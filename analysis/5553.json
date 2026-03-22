@@ -1,0 +1,122 @@
+{
+  "id": "5553",
+  "title": "speedstep-smi fails to load if CONFIG_CPU_FREQ_DEBUG is not set",
+  "kernel_version": "2.6.14",
+  "product": "Power Management",
+  "component": "cpufreq",
+  "hardware": "i386 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "device_not_working"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/i386/kernel/cpu/cpufreq/speedstep-smi.c"
+    ],
+    "buggy_methods": [
+      "void speedstep_set_state",
+      "SMI_TRIES"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [
+      "lib/modules/2.6"
+    ],
+    "source_references": [],
+    "error_messages": [
+      "inserting speedstep_smi"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": true,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": true,
+    "description_length": 768,
+    "description_word_count": 97
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 10,
+    "lines_removed": 12,
+    "patch_size": 22,
+    "patch_types": [
+      "init_fix"
+    ],
+    "num_hunks": 4,
+    "hunk_functions": [
+      "speedstep_set_state"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "arch/i386/kernel/cpu/cpufreq/speedstep-smi.c",
+    "filename": "speedstep-smi.c",
+    "directory": "arch/i386/kernel/cpu/cpufreq",
+    "depth": 6,
+    "top_level": "arch",
+    "second_level": "i386",
+    "arch": "i386",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "file_paths_in_description",
+      "component_known:cpufreq"
+    ],
+    "strategies": [
+      "direct_file_path_matching",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "5553",
+      "version": "2.6.14",
+      "status": "found",
+      "path": "arch/i386/kernel/cpu/cpufreq/speedstep-smi.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "5553",
+    "title": "speedstep-smi fails to load if CONFIG_CPU_FREQ_DEBUG is not set",
+    "ground_truth_file": "arch/i386/kernel/cpu/cpufreq/speedstep-smi.c",
+    "ground_truth_subsystem": "arch/i386",
+    "ground_truth_methods": [
+      "void speedstep_set_state",
+      "SMI_TRIES"
+    ],
+    "product": "Power Management",
+    "component": "cpufreq",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named",
+      "config_options",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "cpufreq",
+      "product": "Power Management",
+      "modules": [
+        "smi"
+      ],
+      "configs": [
+        "CONFIG_CPU_FREQ_DEBUG"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

@@ -1,0 +1,106 @@
+{
+  "id": "200989",
+  "title": "ACPI / LPSS Braswell Lenovo 11e won't boot as of LPSS commit in 4.17.12 (with patch)",
+  "kernel_version": "4.17.12",
+  "product": "ACPI",
+  "component": "Power-Other",
+  "hardware": "Intel Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/acpi_lpss.c"
+    ],
+    "buggy_methods": [
+      "acpi_lpss_dismiss"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": true,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1143,
+    "description_word_count": 194
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 3,
+    "lines_removed": 1,
+    "patch_size": 4,
+    "patch_types": [
+      "quirk/device_table",
+      "init_fix",
+      "synchronization"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "acpi_lpss_dismiss",
+      "lpss_iosf_enter_d3_state"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/acpi_lpss.c",
+    "filename": "acpi_lpss.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/acpi_lpss.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Power-Other",
+      "is_regression",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "200989",
+      "version": "4.17.12",
+      "status": "found",
+      "path": "drivers/acpi/acpi_lpss.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "200989",
+    "title": "ACPI / LPSS Braswell Lenovo 11e won't boot as of LPSS commit in 4.17.12 (with patch)",
+    "product": "ACPI",
+    "component": "Power-Other",
+    "buggy_file": [
+      "drivers/acpi/acpi_lpss.c"
+    ],
+    "fix_type": "quirk_function_addition",
+    "table_entry_lines_added": 0,
+    "description_clues": [
+      "hardware_model_mentioned"
+    ],
+    "patch_size": 4,
+    "potential_strategies": [
+      "search_for_model_specific_quirks",
+      "narrow_by_component:Power-Other"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

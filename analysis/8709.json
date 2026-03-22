@@ -1,0 +1,193 @@
+{
+  "id": "8709",
+  "title": "regression: EmbeddedControl AE_TIME errors, /proc/acpi/battery/* not present",
+  "kernel_version": "2.6.23-rc3",
+  "product": "ACPI",
+  "component": "EC",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "device_not_working"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/ec.c"
+    ],
+    "buggy_methods": [
+      "ec_install_handlers",
+      "acpi_ec_stop"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [
+      {
+        "file": "evregion",
+        "line": "0420"
+      },
+      {
+        "file": "psparse",
+        "line": "0537"
+      },
+      {
+        "file": "psparse",
+        "line": "0537"
+      },
+      {
+        "file": "psparse",
+        "line": "0537"
+      },
+      {
+        "file": "psparse",
+        "line": "0537"
+      },
+      {
+        "file": "psparse",
+        "line": "0537"
+      },
+      {
+        "file": "ac",
+        "line": "0095"
+      },
+      {
+        "file": "evregion",
+        "line": "0420"
+      },
+      {
+        "file": "dswexec",
+        "line": "0462"
+      },
+      {
+        "file": "psparse",
+        "line": "0537"
+      },
+      {
+        "file": "psparse",
+        "line": "0537"
+      },
+      {
+        "file": "psparse",
+        "line": "0537"
+      },
+      {
+        "file": "battery",
+        "line": "0147"
+      }
+    ],
+    "error_messages": [
+      "(psparse-0537): Method parse/execution failed [\\_SB_.PCI0.SBRG.EC0_.RDC3] (Node ",
+      "(psparse-0537): Method parse/execution failed [\\ECIO] (Node ddf0975c), AE_TIME",
+      "(psparse-0537): Method parse/execution failed [\\_SB_.PCI0.SBRG.EC0_.ACPS] (Node ",
+      "(psparse-0537): Method parse/execution failed [\\ACPS] (Node ddf04c70), AE_TIME",
+      "(psparse-0537): Method parse/execution failed [\\_SB_.PCI0.AC0_._PSR] (Node ddf07"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": true,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1951,
+    "description_word_count": 236
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 95,
+    "lines_removed": 100,
+    "patch_size": 195,
+    "new_functions": [
+      "ec_remove_handlers",
+      "acpi_ec_add",
+      "ec_remove_handlers",
+      "acpi_ec_add"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "error_handling",
+      "init_fix",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 25,
+    "hunk_functions": [
+      "acpi_ec_stop",
+      "ec_parse_io_ports",
+      "acpi_ec_start",
+      "acpi_ec_ecdt_probe",
+      "ec_install_handlers",
+      "ec_parse_device",
+      "acpi_ec_remove",
+      "acpi_ec_add"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/ec.c",
+    "filename": "ec.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/ec.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "source_file_line_references",
+      "component_known:EC",
+      "is_regression"
+    ],
+    "strategies": [
+      "use_source_references_to_locate_file",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "8709",
+      "version": "2.6.23-rc3",
+      "status": "found",
+      "path": "drivers/acpi/ec.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "8709",
+    "title": "regression: EmbeddedControl AE_TIME errors, /proc/acpi/battery/* not present",
+    "ground_truth_file": "drivers/acpi/ec.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "ec_install_handlers",
+      "acpi_ec_stop"
+    ],
+    "product": "ACPI",
+    "component": "EC",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "locking_fix",
+      "error_return_fix",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "EC",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

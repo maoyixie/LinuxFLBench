@@ -1,0 +1,34 @@
+{
+  "id": "4249",
+  "title": "KERNEL: assertion (!atomic_read(&sk->sk_rmem_alloc)) failed at net/netlink/af_netlink.c (122)",
+  "description": "Distribution: Slackware 10\nHardware Environment:\n# cat /proc/cpuinfo\nprocessor       : 0\nvendor_id       : GenuineIntel\ncpu family      : 15\nmodel           : 3\nmodel name      : Intel(R) Pentium(R) 4 CPU 2.80GHz\nstepping        : 4\ncpu MHz         : 2793.832\ncache size      : 1024 KB\nphysical id     : 0\nsiblings        : 2\nfdiv_bug        : no\nhlt_bug         : no\nf00f_bug        : no\ncoma_bug        : no\nfpu             : yes\nfpu_exception   : yes\ncpuid level     : 5\nwp              : yes\nflags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov\npat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni monitor ds_cpl cid\nxtpr\nbogomips        : 5505.02\n\nprocessor       : 1\nvendor_id       : GenuineIntel\ncpu family      : 15\nmodel           : 3\nmodel name      : Intel(R) Pentium(R) 4 CPU 2.80GHz\nstepping        : 4\ncpu MHz         : 2793.832\ncache size      : 1024 KB\nphysical id     : 0\nsiblings        : 2\nfdiv_bug        : no\nhlt_bug         : no\nf00f_bug        : no\ncoma_bug        : no\nfpu             : yes\nfpu_exception   : yes\ncpuid level     : 5\nwp              : yes\nflags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov\npat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe pni monitor ds_cpl cid\nxtpr\nbogomips        : 5570.56\n\n# lspci\n00:00.0 Host bridge: Intel Corp. E7220/E7221 Memory Controller Hub (rev 05)\n00:01.0 PCI bridge: Intel Corp. E7220/E7221 PCI Express Root Port (rev 05)\n00:02.0 VGA compatible controller: Intel Corp. E7221 Integrated Graphics\nController (rev 05)\n00:1c.0 PCI bridge: Intel Corp. 82801FB/FBM/FR/FW/FRW (ICH6 Family) PCI Express\nPort 1 (rev 03)\n00:1c.2 PCI bridge: Intel Corp. 82801FB/FBM/FR/FW/FRW (ICH6 Family) PCI Express\nPort 3 (rev 03)\n00:1c.3 PCI bridge: Intel Corp. 82801FB/FBM/FR/FW/FRW (ICH6 Family) PCI Express\nPort 4 (rev 03)\n00:1d.0 USB Controller: Intel Corp. 82801FB/FBM/FR/FW/FRW (ICH6 Family) USB UHCI\n#1 (rev 03)\n00:1d.1 USB Controller: Intel Corp. 82801FB/FBM/FR/FW/FRW (ICH6 Family) USB UHCI\n#2 (rev 03)\n00:1d.2 USB Controller: Intel Corp. 82801FB/FBM/FR/FW/FRW (ICH6 Family) USB UHCI\n#3 (rev 03)\n00:1d.3 USB Controller: Intel Corp. 82801FB/FBM/FR/FW/FRW (ICH6 Family) USB UHCI\n#4 (rev 03)\n00:1d.7 USB Controller: Intel Corp. 82801FB/FBM/FR/FW/FRW (ICH6 Family) USB2\nEHCI Controller (rev 03)\n00:1e.0 PCI bridge: Intel Corp. 82801 PCI Bridge (rev d3)\n00:1f.0 ISA bridge: Intel Corp. 82801FB/FR (ICH6/ICH6R) LPC Interface Bridge\n(rev 03)\n00:1f.1 IDE interface: Intel Corp. 82801FB/FBM/FR/FW/FRW (ICH6 Family) IDE\nController (rev 03)\n00:1f.2 Class 0106: Intel Corp. 82801FR/FRW (ICH6R/ICH6RW) SATA Controller (rev 03)\n00:1f.3 SMBus: Intel Corp. 82801FB/FBM/FR/FW/FRW (ICH6 Family) SMBus Controller\n(rev 03)\n01:00.0 PCI bridge: Intel Corp. 6702PXH PCI Express-to-PCI Bridge A (rev 09)\n01:00.1 PIC: Intel Corp. 6700/6702PXH I/OxAPIC Interrupt Controller A (rev 09)\n04:00.0 Ethernet controller: Broadcom Corporation NetXtreme BCM5721 Gigabit\nEthernet PCI Express (rev 11)\n05:00.0 Ethernet controller: Broadcom Corporation NetXtreme BCM5721 Gigabit\nEthernet PCI Express (rev 11)\n\nSoftware Environment:\nLinux version 2.6.11-rc4 (root@gw1) (gcc version 3.3.4) #1 SMP Mon Feb 14\n06:47:58 CET 2005\n\n# /usr/src/linux-2.6.11-rc4/scripts/ver_linux\n\nLinux gw1 2.6.11-rc4 #1 SMP Mon Feb 14 06:47:58 CET 2005 i686 unknown unknown\nGNU/Linux\n\nGnu C                  3.3.4\nGnu make               3.80\nbinutils               2.15.92.0.2\nutil-linux             2.12p\nmount                  2.12p\nmodule-init-tools      3.1\ne2fsprogs              1.35\nreiserfsprogs          line\nreiser4progs           line\nquota-tools            3.12.\nPPP                    2.4.2\nLinux C Library        2.3.3\nDynamic linker (ldd)   2.3.3\nLinux C++ Library      5.0.6\nProcps                 3.2.3\nNet-tools              1.60\nKbd                    1.12\nSh-utils               5.2.1\n/usr/src/linux-2.6.11-rc4/scripts/ver_linux: line 90: udevinfo: command not found\nModules Loaded         bonding\n\n# cat /proc/net/bonding/bond0\nEthernet Channel Bonding Driver: v2.6.1 (October 29, 2004)\n\nBonding Mode: fault-tolerance (active-backup)\nPrimary Slave: None\nCurrently Active Slave: eth1\nMII Status: up\nMII Polling Interval (ms): 100\nUp Delay (ms): 0\nDown Delay (ms): 0\n\nSlave Interface: eth0\nMII Status: up\nLink Failure Count: 3\nPermanent HW addr: 00:30:48:XX:XX:XX\n\nSlave Interface: eth1\nMII Status: up\nLink Failure Count: 0\nPermanent HW addr: 00:30:48:XX:XX:XX\n\n# cat /proc/net/vlan/config\nVLAN Dev name    | VLAN ID\nName-Type: VLAN_NAME_TYPE_PLUS_VID_NO_PAD\nvlan1          | 1  | bond0\nvlan2          | 2  | bond0\nvlan6          | 6  | bond0\nvlan33         | 33  | bond0\nvlan5          | 5  | bond0\n\nProblem Description:\nI use keepalived for vrrpd. Sometimes, when I restart (kill & start) keepalived\ndaemon kernel logs:\n\nKERNEL: assertion (!atomic_read(&sk->sk_rmem_alloc)) failed at\nnet/netlink/af_netlink.c (122)\nvlan1: del 01:00:5e:00:00:12 mcast address from master interface\n\nThe vlan1 device is used for vrrpd communication between two routers. It is\ncreated over the bound0 interface (eth0+eth1 in active-backup mode).\n\nAnyway, everything seems to work but this message is not very nice.\n\nSteps to reproduce:\n# killall keepalived",
+  "patch": [
+    "===== net/netlink/af_netlink.c 1.72 vs edited =====\n--- 1.72/net/netlink/af_netlink.c\t2005-03-23 14:17:09 +11:00\n+++ edited/net/netlink/af_netlink.c\t2005-03-30 16:24:27 +10:00\n@@ -1080,9 +1080,11 @@\n \tlen = cb->dump(skb, cb);\n \n \tif (len > 0) {\n+\t\tsock_hold(sk);\n \t\tspin_unlock(&nlk->cb_lock);\n \t\tskb_queue_tail(&sk->sk_receive_queue, skb);\n \t\tsk->sk_data_ready(sk, len);\n+\t\tsock_put(sk);\n \t\treturn 0;\n \t}\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Networking",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Herbert Xu",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2005-02-24 16:15 UTC by Krzysztof Oledzki",
+  "Modified": "2005-10-01 12:51 UTC",
+  "CC List": "0 users",
+  "See Also": "",
+  "Kernel Version": "2.6.11",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "net/netlink/af_netlink.c"
+  ],
+  "methods": [
+    "netlink_dump"
+  ]
+}

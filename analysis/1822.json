@@ -1,0 +1,116 @@
+{
+  "id": "1822",
+  "title": "usb-storage borks out with my camera",
+  "kernel_version": "2.6.1",
+  "product": "IO/Storage",
+  "component": "SCSI",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/usb/storage/transport.c"
+    ],
+    "buggy_methods": [
+      "usb_stor_CBI_transport"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [
+      "drivers/usb/core/usb.c"
+    ],
+    "source_references": [],
+    "error_messages": [
+      "on device sda, logical",
+      "on device sda, logical block 0",
+      "on device sda, logical"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1563,
+    "description_word_count": 237
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 4,
+    "lines_removed": 1,
+    "patch_size": 5,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "if"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/usb/storage/transport.c",
+    "filename": "transport.c",
+    "directory": "drivers/usb/storage",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "usb",
+    "driver_subsystem": "usb/storage",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "file_paths_in_description",
+      "component_known:SCSI"
+    ],
+    "strategies": [
+      "direct_file_path_matching",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "1822",
+      "version": "2.6.1",
+      "status": "found",
+      "path": "drivers/usb/storage/transport.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "1822",
+    "title": "usb-storage borks out with my camera",
+    "ground_truth_file": "drivers/usb/storage/transport.c",
+    "ground_truth_subsystem": "drivers/usb",
+    "ground_truth_methods": [
+      "usb_stor_CBI_transport"
+    ],
+    "product": "IO/Storage",
+    "component": "SCSI",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "resource_leak"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named"
+    ],
+    "clue_details": {
+      "component": "SCSI",
+      "product": "IO/Storage",
+      "modules": [
+        "usb"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

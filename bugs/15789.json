@@ -1,0 +1,34 @@
+{
+  "id": "15789",
+  "title": "Bind mounts broken when used with NFSv4",
+  "description": "There is some serious weirdness if you try and use bind mounts in conjunction with nfs4 mounts.\n\n $ df -T /var/tmp\nFilesystem    Type   1K-blocks      Used Available Use% Mounted on\nfs.beware.dropbear.id.au:/tmp/\n              nfs4     5160576    403968   4494464   9% /var/tmp\n $ df -T /tmp\nFilesystem    Type   1K-blocks      Used Available Use% Mounted on\n/tmp         tmpfs      921600         4    921596   1% /tmp\n $ cat /tmp/foo\nOver The Lazy Dogs Back\n $ cat /var/tmp/foo\nThe Quick Brown Fox\n#\n# So /var/tmp/foo is on an nfs4 mounted filesystem\n# /tmp/foo is on a tmpfs. Both files are different.\n#\n $ mount --bind /tmp/foo /var/tmp/foo\n $ cat /tmp/foo\nOver The Lazy Dogs Back\n $ cat /var/tmp/foo\nThe Quick Brown Fox\n#\n# Both files should be the same. ie \"Over The Lazy Dogs Back\"\n#\n# In other oddity, ls -l correctly shows both files the same size (31),\n# and ls -i correctly shows both have the same inode number, yet:\n $ cat /tmp/foo | wc -c\n31\n $ cat /var/tmp/foo | wc -c\n20\n#\n# So much for reading. Now what about writing?\n#\n $ echo blah blah > /var/tmp/foo\n $ cat /var/tmp/foo\nblah blah\nBrown Fox\n#\n# This should have been truncated\n#\n $ cat /tmp/foo\n#\n# /tmp/foo has been truncated, but it should have \"blah blah\" in it\n#\n $ umount /var/tmp/foo\n $ cat /var/tmp/foo\nblah blah\nBrown Fox\n $cat /tmp/foo\n# Empty",
+  "patch": [
+    "NFSv4: Don't attempt an atomic open if the file is a mountpoint\n\nFrom: Trond Myklebust <Trond.Myklebust@netapp.com>\n\nFix https://bugzilla.kernel.org/show_bug.cgi?id=15789\n\nSigned-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>\n---\n\n fs/nfs/dir.c |    2 +-\n 1 files changed, 1 insertions(+), 1 deletions(-)\n\n\ndiff --git a/fs/nfs/dir.c b/fs/nfs/dir.c\nindex be46f26..fbb4cf7 100644\n--- a/fs/nfs/dir.c\n+++ b/fs/nfs/dir.c\n@@ -1050,7 +1050,7 @@ static int nfs_open_revalidate(struct dentry *dentry, struct nameidata *nd)\n \tstruct inode *dir;\n \tint openflags, ret = 0;\n \n-\tif (!is_atomic_open(nd))\n+\tif (!is_atomic_open(nd) || d_mountpoint(dentry))\n \t\tgoto no_open;\n \tparent = dget_parent(dentry);\n \tdir = parent->d_inode;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "NFS",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "Trond Myklebust",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-04-15 14:33 UTC by Ian Dall",
+  "Modified": "2012-05-14 17:23 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.32",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/nfs/dir.c"
+  ],
+  "methods": [
+    "nfs_open_revalidate"
+  ]
+}

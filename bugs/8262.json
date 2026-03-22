@@ -1,0 +1,34 @@
+{
+  "id": "8262",
+  "title": "PCMCIA: socket *** DANGER *** unable to remove socket power",
+  "description": "Most recent kernel where this bug did *NOT* occur: I don't know any.\nDistribution: Debian Etch\nHardware Environment: Thinkpad T41p\nSoftware Environment: pccardctl eject\nProblem Description: \n\nThe command \"pccardctl eject\" gives the following warning:\n\nkernel: PCMCIA: socket f793c428: *** DANGER *** unable to remove socket power\n\nIt seems that this warning is wrong, because the pcmcia-card is offline. (LED \nis off.)\n\nSteps to reproduce:\nInserting a pcmcia-card (I use the merlin u740.) and after this use \"pccardctl \neject\". If I remove the card without pccardctl eject I get no warning from the \nkernel.\n\ncat /proc/iomem  | grep -C1 yenta\nb0000000-b0000fff : 0000:02:00.0\n  b0000000-b0000fff : yenta_socket\nb1000000-b1000fff : 0000:02:00.1\n  b1000000-b1000fff : yenta_socket\n\nlspci -vv  | grep -A14 Card\n02:00.0 CardBus bridge: Texas Instruments PCI4520 PC card Cardbus Controller \n(rev 01)\n        Subsystem: IBM Unknown device 0552\n        Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- \nStepping- SERR- FastB2B-\n        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=medium >TAbort- \n<TAbort- <MAbort- >SERR- <PERR-\n        Latency: 168, Cache Line Size: 64 bytes\n        Interrupt: pin A routed to IRQ 11\n        Region 0: Memory at b0000000 (32-bit, non-prefetchable) [size=4K]\n        Bus: primary=02, secondary=03, subordinate=06, sec-latency=176\n        Memory window 0: e8000000-ebfff000 (prefetchable)\n        Memory window 1: c4000000-c7fff000\n        I/O window 0: 00004000-000040ff\n        I/O window 1: 00004400-000044ff\n        BridgeCtl: Parity- SERR- ISA- VGA- MAbort- >Reset+ 16bInt+ PostWrite+\n        16-bit legacy interface ports at 0001\n\n02:00.1 CardBus bridge: Texas Instruments PCI4520 PC card Cardbus Controller \n(rev 01)\n        Subsystem: IBM Unknown device 0552\n        Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- \nStepping- SERR- FastB2B-\n        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=medium >TAbort- \n<TAbort- <MAbort- >SERR- <PERR-\n        Latency: 168, Cache Line Size: 64 bytes\n        Interrupt: pin B routed to IRQ 11\n        Region 0: Memory at b1000000 (32-bit, non-prefetchable) [size=4K]\n        Bus: primary=02, secondary=07, subordinate=07, sec-latency=176\n        Memory window 0: ec000000-effff000 (prefetchable)\n        Memory window 1: c8000000-cbfff000\n        I/O window 0: 00004800-000048ff\n        I/O window 1: 00004c00-00004cff\n        BridgeCtl: Parity- SERR- ISA- VGA- MAbort- >Reset+ 16bInt- PostWrite+\n        16-bit legacy interface ports at 0001\n\nkernel: BIOS-e820: 00000000000dc000 - 0000000000100000 (reserved)\nkernel: BIOS-e820: 0000000000100000 - 000000003ff40000 (usable)\nkernel: BIOS-e820: 000000003ff40000 - 000000003ff52000 (ACPI data)\nkernel: BIOS-e820: 000000003ff52000 - 000000003ff54000 (ACPI NVS)\nkernel: BIOS-e820: 000000003ff80000 - 0000000040000000 (reserved)\nkernel: BIOS-e820: 00000000ff800000 - 0000000100000000 (reserved)",
+  "patch": [
+    "diff --git a/drivers/pcmcia/cs.c b/drivers/pcmcia/cs.c\nindex 7c93a10..262313e 100644\n--- a/drivers/pcmcia/cs.c\n+++ b/drivers/pcmcia/cs.c\n@@ -53,7 +53,6 @@ MODULE_LICENSE(\"GPL\");\n \n INT_MODULE_PARM(setup_delay,\t10);\t\t/* centiseconds */\n INT_MODULE_PARM(resume_delay,\t20);\t\t/* centiseconds */\n-INT_MODULE_PARM(shutdown_delay,\t3);\t\t/* centiseconds */\n INT_MODULE_PARM(vcc_settle,\t40);\t\t/* centiseconds */\n INT_MODULE_PARM(reset_time,\t10);\t\t/* usecs */\n INT_MODULE_PARM(unreset_delay,\t10);\t\t/* centiseconds */\n@@ -393,8 +392,6 @@ static void socket_shutdown(struct pcmcia_socket *s)\n \tcs_dbg(s, 4, \"shutdown\\n\");\n \n \tsocket_remove_drivers(s);\n-\ts->state &= SOCKET_INUSE | SOCKET_PRESENT;\n-\tmsleep(shutdown_delay * 10);\n \ts->state &= SOCKET_INUSE;\n \n \t/* Blank out the socket state */\n@@ -409,6 +406,9 @@ static void socket_shutdown(struct pcmcia_socket *s)\n #endif\n \ts->functions = 0;\n \n+\t/* give socket some time to power down */\n+\tmsleep(100);\n+\n \ts->ops->get_status(s, &status);\n \tif (status & SS_POWERON) {\n \t\tprintk(KERN_ERR \"PCMCIA: socket %p: *** DANGER *** unable to remove socket power\\n\", s);\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "PCMCIA",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 high",
+  "Assignee": "Dominik Brodowski",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-03-26 00:50 UTC by Nils Neumann",
+  "Modified": "2009-10-17 12:11 UTC",
+  "CC List": "6 users",
+  "See Also": "",
+  "Kernel Version": "2.6.20",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/pcmcia/cs.c"
+  ],
+  "methods": [
+    "socket_shutdown"
+  ]
+}

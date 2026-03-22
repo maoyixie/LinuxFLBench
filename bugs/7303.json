@@ -1,0 +1,38 @@
+{
+  "id": "7303",
+  "title": "Dock driver: Scheduling while atomic BUG during docking.",
+  "description": "Distribution: Debian Unstable\nHardware Environment: Thinkpad T40p and ThinkPad Dock II\nSoftware Environment: ACPI dock driver from vanilla 2.6.18\nProblem Description: If I dock my notebook to the dockingstation, I get the\nattached 'Scheduling while atomic BUG' in my dmesg.\n\nI can still work with this machine afterwards.\n\nSteps to reproduce: Dock the Thinkpad. I tested this with undocking first until\nnow. If you like, I can boot the notebook outside the dock, dock it and see if\nit gives the same result.",
+  "patch": [
+    "Use a mutex instead of a spinlock for locking the\nhotplug list because we need to call into the acpi\nsubsystem which might sleep.\n\nSigned-off-by: Kristen Carlson Accardi <kristen.c.accardi@intel.com>\n---\n drivers/acpi/dock.c |   16 ++++++++--------\n 1 file changed, 8 insertions(+), 8 deletions(-)\n\n--- 2.6-git.orig/drivers/acpi/dock.c\n+++ 2.6-git/drivers/acpi/dock.c\n@@ -44,7 +44,7 @@ struct dock_station {\n \tunsigned long last_dock_time;\n \tu32 flags;\n \tspinlock_t dd_lock;\n-\tspinlock_t hp_lock;\n+\tstruct mutex hp_lock;\n \tstruct list_head dependent_devices;\n \tstruct list_head hotplug_devices;\n };\n@@ -114,9 +114,9 @@ static void\n dock_add_hotplug_device(struct dock_station *ds,\n \t\t\tstruct dock_dependent_device *dd)\n {\n-\tspin_lock(&ds->hp_lock);\n+\tmutex_lock(&ds->hp_lock);\n \tlist_add_tail(&dd->hotplug_list, &ds->hotplug_devices);\n-\tspin_unlock(&ds->hp_lock);\n+\tmutex_unlock(&ds->hp_lock);\n }\n \n /**\n@@ -130,9 +130,9 @@ static void\n dock_del_hotplug_device(struct dock_station *ds,\n \t\t\tstruct dock_dependent_device *dd)\n {\n-\tspin_lock(&ds->hp_lock);\n+\tmutex_lock(&ds->hp_lock);\n \tlist_del(&dd->hotplug_list);\n-\tspin_unlock(&ds->hp_lock);\n+\tmutex_unlock(&ds->hp_lock);\n }\n \n /**\n@@ -295,7 +295,7 @@ static void hotplug_dock_devices(struct \n {\n \tstruct dock_dependent_device *dd;\n \n-\tspin_lock(&ds->hp_lock);\n+\tmutex_lock(&ds->hp_lock);\n \n \t/*\n \t * First call driver specific hotplug functions\n@@ -317,7 +317,7 @@ static void hotplug_dock_devices(struct \n \t\telse\n \t\t\tdock_create_acpi_device(dd->handle);\n \t}\n-\tspin_unlock(&ds->hp_lock);\n+\tmutex_unlock(&ds->hp_lock);\n }\n \n static void dock_event(struct dock_station *ds, u32 event, int num)\n@@ -625,7 +625,7 @@ static int dock_add(acpi_handle handle)\n \tINIT_LIST_HEAD(&dock_station->dependent_devices);\n \tINIT_LIST_HEAD(&dock_station->hotplug_devices);\n \tspin_lock_init(&dock_station->dd_lock);\n-\tspin_lock_init(&dock_station->hp_lock);\n+\tmutex_init(&dock_station->hp_lock);\n \tATOMIC_INIT_NOTIFIER_HEAD(&dock_notifier_list);\n \n \t/* Find dependent devices */\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Config-Hotplug",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Kristen",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-10-10 23:53 UTC by Stefan Schmidt",
+  "Modified": "2007-03-08 01:16 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.18",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/dock.c"
+  ],
+  "methods": [
+    "dock_add_hotplug_device",
+    "dock_del_hotplug_device",
+    "hotplug_dock_devices",
+    "dock_add",
+    "dock_station"
+  ]
+}

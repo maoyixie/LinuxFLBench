@@ -1,0 +1,34 @@
+{
+  "id": "106571",
+  "title": "Surface 3 Lid Switch Method parse/execution failed",
+  "description": "Created attachment 191021 [details]\ndmesg until failure\n\nOn the Microsoft Surface 3, when you fold the type cover over the screen (or \"close the lid\"), the lid switch state does not change, and an ACPI error is thrown. The lid switch state always reports closed.\n\n[root@localhost ~]# cat /proc/acpi/button/lid/LID/state \nstate:      closed\n\n[ 1130.459896] ACPI Exception: AE_ERROR, Returned by Handler for [GeneralPurposeIo] (20150930/evregion-297)\n[ 1130.460061] ACPI Error: Method parse/execution failed [\\_SB.GPO0._E4C] (Node ffff88013f4b4438), AE_ERROR (20150930/psparse-542)\n\nFrom the DSDT, this is the GPIO event handler that toggles the lid switch state.",
+  "patch": [
+    "diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c\nindex 143a9bdbaa53..623a2062c51b 100644\n--- a/drivers/gpio/gpiolib-acpi.c\n+++ b/drivers/gpio/gpiolib-acpi.c\n@@ -603,6 +603,26 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,\n \t\t\t\tbreak;\n \t\t\t}\n \t\t}\n+\n+\t\t/*\n+\t\t * The same GPIO pin can be shared between event and\n+\t\t * operation region if it is marked as shared and is only\n+\t\t * read from the ASL code. In that case we \"borrow\" the\n+\t\t * event GPIO here.\n+\t\t */\n+\t\tif (!found && agpio->sharable == ACPI_SHARED &&\n+\t\t     function == ACPI_READ) {\n+\t\t\tstruct acpi_gpio_event *event;\n+\n+\t\t\tlist_for_each_entry(event, &achip->events, node) {\n+\t\t\t\tif (event->pin == pin) {\n+\t\t\t\t\tdesc = event->desc;\n+\t\t\t\t\tfound = true;\n+\t\t\t\t\tbreak;\n+\t\t\t\t}\n+\t\t\t}\n+\t\t}\n+\n \t\tif (!found) {\n \t\t\tdesc = gpiochip_request_own_desc(chip, pin,\n \t\t\t\t\t\t\t \"ACPI:OpRegion\");\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Config-Tables",
+  "Hardware": "x86-64 Linux",
+  "Importance": "P1 normal",
+  "Assignee": "acpi_config-tables",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2015-10-24 19:51 UTC by Stephen Just",
+  "Modified": "2016-02-01 20:59 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "4.3-rc6",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/gpio/gpiolib-acpi.c"
+  ],
+  "methods": [
+    "acpi_gpio_adr_space_handler"
+  ]
+}

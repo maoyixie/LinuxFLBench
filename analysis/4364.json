@@ -1,0 +1,191 @@
+{
+  "id": "4364",
+  "title": "S1 suspend/resume resets thermal limits -- TP 600X",
+  "kernel_version": "2.6.16",
+  "product": "ACPI",
+  "component": "Power-Thermal",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "hang/lockup",
+    "power/sleep",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/thermal.c"
+    ],
+    "buggy_methods": [
+      "acpi_thermal_driver"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "driver_register",
+      "pci_device_probe",
+      "uhci_hcd_init",
+      "usb_hcd_pci_remove",
+      "check_timer_failed",
+      "del_timer",
+      "pci_device_probe_static",
+      "driver_attach",
+      "pci_register_driver",
+      "__pci_device_probe",
+      "sys_init_module",
+      "syscall_call",
+      "usb_hcd_pci_probe",
+      "driver_probe_device",
+      "uhci_stop",
+      "bus_add_driver"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "messages such as ",
+      "(Bug #3534) -- no good or bad effect from the fixes,"
+    ],
+    "proc_sys_paths": [
+      "/proc/acpi/thermal_zone/THM2/trip_points",
+      "/proc/acpi/sleep"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 3965,
+    "description_word_count": 531
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 18,
+    "lines_removed": 0,
+    "patch_size": 18,
+    "new_functions": [
+      "acpi_thermal_resume",
+      "acpi_thermal_resume"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "init_fix"
+    ],
+    "num_hunks": 3,
+    "hunk_functions": [
+      "acpi_thermal_remove",
+      "MODULE_PARM_DESC"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/thermal.c",
+    "filename": "thermal.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/thermal.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_16_functions",
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Power-Thermal"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "4364",
+      "version": "2.6.16",
+      "status": "found",
+      "path": "drivers/acpi/thermal.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "4364",
+    "version": "2.6.16",
+    "ground_truth_file": "drivers/acpi/thermal.c",
+    "trace_functions": [
+      "check_timer_failed",
+      "del_timer",
+      "uhci_stop",
+      "usb_hcd_pci_remove",
+      "usb_hcd_pci_probe",
+      "pci_device_probe_static",
+      "__pci_device_probe",
+      "pci_device_probe",
+      "driver_probe_device",
+      "driver_attach",
+      "bus_add_driver",
+      "driver_register",
+      "pci_register_driver",
+      "uhci_hcd_init",
+      "sys_init_module"
+    ],
+    "total_trace_functions": 16,
+    "function_locations": {
+      "check_timer_failed": [],
+      "del_timer": [
+        "net/ax25/ax25_ds_timer.c",
+        "net/bluetooth/hidp/core.c",
+        "net/rxrpc/krxtimod.c",
+        "net/core/neighbour.c",
+        "sound/drivers/serial-u16550.c",
+        "kernel/timer.c",
+        "fs/afs/kafstimod.c",
+        "net/ipv6/addrconf.c"
+      ],
+      "uhci_stop": [
+        "drivers/usb/host/uhci-hcd.c"
+      ],
+      "usb_hcd_pci_remove": [
+        "drivers/usb/core/hcd-pci.c"
+      ],
+      "usb_hcd_pci_probe": [
+        "drivers/usb/core/hcd-pci.c"
+      ],
+      "pci_device_probe_static": [],
+      "__pci_device_probe": [],
+      "pci_device_probe": [
+        "drivers/pci/pci-driver.c"
+      ],
+      "driver_probe_device": [
+        "drivers/base/dd.c"
+      ],
+      "driver_attach": [
+        "drivers/base/dd.c",
+        "drivers/acpi/scan.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "net/ax25/ax25_ds_timer.c",
+      "drivers/pci/pci-driver.c",
+      "net/bluetooth/hidp/core.c",
+      "net/rxrpc/krxtimod.c",
+      "net/core/neighbour.c",
+      "sound/drivers/serial-u16550.c",
+      "kernel/timer.c",
+      "fs/afs/kafstimod.c",
+      "net/ipv6/addrconf.c",
+      "drivers/usb/host/uhci-hcd.c",
+      "drivers/usb/core/hcd-pci.c",
+      "drivers/base/dd.c",
+      "drivers/acpi/scan.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

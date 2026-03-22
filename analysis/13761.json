@@ -1,0 +1,159 @@
+{
+  "id": "13761",
+  "title": "kmemleak + BUG: unable to handle kernel paging request",
+  "kernel_version": "2.6.31-rc2",
+  "product": "Other",
+  "component": "Other",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "mm/kmemleak.c"
+    ],
+    "buggy_methods": [
+      "kmemleak_write",
+      "kmemleak_open",
+      "kmemleak_seq_stop",
+      "*kmemleak_seq_start"
+    ],
+    "num_methods": 4
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "kmemleak_seq_next",
+      "EFLAGS"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/kernel/debug/",
+      "/sys/kernel/debug/kmemleak",
+      "/sys/devices/system/cpu/cpu0/cpuidle/state2/time"
+    ],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 44,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3814,
+    "description_word_count": 529
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 31,
+    "lines_removed": 36,
+    "patch_size": 67,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 9,
+    "hunk_functions": [
+      "kmemleak_seq_stop",
+      "kmemleak_write"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "mm/kmemleak.c",
+    "filename": "kmemleak.c",
+    "directory": "mm",
+    "depth": 2,
+    "top_level": "mm",
+    "second_level": "kmemleak.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_2_functions",
+      "proc_sys_paths_hint_subsystem",
+      "dmesg_logs_available"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "grep_error_messages_in_kernel_source"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13761",
+      "version": "2.6.31-rc2",
+      "status": "found",
+      "path": "mm/kmemleak.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "13761",
+    "version": "2.6.31-rc2",
+    "ground_truth_file": "mm/kmemleak.c",
+    "trace_functions": [
+      "kmemleak_seq_next",
+      "seq_read",
+      "vfs_read",
+      "sys_read",
+      "sysenter_do_call",
+      "free_object_rcu",
+      "kmemleak_alloc",
+      "EFLAGS"
+    ],
+    "total_trace_functions": 8,
+    "function_locations": {
+      "kmemleak_seq_next": [
+        "mm/kmemleak.c"
+      ],
+      "seq_read": [
+        "kernel/sched.c",
+        "security/device_cgroup.c",
+        "net/core/skbuff.c",
+        "sound/core/seq/seq_clientmgr.c",
+        "fs/seq_file.c"
+      ],
+      "vfs_read": [
+        "fs/nfsd/vfs.c",
+        "fs/read_write.c"
+      ],
+      "sys_read": [
+        "fs/proc/proc_sysctl.c",
+        "drivers/video/fb_sys_fops.c"
+      ],
+      "sysenter_do_call": [],
+      "free_object_rcu": [
+        "mm/kmemleak.c"
+      ],
+      "kmemleak_alloc": [
+        "mm/kmemleak.c"
+      ],
+      "EFLAGS": []
+    },
+    "gt_found_via_functions": [
+      "kmemleak_seq_next",
+      "free_object_rcu",
+      "kmemleak_alloc"
+    ],
+    "other_candidate_files": [
+      "fs/nfsd/vfs.c",
+      "kernel/sched.c",
+      "fs/proc/proc_sysctl.c",
+      "security/device_cgroup.c",
+      "net/core/skbuff.c",
+      "sound/core/seq/seq_clientmgr.c",
+      "drivers/video/fb_sys_fops.c",
+      "fs/seq_file.c",
+      "fs/read_write.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

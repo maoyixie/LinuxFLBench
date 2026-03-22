@@ -1,0 +1,138 @@
+{
+  "id": "8110",
+  "title": "insanely high temperature on bootup (e.g. 3517 C) - HP/Compaq nx8220, nc6000, nc8000 - 2.6.19 regression",
+  "kernel_version": "2.6.19",
+  "product": "ACPI",
+  "component": "EC",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/ec.c"
+    ],
+    "buggy_methods": [
+      "acpi_ec_check_status",
+      "acpi_ec_transaction_unlocked",
+      "acpi_ec_transaction",
+      "ec_transaction",
+      "acpi_ec_gpe_handler",
+      "acpi_ec_add",
+      "acpi_fake_ecdt_callback",
+      "acpi_ec_get_real_ecdt",
+      "acpi_ec_set_intr_mode",
+      "acpi_ec"
+    ],
+    "num_methods": 10
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1415,
+    "description_word_count": 236
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 23,
+    "lines_removed": 17,
+    "patch_size": 40,
+    "new_functions": [
+      "acpi_ec_wait"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "error_handling",
+      "synchronization"
+    ],
+    "num_hunks": 12,
+    "hunk_functions": [
+      "acpi_ec_check_status",
+      "acpi_ec_get_real_ecdt",
+      "acpi_fake_ecdt_callback",
+      "acpi_ec_gpe_handler",
+      "acpi_ec_set_intr_mode",
+      "acpi_ec_transaction_unlocked",
+      "acpi_ec_transaction",
+      "acpi_ec_add",
+      "acpi_ec_write_data",
+      "ec_write"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/ec.c",
+    "filename": "ec.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/ec.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:EC"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "8110",
+      "version": "2.6.19",
+      "status": "found",
+      "path": "drivers/acpi/ec.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "8110",
+    "title": "insanely high temperature on bootup (e.g. 3517 C) - HP/Compaq nx8220, nc6000, nc8000 - 2.6.19 regression",
+    "ground_truth_file": "drivers/acpi/ec.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "acpi_ec_check_status",
+      "acpi_ec_transaction_unlocked",
+      "acpi_ec_transaction",
+      "ec_transaction",
+      "acpi_ec_gpe_handler",
+      "acpi_ec_add",
+      "acpi_fake_ecdt_callback",
+      "acpi_ec_get_real_ecdt",
+      "acpi_ec_set_intr_mode",
+      "acpi_ec"
+    ],
+    "product": "ACPI",
+    "component": "EC",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "EC",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

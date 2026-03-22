@@ -1,0 +1,34 @@
+{
+  "id": "2567",
+  "title": "wrong irq rouing on centrino laptop - PIC",
+  "description": "Hardware Environment: some centrino laptop\nProblem Description:\n\n I'm trying to use Intel Wireless 2100 adapter on my centrino based\n notebook. I use ipw2100 drivers from ipw2100.sf.net. The thing is that\n hardware says that the device should generate irq11, but it really\n generates irq5. I tryed both 2.4.26 and 2.6.5. I also tryed to compile\n kernel with and without ACPI. I tryed to compile kernel with and\n without APIC support. I also tryed to pass some parameters to kernel\n (acpi=off, acpi=force, pci=biosirq). But anyway kernel says irq 11 and\n device generates irq5. Of course it is possible to be hardware\n problem, but it works under windows.",
+  "patch": [
+    "--- linux-2.4.22-1.2174.nptl.asp/drivers/acpi/pci_link.c\t2004-02-20 00:52:23.000000000 +0300\n+++ linux-2.4.22-1.2174.nptl.aspmy/drivers/acpi/pci_link.c\t2004-04-24 13:15:09.000000000 +0400\n@@ -261,12 +261,6 @@\n \t\tgoto end;\n \t}\n \n-\t/*\n-\t * Note that we don't validate that the current IRQ (_CRS) exists\n-\t * within the possible IRQs (_PRS): we blindly assume that whatever\n-\t * IRQ a boot-enabled Link device is set to is the correct one.\n-\t * (Required to support systems such as the Toshiba 5005-S504.)\n-\t */\n \tlink->irq.active = irq;\n \n \tACPI_DEBUG_PRINT((ACPI_DB_INFO, \"Link at IRQ %d \\n\", link->irq.active));\n@@ -495,13 +489,26 @@\n static int acpi_pci_link_allocate(struct acpi_pci_link* link) {\n \tint irq;\n \tint i;\n+\tint irq_allowed;\n \n \tACPI_FUNCTION_TRACE(\"acpi_pci_link_allocate\");\n \n \tif (link->irq.setonboot)\n \t\treturn_VALUE(0);\n \n-\tif (link->irq.active) {\n+\tif(link->irq.active) {\n+\t\tirq_allowed = 0;\n+\t\tfor (i=(link->irq.possible_count-1); i>0; i--)\n+\t\t\tif(link->irq.possible[i] == link->irq.active)\n+\t\t\t{\n+\t\t\t\tirq_allowed = 1;\n+\t\t\t\tbreak;\n+\t\t\t}\n+\t} else {\n+\t\tirq_allowed = 1;\n+\t}\n+\t\n+\tif (link->irq.active && irq_allowed) {\n \t\tirq = link->irq.active;\n \t} else {\n \t\tirq = link->irq.possible[0];\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Config-Interrupts",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Len Brown",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2004-04-22 09:45 UTC by Andrey Ulanov",
+  "Modified": "2004-05-11 23:28 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.4.26",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/pci_link.c"
+  ],
+  "methods": [
+    "acpi_pci_link_allocate"
+  ]
+}

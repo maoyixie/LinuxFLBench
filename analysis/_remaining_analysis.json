@@ -1,0 +1,5483 @@
+{
+  "total": 169,
+  "symptom_distribution": {
+    "other_functional": 67,
+    "hang/deadlock": 46,
+    "wrong_output": 30,
+    "suspend/resume": 28,
+    "performance": 24,
+    "data_corruption": 6,
+    "boot_failure": 2,
+    "resource_leak": 1
+  },
+  "fix_type_distribution": {
+    "new_function_calls": 110,
+    "null_check_added": 47,
+    "other_fix": 44,
+    "init_fix": 35,
+    "locking_fix": 28,
+    "error_return_fix": 17,
+    "boundary_fix": 7,
+    "type_cast_fix": 5
+  },
+  "clue_distribution": {
+    "known_component": 155,
+    "is_regression": 64,
+    "diagnostic_tool_output": 55,
+    "proc_sys_paths": 45,
+    "driver_module_named": 35,
+    "kernel_log_messages": 11,
+    "greppable_kernel_messages": 11,
+    "config_options": 6,
+    "minimal_clues": 6,
+    "greppable_error_strings": 5
+  },
+  "strategy_distribution": {
+    "map_proc_sys_to_subsystem": 42,
+    "grep_error_strings": 14,
+    "narrow_by_component_metadata": 78,
+    "search_named_driver": 23,
+    "search_config_related_code": 3,
+    "semantic_understanding_only": 6,
+    "parse_diagnostic_output": 2,
+    "check_recent_commits": 1
+  },
+  "strategy_bug_ids": {
+    "map_proc_sys_to_subsystem": [
+      "10042",
+      "10389",
+      "11154",
+      "11178",
+      "11323",
+      "11329",
+      "11331",
+      "11568",
+      "11957",
+      "12061",
+      "12286",
+      "12302",
+      "12632",
+      "12646",
+      "12914",
+      "14053",
+      "15118",
+      "16043",
+      "1696",
+      "24492",
+      "25922",
+      "28142",
+      "3108",
+      "34252",
+      "3518",
+      "4249",
+      "4359",
+      "4781",
+      "5093",
+      "60519",
+      "7062",
+      "7200",
+      "7206",
+      "7487",
+      "7601",
+      "8262",
+      "8381",
+      "8559",
+      "8671",
+      "8995",
+      "9704",
+      "9779"
+    ],
+    "grep_error_strings": [
+      "10201",
+      "10590",
+      "106571",
+      "11141",
+      "12239",
+      "12961",
+      "14000",
+      "203617",
+      "23222",
+      "30832",
+      "40042",
+      "4380",
+      "9327",
+      "9643"
+    ],
+    "narrow_by_component_metadata": [
+      "10246",
+      "10403",
+      "10507",
+      "10695",
+      "10976",
+      "110831",
+      "11104",
+      "11212",
+      "11242",
+      "11399",
+      "11520",
+      "11742",
+      "117651",
+      "11865",
+      "120591",
+      "12270",
+      "12310",
+      "12360",
+      "12592",
+      "13134",
+      "13621",
+      "14181",
+      "14329",
+      "14538",
+      "15303",
+      "15788",
+      "15789",
+      "16027",
+      "16213",
+      "16272",
+      "187061",
+      "1930",
+      "195869",
+      "196741",
+      "198351",
+      "199971",
+      "2200",
+      "23012",
+      "23892",
+      "24302",
+      "24342",
+      "2443",
+      "24562",
+      "2567",
+      "2829",
+      "29732",
+      "3024",
+      "31872",
+      "32052",
+      "33812",
+      "41672",
+      "4219",
+      "42981",
+      "43088",
+      "4312",
+      "43163",
+      "43286",
+      "5151",
+      "53441",
+      "5475",
+      "640",
+      "6455",
+      "6706",
+      "6921",
+      "6965",
+      "7306",
+      "7385",
+      "7838",
+      "8110",
+      "8269",
+      "83151",
+      "8374",
+      "8535",
+      "8709",
+      "9206",
+      "933",
+      "9374",
+      "94411"
+    ],
+    "search_named_driver": [
+      "10486",
+      "10860",
+      "11926",
+      "12567",
+      "1321",
+      "13250",
+      "13581",
+      "15419",
+      "15903",
+      "15982",
+      "16351",
+      "1822",
+      "1865",
+      "19872",
+      "32402",
+      "41342",
+      "5553",
+      "60577",
+      "7180",
+      "7462",
+      "7517",
+      "7800",
+      "8667"
+    ],
+    "search_config_related_code": [
+      "15537",
+      "9751",
+      "9843"
+    ],
+    "semantic_understanding_only": [
+      "196375",
+      "4625",
+      "5366",
+      "6200",
+      "7153",
+      "8838"
+    ],
+    "parse_diagnostic_output": [
+      "2638",
+      "7950"
+    ],
+    "check_recent_commits": [
+      "31572"
+    ]
+  },
+  "subsystem_distribution": {
+    "drivers/acpi": 30,
+    "drivers/net": 25,
+    "drivers/gpu": 10,
+    "sound/pci": 8,
+    "drivers/usb": 8,
+    "arch/i386": 7,
+    "fs/nfs": 6,
+    "arch/x86": 5,
+    "drivers/ata": 4,
+    "net/sunrpc": 4,
+    "drivers/cpufreq": 4,
+    "drivers/platform": 4,
+    "drivers/scsi": 3,
+    "drivers/misc": 3,
+    "drivers/pci": 2,
+    "drivers/hwmon": 2,
+    "drivers/ide": 2,
+    "drivers/input": 2,
+    "drivers/pnp": 2,
+    "drivers/block": 2,
+    "drivers/ieee1394": 2,
+    "drivers/md": 2,
+    "fs/ext3": 1,
+    "drivers/gpio": 1,
+    "fs/jbd": 1,
+    "net/mac80211": 1,
+    "drivers/accessibility": 1,
+    "block/genhd.c": 1,
+    "drivers/watchdog": 1,
+    "drivers/isdn": 1,
+    "mm/swapfile.c": 1,
+    "drivers/firewire": 1,
+    "drivers/w1": 1,
+    "drivers/serial": 1,
+    "fs/xfs": 1,
+    "drivers/media": 1,
+    "net/core": 1,
+    "drivers/staging": 1,
+    "init/main.c": 1,
+    "fs/cifs": 1,
+    "fs/locks.c": 1,
+    "mm/vmalloc.c": 1,
+    "net/netlink": 1,
+    "drivers/video": 1,
+    "drivers/char": 1,
+    "arch/x86_64": 1,
+    "arch/powerpc": 1,
+    "drivers/pcmcia": 1,
+    "fs/ocfs2": 1,
+    "kernel/power": 1,
+    "net/ipv4": 1,
+    "arch/alpha": 1,
+    "kernel/sched.c": 1,
+    "kernel/sched_fair.c": 1
+  },
+  "details": [
+    {
+      "id": "10042",
+      "title": "Unreal actual_brightness and other strange behavior of video module on FSC Amilo Pi 2515",
+      "ground_truth_file": "drivers/acpi/namespace/nsxfeval.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_evaluate_object"
+      ],
+      "product": "ACPI",
+      "component": "Power-Video",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/class/backlight/acpi_video0/"
+        ],
+        "component": "Power-Video",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "10201",
+      "title": "Yum update of Kernel broke sis900 ethernet driver",
+      "ground_truth_file": "drivers/net/sis900.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "sis900_probe"
+      ],
+      "product": "Drivers",
+      "component": "Network",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "greppable_error_strings",
+        "known_component",
+        "driver_module_named",
+        "is_regression"
+      ],
+      "clue_details": {
+        "error_strings": [
+          "SIOCSIFFLAGS: Invalid argument"
+        ],
+        "component": "Network",
+        "product": "Drivers",
+        "modules": [
+          "sis900"
+        ]
+      }
+    },
+    {
+      "id": "10246",
+      "title": "\"in\" after successful ioperm() results in SEGV after kvm use",
+      "ground_truth_file": "arch/x86/kvm/vmx.c",
+      "ground_truth_subsystem": "arch/x86",
+      "ground_truth_methods": [
+        "reload_tss"
+      ],
+      "product": "Virtualization",
+      "component": "kvm",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "kvm",
+        "product": "Virtualization"
+      }
+    },
+    {
+      "id": "10389",
+      "title": "kernel 2.6.24-1 doesn't detect my laptop correctly",
+      "ground_truth_file": "drivers/acpi/asus_acpi.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "asus_hotk_get_info"
+      ],
+      "product": "ACPI",
+      "component": "ACPICA-Core",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "error_return_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/acpi/dsdt"
+        ],
+        "component": "ACPICA-Core",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "10403",
+      "title": "Quotas problem on ext3 FS mounted with data=journal",
+      "ground_truth_file": "fs/ext3/super.c",
+      "ground_truth_subsystem": "fs/ext3",
+      "ground_truth_methods": [
+        "ext3_quota_on"
+      ],
+      "product": "File System",
+      "component": "ext3",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "error_return_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "ext3",
+        "product": "File System"
+      }
+    },
+    {
+      "id": "10486",
+      "title": "kernel 2.6.24  4G FC arrays don't work properly with qla2xxx driver",
+      "ground_truth_file": "drivers/scsi/qla2xxx/qla_os.c",
+      "ground_truth_subsystem": "drivers/scsi",
+      "ground_truth_methods": [
+        "qla2x00_do_dpc"
+      ],
+      "product": "SCSI Drivers",
+      "component": "QLOGIC QLA2XXX",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "QLOGIC QLA2XXX",
+        "product": "SCSI Drivers",
+        "modules": [
+          "or"
+        ]
+      }
+    },
+    {
+      "id": "10507",
+      "title": "Kernel fails to properly identify SATA drives",
+      "ground_truth_file": "drivers/ata/ahci.c",
+      "ground_truth_subsystem": "drivers/ata",
+      "ground_truth_methods": [
+        "ahci_port_info"
+      ],
+      "product": "IO/Storage",
+      "component": "Serial ATA",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Serial ATA",
+        "product": "IO/Storage"
+      }
+    },
+    {
+      "id": "10590",
+      "title": "rndis_host fails to register HTC P3600 device",
+      "ground_truth_file": "drivers/net/usb/rndis_host.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "rndis_command"
+      ],
+      "product": "Drivers",
+      "component": "Network",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "greppable_error_strings",
+        "kernel_log_messages",
+        "greppable_kernel_messages",
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "error_strings": [
+          "RNDIS_MSG_QUERY(0x00010202) failed, -47"
+        ],
+        "kernel_msg_count": 28,
+        "greppable_kernel_msgs": [
+          "usb 2-1: new full speed USB device using uhci_hcd and address 7",
+          "usb 2-1: configuration #1 chosen from 1 choice",
+          "usb 2-1: New USB device found, idVendor=0bb4, idProduct=0b05",
+          "usb 2-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3",
+          "usb 2-1: Product: Generic RNDIS"
+        ],
+        "component": "Network",
+        "product": "Drivers",
+        "modules": [
+          "is",
+          "works",
+          "rndis_host",
+          "rndis_wlan",
+          "cdc_ether"
+        ]
+      }
+    },
+    {
+      "id": "106571",
+      "title": "Surface 3 Lid Switch Method parse/execution failed",
+      "ground_truth_file": "drivers/gpio/gpiolib-acpi.c",
+      "ground_truth_subsystem": "drivers/gpio",
+      "ground_truth_methods": [
+        "acpi_gpio_adr_space_handler"
+      ],
+      "product": "ACPI",
+      "component": "Config-Tables",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "kernel_log_messages",
+        "greppable_kernel_messages",
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/acpi/button/lid/LID/state"
+        ],
+        "kernel_msg_count": 2,
+        "greppable_kernel_msgs": [
+          "AE_ERROR, Returned by Handler for [GeneralPurposeIo] (20150930/evregion-297)",
+          "Method parse/execution failed [\\_SB.GPO0._E4C] (Node ffff88013f4b4438), AE_ERROR"
+        ],
+        "component": "Config-Tables",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "10695",
+      "title": "no AC status notification",
+      "ground_truth_file": "drivers/acpi/ac.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_ac_notify"
+      ],
+      "product": "ACPI",
+      "component": "Power-Battery",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Power-Battery",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "10860",
+      "title": "total system freeze at boot with 2.6.26-rc",
+      "ground_truth_file": "drivers/ata/sata_uli.c",
+      "ground_truth_subsystem": "drivers/ata",
+      "ground_truth_methods": [
+        "uli_ops"
+      ],
+      "product": "IO/Storage",
+      "component": "Serial ATA",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Serial ATA",
+        "product": "IO/Storage",
+        "modules": [
+          "Revision"
+        ]
+      }
+    },
+    {
+      "id": "10976",
+      "title": "Soft lockup on (intentionally) corrupted filesystem",
+      "ground_truth_file": "fs/jbd/checkpoint.c",
+      "ground_truth_subsystem": "fs/jbd",
+      "ground_truth_methods": [
+        "__log_wait_for_space"
+      ],
+      "product": "File System",
+      "component": "ext3",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock",
+        "data_corruption"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "ext3",
+        "product": "File System"
+      }
+    },
+    {
+      "id": "110831",
+      "title": "iwlwifi: mvm: scheduled scan doesn't report results when no matches are passed - MWG100254662",
+      "ground_truth_file": "drivers/net/wireless/iwlwifi/mvm/mac80211.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "iwl_mvm_mac_sched_scan_start"
+      ],
+      "product": "Drivers",
+      "component": "network-wireless",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "error_return_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "network-wireless",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "11104",
+      "title": "iwlwifi: printk flood in ad-hoc mode + WEP",
+      "ground_truth_file": "net/mac80211/mlme.c",
+      "ground_truth_subsystem": "net/mac80211",
+      "ground_truth_methods": [
+        "ieee80211_rx_bss_info"
+      ],
+      "product": "Drivers",
+      "component": "network-wireless",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "network-wireless",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "11141",
+      "title": "no battery or DC status - Dell i1501",
+      "ground_truth_file": "drivers/acpi/ec.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_ec_wait"
+      ],
+      "product": "ACPI",
+      "component": "Power-Battery",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "hang/deadlock",
+        "suspend/resume",
+        "wrong_output",
+        "performance"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "kernel_log_messages",
+        "greppable_kernel_messages",
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "kernel_msg_count": 560,
+        "greppable_kernel_msgs": [
+          "Linux version 2.6.26-g6-+-05253-g14b395e (grissiom@grissiom_slackware) (gcc vers",
+          "BIOS-provided physical RAM map:",
+          "BIOS-e820: 0000000000000000 - 000000000009dc00 (usable)",
+          "BIOS-e820: 000000000009dc00 - 00000000000a0000 (reserved)",
+          "BIOS-e820: 00000000000ce000 - 0000000000100000 (reserved)"
+        ],
+        "component": "Power-Battery",
+        "product": "ACPI",
+        "modules": [
+          "usbfs",
+          "hub",
+          "version",
+          "for",
+          "0000",
+          "initialized",
+          "usbhid",
+          "Version",
+          "10",
+          "started",
+          "Revision",
+          "hiddev",
+          "usb"
+        ]
+      }
+    },
+    {
+      "id": "11154",
+      "title": "NFS hangs with 2.6.25/2.6.26 despite server being reachable",
+      "ground_truth_file": "net/sunrpc/xprtsock.c",
+      "ground_truth_subsystem": "net/sunrpc",
+      "ground_truth_methods": [
+        "xs_tcp_send_request",
+        "xs_close",
+        "xs_udp_finish_connecting",
+        "xs_tcp_finish_connecting",
+        "sock_xprt"
+      ],
+      "product": "File System",
+      "component": "NFS",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "hang/deadlock",
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/mounts"
+        ],
+        "component": "NFS",
+        "product": "File System"
+      }
+    },
+    {
+      "id": "11178",
+      "title": "Secondary hard drive fails during both hibernation and resume.",
+      "ground_truth_file": "drivers/pci/msi.c",
+      "ground_truth_subsystem": "drivers/pci",
+      "ground_truth_methods": [
+        "__pci_restore_msi_state"
+      ],
+      "product": "Drivers",
+      "component": "PCI",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/power/state"
+        ],
+        "component": "PCI",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "11212",
+      "title": "PROBLEM: abituguru3 module does not recognize my ip35 pro since 2.6.26",
+      "ground_truth_file": "drivers/hwmon/abituguru3.c",
+      "ground_truth_subsystem": "drivers/hwmon",
+      "ground_truth_methods": [
+        "abituguru3_detect",
+        "abituguru3_init",
+        "abituguru3_motherboard_info",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "abituguru3_motherboards",
+        "static struct platform_driver abituguru3_driver",
+        "static struct platform_device *abituguru3_pdev;"
+      ],
+      "product": "Drivers",
+      "component": "Hardware Monitoring",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "error_return_fix",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Hardware Monitoring",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "11242",
+      "title": "Regression with handling the DEL key on Thinkpad X31",
+      "ground_truth_file": "drivers/accessibility/braille/braille_console.c",
+      "ground_truth_subsystem": "drivers/accessibility",
+      "ground_truth_methods": [
+        "braille_register_console",
+        "braille_init"
+      ],
+      "product": "Drivers",
+      "component": "Console/Framebuffers",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Console/Framebuffers",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "11323",
+      "title": "/proc/diskstats does not contain all disk devices",
+      "ground_truth_file": "block/genhd.c",
+      "ground_truth_subsystem": "block/genhd.c",
+      "ground_truth_methods": [
+        "find_start",
+        "*part_start"
+      ],
+      "product": "File System",
+      "component": "Other",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "locking_fix"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/block",
+          "/proc/diskstats"
+        ],
+        "product": "File System"
+      }
+    },
+    {
+      "id": "11329",
+      "title": "Incorrect value in /sys/devices/platform/w83627hf.656/cpu0_vid",
+      "ground_truth_file": "drivers/hwmon/hwmon-vid.c",
+      "ground_truth_subsystem": "drivers/hwmon",
+      "ground_truth_methods": [
+        "vid_from_reg",
+        "find_vrm",
+        "vrm_model"
+      ],
+      "product": "Drivers",
+      "component": "Hardware Monitoring",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/devices/platform/w83627hf"
+        ],
+        "component": "Hardware Monitoring",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "11331",
+      "title": "Fan speed setting reset after suspend to disk/ram on Thinkpad X31",
+      "ground_truth_file": "drivers/misc/thinkpad_acpi.c",
+      "ground_truth_subsystem": "drivers/misc",
+      "ground_truth_methods": [
+        "fan_driver_data"
+      ],
+      "product": "Drivers",
+      "component": "Platform",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "suspend/resume",
+        "wrong_output"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/acpi/ibm/fan"
+        ],
+        "component": "Platform",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "11399",
+      "title": "(patch queued)possible buffer underflow in ib700wdt.c",
+      "ground_truth_file": "drivers/watchdog/ib700wdt.c",
+      "ground_truth_subsystem": "drivers/watchdog",
+      "ground_truth_methods": [
+        "ibwdt_set_heartbeat"
+      ],
+      "product": "Drivers",
+      "component": "Watchdog",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Watchdog",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "11520",
+      "title": "eeepc_laptop hwmon missing name",
+      "ground_truth_file": "drivers/misc/eeepc-laptop.c",
+      "ground_truth_subsystem": "drivers/misc",
+      "ground_truth_methods": [
+        "eeepc_get_fan_pwm",
+        "*hwmon_attributes"
+      ],
+      "product": "Drivers",
+      "component": "Hardware Monitoring",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Hardware Monitoring",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "11568",
+      "title": "spontaneous reboot on resume with 2.6.27",
+      "ground_truth_file": "arch/x86/kernel/acpi/sleep.c",
+      "ground_truth_subsystem": "arch/x86",
+      "ground_truth_methods": [
+        "acpi_save_state_mem"
+      ],
+      "product": "Platform Specific/Hardware",
+      "component": "x86-64",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "error_return_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/power/state"
+        ],
+        "component": "x86-64",
+        "product": "Platform Specific/Hardware"
+      }
+    },
+    {
+      "id": "11742",
+      "title": "Device buffer on a DVD multi standard writer runs out burning a CD",
+      "ground_truth_file": "drivers/ide/ide-cd.c",
+      "ground_truth_subsystem": "drivers/ide",
+      "ground_truth_methods": [
+        "cdrom_do_block_pc",
+        "ide_cdrom_setup"
+      ],
+      "product": "IO/Storage",
+      "component": "IDE",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "IDE",
+        "product": "IO/Storage"
+      }
+    },
+    {
+      "id": "117651",
+      "title": "Root NFS and autofs - mount disappears due to inode revalidate failed",
+      "ground_truth_file": "net/sunrpc/xprtsock.c",
+      "ground_truth_subsystem": "net/sunrpc",
+      "ground_truth_methods": [
+        "xs_sock_set_reuseport"
+      ],
+      "product": "File System",
+      "component": "NFS",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "init_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "NFS",
+        "product": "File System"
+      }
+    },
+    {
+      "id": "11865",
+      "title": "WOL for E100 Doesn't Work Anymore",
+      "ground_truth_file": "drivers/net/e100.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "e100_set_wol",
+        "e100_probe"
+      ],
+      "product": "Drivers",
+      "component": "Network",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Network",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "11926",
+      "title": "[PATCH]sis190 doesn't detect ethernet cable removal (Realtek PHY)",
+      "ground_truth_file": "drivers/net/sis190.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "sis190_interrupt",
+        "sis190_phy_task",
+        "sis190_init_board",
+        "sis190_private"
+      ],
+      "product": "Drivers",
+      "component": "Network",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "hang/deadlock",
+        "performance"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "component": "Network",
+        "product": "Drivers",
+        "modules": [
+          "doesn",
+          "1"
+        ]
+      }
+    },
+    {
+      "id": "11957",
+      "title": "oops on reading /proc/capi/controller after removing b1isa",
+      "ground_truth_file": "drivers/isdn/hardware/avm/b1isa.c",
+      "ground_truth_subsystem": "drivers/isdn",
+      "ground_truth_methods": [
+        "b1isa_exit"
+      ],
+      "product": "Drivers",
+      "component": "ISDN",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/capi/controller"
+        ],
+        "component": "ISDN",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "120591",
+      "title": "BUG() in dmesg after loading nouveau module",
+      "ground_truth_file": "drivers/gpu/drm/nouveau/nouveau_fbcon.c",
+      "ground_truth_subsystem": "drivers/gpu",
+      "ground_truth_methods": [
+        "nouveau_fbcon_init"
+      ],
+      "product": "Drivers",
+      "component": "Video",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "Video",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "12061",
+      "title": "snd_hda_intel: power_save: sound cracks on powerdown",
+      "ground_truth_file": "sound/pci/hda/patch_sigmatel.c",
+      "ground_truth_subsystem": "sound/pci",
+      "ground_truth_methods": [
+        "stac92xx_suspend"
+      ],
+      "product": "Drivers",
+      "component": "Sound",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/asound/cards",
+          "/proc/asound/pcm"
+        ],
+        "component": "Sound",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "12239",
+      "title": "Swap breaks after 2x hibernation failure due to lack of swap",
+      "ground_truth_file": "mm/swapfile.c",
+      "ground_truth_subsystem": "mm/swapfile.c",
+      "ground_truth_methods": [
+        "swap_type_of"
+      ],
+      "product": "Power Management",
+      "component": "Hibernation/Suspend",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "hang/deadlock",
+        "suspend/resume",
+        "wrong_output",
+        "data_corruption"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "greppable_error_strings",
+        "proc_sys_paths",
+        "kernel_log_messages",
+        "greppable_kernel_messages",
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "error_strings": [
+          "Cannot find swap device, try swapon -a."
+        ],
+        "proc_sys_paths": [
+          "/proc/swaps"
+        ],
+        "kernel_msg_count": 28,
+        "greppable_kernel_msgs": [
+          "kdeinit[10614]: segfault at 0 ip 00007fbd8515139a sp",
+          "kdeinit[7322]: segfault at 0 ip 00007fbd8515139a sp",
+          "kio_file[7343]: segfault at ffffffff00000000 ip",
+          "Xorg[6928]: segfault at 692 ip 00007fb391c5bb92 sp",
+          "6928 freeing invalid memtype d0020000-d002a000"
+        ],
+        "component": "Hibernation/Suspend",
+        "product": "Power Management"
+      }
+    },
+    {
+      "id": "12270",
+      "title": "Almost all my devices are not recongnized by  kernel-2.6.27, 2.6-28",
+      "ground_truth_file": "drivers/acpi/resources/rscreate.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_rs_create_pci_routing_table"
+      ],
+      "product": "ACPI",
+      "component": "ACPICA-Core",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "ACPICA-Core",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "12286",
+      "title": "[Patch] tc1100-wmi: sysfs entries always 0",
+      "ground_truth_file": "drivers/misc/tc1100-wmi.c",
+      "ground_truth_subsystem": "drivers/misc",
+      "ground_truth_methods": [
+        "get_state"
+      ],
+      "product": "Drivers",
+      "component": "Platform",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/devices/platform/tc1100"
+        ],
+        "component": "Platform",
+        "product": "Drivers",
+        "modules": [
+          "intends",
+          "assumes",
+          "should"
+        ]
+      }
+    },
+    {
+      "id": "12302",
+      "title": "Backward brigthess level",
+      "ground_truth_file": "drivers/acpi/video.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_video_get_brightness",
+        "video_get_cur_state",
+        "acpi_video_device_lcd_set_level",
+        "acpi_video_device_lcd_get_level_current",
+        "acpi_video_init_brightness",
+        "acpi_video_device_find_cap",
+        "acpi_video_device_write_brightness",
+        "acpi_video_switch_brightness",
+        "struct acpi_video_device_cap",
+        "acpi_video_device_brightness"
+      ],
+      "product": "ACPI",
+      "component": "Power-Video",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "error_return_fix",
+        "init_fix",
+        "boundary_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/class/backlight/acpi_video0/brightness",
+          "/proc/acpi/video/VGA/LCDD/brightness"
+        ],
+        "component": "Power-Video",
+        "product": "ACPI",
+        "modules": [
+          "Dec"
+        ]
+      }
+    },
+    {
+      "id": "12310",
+      "title": "NOHZ appears to cause ondemand to effectively ignore 'ignore_nice_load'",
+      "ground_truth_file": "drivers/cpufreq/cpufreq_ondemand.c",
+      "ground_truth_subsystem": "drivers/cpufreq",
+      "ground_truth_methods": [
+        "get_cpu_idle_time_jiffy",
+        "store_ignore_nice_load",
+        "dbs_check_cpu",
+        "cpufreq_governor_dbs"
+      ],
+      "product": "Power Management",
+      "component": "cpufreq",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "locking_fix"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "cpufreq",
+        "product": "Power Management"
+      }
+    },
+    {
+      "id": "12360",
+      "title": "with 2.6.28 undock/dock work bad or freeze computer - Dell D430",
+      "ground_truth_file": "drivers/acpi/dock.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "hotplug_dock_devices",
+        "handle_eject_request",
+        "dock_notify",
+        "show_docked"
+      ],
+      "product": "ACPI",
+      "component": "Config-Hotplug",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Config-Hotplug",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "12567",
+      "title": "The rtl-8187b card stops responding and connection is lost on hight trafic (torrent protocol).",
+      "ground_truth_file": "drivers/net/wireless/rtl8187_dev.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "rtl8187_tx"
+      ],
+      "product": "Drivers",
+      "component": "network-wireless",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "component": "network-wireless",
+        "product": "Drivers",
+        "modules": [
+          "doesn"
+        ]
+      }
+    },
+    {
+      "id": "12592",
+      "title": "fw_card_add adds card to the list even on enable failure",
+      "ground_truth_file": "drivers/firewire/fw-card.c",
+      "ground_truth_subsystem": "drivers/firewire",
+      "ground_truth_methods": [
+        "fw_card_add"
+      ],
+      "product": "Drivers",
+      "component": "IEEE1394",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "wrong_output",
+        "performance",
+        "data_corruption"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "IEEE1394",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "12632",
+      "title": "don't assume we are fully charged when not charging or discharging",
+      "ground_truth_file": "drivers/acpi/battery.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_battery_get_property"
+      ],
+      "product": "ACPI",
+      "component": "Power-Battery",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/class/power_supply/BAT"
+        ],
+        "component": "Power-Battery",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "12646",
+      "title": "w1_therm overflows for temperatures greater that 32.767 Celsius",
+      "ground_truth_file": "drivers/w1/slaves/w1_therm.c",
+      "ground_truth_subsystem": "drivers/w1",
+      "ground_truth_methods": [
+        "w1_DS18B20_convert_temp"
+      ],
+      "product": "Drivers",
+      "component": "W1",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/devices/w1"
+        ],
+        "component": "W1",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "12914",
+      "title": "pmac_zilog fails to find IRQ for internal serial modem",
+      "ground_truth_file": "drivers/serial/pmac_zilog.c",
+      "ground_truth_subsystem": "drivers/serial",
+      "ground_truth_methods": [
+        "pmz_init_port"
+      ],
+      "product": "Platform Specific/Hardware",
+      "component": "PPC-32",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "error_return_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/tty/driver/ttyPZ"
+        ],
+        "component": "PPC-32",
+        "product": "Platform Specific/Hardware",
+        "modules": [
+          "v2",
+          "revision"
+        ]
+      }
+    },
+    {
+      "id": "12961",
+      "title": "Kernel panics in early boot: IO-APIC + timer doesn't work",
+      "ground_truth_file": "arch/x86/kernel/hpet.c",
+      "ground_truth_subsystem": "arch/x86",
+      "ground_truth_methods": [
+        "hpet_stop_counter",
+        "hpet_restart_counter",
+        "hpet_set_mode",
+        "hpet_set_mode"
+      ],
+      "product": "Platform Specific/Hardware",
+      "component": "x86-64",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "kernel_log_messages",
+        "greppable_kernel_messages",
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "kernel_msg_count": 11,
+        "greppable_kernel_msgs": [
+          "ENABLING IO-APIC IRQs",
+          "..TIMER: vector=0x30 apic1=0 pin1=2 apic2=0 pin2=0",
+          "..MP-BIOS bug: 8254 timer not connected to IO-APIC",
+          "...trying to set up timer (IRQ0) through the 8259A ...",
+          "..... (found apic 0 pin 0) ..."
+        ],
+        "component": "x86-64",
+        "product": "Platform Specific/Hardware"
+      }
+    },
+    {
+      "id": "13134",
+      "title": "ALPS Touchpad not getting recognized anymore",
+      "ground_truth_file": "drivers/input/mouse/alps.c",
+      "ground_truth_subsystem": "drivers/input",
+      "ground_truth_methods": [
+        "alps_model_data"
+      ],
+      "product": "Drivers",
+      "component": "Input Devices",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "Input Devices",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "1321",
+      "title": "[8139cp?] 2.6.0-test6 hangs while executing \"make menuconfig\" on a remote computer",
+      "ground_truth_file": "drivers/net/8139cp.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "cp_rx_poll",
+        "cp_interrupt"
+      ],
+      "product": "Drivers",
+      "component": "Network",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "component": "Network",
+        "product": "Drivers",
+        "modules": [
+          "for"
+        ]
+      }
+    },
+    {
+      "id": "13250",
+      "title": "Side channel of Intel HDA chip doesn't work anymore, did work with 2.6.29",
+      "ground_truth_file": "sound/pci/hda/patch_sigmatel.c",
+      "ground_truth_subsystem": "sound/pci",
+      "ground_truth_methods": [
+        "*stac927x_brd_tbl",
+        "*stac927x_models"
+      ],
+      "product": "Drivers",
+      "component": "Sound",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Sound",
+        "product": "Drivers",
+        "modules": [
+          "in"
+        ]
+      }
+    },
+    {
+      "id": "13581",
+      "title": "ath9k doesn't work with newer kernels",
+      "ground_truth_file": "arch/x86/kernel/e820.c",
+      "ground_truth_subsystem": "arch/x86",
+      "ground_truth_methods": [
+        "ram_alignment"
+      ],
+      "product": "Networking",
+      "component": "Wireless",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "hang/deadlock",
+        "performance"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Wireless",
+        "product": "Networking",
+        "modules": [
+          "failed"
+        ]
+      }
+    },
+    {
+      "id": "13621",
+      "title": "xfs hangs with assertion failed",
+      "ground_truth_file": "fs/xfs/xfs_log.c",
+      "ground_truth_subsystem": "fs/xfs",
+      "ground_truth_methods": [
+        "xlog_state_want_sync"
+      ],
+      "product": "File System",
+      "component": "XFS",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "XFS",
+        "product": "File System"
+      }
+    },
+    {
+      "id": "14000",
+      "title": "prism 2.5 broke in 2.6.30.x",
+      "ground_truth_file": "drivers/net/wireless/hostap/hostap_main.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "hostap_setup_dev"
+      ],
+      "product": "Drivers",
+      "component": "network-wireless",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "init_fix"
+      ],
+      "localization_clues": [
+        "kernel_log_messages",
+        "greppable_kernel_messages",
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "kernel_msg_count": 17,
+        "greppable_kernel_msgs": [
+          "02:01.0: PCI INT A -> GSI 21 (level, low) -> IRQ 21",
+          "Registered netdevice wifi0",
+          "Original COR value: 0x2",
+          "initialized in 196 ms",
+          "NIC: id=0x8013 v1.0.0"
+        ],
+        "component": "network-wireless",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "14053",
+      "title": "Kernel blocks during rsync to NFS-mounted directory exported from Sun OS machine",
+      "ground_truth_file": "net/sunrpc/clnt.c",
+      "ground_truth_subsystem": "net/sunrpc",
+      "ground_truth_methods": [
+        "rpc_task_force_reencode"
+      ],
+      "product": "File System",
+      "component": "NFS",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "init_fix"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/version"
+        ],
+        "component": "NFS",
+        "product": "File System"
+      }
+    },
+    {
+      "id": "14181",
+      "title": "b43 causes panic at ifconfig down / shutdown",
+      "ground_truth_file": "drivers/net/wireless/b43/main.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "b43_op_stop"
+      ],
+      "product": "Drivers",
+      "component": "network-wireless",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "network-wireless",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "14329",
+      "title": "Sata disk doesn't wake up after S3 suspend",
+      "ground_truth_file": "drivers/ata/sata_nv.c",
+      "ground_truth_subsystem": "drivers/ata",
+      "ground_truth_methods": [
+        "nv_hardreset"
+      ],
+      "product": "IO/Storage",
+      "component": "Serial ATA",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Serial ATA",
+        "product": "IO/Storage"
+      }
+    },
+    {
+      "id": "14538",
+      "title": "Unable to associate with AP after resume since 2.6.32-rc6",
+      "ground_truth_file": "drivers/net/wireless/b43/rfkill.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "b43_is_hw_radio_enabled"
+      ],
+      "product": "Networking",
+      "component": "Wireless",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Wireless",
+        "product": "Networking"
+      }
+    },
+    {
+      "id": "15118",
+      "title": "\"ThinkPad\" key on T20 only works after suspend cycle",
+      "ground_truth_file": "drivers/platform/x86/thinkpad_acpi.c",
+      "ground_truth_subsystem": "drivers/platform",
+      "ground_truth_methods": [
+        "hotkey_inputdev_open",
+        "hotkey_inputdev_close",
+        "thinkpad_acpi_module_init"
+      ],
+      "product": "Drivers",
+      "component": "Platform",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "error_return_fix"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/bus/platform/devices/thinkpad_acpi/hotkey_poll_freq",
+          "/sys/bus/platform/devices/thinkpad_acpi/hotkey_recommended_mask",
+          "/sys/bus/platform/devices/thinkpad_acpi/hotkey_bios_mask",
+          "/sys/bus/platform/devices/thinkpad_acpi/hotkey_all_mask",
+          "/sys/bus/platform/devices/thinkpad_acpi/hotkey_report_mode",
+          "/sys/bus/platform/devices/thinkpad_acpi/hotkey_source_mask",
+          "/sys/bus/platform/devices/thinkpad_acpi/hotkey_bios_enabled",
+          "/sys/bus/platform/devices/thinkpad_acpi/hotkey_enable",
+          "/sys/bus/platform/devices/thinkpad_acpi/hotkey_mask"
+        ],
+        "component": "Platform",
+        "product": "Drivers",
+        "modules": [
+          "hotkey"
+        ]
+      }
+    },
+    {
+      "id": "15303",
+      "title": "WLAN cannot be activated if booted with activated RF kill switch on Sony notebook (iwl3945)",
+      "ground_truth_file": "drivers/platform/x86/sony-laptop.c",
+      "ground_truth_subsystem": "drivers/platform",
+      "ground_truth_methods": [
+        "sony_pic_irq",
+        "sonypi_blueev"
+      ],
+      "product": "Drivers",
+      "component": "Platform",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Platform",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "15419",
+      "title": "ipw2200: requesting scan causes connection drops",
+      "ground_truth_file": "drivers/net/wireless/ipw2x00/ipw2200.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "ipw_scan_check"
+      ],
+      "product": "Drivers",
+      "component": "network-wireless",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "network-wireless",
+        "product": "Drivers",
+        "modules": [
+          "in"
+        ]
+      }
+    },
+    {
+      "id": "15537",
+      "title": "2.6.34-rc1 hangs for 30 seconds when trying to access the disk",
+      "ground_truth_file": "drivers/ata/libata-sff.c",
+      "ground_truth_subsystem": "drivers/ata",
+      "ground_truth_methods": [
+        "ata_sff_host_intr",
+        "ata_sff_interrupt"
+      ],
+      "product": "IO/Storage",
+      "component": "Serial ATA",
+      "best_strategy": "search_config_related_code",
+      "symptom_categories": [
+        "hang/deadlock",
+        "wrong_output"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "locking_fix",
+        "init_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "config_options",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Serial ATA",
+        "product": "IO/Storage",
+        "configs": [
+          "CONFIG_PATA_SCH",
+          "CONFIG_PATA_MPIIX"
+        ]
+      }
+    },
+    {
+      "id": "15788",
+      "title": "external usb sound card doesn't work after resume",
+      "ground_truth_file": "drivers/usb/core/driver.c",
+      "ground_truth_subsystem": "drivers/usb",
+      "ground_truth_methods": [
+        "usb_resume"
+      ],
+      "product": "Drivers",
+      "component": "Sound",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Sound",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "15789",
+      "title": "Bind mounts broken when used with NFSv4",
+      "ground_truth_file": "fs/nfs/dir.c",
+      "ground_truth_subsystem": "fs/nfs",
+      "ground_truth_methods": [
+        "nfs_open_revalidate"
+      ],
+      "product": "File System",
+      "component": "NFS",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "suspend/resume",
+        "wrong_output"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "NFS",
+        "product": "File System"
+      }
+    },
+    {
+      "id": "15903",
+      "title": "PNP resource assignment fails",
+      "ground_truth_file": "drivers/pnp/resource.c",
+      "ground_truth_subsystem": "drivers/pnp",
+      "ground_truth_methods": [
+        "pnp_check_port",
+        "pnp_check_mem"
+      ],
+      "product": "Drivers",
+      "component": "PNP",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "PNP",
+        "product": "Drivers",
+        "modules": [
+          "is"
+        ]
+      }
+    },
+    {
+      "id": "15982",
+      "title": "radeon module update for 2.6.34 breaks ALSA (snd_atiixp and snd_hda_intel)",
+      "ground_truth_file": "drivers/gpu/drm/radeon/radeon_display.c",
+      "ground_truth_subsystem": "drivers/gpu",
+      "ground_truth_methods": [
+        "radeon_update_display_priority"
+      ],
+      "product": "Drivers",
+      "component": "Video",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "hang/deadlock",
+        "performance"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Video",
+        "product": "Drivers",
+        "modules": [
+          "in"
+        ]
+      }
+    },
+    {
+      "id": "16027",
+      "title": "TFP410 driver should use RSEN bit to detect presence of a digital monitor",
+      "ground_truth_file": "drivers/gpu/drm/i915/dvo_tfp410.c",
+      "ground_truth_subsystem": "drivers/gpu",
+      "ground_truth_methods": [
+        "tfp410_detect"
+      ],
+      "product": "Drivers",
+      "component": "Video",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Video",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "16043",
+      "title": "Resume w/USB remote working in 2.6.33.2, no longer in 2.6.33.10",
+      "ground_truth_file": "drivers/usb/core/driver.c",
+      "ground_truth_subsystem": "drivers/usb",
+      "ground_truth_methods": [
+        "choose_wakeup"
+      ],
+      "product": "Drivers",
+      "component": "USB",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/acpi/wakeup"
+        ],
+        "component": "USB",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "16213",
+      "title": "Some NFS/RPC file transfers fail and hang automounting",
+      "ground_truth_file": "net/sunrpc/xprtsock.c",
+      "ground_truth_subsystem": "net/sunrpc",
+      "ground_truth_methods": [
+        "xs_tcp_read_calldir",
+        "xs_tcp_read_common",
+        "sock_xprt"
+      ],
+      "product": "File System",
+      "component": "NFS",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "NFS",
+        "product": "File System"
+      }
+    },
+    {
+      "id": "16272",
+      "title": "switching to 2.6.34 broke audio on toshiba satellite x205-s9800 using snd_hda_intel module",
+      "ground_truth_file": "sound/pci/hda/patch_realtek.c",
+      "ground_truth_subsystem": "sound/pci",
+      "ground_truth_methods": [
+        "alc_build_controls"
+      ],
+      "product": "Drivers",
+      "component": "Sound",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock",
+        "wrong_output"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "init_fix",
+        "boundary_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Sound",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "16351",
+      "title": "Various issues with imon remote control driver",
+      "ground_truth_file": "drivers/media/IR/imon.c",
+      "ground_truth_subsystem": "drivers/media",
+      "ground_truth_methods": [
+        "imon_mce_timeout",
+        "imon_ir_change_protocol",
+        "imon_mce_key_lookup",
+        "imon_mouse_event",
+        "imon_parse_press_type",
+        "imon_incoming_packet",
+        "imon_disconnect",
+        "*imon_init_intf0",
+        "imon_context"
+      ],
+      "product": "Drivers",
+      "component": "Input Devices",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "locking_fix",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "component": "Input Devices",
+        "product": "Drivers",
+        "modules": [
+          "doesn",
+          "should",
+          "maintainer"
+        ]
+      }
+    },
+    {
+      "id": "1696",
+      "title": "Centrino's Speedstep is not detected correctly",
+      "ground_truth_file": "arch/i386/kernel/cpu/cpufreq/acpi.c",
+      "ground_truth_subsystem": "arch/i386",
+      "ground_truth_methods": [
+        "acpi_cpufreq_cpu_init"
+      ],
+      "product": "ACPI",
+      "component": "Power-Processor",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "init_fix",
+        "boundary_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/acpi/processor/"
+        ],
+        "component": "Power-Processor",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "1822",
+      "title": "usb-storage borks out with my camera",
+      "ground_truth_file": "drivers/usb/storage/transport.c",
+      "ground_truth_subsystem": "drivers/usb",
+      "ground_truth_methods": [
+        "usb_stor_CBI_transport"
+      ],
+      "product": "IO/Storage",
+      "component": "SCSI",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "resource_leak"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "component": "SCSI",
+        "product": "IO/Storage",
+        "modules": [
+          "usb"
+        ]
+      }
+    },
+    {
+      "id": "1865",
+      "title": "uhci-hcd or hid modules stops working blocking usb mouse and module unloading",
+      "ground_truth_file": "drivers/usb/host/uhci-hcd.c",
+      "ground_truth_subsystem": "drivers/usb",
+      "ground_truth_methods": [
+        "uhci_urb_enqueue",
+        "uhci_urb_dequeue",
+        "uhci_finish_urb",
+        "uhci_irq"
+      ],
+      "product": "Drivers",
+      "component": "USB",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "component": "USB",
+        "product": "Drivers",
+        "modules": [
+          "hid",
+          "Jan",
+          "responsible"
+        ]
+      }
+    },
+    {
+      "id": "187061",
+      "title": "Poweroff and reboot hungs the PC with screen off and leds blinking on Latitude E7250",
+      "ground_truth_file": "drivers/acpi/sleep.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_sleep_tts_switch",
+        "acpi_sleep_init"
+      ],
+      "product": "ACPI",
+      "component": "Power-Off",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Power-Off",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "1930",
+      "title": "2.6.1 fails to mount large iso9660 dvd discs with ATAPI drivers, succeeds with SCSI.",
+      "ground_truth_file": "drivers/ide/ide-cd.c",
+      "ground_truth_subsystem": "drivers/ide",
+      "ground_truth_methods": [
+        "cdrom_read_toc"
+      ],
+      "product": "IO/Storage",
+      "component": "IDE",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "IDE",
+        "product": "IO/Storage"
+      }
+    },
+    {
+      "id": "195869",
+      "title": "Wireless ioctls fail if struct iwreq is at the end of a memory mapping",
+      "ground_truth_file": "net/core/dev_ioctl.c",
+      "ground_truth_subsystem": "net/core",
+      "ground_truth_methods": [
+        "dev_ioctl"
+      ],
+      "product": "Networking",
+      "component": "Wireless",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "error_return_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Wireless",
+        "product": "Networking"
+      }
+    },
+    {
+      "id": "196375",
+      "title": "MTX load commands fail",
+      "ground_truth_file": "drivers/scsi/sg.c",
+      "ground_truth_subsystem": "drivers/scsi",
+      "ground_truth_methods": [
+        "sg_is_valid_dxfer",
+        "sg_common_write"
+      ],
+      "product": "Tools",
+      "component": "Other",
+      "best_strategy": "semantic_understanding_only",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "minimal_clues"
+      ],
+      "clue_details": {
+        "product": "Tools"
+      }
+    },
+    {
+      "id": "196741",
+      "title": "iwlwifi: unsolicited multicast traffic still dropped when adapter set to allmulti - WIFILNX-1330",
+      "ground_truth_file": "drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "iwl_mvm_configure_filter"
+      ],
+      "product": "Drivers",
+      "component": "network-wireless",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "network-wireless",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "198351",
+      "title": "iwlwifi: 9260: very slow WAN-LAN transfers at 5Ghz",
+      "ground_truth_file": "drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "iwl_mvm_check_pn",
+        "iwl_mvm_rx_csum",
+        "iwl_mvm_is_nonagg_dup",
+        "iwl_mvm_rx_mpdu_mq"
+      ],
+      "product": "Drivers",
+      "component": "network-wireless",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "network-wireless",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "19872",
+      "title": "phison unable to read partition table",
+      "ground_truth_file": "drivers/staging/phison/phison.c",
+      "ground_truth_subsystem": "drivers/staging",
+      "ground_truth_methods": [
+        "phison_init_one"
+      ],
+      "product": "Drivers",
+      "component": "Staging",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "Staging",
+        "product": "Drivers",
+        "modules": [
+          "from",
+          "is"
+        ]
+      }
+    },
+    {
+      "id": "199971",
+      "title": "iwlwifi: 3165: TFD queue hang",
+      "ground_truth_file": "drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "iwl_mvm_mac_setup_register"
+      ],
+      "product": "Drivers",
+      "component": "network-wireless",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock",
+        "performance"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "network-wireless",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "203617",
+      "title": "ACPI Error \"storm\" on LG Gram 17 (\"No handler or method for GPE...\")",
+      "ground_truth_file": "drivers/pci/hotplug/acpiphp_glue.c",
+      "ground_truth_subsystem": "drivers/pci",
+      "ground_truth_methods": [
+        "acpiphp_native_scan_bridge",
+        "enable_slot"
+      ],
+      "product": "ACPI",
+      "component": "Other",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "boot_failure"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "kernel_log_messages",
+        "greppable_kernel_messages",
+        "is_regression"
+      ],
+      "clue_details": {
+        "kernel_msg_count": 46,
+        "greppable_kernel_msgs": [
+          "No installed handler for fixed event - PM_Timer (0), disabling (20190215/evevent",
+          "No installed handler for fixed event - SleepButton (3), disabling (20190215/evev",
+          "Could not disable RealTimeClock events (20190215/evxfevnt-245)",
+          "No handler or method for GPE 08, disabling event (20190215/evgpe-835)",
+          "No handler or method for GPE 09, disabling event (20190215/evgpe-835)"
+        ],
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "2200",
+      "title": "uncorrectly enabling GPEs",
+      "ground_truth_file": "drivers/acpi/events/evgpeblk.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_ev_save_method_info",
+        "acpi_ev_gpe_initialize"
+      ],
+      "product": "ACPI",
+      "component": "ACPICA-Core",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "ACPICA-Core",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "23012",
+      "title": "ftdi_sio /dev/ttyUSB error:  \"Resource Temporarily Unavailable\"",
+      "ground_truth_file": "drivers/usb/serial/usb-serial.c",
+      "ground_truth_subsystem": "drivers/usb",
+      "ground_truth_methods": [
+        "usb_serial_register",
+        "usb_serial_driver"
+      ],
+      "product": "Drivers",
+      "component": "USB",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "USB",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "23222",
+      "title": "2.6.36 radeon KMS: [drm] Cannot find any crtc or sizes",
+      "ground_truth_file": "drivers/gpu/drm/radeon/radeon_combios.c",
+      "ground_truth_subsystem": "drivers/gpu",
+      "ground_truth_methods": [
+        "combios_setup_i2c_bus"
+      ],
+      "product": "Drivers",
+      "component": "Video",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "hang/deadlock",
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "kernel_log_messages",
+        "greppable_kernel_messages",
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "kernel_msg_count": 2,
+        "greppable_kernel_msgs": [
+          "No connectors reported connected with modes",
+          "[drm] Cannot find any crtc or sizes - going 1024x768"
+        ],
+        "component": "Video",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "23892",
+      "title": "fcntl(..., F_GETLK, ...) does not return correct info about a read lock which is set on server",
+      "ground_truth_file": "fs/nfs/file.c",
+      "ground_truth_subsystem": "fs/nfs",
+      "ground_truth_methods": [
+        "do_getlk"
+      ],
+      "product": "File System",
+      "component": "NFS",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "NFS",
+        "product": "File System"
+      }
+    },
+    {
+      "id": "24302",
+      "title": "Kernel crashes when repeatedly trying to mount nfs share that is failing",
+      "ground_truth_file": "fs/nfs/mount_clnt.c",
+      "ground_truth_subsystem": "fs/nfs",
+      "ground_truth_methods": [
+        "rpc_version mnt_version1",
+        "rpc_version mnt_version3"
+      ],
+      "product": "File System",
+      "component": "NFS",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "NFS",
+        "product": "File System"
+      }
+    },
+    {
+      "id": "24342",
+      "title": "no sound on spdif",
+      "ground_truth_file": "sound/pci/hda/patch_realtek.c",
+      "ground_truth_subsystem": "sound/pci",
+      "ground_truth_methods": [
+        "alc_auto_init_amp"
+      ],
+      "product": "Drivers",
+      "component": "Sound",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Sound",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "2443",
+      "title": "Frequent short \"pauses\" corresponding to multiple battery events",
+      "ground_truth_file": "drivers/acpi/events/evxfevnt.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_enable_gpe"
+      ],
+      "product": "ACPI",
+      "component": "Power-Battery",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Power-Battery",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "24492",
+      "title": "SBS - Battery status is updated only on AC/DC event, not every minute - Acer Travelmate 2301",
+      "ground_truth_file": "drivers/acpi/sbs.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_sbs_battery_get_property"
+      ],
+      "product": "ACPI",
+      "component": "Power-Battery",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/class/power_supply/BAT0/energy_now"
+        ],
+        "component": "Power-Battery",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "24562",
+      "title": "k8-powernow does not see all cores",
+      "ground_truth_file": "arch/x86/kernel/cpu/cpufreq/powernow-k8.c",
+      "ground_truth_subsystem": "arch/x86",
+      "ground_truth_methods": [
+        "print_basics"
+      ],
+      "product": "Power Management",
+      "component": "cpufreq",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "cpufreq",
+        "product": "Power Management"
+      }
+    },
+    {
+      "id": "2567",
+      "title": "wrong irq rouing on centrino laptop - PIC",
+      "ground_truth_file": "drivers/acpi/pci_link.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_pci_link_allocate"
+      ],
+      "product": "ACPI",
+      "component": "Config-Interrupts",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Config-Interrupts",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "25922",
+      "title": "IdeaPad Y530 brightness keys not functioning",
+      "ground_truth_file": "drivers/platform/x86/ideapad-laptop.c",
+      "ground_truth_subsystem": "drivers/platform",
+      "ground_truth_methods": [
+        "ideapad_acpi_notify"
+      ],
+      "product": "Drivers",
+      "component": "Platform_x86",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/class/backlight/acpi_video0/brightness"
+        ],
+        "component": "Platform_x86",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "2638",
+      "title": "kernel parameter acpi_os_name= does not work",
+      "ground_truth_file": "init/main.c",
+      "ground_truth_subsystem": "init/main.c",
+      "ground_truth_methods": [
+        "unknown_bootoption"
+      ],
+      "product": "ACPI",
+      "component": "Other",
+      "best_strategy": "parse_diagnostic_output",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "28142",
+      "title": "CIFS: \"Echo Request\" message results in STATUS_ACCESS_DENIED",
+      "ground_truth_file": "fs/cifs/transport.c",
+      "ground_truth_subsystem": "fs/cifs",
+      "ground_truth_methods": [
+        "cifs_call_async"
+      ],
+      "product": "File System",
+      "component": "CIFS",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "config_options",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/fs/cifs/DebugData"
+        ],
+        "component": "CIFS",
+        "product": "File System",
+        "configs": [
+          "CONFIG_CIFS_UPCALL",
+          "CONFIG_CIFS",
+          "CONFIG_CIFS_XATTR",
+          "CONFIG_CIFS_STATS",
+          "CONFIG_CIFS_WEAK_PW_HASH",
+          "CONFIG_CIFS_POSIX",
+          "CONFIG_CIFS_DFS_UPCALL",
+          "CONFIG_SMB_NLS_REMOTE",
+          "CONFIG_CIFS_ACL",
+          "CONFIG_CIFS_DEBUG2",
+          "CONFIG_SMB_FS",
+          "CONFIG_CIFS_EXPERIMENTAL",
+          "CONFIG_SMB_NLS_DEFAULT"
+        ]
+      }
+    },
+    {
+      "id": "2829",
+      "title": "posix_locks_deadlock() loops infinitely",
+      "ground_truth_file": "fs/locks.c",
+      "ground_truth_subsystem": "fs/locks.c",
+      "ground_truth_methods": [
+        "posix_locks_deadlock"
+      ],
+      "product": "File System",
+      "component": "VFS",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock",
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "VFS",
+        "product": "File System"
+      }
+    },
+    {
+      "id": "29732",
+      "title": "rndis_wlan not working again for BCM4320a",
+      "ground_truth_file": "drivers/net/wireless/rndis_wlan.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "rndis_set_power_mgmt"
+      ],
+      "product": "Drivers",
+      "component": "network-wireless",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "error_return_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "network-wireless",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "3024",
+      "title": "Tyan Thunder K7 hangs on shutdown / reboot",
+      "ground_truth_file": "drivers/acpi/hardware/hwsleep.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_enter_sleep_state_prep"
+      ],
+      "product": "ACPI",
+      "component": "Power-Off",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "Power-Off",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "30832",
+      "title": "Radeon S-Video Out has become black and white. Works fine in 2.6.37",
+      "ground_truth_file": "drivers/gpu/drm/radeon/atombios_crtc.c",
+      "ground_truth_subsystem": "drivers/gpu",
+      "ground_truth_methods": [
+        "atombios_crtc_set_pll"
+      ],
+      "product": "Drivers",
+      "component": "Video",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "kernel_log_messages",
+        "greppable_kernel_messages",
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "kernel_msg_count": 99,
+        "greppable_kernel_msgs": [
+          "[drm] Initialized drm 1.1.0 20060810",
+          "[drm] radeon defaulting to kernel modesetting.",
+          "[drm] radeon kernel modesetting enabled.",
+          "conflicting fb hw usage radeondrmfb vs VESA VGA - removing generic driver",
+          "[drm] initializing kernel modesetting (RV770 0x1002:0x9442)."
+        ],
+        "component": "Video",
+        "product": "Drivers",
+        "modules": [
+          "supports",
+          "has",
+          "worked"
+        ]
+      }
+    },
+    {
+      "id": "3108",
+      "title": "/proc/bus/usb/devices stall",
+      "ground_truth_file": "drivers/usb/core/devio.c",
+      "ground_truth_subsystem": "drivers/usb",
+      "ground_truth_methods": [
+        "proc_control",
+        "proc_bulk",
+        "proc_resetep",
+        "proc_clearhalt",
+        "proc_getdriver",
+        "proc_connectinfo",
+        "proc_resetdevice",
+        "proc_setintf",
+        "proc_setconfig",
+        "proc_unlinkurb",
+        "proc_reapurbnonblock",
+        "proc_disconnectsignal",
+        "proc_claiminterface",
+        "proc_ioctl"
+      ],
+      "product": "Drivers",
+      "component": "USB",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "error_return_fix",
+        "init_fix",
+        "boundary_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/bus/usb/devices"
+        ],
+        "component": "USB",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "31572",
+      "title": "BUG in vb_alloc() - firewire crash at boot",
+      "ground_truth_file": "mm/vmalloc.c",
+      "ground_truth_subsystem": "mm/vmalloc.c",
+      "ground_truth_methods": [
+        "*vb_alloc"
+      ],
+      "product": "Memory Management",
+      "component": "Other",
+      "best_strategy": "check_recent_commits",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "type_cast_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "product": "Memory Management"
+      }
+    },
+    {
+      "id": "31872",
+      "title": "boot panic unless acpi=off, Thread overran stack, or stack corrupted - Toshiba Satellite/mobile P4",
+      "ground_truth_file": "drivers/acpi/scan.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_bus_add_power_resource"
+      ],
+      "product": "ACPI",
+      "component": "ACPICA-Core",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "data_corruption"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "ACPICA-Core",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "32052",
+      "title": "Unloading wmi module causes a kernel oops.",
+      "ground_truth_file": "drivers/platform/x86/wmi.c",
+      "ground_truth_subsystem": "drivers/platform",
+      "ground_truth_methods": [
+        "wmi_free_devices"
+      ],
+      "product": "Platform Specific/Hardware",
+      "component": "x86-64",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "x86-64",
+        "product": "Platform Specific/Hardware"
+      }
+    },
+    {
+      "id": "32402",
+      "title": "Oops associated with radeon_unpin_work_func",
+      "ground_truth_file": "drivers/gpu/drm/radeon/radeon_display.c",
+      "ground_truth_subsystem": "drivers/gpu",
+      "ground_truth_methods": [
+        "radeon_unpin_work_func",
+        "radeon_crtc_page_flip"
+      ],
+      "product": "Drivers",
+      "component": "Video",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "component": "Video",
+        "product": "Drivers",
+        "modules": [
+          "6"
+        ]
+      }
+    },
+    {
+      "id": "33812",
+      "title": "radeon with modeset option causes oops as secondary adapter (vgaswitcheroo)",
+      "ground_truth_file": "drivers/gpu/drm/radeon/radeon_atombios.c",
+      "ground_truth_subsystem": "drivers/gpu",
+      "ground_truth_methods": [
+        "*radeon_atombios_get_lvds_info"
+      ],
+      "product": "Drivers",
+      "component": "Video",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Video",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "34252",
+      "title": "Unexpected behaviour when switching video cards with vga_switcheroo",
+      "ground_truth_file": "drivers/gpu/vga/vga_switcheroo.c",
+      "ground_truth_subsystem": "drivers/gpu",
+      "ground_truth_methods": [
+        "vga_switchto_stage1",
+        "vga_switcheroo_debugfs_write"
+      ],
+      "product": "Drivers",
+      "component": "Video",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/kernel/debug/vgaswitcheroo/switch"
+        ],
+        "component": "Video",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "3518",
+      "title": "disable event LID blocks SLPB and vice versa on wakeup from S3",
+      "ground_truth_file": "drivers/acpi/sleep/proc.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_system_write_wakeup_device"
+      ],
+      "product": "ACPI",
+      "component": "Power-Sleep-Wake",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "locking_fix",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/power/state",
+          "/proc/acpi/wakeup"
+        ],
+        "component": "Power-Sleep-Wake",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "40042",
+      "title": "iwlagn: bad 802.11n performance and \"aggregation not enabled\" flood in dmesg",
+      "ground_truth_file": "drivers/net/wireless/iwlwifi/iwl-agn-rs.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "rs_tl_turn_on_agg_for_tid"
+      ],
+      "product": "Drivers",
+      "component": "network-wireless",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "kernel_log_messages",
+        "greppable_kernel_messages",
+        "known_component"
+      ],
+      "clue_details": {
+        "kernel_msg_count": 11,
+        "greppable_kernel_msgs": [
+          "02:00.0: iwlagn_tx_agg_start on ra = 00:21:91:f3:c8:a1 tid = 0",
+          "02:00.0: Aggregation not enabled for tid 0 because load = 3",
+          "02:00.0: iwlagn_tx_agg_start on ra = 00:21:91:f3:c8:a1 tid = 0",
+          "02:00.0: Aggregation not enabled for tid 0 because load = 1",
+          "02:00.0: iwlagn_tx_agg_start on ra = 00:21:91:f3:c8:a1 tid = 0"
+        ],
+        "component": "network-wireless",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "41342",
+      "title": "Audio gain is massively higher in kernel 3.1",
+      "ground_truth_file": "sound/pci/hda/patch_realtek.c",
+      "ground_truth_subsystem": "sound/pci",
+      "ground_truth_methods": [
+        "alc_slave_vols",
+        "alc_slave_sws"
+      ],
+      "product": "Drivers",
+      "component": "Sound",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Sound",
+        "product": "Drivers",
+        "modules": [
+          "in"
+        ]
+      }
+    },
+    {
+      "id": "41672",
+      "title": "backlight control will not work on Lenovo V570",
+      "ground_truth_file": "drivers/acpi/video.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_video_bus_check"
+      ],
+      "product": "ACPI",
+      "component": "Power-Video",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "init_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "Power-Video",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "4219",
+      "title": "pcnet32 fiberoptic do not works on Allied Telesyn 2701FTX",
+      "ground_truth_file": "drivers/net/pcnet32.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "pcnet32_get_regs",
+        "pcnet32_get_regs_len",
+        "pcnet32_probe1",
+        "pcnet32_open",
+        "pcnet32_watchdog",
+        "pcnet32_private"
+      ],
+      "product": "Drivers",
+      "component": "Network",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "locking_fix",
+        "init_fix",
+        "type_cast_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Network",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "4249",
+      "title": "KERNEL: assertion (!atomic_read(&sk->sk_rmem_alloc)) failed at net/netlink/af_netlink.c (122)",
+      "ground_truth_file": "net/netlink/af_netlink.c",
+      "ground_truth_subsystem": "net/netlink",
+      "ground_truth_methods": [
+        "netlink_dump"
+      ],
+      "product": "Networking",
+      "component": "Other",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/net/vlan/config",
+          "/proc/net/bonding/bond0",
+          "/proc/cpuinfo"
+        ],
+        "product": "Networking"
+      }
+    },
+    {
+      "id": "42981",
+      "title": "Processor Aggregator Device is not stable causing FW-OS communication to stop",
+      "ground_truth_file": "drivers/acpi/acpi_pad.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "round_robin_cpu"
+      ],
+      "product": "ACPI",
+      "component": "Power-Processor",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock",
+        "performance"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Power-Processor",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "43088",
+      "title": "[965GM] hang at DPMS time",
+      "ground_truth_file": "drivers/gpu/drm/i915/intel_display.c",
+      "ground_truth_subsystem": "drivers/gpu",
+      "ground_truth_methods": [
+        "intel_crtc_wait_for_pending_flips",
+        "intel_crtc_disable"
+      ],
+      "product": "Drivers",
+      "component": "Video",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "locking_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "Video",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "4312",
+      "title": "tridentfb: flicker when disk I/O is happening",
+      "ground_truth_file": "drivers/video/tridentfb.c",
+      "ground_truth_subsystem": "drivers/video",
+      "ground_truth_methods": [
+        "tridentfb_set_par"
+      ],
+      "product": "Drivers",
+      "component": "Console/Framebuffers",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "Console/Framebuffers",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "43163",
+      "title": "[ILK eDP] Black Screen on Boot for Dell Latitude E6410 Intel HD Graphics (panel power sequencing fail?)",
+      "ground_truth_file": "drivers/gpu/drm/i915/intel_dp.c",
+      "ground_truth_subsystem": "drivers/gpu",
+      "ground_truth_methods": [
+        "ironlake_edp_panel_off",
+        "intel_dp_prepare",
+        "intel_dp_dpms"
+      ],
+      "product": "Drivers",
+      "component": "Video",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Video",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "43286",
+      "title": "NFS4ERR_SHARE_DENIED errors are translated to EIO",
+      "ground_truth_file": "fs/nfs/nfs4proc.c",
+      "ground_truth_subsystem": "fs/nfs",
+      "ground_truth_methods": [
+        "nfs4_map_errors"
+      ],
+      "product": "File System",
+      "component": "NFS",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "error_return_fix"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "NFS",
+        "product": "File System"
+      }
+    },
+    {
+      "id": "4359",
+      "title": "With HT off in bios, /proc/cpuinfo shows2 processors, each with 2 siblings",
+      "ground_truth_file": "arch/i386/kernel/smpboot.c",
+      "ground_truth_subsystem": "arch/i386",
+      "ground_truth_methods": [
+        "smp_boot_cpus"
+      ],
+      "product": "ACPI",
+      "component": "BIOS",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/cpuinfo"
+        ],
+        "component": "BIOS",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "4380",
+      "title": "(net via_velocity) receiver hang after setting mtu >1500",
+      "ground_truth_file": "drivers/net/via-velocity.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "velocity_free_rd_ring"
+      ],
+      "product": "Drivers",
+      "component": "Network",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "hang/deadlock",
+        "wrong_output"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "greppable_error_strings",
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "error_strings": [
+          "%s: Invalid MTU.\\n"
+        ],
+        "component": "Network",
+        "product": "Drivers",
+        "modules": [
+          "isn",
+          "code"
+        ]
+      }
+    },
+    {
+      "id": "4625",
+      "title": "ub is much slower in writing than usb-storage",
+      "ground_truth_file": "drivers/block/ub.c",
+      "ground_truth_subsystem": "drivers/block",
+      "ground_truth_methods": [
+        "ub_diag_show",
+        "ub_bd_rq_fn",
+        "ub_bd_rq_fn_1",
+        "ub_cmd_build_block",
+        "ub_cmd_build_packet",
+        "ub_rw_cmd_done",
+        "ub_scsi_urb_compl",
+        "ub_state_sense",
+        "ub_submit_clear_stall",
+        "ub_sync_read_cap",
+        "ub_probe_lun",
+        "ub_scsi_cmd",
+        "struct ub_dev"
+      ],
+      "product": "Drivers",
+      "component": "Other",
+      "best_strategy": "semantic_understanding_only",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "init_fix",
+        "boundary_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "minimal_clues"
+      ],
+      "clue_details": {
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "4781",
+      "title": "Conservative governor makes me lose my USB keyboard",
+      "ground_truth_file": "drivers/cpufreq/cpufreq_conservative.c",
+      "ground_truth_subsystem": "drivers/cpufreq",
+      "ground_truth_methods": [
+        "dbs_check_cpu"
+      ],
+      "product": "Power Management",
+      "component": "cpufreq",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/devices/system/cpu/cpu"
+        ],
+        "component": "cpufreq",
+        "product": "Power Management"
+      }
+    },
+    {
+      "id": "5093",
+      "title": "atmel_cs needs to keep firmware",
+      "ground_truth_file": "drivers/net/wireless/atmel.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "reset_atmel_card"
+      ],
+      "product": "Drivers",
+      "component": "PCMCIA",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "hang/deadlock",
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/power/state",
+          "/sys/power/disk"
+        ],
+        "component": "PCMCIA",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "5151",
+      "title": "Driver Mouse - Toshiba touchpad after kernel 2.6.11",
+      "ground_truth_file": "drivers/input/mouse/alps.c",
+      "ground_truth_subsystem": "drivers/input",
+      "ground_truth_methods": [
+        "alps_process_packet"
+      ],
+      "product": "Drivers",
+      "component": "Input Devices",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Input Devices",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "53441",
+      "title": "hda_intel: sound stops working after suspend to ram",
+      "ground_truth_file": "sound/pci/hda/hda_intel.c",
+      "ground_truth_subsystem": "sound/pci",
+      "ground_truth_methods": [
+        "DEFINE_PCI_DEVICE_TABLE"
+      ],
+      "product": "Drivers",
+      "component": "Sound",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Sound",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "5366",
+      "title": "synchronize_tsc_bp can zero the TSC during a lost ticks measurement",
+      "ground_truth_file": "arch/i386/kernel/timers/timer_tsc.c",
+      "ground_truth_subsystem": "arch/i386",
+      "ground_truth_methods": [
+        "mark_offset_tsc_hpet",
+        "mark_offset_tsc"
+      ],
+      "product": "Timers",
+      "component": "Other",
+      "best_strategy": "semantic_understanding_only",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "minimal_clues"
+      ],
+      "clue_details": {
+        "product": "Timers"
+      }
+    },
+    {
+      "id": "5475",
+      "title": "USB mouse freezes in X",
+      "ground_truth_file": "drivers/usb/input/hid-core.c",
+      "ground_truth_subsystem": "drivers/usb",
+      "ground_truth_methods": [
+        "hid_irq_in"
+      ],
+      "product": "Drivers",
+      "component": "USB",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "USB",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "5553",
+      "title": "speedstep-smi fails to load if CONFIG_CPU_FREQ_DEBUG is not set",
+      "ground_truth_file": "arch/i386/kernel/cpu/cpufreq/speedstep-smi.c",
+      "ground_truth_subsystem": "arch/i386",
+      "ground_truth_methods": [
+        "void speedstep_set_state",
+        "SMI_TRIES"
+      ],
+      "product": "Power Management",
+      "component": "cpufreq",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named",
+        "config_options",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "cpufreq",
+        "product": "Power Management",
+        "modules": [
+          "smi"
+        ],
+        "configs": [
+          "CONFIG_CPU_FREQ_DEBUG"
+        ]
+      }
+    },
+    {
+      "id": "60519",
+      "title": "Wrong battery information reported on Samsung NP540U3C",
+      "ground_truth_file": "drivers/acpi/battery.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_battery",
+        "info_offsets"
+      ],
+      "product": "ACPI",
+      "component": "Power-Battery",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/class/power_supply/BAT1/uevent"
+        ],
+        "component": "Power-Battery",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "60577",
+      "title": "WiFi doen't work on Intel WiMAX/WiFi Link 5150",
+      "ground_truth_file": "drivers/net/wireless/iwlwifi/pcie/drv.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "DEFINE_PCI_DEVICE_TABLE"
+      ],
+      "product": "Drivers",
+      "component": "network-wireless",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "network-wireless",
+        "product": "Drivers",
+        "modules": [
+          "in"
+        ]
+      }
+    },
+    {
+      "id": "6200",
+      "title": "Linux 2.4.32 keeps hanging",
+      "ground_truth_file": "fs/nfs/inode.c",
+      "ground_truth_subsystem": "fs/nfs",
+      "ground_truth_methods": [
+        "__nfs_revalidate_inode"
+      ],
+      "product": "IO/Storage",
+      "component": "Other",
+      "best_strategy": "semantic_understanding_only",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "minimal_clues"
+      ],
+      "clue_details": {
+        "product": "IO/Storage"
+      }
+    },
+    {
+      "id": "640",
+      "title": "2.5.68-mjb2 stops at activating swap",
+      "ground_truth_file": "arch/i386/mm/fault.c",
+      "ground_truth_subsystem": "arch/i386",
+      "ground_truth_methods": [
+        "do_page_fault"
+      ],
+      "product": "Alternate Trees",
+      "component": "mjb",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock",
+        "boot_failure"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "mjb",
+        "product": "Alternate Trees"
+      }
+    },
+    {
+      "id": "6455",
+      "title": "battery and AC status stops updating - HP Compaq nx6125",
+      "ground_truth_file": "drivers/acpi/ec.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_ec_intr_wait",
+        "acpi_ec_gpe_intr_handler"
+      ],
+      "product": "ACPI",
+      "component": "Power-Battery",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Power-Battery",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "6706",
+      "title": "modprobe -r ohci1394 hangs or panics",
+      "ground_truth_file": "drivers/ieee1394/nodemgr.c",
+      "ground_truth_subsystem": "drivers/ieee1394",
+      "ground_truth_methods": [
+        "nodemgr_bus_match",
+        "init_ieee1394_nodemgr",
+        "nodemgr_dev_template_host"
+      ],
+      "product": "Drivers",
+      "component": "IEEE1394",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "IEEE1394",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "6921",
+      "title": "cpqarray fails to detect array when built as a module",
+      "ground_truth_file": "drivers/block/cpqarray.c",
+      "ground_truth_subsystem": "drivers/block",
+      "ground_truth_methods": [
+        "pollcomplete"
+      ],
+      "product": "IO/Storage",
+      "component": "SCSI",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "SCSI",
+        "product": "IO/Storage"
+      }
+    },
+    {
+      "id": "6965",
+      "title": "Kernel doesn't re-sync usb-raid1 after running mdadm --add",
+      "ground_truth_file": "drivers/md/md.c",
+      "ground_truth_subsystem": "drivers/md",
+      "ground_truth_methods": [
+        "md_update_sb"
+      ],
+      "product": "IO/Storage",
+      "component": "MD",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "MD",
+        "product": "IO/Storage"
+      }
+    },
+    {
+      "id": "7062",
+      "title": "nanosleep blocks indefinitely when CONFIG_HPET_TIMER is enabled",
+      "ground_truth_file": "arch/i386/kernel/hpet.c",
+      "ground_truth_subsystem": "arch/i386",
+      "ground_truth_methods": [
+        "init_hpet_clocksource"
+      ],
+      "product": "Timers",
+      "component": "Other",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "config_options"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/cpuinfo"
+        ],
+        "product": "Timers",
+        "configs": [
+          "CONFIG_HPET_TIMER"
+        ]
+      }
+    },
+    {
+      "id": "7153",
+      "title": "oops on ipmi_msghandler removal for non ipmi systems",
+      "ground_truth_file": "drivers/char/ipmi/ipmi_si_intf.c",
+      "ground_truth_subsystem": "drivers/char",
+      "ground_truth_methods": [
+        "init_ipmi_si"
+      ],
+      "product": "Drivers",
+      "component": "Other",
+      "best_strategy": "semantic_understanding_only",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "minimal_clues"
+      ],
+      "clue_details": {
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "7180",
+      "title": "aic94xx driver locks up on IBM x366 with Calgary IOMMU enabled",
+      "ground_truth_file": "arch/x86_64/kernel/pci-calgary.c",
+      "ground_truth_subsystem": "arch/x86_64",
+      "ground_truth_methods": [
+        "calgary_enable_translation"
+      ],
+      "product": "SCSI Drivers",
+      "component": "AIC94XX",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "component": "AIC94XX",
+        "product": "SCSI Drivers",
+        "modules": [
+          "NMIs",
+          "causes"
+        ]
+      }
+    },
+    {
+      "id": "7200",
+      "title": "battery not detected on laptop - nec versa p550",
+      "ground_truth_file": "drivers/acpi/battery.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_battery_read_info",
+        "acpi_battery_read_state",
+        "acpi_battery_read_alarm",
+        "acpi_battery_write_alarm"
+      ],
+      "product": "ACPI",
+      "component": "Power-Battery",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/acpi/battery/BAT1/info"
+        ],
+        "component": "Power-Battery",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "7206",
+      "title": "acpi not recognize residual charge on packard bell easynote S5011",
+      "ground_truth_file": "drivers/acpi/battery.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_battery_read_info",
+        "acpi_battery_read_state",
+        "acpi_battery_read_alarm",
+        "acpi_battery_write_alarm"
+      ],
+      "product": "ACPI",
+      "component": "Power-Battery",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/acpi/battery/BAT1/state",
+          "/proc/acpi/battery/BAT1/info"
+        ],
+        "component": "Power-Battery",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "7306",
+      "title": "Yenta-socket causes oops on insertion of any PCMCIA card",
+      "ground_truth_file": "arch/powerpc/kernel/pci-common.c",
+      "ground_truth_subsystem": "arch/powerpc",
+      "ground_truth_methods": [
+        "pci_process_bridge_OF_ranges"
+      ],
+      "product": "Drivers",
+      "component": "PCMCIA",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "PCMCIA",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "7385",
+      "title": "nfs4 broken in vanilla-sources 2.6.19",
+      "ground_truth_file": "fs/nfs/super.c",
+      "ground_truth_subsystem": "fs/nfs",
+      "ground_truth_methods": [
+        "nfs4_get_sb"
+      ],
+      "product": "File System",
+      "component": "NFS",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock",
+        "suspend/resume",
+        "wrong_output"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "NFS",
+        "product": "File System"
+      }
+    },
+    {
+      "id": "7462",
+      "title": "hda_intel: insufficient memory for buffer",
+      "ground_truth_file": "sound/pci/hda/hda_intel.c",
+      "ground_truth_subsystem": "sound/pci",
+      "ground_truth_methods": [
+        "create_codec_pcm"
+      ],
+      "product": "Drivers",
+      "component": "Sound",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "component": "Sound",
+        "product": "Drivers",
+        "modules": [
+          "from"
+        ]
+      }
+    },
+    {
+      "id": "7487",
+      "title": "(net sundance) driver fails to recognize carrier status",
+      "ground_truth_file": "drivers/net/sundance.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "netdev_error"
+      ],
+      "product": "Drivers",
+      "component": "Network",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/class/net/eth0/iflink",
+          "/sys/class/net/eth0/broadcast",
+          "/sys/class/net/eth0/dormant",
+          "/sys/class/net/eth0/address",
+          "/sys/class/net/eth0/",
+          "/sys/class/net/eth0/flags",
+          "/sys/class/net/eth0/carrier",
+          "/sys/class/net/eth0/addr_len",
+          "/sys/class/net/eth0/mtu",
+          "/sys/class/net/eth0/link_mode",
+          "/sys/class/net/eth0/operstate",
+          "/sys/class/net/eth0/features",
+          "/sys/class/net/eth0/weight",
+          "/sys/class/net/eth0/ifindex",
+          "/sys/class/net/eth0/tx_queue_len",
+          "/sys/class/net/eth0/uevent",
+          "/sys/class/net/eth0/type"
+        ],
+        "component": "Network",
+        "product": "Drivers",
+        "modules": [
+          "fails"
+        ]
+      }
+    },
+    {
+      "id": "7517",
+      "title": "r8169: Packet corruption on receive for 8111B chip",
+      "ground_truth_file": "drivers/net/r8169.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "rtl8169_hw_start"
+      ],
+      "product": "Drivers",
+      "component": "Network",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "data_corruption"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "type_cast_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "component": "Network",
+        "product": "Drivers",
+        "modules": [
+          "to",
+          "apparently"
+        ]
+      }
+    },
+    {
+      "id": "7601",
+      "title": "irq 18: nobody cared - Intel STL2 SCI INT_SRC_OVR",
+      "ground_truth_file": "arch/i386/kernel/acpi/boot.c",
+      "ground_truth_subsystem": "arch/i386",
+      "ground_truth_methods": [
+        "acpi_sci_ioapic_setup",
+        "acpi_parse_int_src_ovr",
+        "acpi_parse_madt_ioapic_entries"
+      ],
+      "product": "ACPI",
+      "component": "Config-Interrupts",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/interrupts"
+        ],
+        "component": "Config-Interrupts",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "7800",
+      "title": "Unable to read DVDs on external IEEE1394 DVD-RW",
+      "ground_truth_file": "drivers/ieee1394/sbp2.c",
+      "ground_truth_subsystem": "drivers/ieee1394",
+      "ground_truth_methods": [
+        "sbp2scsi_slave_configure"
+      ],
+      "product": "Drivers",
+      "component": "IEEE1394",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "component": "IEEE1394",
+        "product": "Drivers",
+        "modules": [
+          "forced"
+        ]
+      }
+    },
+    {
+      "id": "7838",
+      "title": "Missing important feature: libata bus shutdown and device shutdown",
+      "ground_truth_file": "drivers/scsi/sd.c",
+      "ground_truth_subsystem": "drivers/scsi",
+      "ground_truth_methods": [
+        "sd_probe",
+        "sd_shutdown",
+        "scsi_disk",
+        "sd_disk_attrs"
+      ],
+      "product": "IO/Storage",
+      "component": "Serial ATA",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "suspend/resume",
+        "wrong_output",
+        "data_corruption"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "error_return_fix",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Serial ATA",
+        "product": "IO/Storage"
+      }
+    },
+    {
+      "id": "7950",
+      "title": "Network traffic stops inexplicably when running at gigabit speed.",
+      "ground_truth_file": "drivers/net/forcedeth.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "phy_reset"
+      ],
+      "product": "Networking",
+      "component": "Other",
+      "best_strategy": "parse_diagnostic_output",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "product": "Networking"
+      }
+    },
+    {
+      "id": "8110",
+      "title": "insanely high temperature on bootup (e.g. 3517 C) - HP/Compaq nx8220, nc6000, nc8000 - 2.6.19 regression",
+      "ground_truth_file": "drivers/acpi/ec.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_ec_check_status",
+        "acpi_ec_transaction_unlocked",
+        "acpi_ec_transaction",
+        "ec_transaction",
+        "acpi_ec_gpe_handler",
+        "acpi_ec_add",
+        "acpi_fake_ecdt_callback",
+        "acpi_ec_get_real_ecdt",
+        "acpi_ec_set_intr_mode",
+        "acpi_ec"
+      ],
+      "product": "ACPI",
+      "component": "EC",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "EC",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "8262",
+      "title": "PCMCIA: socket *** DANGER *** unable to remove socket power",
+      "ground_truth_file": "drivers/pcmcia/cs.c",
+      "ground_truth_subsystem": "drivers/pcmcia",
+      "ground_truth_methods": [
+        "socket_shutdown"
+      ],
+      "product": "Drivers",
+      "component": "PCMCIA",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "wrong_output",
+        "performance"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/iomem"
+        ],
+        "component": "PCMCIA",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "8269",
+      "title": "pnp: Failed to activate device 00:0a - Samsung P35 XVM 1600 III",
+      "ground_truth_file": "drivers/pnp/pnpacpi/core.c",
+      "ground_truth_subsystem": "drivers/pnp",
+      "ground_truth_methods": [
+        "pnpacpi_add_device"
+      ],
+      "product": "ACPI",
+      "component": "Power-Sleep-Wake",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "suspend/resume",
+        "wrong_output"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "Power-Sleep-Wake",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "83151",
+      "title": "Intel Turbo can't be disabled/enabled under certain conditions",
+      "ground_truth_file": "drivers/cpufreq/intel_pstate.c",
+      "ground_truth_subsystem": "drivers/cpufreq",
+      "ground_truth_methods": [
+        "store_no_turbo",
+        "intel_pstate_get_min_max",
+        "intel_pstate_set_pstate",
+        "intel_pstate_set_policy",
+        "intel_pstate_cpu_init",
+        "perf_limits"
+      ],
+      "product": "Power Management",
+      "component": "intel_pstate",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "error_return_fix",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "intel_pstate",
+        "product": "Power Management"
+      }
+    },
+    {
+      "id": "8374",
+      "title": "ACPI: Unable to turn cooling device [c146aec8] 'on'",
+      "ground_truth_file": "drivers/acpi/thermal.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_thermal_active",
+        "acpi_thermal_trip_seq_show"
+      ],
+      "product": "ACPI",
+      "component": "Power-Fan",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "init_fix",
+        "boundary_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Power-Fan",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "8381",
+      "title": "(net forcedeth) doesn't wol on suspend",
+      "ground_truth_file": "drivers/net/forcedeth.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "nv_suspend",
+        "fe_priv"
+      ],
+      "product": "Drivers",
+      "component": "Network",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/power/state"
+        ],
+        "component": "Network",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "8535",
+      "title": "USB input death then system freeze",
+      "ground_truth_file": "drivers/usb/host/ehci-sched.c",
+      "ground_truth_subsystem": "drivers/usb",
+      "ground_truth_methods": [
+        "qh_reactivate_split_intr_qhs"
+      ],
+      "product": "Drivers",
+      "component": "Input Devices",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Input Devices",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "8559",
+      "title": "no smartbattery status on Laptop",
+      "ground_truth_file": "drivers/acpi/sbs.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_sbsm_get_info",
+        "acpi_sbs_add",
+        "acpi_sbs",
+        "acpi_sbs_driver"
+      ],
+      "product": "ACPI",
+      "component": "Power-Battery",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "locking_fix"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "driver_module_named",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/acpi/battery"
+        ],
+        "component": "Power-Battery",
+        "product": "ACPI",
+        "modules": [
+          "loads"
+        ]
+      }
+    },
+    {
+      "id": "8667",
+      "title": "sky2 crash when return from resume to ram",
+      "ground_truth_file": "drivers/net/sky2.c",
+      "ground_truth_subsystem": "drivers/net",
+      "ground_truth_methods": [
+        "sky2_up"
+      ],
+      "product": "Power Management",
+      "component": "Hibernation/Suspend",
+      "best_strategy": "search_named_driver",
+      "symptom_categories": [
+        "hang/deadlock",
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "component": "Hibernation/Suspend",
+        "product": "Power Management",
+        "modules": [
+          "v3"
+        ]
+      }
+    },
+    {
+      "id": "8671",
+      "title": "CPU frequency always on highest frequency after wakeup from suspend to disk",
+      "ground_truth_file": "drivers/cpufreq/cpufreq.c",
+      "ground_truth_subsystem": "drivers/cpufreq",
+      "ground_truth_methods": [
+        "cpufreq_add_dev",
+        "__cpufreq_remove_dev"
+      ],
+      "product": "Power Management",
+      "component": "cpufreq",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "driver_module_named"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/power/state"
+        ],
+        "component": "cpufreq",
+        "product": "Power Management",
+        "modules": [
+          "is",
+          "and"
+        ]
+      }
+    },
+    {
+      "id": "8709",
+      "title": "regression: EmbeddedControl AE_TIME errors, /proc/acpi/battery/* not present",
+      "ground_truth_file": "drivers/acpi/ec.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "ec_install_handlers",
+        "acpi_ec_stop"
+      ],
+      "product": "ACPI",
+      "component": "EC",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "locking_fix",
+        "error_return_fix",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "EC",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "8838",
+      "title": "Random data in files created on NFS (over OCFS2 over DRBD)",
+      "ground_truth_file": "fs/ocfs2/file.c",
+      "ground_truth_subsystem": "fs/ocfs2",
+      "ground_truth_methods": [
+        "*ocfs2_get_write_source"
+      ],
+      "product": "File System",
+      "component": "Other",
+      "best_strategy": "semantic_understanding_only",
+      "symptom_categories": [
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "minimal_clues"
+      ],
+      "clue_details": {
+        "product": "File System"
+      }
+    },
+    {
+      "id": "8995",
+      "title": "/proc/acpi/alarm worked; update to 2.6.22.2 and /sys/class/rtc/rtc0/wakealarm don't",
+      "ground_truth_file": "kernel/power/disk.c",
+      "ground_truth_subsystem": "kernel/power",
+      "ground_truth_methods": [
+        "hibernation_platform_enter"
+      ],
+      "product": "Power Management",
+      "component": "Hibernation/Suspend",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "hang/deadlock",
+        "suspend/resume"
+      ],
+      "fix_types": [
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/acpi/wakeup",
+          "/sys/class/rtc/rtc0/wakealarm",
+          "/proc/acpi/alarm"
+        ],
+        "component": "Hibernation/Suspend",
+        "product": "Power Management"
+      }
+    },
+    {
+      "id": "9206",
+      "title": "Negative internal write-intent bitmap offset with metadata 1.0 REDUX in raid 6: kernel refuses to start the array",
+      "ground_truth_file": "drivers/md/bitmap.c",
+      "ground_truth_subsystem": "drivers/md",
+      "ground_truth_methods": [
+        "write_sb_page"
+      ],
+      "product": "IO/Storage",
+      "component": "MD",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "type_cast_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "MD",
+        "product": "IO/Storage"
+      }
+    },
+    {
+      "id": "9327",
+      "title": "2.6.24-rc2 (esthetic?) regression: auto select interrupt bouncing",
+      "ground_truth_file": "drivers/acpi/ec.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_ec_read_status",
+        "acpi_ec_read_data",
+        "acpi_ec_write_cmd",
+        "acpi_ec_write_data",
+        "acpi_ec_wait",
+        "acpi_ec_transaction_unlocked",
+        "acpi_ec_transaction",
+        "acpi_ec_gpe_handler",
+        "ec_remove_handlers",
+        "acpi_ec_add",
+        "acpi_ec_ecdt_probe"
+      ],
+      "product": "ACPI",
+      "component": "EC",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "hang/deadlock",
+        "performance"
+      ],
+      "fix_types": [
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "kernel_log_messages",
+        "greppable_kernel_messages",
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "kernel_msg_count": 6,
+        "greppable_kernel_msgs": [
+          "EC: missing IBF_1 confirmations,switch off interrupt mode.",
+          "EC: non-query interrupt received, switching to interrupt mode",
+          "EC: missing IBF_1 confirmations,switch off interrupt mode.",
+          "EC: non-query interrupt received, switching to interrupt mode",
+          "EC: missing IBF_1 confirmations,switch off interrupt mode."
+        ],
+        "component": "EC",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "933",
+      "title": "FTP NAT doesn't work in 2.6.0-test1",
+      "ground_truth_file": "net/ipv4/netfilter/ip_nat_helper.c",
+      "ground_truth_subsystem": "net/ipv4",
+      "ground_truth_methods": [
+        "ip_nat_mangle_tcp_packet"
+      ],
+      "product": "Networking",
+      "component": "Netfilter/Iptables",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "other_functional"
+      ],
+      "fix_types": [
+        "type_cast_fix"
+      ],
+      "localization_clues": [
+        "known_component"
+      ],
+      "clue_details": {
+        "component": "Netfilter/Iptables",
+        "product": "Networking"
+      }
+    },
+    {
+      "id": "9374",
+      "title": "[ICH7 snd_hda_intel] Volume control broken",
+      "ground_truth_file": "sound/pci/hda/hda_codec.c",
+      "ground_truth_subsystem": "sound/pci",
+      "ground_truth_methods": [
+        "hda_set_power_state"
+      ],
+      "product": "Drivers",
+      "component": "Sound",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock",
+        "wrong_output",
+        "performance"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "Sound",
+        "product": "Drivers"
+      }
+    },
+    {
+      "id": "94411",
+      "title": "Unwanted delayed execution of _Qxx EC methods",
+      "ground_truth_file": "drivers/acpi/ec.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_ec_query"
+      ],
+      "product": "ACPI",
+      "component": "EC",
+      "best_strategy": "narrow_by_component_metadata",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "locking_fix",
+        "error_return_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "known_component",
+        "diagnostic_tool_output"
+      ],
+      "clue_details": {
+        "component": "EC",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "9643",
+      "title": "/proc/acpi/alarm set error",
+      "ground_truth_file": "drivers/acpi/sleep/proc.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "get_date_field"
+      ],
+      "product": "ACPI",
+      "component": "Other",
+      "best_strategy": "grep_error_strings",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "init_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "greppable_error_strings",
+        "proc_sys_paths"
+      ],
+      "clue_details": {
+        "error_strings": [
+          " as an invalid input.\n\nSteps to reproduce:\n\n[root@localhost /]# echo "
+        ],
+        "proc_sys_paths": [
+          "/proc/acpi/alarm"
+        ],
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "9704",
+      "title": "ACPI: processor throttling set error",
+      "ground_truth_file": "drivers/acpi/processor_throttling.c",
+      "ground_truth_subsystem": "drivers/acpi",
+      "ground_truth_methods": [
+        "acpi_processor_write_throttling"
+      ],
+      "product": "ACPI",
+      "component": "Config-Processors",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "null_check_added",
+        "error_return_fix",
+        "init_fix",
+        "boundary_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/proc/acpi/processor/",
+          "/proc/acpi/processor/CPU0/throttling"
+        ],
+        "component": "Config-Processors",
+        "product": "ACPI"
+      }
+    },
+    {
+      "id": "9751",
+      "title": "conversion of denormal floats to double is wrong",
+      "ground_truth_file": "arch/alpha/math-emu/math.c",
+      "ground_truth_subsystem": "arch/alpha",
+      "ground_truth_methods": [
+        "alpha_fp_emul"
+      ],
+      "product": "Platform Specific/Hardware",
+      "component": "Alpha",
+      "best_strategy": "search_config_related_code",
+      "symptom_categories": [
+        "wrong_output"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "config_options"
+      ],
+      "clue_details": {
+        "component": "Alpha",
+        "product": "Platform Specific/Hardware",
+        "configs": [
+          "CONFIG_MATHEMU"
+        ]
+      }
+    },
+    {
+      "id": "9779",
+      "title": "Setting cpu_share to 1 freezes system",
+      "ground_truth_file": "kernel/sched.c",
+      "ground_truth_subsystem": "kernel/sched.c",
+      "ground_truth_methods": [
+        "sched_group_set_shares"
+      ],
+      "product": "Process Management",
+      "component": "Scheduler",
+      "best_strategy": "map_proc_sys_to_subsystem",
+      "symptom_categories": [
+        "hang/deadlock"
+      ],
+      "fix_types": [
+        "locking_fix",
+        "new_function_calls"
+      ],
+      "localization_clues": [
+        "proc_sys_paths",
+        "known_component"
+      ],
+      "clue_details": {
+        "proc_sys_paths": [
+          "/sys/kernel/uids/"
+        ],
+        "component": "Scheduler",
+        "product": "Process Management"
+      }
+    },
+    {
+      "id": "9843",
+      "title": "CIFS doesn't like the new fair group CPU scheduler",
+      "ground_truth_file": "kernel/sched_fair.c",
+      "ground_truth_subsystem": "kernel/sched_fair.c",
+      "ground_truth_methods": [
+        "check_preempt_wakeup"
+      ],
+      "product": "File System",
+      "component": "CIFS",
+      "best_strategy": "search_config_related_code",
+      "symptom_categories": [
+        "performance"
+      ],
+      "fix_types": [
+        "other_fix"
+      ],
+      "localization_clues": [
+        "known_component",
+        "config_options",
+        "is_regression"
+      ],
+      "clue_details": {
+        "component": "CIFS",
+        "product": "File System",
+        "configs": [
+          "CONFIG_FAIR_GROUP_SCHED"
+        ]
+      }
+    }
+  ]
+}

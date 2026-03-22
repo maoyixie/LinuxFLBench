@@ -1,0 +1,36 @@
+{
+  "id": "34252",
+  "title": "Unexpected behaviour when switching video cards with vga_switcheroo",
+  "": "Show dependency tree",
+  "description": "Created attachment 56262 [details]\nKernel config\n\nTrying to setup script, that switches video cards, I ran into the situation when I left with a black screen not possible to do anything with the system.\nHere is an example:\n\n# cat /sys/kernel/debug/vgaswitcheroo/switch\n0:IGD:+:Pwr:0000:01:05.0\n1:DIS: :Pwr:0000:02:00.0\n# echo IGD > /sys/kernel/debug/vgaswitcheroo/switch\n# cat /sys/kernel/debug/vgaswitcheroo/switch\n0:IGD:+:Off:0000:01:05.0\n1:DIS: :Pwr:0000:02:00.0\n\nI think that this behaviour is buggy and this should not happen.\n\nEnvironment:\n# lspci | grep -i vga\n01:05.0 VGA compatible controller: ATI Technologies Inc RS780M/RS780MN [Radeon HD 3200 Graphics]\n02:00.0 VGA compatible controller: ATI Technologies Inc M93 [Mobility Radeon HD 4500 Series]\n# uname -a\nLinux garik-laptop 2.6.39-rc5+ #8 SMP Sat Apr 30 18:36:12 MSD 2011 x86_64 AMD Athlon(tm) Neo Processor MV-40 AuthenticAMD GNU/Linux",
+  "patch": [
+    "commit 871be6ce12b6035d4eba4a06a10c365254426569\nAuthor: Florian Mickler <florian@mickler.org>\nDate:   Thu May 12 15:53:00 2011 +0200\n\n    vga_switcheroo: don't toggle-switch devices\n    \n    If the requested device is already active, ignore the request.\n    \n    This restores the original behaviour of the interface. The change was\n    probably an unintended side effect of\n    \n    commit 66b37c6777c4 vga_switcheroo: split switching into two stages\n    \n    which did not take into account to duplicate the !active check in the split-off\n    stage2.\n    \n    Fix this by factoring that check out of stage1 into the debugfs_write routine.\n    \n    References: https://bugzilla.kernel.org/show_bug.cgi?id=34252\n    Reported-by: Igor Murzov <e-mail@date.by>\n    Signed-off-by: Florian Mickler <florian@mickler.org>\n    CC: Dave Airlie <airlied@redhat.com>\n\ndiff --git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c\nindex e01cacb..498b284 100644\n--- a/drivers/gpu/vga/vga_switcheroo.c\n+++ b/drivers/gpu/vga/vga_switcheroo.c\n@@ -219,9 +219,6 @@ static int vga_switchto_stage1(struct vga_switcheroo_client *new_client)\n \tint i;\n \tstruct vga_switcheroo_client *active = NULL;\n \n-\tif (new_client->active == true)\n-\t\treturn 0;\n-\n \tfor (i = 0; i < VGA_SWITCHEROO_MAX_CLIENTS; i++) {\n \t\tif (vgasr_priv.clients[i].active == true) {\n \t\t\tactive = &vgasr_priv.clients[i];\n@@ -372,6 +369,9 @@ vga_switcheroo_debugfs_write(struct file *filp, const char __user *ubuf,\n \t\tgoto out;\n \t}\n \n+\tif (client->active == true)\n+\t\tgoto out;\n+\n \t/* okay we want a switch - test if devices are willing to switch */\n \tcan_switch = true;\n \tfor (i = 0; i < VGA_SWITCHEROO_MAX_CLIENTS; i++) {\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Video",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_video-dri",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "27352",
+  "Reported": "2011-05-02 22:39 UTC by Igor Murzov",
+  "Modified": "2011-05-19 07:27 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.39-rc5",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/gpu/vga/vga_switcheroo.c"
+  ],
+  "methods": [
+    "vga_switchto_stage1",
+    "vga_switcheroo_debugfs_write"
+  ]
+}

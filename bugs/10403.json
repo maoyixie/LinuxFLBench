@@ -1,0 +1,35 @@
+{
+  "id": "10403",
+  "title": "Quotas problem on ext3 FS mounted with data=journal",
+  "description": "Latest working kernel version: none\nEarliest failing kernel version: 2.6.25-rc8\nDistribution: Gentoo\nHardware Environment: x86 (both 32 and 64 bits)\nSoftware Environment: GNU\nProblem Description:\n\nNew quota data is not read (from aquota.user file) after quota enabling\non ext3 FS mounted with \"data=journal\".\nNOTE: data=ordered (default) and data=writeback - are OK.\nThe problem is with quota v2 (old format is not tested).\n\n\nSteps to reproduce:\n\nThe problem is always recreatable.\nJust create an ext3 FS and mount it with \"data=journal\".\nHere is the howto:\n\n# dd if=/dev/zero of=TEST.ext3.fs bs=1M count=1 seek=99\n# mkfs.ext3 TEST.ext3.fs\n# mkdir -p /mnt/1\n# modprobe loop\n# mount TEST.ext3.fs /mnt/1 -ousrquota,data=journal,loop\n# quotacheck /dev/loop0\n# quotaon -a\n\n//  Set quotas for some user (john) both soft and hard (to something like 80000)\n# edquota john\n\n// Put some data into the FS\n# cp -a /usr/src/linux/kernel /mnt/1\n\n// Owned by user john\n# chown -R john:john /mnt/1/kernel\n\n# quota john\nDisk quotas for user john (uid 1003):\n     Filesystem  blocks   quota   limit   grace   files   quota   limit   grace\n     /dev/loop0   40248   80000   80000             412       0       0\n\n// Disable quotas\n# quotaoff -a\n\n// Set quotas to just another value (like 90000)\n# edquota john\n\n// Enable quotas\n# quotaon -a\n\n// And check the user again\n# quota john\nDisk quotas for user john (uid 1003):\n     Filesystem  blocks   quota   limit   grace   files   quota   limit   grace\n     /dev/loop0   40248   80000   80000             412       0       0\n\nProblem: the quotas is not changed.\n\n\nIf:\n- the FS is mounted by default (with data=ordered)\n- or with data=writeback\n- or \"edquota john\" is running with enabled quotas on the FS\n\nthe problem is not arising.",
+  "patch": [
+    "From b8a292fee9e8a68125070d3309f0ca821263ba23 Mon Sep 17 00:00:00 2001\nFrom: Jan Kara <jack@suse.cz>\nDate: Thu, 10 Apr 2008 19:01:28 +0200\nSubject: [PATCH] ext3: Fix synchronization of quota files in journal=data mode\n\nIn journal=data mode, it is not enough to do write_inode_now as done in\nvfs_quota_on() to write all data to their final location (which is needed\nfor quota_read to work correctly). Calling journal_flush() does its job.\n\nSigned-off-by: Jan Kara <jack@suse.cz>\n---\n fs/ext3/super.c |   42 +++++++++++++++++++++++++++++-------------\n 1 files changed, 29 insertions(+), 13 deletions(-)\n\ndiff --git a/fs/ext3/super.c b/fs/ext3/super.c\nindex 77e9702..5235630 100644\n--- a/fs/ext3/super.c\n+++ b/fs/ext3/super.c\n@@ -2756,23 +2756,39 @@ static int ext3_quota_on(struct super_block *sb, int type, int format_id,\n \n \tif (!test_opt(sb, QUOTA))\n \t\treturn -EINVAL;\n-\t/* Not journalling quota? */\n-\tif (!EXT3_SB(sb)->s_qf_names[USRQUOTA] &&\n-\t    !EXT3_SB(sb)->s_qf_names[GRPQUOTA])\n-\t\treturn vfs_quota_on(sb, type, format_id, path);\n+\n \terr = path_lookup(path, LOOKUP_FOLLOW, &nd);\n \tif (err)\n \t\treturn err;\n-\t/* Quotafile not on the same filesystem? */\n-\tif (nd.path.mnt->mnt_sb != sb) {\n-\t\tpath_put(&nd.path);\n-\t\treturn -EXDEV;\n+\n+\t/* Not journalling quota? */\n+\tif (EXT3_SB(sb)->s_qf_names[type]) {\n+\t\t/* Quotafile not on the same filesystem? */\n+\t\tif (nd.path.mnt->mnt_sb != sb) {\n+\t\t\tpath_put(&nd.path);\n+\t\t\treturn -EXDEV;\n+\t\t}\n+\t\t/* Quotafile not of fs root? */\n+\t\tif (nd.path.dentry->d_parent->d_inode != sb->s_root->d_inode)\n+\t\t\tprintk(KERN_WARNING\n+\t\t\t\t\"EXT3-fs: Quota file not on filesystem root. \"\n+\t\t\t\t\"Journalled quota will not work.\\n\");\n \t}\n-\t/* Quotafile not of fs root? */\n-\tif (nd.path.dentry->d_parent->d_inode != sb->s_root->d_inode)\n-\t\tprintk(KERN_WARNING\n-\t\t\t\"EXT3-fs: Quota file not on filesystem root. \"\n-\t\t\t\"Journalled quota will not work.\\n\");\n+\n+\t/*\n+\t * When we journal data on quota file, we have to flush journal to see\n+\t * all updates to the file when we bypass pagecache...\n+\t */\n+\tif (ext3_should_journal_data(nd.path.dentry->d_inode)) {\n+\t\t/*\n+\t\t * We don't need to lock updates but journal_flush() could\n+\t\t * otherwise be livelocked...\n+\t\t */\n+\t\tjournal_lock_updates(EXT3_SB(sb)->s_journal);\n+\t\tjournal_flush(EXT3_SB(sb)->s_journal);\n+\t\tjournal_unlock_updates(EXT3_SB(sb)->s_journal);\n+\t}\n+\n \tpath_put(&nd.path);\n \treturn vfs_quota_on(sb, type, format_id, path);\n }\n-- \n1.5.2.4\n\n",
+    "diff --git a/fs/ext3/super.c b/fs/ext3/super.c\nindex cb14de1..18564eb 100644\n--- a/fs/ext3/super.c\n+++ b/fs/ext3/super.c\n@@ -2727,23 +2727,39 @@ static int ext3_quota_on(struct super_block *sb, int type, int format_id,\n \n \tif (!test_opt(sb, QUOTA))\n \t\treturn -EINVAL;\n-\t/* Not journalling quota? */\n-\tif (!EXT3_SB(sb)->s_qf_names[USRQUOTA] &&\n-\t    !EXT3_SB(sb)->s_qf_names[GRPQUOTA])\n-\t\treturn vfs_quota_on(sb, type, format_id, path);\n+\n \terr = path_lookup(path, LOOKUP_FOLLOW, &nd);\n \tif (err)\n \t\treturn err;\n-\t/* Quotafile not on the same filesystem? */\n-\tif (nd.mnt->mnt_sb != sb) {\n-\t\tpath_release(&nd);\n-\t\treturn -EXDEV;\n+\n+\t/* Not journalling quota? */\n+\tif (EXT3_SB(sb)->s_qf_names[type]) {\n+\t\t/* Quotafile not on the same filesystem? */\n+\t\tif (nd.mnt->mnt_sb != sb) {\n+\t\t\tpath_release(&nd);\n+\t\t\treturn -EXDEV;\n+\t\t}\n+\t\t/* Quotafile not of fs root? */\n+\t\tif (nd.dentry->d_parent->d_inode != sb->s_root->d_inode)\n+\t\t\tprintk(KERN_WARNING\n+\t\t\t\t\"EXT3-fs: Quota file not on filesystem root. \"\n+\t\t\t\t\"Journalled quota will not work.\\n\");\n \t}\n-\t/* Quotafile not of fs root? */\n-\tif (nd.dentry->d_parent->d_inode != sb->s_root->d_inode)\n-\t\tprintk(KERN_WARNING\n-\t\t\t\"EXT3-fs: Quota file not on filesystem root. \"\n-\t\t\t\"Journalled quota will not work.\\n\");\n+\n+\t/*\n+\t * When we journal data on quota file, we have to flush journal to see\n+\t * all updates to the file when we bypass pagecache...\n+\t */\n+\tif (ext3_should_journal_data(nd.dentry->d_inode)) {\n+\t\t/*\n+\t\t * We don't need to lock updates but journal_flush() could\n+\t\t * otherwise be livelocked...\n+\t\t */\n+\t\tjournal_lock_updates(EXT3_SB(sb)->s_journal);\n+\t\tjournal_flush(EXT3_SB(sb)->s_journal);\n+\t\tjournal_unlock_updates(EXT3_SB(sb)->s_journal);\n+\t}\n+\n \tpath_release(&nd);\n \treturn vfs_quota_on(sb, type, format_id, path);\n }\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "ext3",
+  "Hardware": "All Linux",
+  "Importance": "P1 low",
+  "Assignee": "Jan Kara",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-04-05 23:19 UTC by Nick",
+  "Modified": "2009-01-17 19:32 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.25",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/ext3/super.c"
+  ],
+  "methods": [
+    "ext3_quota_on"
+  ]
+}

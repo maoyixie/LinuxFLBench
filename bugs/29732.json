@@ -1,0 +1,34 @@
+{
+  "id": "29732",
+  "title": "rndis_wlan not working again for BCM4320a",
+  "description": "Created attachment 48752 [details]\nSyslogs for rndis_wlan with 2.6.38-rc5\n\nI've been testing the 2.6.368 kernel with my wireless adapter and it seems that something is not well once again.\n\n\nI'm attaching the logs of four test sets. All tests were performed after booting the computer with the device disconnected and only connecting it after everything is ready on the desktop. The attachments show what came up on the syslog after the moment I plugged in the device.\n\n\n- On the first test, I disabled network-manager and only used iwconfig + dhclient. I got no connection and the adapter's \"Link\" LED just kept blinking as if nothing was happening.\n\n- For all other tests I enabled network-manager. On the second test, after about an hour with the device connected, it hadn't connected yet and my ESSID didn't shown up on n-m's available connections. I used iwconfig + dhclient to configure the device. No success yet. N-m caught the SSID by then but it couldn't connect neither.\n\n- On the third test, the SSID was detected about 5 minutes after I plugged the device. The connection was not successful. I left the computer idle for some hours and when I returned, I clicked the network's name on network-manager's list. It connected and all seemed well. However, 15 minutes later, the device disconnected. On the log you can see n-m retrying to connect without success. After it gave up, I tried to connect manually again. No success.\n\n- On the fourth test, n-m connected automatically after about 25 minutes. Unfortunately, after other 25 mins it disconnected and couldn't reconnect again.\n\n\nSo, it seems to me that we have two (or three?) issues/symptoms here again:\n- The scan results seem to be poor again, as reported on Bug #20822. The \"alternative scan mode\" patch that significantly improved it for 2.6.37 seems to be present, but maybe something is preventing it from working correctly?\n- It seems that as soon as the connection is established, the device disconnects.\n- I noticed that sometimes there are looping messages from wpa_supplicant saying that it is \"Trying to associate\" with my router, but then it says that \"Authentication with 00:00:00:00:00:00 timed out\". Notice the 00s.\n\n\nBest regards,\nPitxyoki",
+  "patch": [
+    "rndis_wlan: use power save only for BCM4320b\n\nFrom: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>\n\nBCM4320a breaks when enabling power save (bug 29732). So disable power save\nfor anything but BCM4320b.\n\nSigned-off-by: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>\n---\n drivers/net/wireless/rndis_wlan.c |    3 +++\n 1 files changed, 3 insertions(+), 0 deletions(-)\n\ndiff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis_wlan.c\nindex 848cc2c..518542b 100644\n--- a/drivers/net/wireless/rndis_wlan.c\n+++ b/drivers/net/wireless/rndis_wlan.c\n@@ -2597,6 +2597,9 @@ static int rndis_set_power_mgmt(struct wiphy *wiphy, struct net_device *dev,\n \t__le32 mode;\n \tint ret;\n \n+\tif (priv->device_type != RNDIS_BCM4320B)\n+\t\treturn -ENOTSUPP;\n+\n \tnetdev_dbg(usbdev->net, \"%s(): %s, %d\\n\", __func__,\n \t\t\t\tenabled ? \"enabled\" : \"disabled\",\n \t\t\t\ttimeout);\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "network-wireless",
+  "Hardware": "All Linux",
+  "Importance": "P1 enhancement",
+  "Assignee": "Jussi Kivilinna",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2011-02-23 12:29 UTC by Pitxyoki",
+  "Modified": "2011-03-04 23:41 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.38-rc5",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/rndis_wlan.c"
+  ],
+  "methods": [
+    "rndis_set_power_mgmt"
+  ]
+}

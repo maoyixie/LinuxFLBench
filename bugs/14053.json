@@ -1,0 +1,34 @@
+{
+  "id": "14053",
+  "title": "Kernel blocks during rsync to NFS-mounted directory exported from Sun OS machine",
+  "description": "Created attachment 22838 [details]\nFedora 10 machine details (/proc/{cpuinfo,modules,ioports,iomem,scsi/scsi},lspci -vvv)\n\nWe have a Fedora 10 machine and a Sun OS machine. The Sun OS machine exports a ZFS filesystem (pool) to the Fedora 10 machine, which mounts it using a NFS v4 mount (/etc/fstab: \tmelon:/melon1   /melon1 nfs4    rw,rsize=8192,wsize=8192,timeo=14,intr). When a large file (3 GB) is read from the NFS-mounted directory on the Fedora 10 machine (/melon1) this kernel panic frequently occurs. Also, when performing a rsync to this directory this kernel panic also occurs, even being at one point was completely predictable by consistently crashing 3 times in each case after sending around 2 MB. However, the bug is not always so predictable. The Sun OS machine has apparently no ill effects.\n\nI don't know if this is a failure in the implementation of NFS 4 in Linux or in Sun OS.\n\n\nSun OS machine information:\n\nSunOS 5.10 Generic_137112-06 i86pc i386 i86pc\n\nFedora 10 machine information:\n\nClient: Fedora 10 Linux\nClient Kernel Version (/proc/version): Linux version 2.6.27.29-170.2.79.fc10.x86_64 (mockbuild@x86-4.fedora.phx.redhat.com) (gcc version 4.3.2 20081105 (Red Hat 4.3.2-7) (GCC) ) #1 SMP Fri Aug 14 20:49:37 EDT 2009",
+  "patch": [
+    "From: Trond Myklebust <Trond.Myklebust@netapp.com>\nSUNRPC: Fix rpc_task_force_reencode\n\nIf we're in the case where we need to force a reencode and then resend of\nthe RPC request, due to xprt_transmit failing with a networking error, then\nwe _must_ retransmit the entire request.\n\nSigned-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>\n---\n\n net/sunrpc/clnt.c |    1 +\n 1 files changed, 1 insertions(+), 0 deletions(-)\n\n\ndiff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c\nindex c1e467e..fac0ca9 100644\n--- a/net/sunrpc/clnt.c\n+++ b/net/sunrpc/clnt.c\n@@ -955,6 +955,7 @@ static inline void\n rpc_task_force_reencode(struct rpc_task *task)\n {\n \ttask->tk_rqstp->rq_snd_buf.len = 0;\n+\ttask->tk_rqstp->rq_bytes_sent = 0;\n }\n \n static inline void\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "NFS",
+  "Hardware": "All Linux",
+  "Importance": "P1 blocking",
+  "Assignee": "Trond Myklebust",
+  "URL": "http://kerneloops.org/submitresult.ph...",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-08-25 02:14 UTC by Matthew Breeze",
+  "Modified": "2010-02-03 20:42 UTC",
+  "CC List": "0 users",
+  "See Also": "",
+  "Kernel Version": "2.6.27",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "net/sunrpc/clnt.c"
+  ],
+  "methods": [
+    "rpc_task_force_reencode"
+  ]
+}

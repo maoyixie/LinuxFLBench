@@ -1,0 +1,34 @@
+{
+  "id": "9643",
+  "title": "/proc/acpi/alarm set error",
+  "description": "Most recent kernel where this bug did not occur: none\nDistribution: FC8\nHardware Environment: All\nSoftware Environment: All\nProblem Description: after echo \"2007 12\" > /proc/acpi/alarm, you'll get 2007-12-12 12:12:12 by cat /proc/acpi/alarm, obviously it is wrong, it should consider \"2007 12\" as an invalid input.\n\nSteps to reproduce:\n\n[root@localhost /]# echo \"2006 09\" > /proc/acpi/alarm\n[root@localhost /]# cat /proc/acpi/alarm\n2007-12-09 09:09:09\n[root@localhost /]# echo \"2006 04\" > /proc/acpi/alarm\n[root@localhost /]# cat /proc/acpi/alarm\n2007-12-04 04:04:04",
+  "patch": [
+    "/proc/acpi/alarm can't be set correctly, here is a sample:\n\n[root@localhost /]# echo \"2006 09\" > /proc/acpi/alarm\n[root@localhost /]# cat /proc/acpi/alarm\n2007-12-09 09:09:09\n[root@localhost /]# echo \"2006 04\" > /proc/acpi/alarm\n[root@localhost /]# cat /proc/acpi/alarm\n2007-12-04 04:04:04\n[root@localhost /]#\n\nObviously, it is wrong, it should consider it as an invalid input.\n\nThis patch'll fix this issue, after applying this patch, the result is:\n\n[root@localhost /]# echo \"2008 09\" > /proc/acpi/alarm\n-bash: echo: write error: Invalid argument\n[root@localhost /]#\n\nSigned-off by Yi Yang <yi.y.yang@intel.com>\n \ndiff --git a/drivers/acpi/sleep/proc.c b/drivers/acpi/sleep/proc.c\nindex 1538355..fce78fb 100644\n--- a/drivers/acpi/sleep/proc.c\n+++ b/drivers/acpi/sleep/proc.c\n@@ -178,6 +178,9 @@ static int get_date_field(char **p, u32 * value)\n \t * Try to find delimeter, only to insert null.  The end of the\n \t * string won't have one, but is still valid.\n \t */\n+\tif (*p == NULL)\n+\t\treturn result;\n+\n \tnext = strpbrk(*p, \"- :\");\n \tif (next)\n \t\t*next++ = '\\0';\n@@ -190,6 +193,8 @@ static int get_date_field(char **p, u32 * value)\n \n \tif (next)\n \t\t*p = next;\n+\telse\n+\t\t*p = NULL;\n \n \treturn result;\n }\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Yi Yang",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-12-26 22:06 UTC by Yi Yang",
+  "Modified": "2008-02-10 14:44 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.24",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/sleep/proc.c"
+  ],
+  "methods": [
+    "get_date_field"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "id": "33232",
+  "title": "WARNING: at /build/buildd/linux-2.6.38/net/wireless/scan.c:591 cfg80211_inform_bss_frame 0x1da/0x1f0 [cfg80211]()",
+  "description": "Hello\nReported just to keep track, system seems to work.\n\n- latest updates installed\n- window with stop sign displayed on desktop every time after full loading re kernel developed a serious problem ....\n- os still functional in spite of above mssge (can perform updates, use mail, browse)\n\nProblemType: KernelOops\nDistroRelease: Ubuntu 11.04\nPackage: linux-image-2.6.38-8-generic 2.6.38-8.42\n\n[   52.942507] WARNING: at /build/buildd/linux-2.6.38/net/wireless/scan.c:591 cfg80211_inform_bss_frame+0x1da/0x1f0 [cfg80211]()\n[   52.942509] Hardware name: GA-MA78GM-S2HP\n[   52.942510] Modules linked in: binfmt_misc nls_iso8859_1 nls_cp437 vfat fat snd_hda_codec_hdmi arc4 snd_hda_codec_realtek snd_usb_audio snd_hda_intel snd_hda_codec zd1211rw ppdev mac80211 snd_pcm snd_hwdep snd_usbmidi_lib snd_seq_midi snd_rawmidi snd_seq_midi_event radeon snd_seq snd_timer psmouse snd_seq_device cfg80211 serio_raw uvcvideo videodev v4l2_compat_ioctl32 ttm snd k10temp edac_core drm_kms_helper edac_mce_amd parport_pc sp5100_tco i2c_piix4 drm xhci_hcd soundcore snd_page_alloc i2c_algo_bit lp parport usbhid hid usb_storage uas ahci floppy firewire_ohci firewire_core crc_itu_t r8169 pata_atiixp libahci\n[   52.942537] Pid: 0, comm: kworker/0:1 Not tainted 2.6.38-8-generic #42-Ubuntu\n[   52.942539] Call Trace:\n[   52.942541]  <IRQ>  [<ffffffff81065cef>] ? warn_slowpath_common+0x7f/0xc0\n[   52.942548]  [<ffffffff81065d4a>] ? warn_slowpath_null+0x1a/0x20\n[   52.942553]  [<ffffffffa033403a>] ? cfg80211_inform_bss_frame+0x1da/0x1f0 [cfg80211]\n[   52.942557]  [<ffffffff8144d2d6>] ? ehci_qtd_alloc.clone.58+0x16/0x60\n[   52.942560]  [<ffffffff814377bc>] ? usb_hcd_link_urb_to_ep+0x8c/0xc0\n[   52.942569]  [<ffffffffa038b875>] ? ieee80211_bss_info_update+0x55/0x220 [mac80211]\n[   52.942574]  [<ffffffffa038bb58>] ? ieee80211_scan_rx+0x118/0x190 [mac80211]\n[   52.942582]  [<ffffffffa03a0177>] ? ieee80211_prepare_and_rx_handle+0x217/0x260 [mac80211]\n[   52.942589]  [<ffffffffa03a035f>] ? __ieee80211_rx_handle_packet+0x19f/0x300 [mac80211]\n[   52.942596]  [<ffffffffa03a05da>] ? ieee80211_rx+0x11a/0x1d0 [mac80211]\n[   52.942598]  [<ffffffff81450944>] ? ehci_irq+0x174/0x230\n[   52.942603]  [<ffffffffa0386c11>] ? ieee80211_tasklet_handler+0xd1/0xe0 [mac80211]\n[   52.942605]  [<ffffffff8106cc43>] ? tasklet_action+0x73/0x120\n[   52.942607]  [<ffffffff8106d538>] ? __do_softirq+0xa8/0x1c0\n[   52.942610]  [<ffffffff81030518>] ? ack_apic_level+0x78/0x1a0\n[   52.942613]  [<ffffffff8100cf1c>] ? call_softirq+0x1c/0x30\n[   52.942615]  [<ffffffff8100ea45>] ? do_softirq+0x65/0xa0\n[   52.942617]  [<ffffffff8106d755>] ? irq_exit+0x85/0x90\n[   52.942620]  [<ffffffff815caec6>] ? do_IRQ+0x66/0xe0\n[   52.942622]  [<ffffffff815c3213>] ? ret_from_intr+0x0/0x15\n[   52.942623]  <EOI>  [<ffffffff810d975b>] ? rcu_needs_cpu+0x6b/0x270\n[   52.942628]  [<ffffffff81037f0b>] ? native_safe_halt+0xb/0x10\n[   52.942631]  [<ffffffff81014801>] ? default_idle+0x41/0xe0\n[   52.942634]  [<ffffffff8100a266>] ? cpu_idle+0xa6/0xf0\n[   52.942636]  [<ffffffff815bc743>] ? start_secondary+0xbc/0xbe\n[   52.942638] ---[ end trace 683bef0bfcfd6f92 ]---\n\nOthers log files in the linked Launchpad URL\n\nThanks\nFabio",
+  "patch": [
+    "zd1211rw: fix invalid signal values from device\n\nFrom: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>\n\nDriver uses IEEE80211_HW_SIGNAL_UNSPEC and so signal values reported to\nmac80211 should be in range 0..100. Sometimes device return out of range\nvalues. This patch adds checks to enforce range returned from driver to\nmac80211 be in 0..100 range.\n\nSigned-off-by: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>\n---\n drivers/net/wireless/zd1211rw/zd_mac.c |   13 +++++++++++--\n 1 files changed, 11 insertions(+), 2 deletions(-)\n\ndiff --git a/drivers/net/wireless/zd1211rw/zd_mac.c b/drivers/net/wireless/zd1211rw/zd_mac.c\nindex 5037c8b..ec7bcb0 100644\n--- a/drivers/net/wireless/zd1211rw/zd_mac.c\n+++ b/drivers/net/wireless/zd1211rw/zd_mac.c\n@@ -160,6 +160,15 @@ static int zd_reg2alpha2(u8 regdomain, char *alpha2)\n \treturn 1;\n }\n \n+static inline int zd_check_signal(int signal)\n+{\n+\tif (signal < 0)\n+\t\treturn 0;\n+\tif (signal > 100)\n+\t\treturn 100;\n+\treturn signal;\n+}\n+\n int zd_mac_preinit_hw(struct ieee80211_hw *hw)\n {\n \tint r;\n@@ -461,7 +470,7 @@ static void zd_mac_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb,\n \tif (i<IEEE80211_TX_MAX_RATES)\n \t\tinfo->status.rates[i].idx = -1; /* terminate */\n \n-\tinfo->status.ack_signal = ackssi;\n+\tinfo->status.ack_signal = zd_check_signal(ackssi);\n \tieee80211_tx_status_irqsafe(hw, skb);\n }\n \n@@ -982,7 +991,7 @@ int zd_mac_rx(struct ieee80211_hw *hw, const u8 *buffer, unsigned int length)\n \n \tstats.freq = zd_channels[_zd_chip_get_channel(&mac->chip) - 1].center_freq;\n \tstats.band = IEEE80211_BAND_2GHZ;\n-\tstats.signal = status->signal_strength;\n+\tstats.signal = zd_check_signal(status->signal_strength);\n \n \trate = zd_rx_rate(buffer, status);\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Networking",
+  "Classification": "Unclassified",
+  "Component": "Wireless",
+  "Hardware": "All Linux",
+  "Importance": "P1 low",
+  "Assignee": "networking_wireless@kernel-bugs.osdl.org",
+  "URL": "https://bugs.launchpad.net/ubuntu/+so...",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2011-04-13 18:48 UTC by njin",
+  "Modified": "2012-06-14 17:50 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.38",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/zd1211rw/zd_mac.c"
+  ],
+  "methods": [
+    "zd_mac_tx_status",
+    "zd_mac_rx"
+  ]
+}

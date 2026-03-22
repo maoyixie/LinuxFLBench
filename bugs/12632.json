@@ -1,0 +1,34 @@
+{
+  "id": "12632",
+  "title": "don't assume we are fully charged when not charging or discharging",
+  "description": "Latest working kernel version: None\nEarliest failing kernel version: Everything since ACPI moved to using the power_supply class\nDistribution: Fedora rawhide\nHardware Environment: Lenovo T61\nSoftware Environment: Fedora rawhide\nProblem Description:\n\nOn hardware like the T61 it can take a couple of seconds for the battery\nto start charging after the power is connected, and we incorrectly tell\nuserspace that we are fully charged, and then go back to charging.\n\nOnly mark a battery as fully charged when the preset charge matches either\nthe last full charge, or the design charge.\n\nSteps to reproduce:\n\nCharge battery to 50%. Watch /sys/class/power_supply/BAT*/status, and observe that when the power is disconnected, the status goes from charging->fully_charged->discharging. This also happens when going from battery to AC. This greatly confuses userspace.",
+  "patch": [
+    "From 3b0fb1239e5bc064766ffa3d7a45265e722fb9eb Mon Sep 17 00:00:00 2001\nFrom: Richard Hughes <hughsient@gmail.com>\nDate: Sun, 25 Jan 2009 15:05:50 +0000\nSubject: [PATCH] battery: don't assume we are fully charged when not charging or discharging\n\nOn hardware like the T61 it can take a couple of seconds for the battery\nto start charging after the power is connected, and we incorrectly tell\nuserspace that we are fully charged, and then go back to charging.\n\nOnly mark a battery as fully charged when the preset charge matches either\nthe last full charge, or the design charge.\n\nSigned-off-by: Richard Hughes <hughsient@gmail.com>\n---\n drivers/acpi/battery.c |   25 ++++++++++++++++++++++++-\n 1 files changed, 24 insertions(+), 1 deletions(-)\n\ndiff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c\nindex 65132f9..69cbc57 100644\n--- a/drivers/acpi/battery.c\n+++ b/drivers/acpi/battery.c\n@@ -138,6 +138,29 @@ static int acpi_battery_technology(struct acpi_battery *battery)\n \n static int acpi_battery_get_state(struct acpi_battery *battery);\n \n+static int acpi_battery_is_charged(struct acpi_battery *battery)\n+{\n+\t/* either charging or discharging */\n+\tif (battery->state != 0)\n+\t\treturn 0;\n+\n+\t/* battery not reporting charge */\n+\tif (battery->capacity_now == ACPI_BATTERY_VALUE_UNKNOWN ||\n+\t    battery->capacity_now == 0)\n+\t\treturn 0;\n+\n+\t/* good batteries update full_charge as the batteries degrade */\n+\tif (battery->full_charge_capacity == battery->capacity_now)\n+\t\treturn 1;\n+\n+\t/* fallback to using design values for broken batteries */\n+\tif (battery->design_capacity == battery->capacity_now)\n+\t\treturn 1;\n+\n+\t/* we don't do any sort of metric based on percentages */\n+\treturn 0;\n+}\n+\n static int acpi_battery_get_property(struct power_supply *psy,\n \t\t\t\t     enum power_supply_property psp,\n \t\t\t\t     union power_supply_propval *val)\n@@ -155,7 +178,7 @@ static int acpi_battery_get_property(struct power_supply *psy,\n \t\t\tval->intval = POWER_SUPPLY_STATUS_DISCHARGING;\n \t\telse if (battery->state & 0x02)\n \t\t\tval->intval = POWER_SUPPLY_STATUS_CHARGING;\n-\t\telse if (battery->state == 0)\n+\t\telse if (acpi_battery_is_charged(battery))\n \t\t\tval->intval = POWER_SUPPLY_STATUS_FULL;\n \t\telse\n \t\t\tval->intval = POWER_SUPPLY_STATUS_UNKNOWN;\n-- \n1.6.0.6\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Battery",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Zhang Rui",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-02-04 05:53 UTC by Richard Hughes",
+  "Modified": "2009-02-22 17:48 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.29-rc3",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/battery.c"
+  ],
+  "methods": [
+    "acpi_battery_get_property"
+  ]
+}

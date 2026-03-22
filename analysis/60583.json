@@ -1,0 +1,209 @@
+{
+  "id": "60583",
+  "title": "Kernel oops at boot in acpi_ev_notify_dispatch",
+  "kernel_version": "3.5.4",
+  "product": "ACPI",
+  "component": "ACPICA-Core",
+  "hardware": "i386 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/acpica/evxface.c"
+    ],
+    "buggy_methods": [
+      "acpi_remove_notify_handler",
+      "acpi_remove_gpe_handler"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "acpi_os_execute_deferred",
+      "__bad_area_nosemaphore",
+      "0x0",
+      "worker_thread",
+      "kthread_data",
+      "__schedule",
+      "do_exit",
+      "EFLAGS",
+      "process_one_work",
+      "bad_area_nosemaphore",
+      "kthread",
+      "no_context",
+      "error_code",
+      "do_page_fault",
+      "kernel_thread_helper",
+      "schedule",
+      "oops_end"
+    ],
+    "mentioned_file_paths": [
+      "drivers/acpi/acpica/evmisc.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 8577,
+    "description_word_count": 1116
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 32,
+    "lines_removed": 8,
+    "patch_size": 40,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 5,
+    "hunk_functions": [
+      "acpi_remove_gpe_handler",
+      "acpi_remove_notify_handler"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/acpica/evxface.c",
+    "filename": "evxface.c",
+    "directory": "drivers/acpi/acpica",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/acpica",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_17_functions",
+      "component_known:ACPICA-Core"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "60583",
+      "version": "3.5.4",
+      "status": "found",
+      "path": "drivers/acpi/acpica/evxface.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "60583",
+    "version": "3.5.4",
+    "ground_truth_file": "drivers/acpi/acpica/evxface.c",
+    "trace_functions": [
+      "acpi_ev_notify_dispatch",
+      "acpi_os_execute_deferred",
+      "process_one_work",
+      "acpi_os_wait_events_complete",
+      "worker_thread",
+      "manage_workers",
+      "kthread",
+      "kthread_freezable_should_stop",
+      "kernel_thread_helper",
+      "kthread_data",
+      "wq_worker_sleeping",
+      "__schedule",
+      "d_hash_and_lookup",
+      "proc_flush_task",
+      "call_rcu_sched"
+    ],
+    "total_trace_functions": 32,
+    "function_locations": {
+      "acpi_ev_notify_dispatch": [
+        "drivers/acpi/acpica/evmisc.c"
+      ],
+      "acpi_os_execute_deferred": [
+        "drivers/acpi/osl.c"
+      ],
+      "process_one_work": [
+        "kernel/workqueue.c"
+      ],
+      "acpi_os_wait_events_complete": [
+        "drivers/acpi/osl.c"
+      ],
+      "worker_thread": [
+        "kernel/workqueue.c",
+        "drivers/scsi/ipr.c"
+      ],
+      "manage_workers": [
+        "kernel/workqueue.c"
+      ],
+      "kthread": [
+        "fs/ecryptfs/kthread.c",
+        "fs/btrfs/inode-map.c",
+        "fs/btrfs/volumes.c",
+        "kernel/kthread.c",
+        "fs/btrfs/disk-io.c",
+        "drivers/net/xen-netback/netback.c",
+        "drivers/staging/media/lirc/lirc_zilog.c",
+        "drivers/usb/atm/ueagle-atm.c",
+        "kernel/time/clocksource.c",
+        "drivers/block/nvme.c"
+      ],
+      "kthread_freezable_should_stop": [
+        "kernel/kthread.c"
+      ],
+      "kernel_thread_helper": [
+        "arch/hexagon/kernel/process.c",
+        "arch/sh/kernel/process_32.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "arch/sh/kernel/process_64.c",
+        "arch/blackfin/kernel/process.c",
+        "arch/openrisc/kernel/process.c",
+        "arch/m32r/kernel/process.c",
+        "arch/c6x/kernel/process.c",
+        "arch/x86/kernel/process.c",
+        "arch/mips/kernel/process.c"
+      ],
+      "kthread_data": [
+        "kernel/kthread.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "fs/btrfs/volumes.c",
+      "arch/sh/kernel/process_64.c",
+      "kernel/kthread.c",
+      "arch/blackfin/kernel/process.c",
+      "drivers/acpi/osl.c",
+      "arch/mips/kernel/process.c",
+      "arch/hexagon/kernel/process.c",
+      "fs/btrfs/inode-map.c",
+      "arch/sh/kernel/process_32.c",
+      "arch/cris/arch-v10/kernel/process.c",
+      "fs/btrfs/disk-io.c",
+      "arch/openrisc/kernel/process.c",
+      "kernel/workqueue.c",
+      "arch/c6x/kernel/process.c",
+      "drivers/usb/atm/ueagle-atm.c",
+      "kernel/time/clocksource.c",
+      "drivers/block/nvme.c",
+      "fs/ecryptfs/kthread.c",
+      "drivers/acpi/acpica/evmisc.c",
+      "drivers/net/xen-netback/netback.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

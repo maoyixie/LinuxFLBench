@@ -1,0 +1,35 @@
+{
+  "id": "13581",
+  "title": "ath9k doesn't work with newer kernels",
+  "": "Show dependency tree",
+  "description": "Upgrading from 2.6.29 to 2.6.30 the wireless stop working.\nsome infos:\n\n# wpa_supplicant -i wlan0 -D wext -c /etc/wpa_supplicant/wpa_supplicant.conf\nCTRL-EVENT-SCAN-RESULTS                                                     \nTrying to associate with 00:18:84:81:00:fd (SSID='OpenWrt' freq=2452 MHz)   \nAssociation request to the driver failed                                    \nAssociated with 00:18:84:81:00:fd                                           \nCTRL-EVENT-DISCONNECTED - Disconnect event - remove keys                    \nioctl[SIOCSIWENCODEEXT]: No such file or directory                          \nioctl[SIOCSIWSCAN]: Device or resource busy                                 \nFailed to initiate AP scan.                                                 \nAuthentication with 00:00:00:00:00:00 timed out.                            \nCTRL-EVENT-SCAN-RESULTS                                                     \nTrying to associate with 00:18:84:81:00:fd (SSID='OpenWrt' freq=2452 MHz)   \nAssociation request to the driver failed\nAssociated with 00:18:84:81:00:fd\nCTRL-EVENT-DISCONNECTED - Disconnect event - remove keys\nioctl[SIOCSIWENCODEEXT]: No such file or directory\nioctl[SIOCSIWSCAN]: Device or resource busy\nFailed to initiate AP scan.\nAuthentication with 00:00:00:00:00:00 timed out.\n\n# dmesg\ncfg80211: Using static regulatory domain info\ncfg80211: Regulatory domain: US\n        (start_freq - end_freq @ bandwidth), (max_antenna_gain, max_eirp)\n        (2402000 KHz - 2472000 KHz @ 40000 KHz), (600 mBi, 2700 mBm)\n        (5170000 KHz - 5190000 KHz @ 40000 KHz), (600 mBi, 2300 mBm)\n        (5190000 KHz - 5210000 KHz @ 40000 KHz), (600 mBi, 2300 mBm)\n        (5210000 KHz - 5230000 KHz @ 40000 KHz), (600 mBi, 2300 mBm)\n        (5230000 KHz - 5330000 KHz @ 40000 KHz), (600 mBi, 2300 mBm)\n        (5735000 KHz - 5835000 KHz @ 40000 KHz), (600 mBi, 3000 mBm)\ncfg80211: Calling CRDA for country: US\nath9k 0000:03:00.0: PCI INT A -> GSI 17 (level, low) -> IRQ 17\nath9k 0000:03:00.0: setting latency timer to 64\nphy0: Selected rate control algorithm 'ath9k_rate_control'\ncfg80211: Calling CRDA for country: AT\nRegistered led device: ath9k-phy0::radio\nRegistered led device: ath9k-phy0::assoc\nRegistered led device: ath9k-phy0::tx\nRegistered led device: ath9k-phy0::rx\nphy0: Atheros AR5418 MAC/BB Rev:2 AR5133 RF Rev:81: mem=0xffffc200042c0000, irq=17\nADDRCONF(NETDEV_UP): wlan0: link is not ready\nwlan0: authenticate with AP 00:18:84:81:00:fd\nwlan0: authenticated\nwlan0: associate with AP 00:18:84:81:00:fd\nwlan0: RX AssocResp from 00:18:84:81:00:fd (capab=0x431 status=0 aid=3)\nwlan0: associated\nADDRCONF(NETDEV_CHANGE): wlan0: link becomes ready\nwlan0: disassociating by local choice (reason=3)\nwlan0: no IPv6 routers present\nwlan0: authenticate with AP 00:18:84:81:00:fd\nwlan0: authenticated\nwlan0: associate with AP 00:18:84:81:00:fd\nwlan0: RX AssocResp from 00:18:84:81:00:fd (capab=0x431 status=0 aid=3)\nwlan0: associated\nwlan0: disassociating by local choice (reason=3)\nwlan0: authenticate with AP 00:18:84:81:00:fd\nwlan0: authenticated\nwlan0: associate with AP 00:18:84:81:00:fd\nwlan0: RX AssocResp from 00:18:84:81:00:fd (capab=0x431 status=0 aid=3)\nwlan0: associated\nwlan0: disassociating by local choice (reason=3)",
+  "patch": [
+    "From: Yinghai Lu <yinghai@kernel.org>\nSubject: pci: increase alignment to make more space for hidden code\n    \nAs reported in\n\nhttp://bugzilla.kernel.org/show_bug.cgi?id=13940\n\non some system when acpi are enabled, acpi clears some BAR for some\ndevices without reason, and kernel will need to allocate devices for\nthem.  It then apparently hits some undocumented resource conflict,\nresulting in non-working devices.\n\nTry to increase alignment to get more safe range for unassigned devices.\n\nSigned-off-by: Yinghai Lu <yinghai@kernel.org>\nSigned-off-by: Linus Torvalds <torvalds@linux-foundation.org>\n\ndiff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c\nindex 85419bb..d17d482 100644\n--- a/arch/x86/kernel/e820.c\n+++ b/arch/x86/kernel/e820.c\n@@ -1378,8 +1378,8 @@ static unsigned long ram_alignment(resource_size_t pos)\n \tif (mb < 16)\n \t\treturn 1024*1024;\n \n-\t/* To 32MB for anything above that */\n-\treturn 32*1024*1024;\n+\t/* To 64MB for anything above that */\n+\treturn 64*1024*1024;\n }\n \n #define MAX_RESOURCE_SIZE ((resource_size_t)-1)\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Networking",
+  "Classification": "Unclassified",
+  "Component": "Wireless",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Luis Chamberlain",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "13070",
+  "Reported": "2009-06-19 12:04 UTC by Matteo Croce",
+  "Modified": "2009-12-29 21:28 UTC",
+  "CC List": "9 users",
+  "See Also": "",
+  "Kernel Version": "2.6.30",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/x86/kernel/e820.c"
+  ],
+  "methods": [
+    "ram_alignment"
+  ]
+}

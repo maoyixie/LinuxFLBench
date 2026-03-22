@@ -1,0 +1,139 @@
+{
+  "id": "106571",
+  "title": "Surface 3 Lid Switch Method parse/execution failed",
+  "kernel_version": "4.3-rc6",
+  "product": "ACPI",
+  "component": "Config-Tables",
+  "hardware": "x86-64 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpio/gpiolib-acpi.c"
+    ],
+    "buggy_methods": [
+      "acpi_gpio_adr_space_handler"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [
+      {
+        "file": "evregion",
+        "line": "297"
+      },
+      {
+        "file": "psparse",
+        "line": "542"
+      }
+    ],
+    "error_messages": [
+      "is thrown. The lid switch state always reports closed.",
+      "Method parse/execution failed [\\_SB.GPO0._E4C] (Node ffff88013f4b4438), AE_ERROR"
+    ],
+    "proc_sys_paths": [
+      "/proc/acpi/button/lid/LID/state"
+    ],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 2,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 661,
+    "description_word_count": 89
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 20,
+    "lines_removed": 0,
+    "patch_size": 20,
+    "patch_types": [
+      "logic_change",
+      "init_fix"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "acpi_gpio_adr_space_handler"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpio/gpiolib-acpi.c",
+    "filename": "gpiolib-acpi.c",
+    "directory": "drivers/gpio",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "gpio",
+    "driver_subsystem": "gpio/gpiolib-acpi.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "medium",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "source_file_line_references",
+      "dmesg_logs_available",
+      "component_known:Config-Tables"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "use_source_references_to_locate_file",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "106571",
+      "version": "4.3-rc6",
+      "status": "found",
+      "path": "drivers/gpio/gpiolib-acpi.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "106571",
+    "title": "Surface 3 Lid Switch Method parse/execution failed",
+    "ground_truth_file": "drivers/gpio/gpiolib-acpi.c",
+    "ground_truth_subsystem": "drivers/gpio",
+    "ground_truth_methods": [
+      "acpi_gpio_adr_space_handler"
+    ],
+    "product": "ACPI",
+    "component": "Config-Tables",
+    "best_strategy": "grep_error_strings",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "kernel_log_messages",
+      "greppable_kernel_messages",
+      "known_component",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/proc/acpi/button/lid/LID/state"
+      ],
+      "kernel_msg_count": 2,
+      "greppable_kernel_msgs": [
+        "AE_ERROR, Returned by Handler for [GeneralPurposeIo] (20150930/evregion-297)",
+        "Method parse/execution failed [\\_SB.GPO0._E4C] (Node ffff88013f4b4438), AE_ERROR"
+      ],
+      "component": "Config-Tables",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_grep_error_strings"
+}

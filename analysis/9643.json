@@ -1,0 +1,116 @@
+{
+  "id": "9643",
+  "title": "/proc/acpi/alarm set error",
+  "kernel_version": "2.6.24",
+  "product": "ACPI",
+  "component": "Other",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/sleep/proc.c"
+    ],
+    "buggy_methods": [
+      "get_date_field"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/acpi/alarm"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 566,
+    "description_word_count": 75
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 5,
+    "lines_removed": 1,
+    "patch_size": 6,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "init_fix"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "get_date_field"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/sleep/proc.c",
+    "filename": "proc.c",
+    "directory": "drivers/acpi/sleep",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/sleep",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "9643",
+      "version": "2.6.24",
+      "status": "found",
+      "path": "drivers/acpi/sleep/proc.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "9643",
+    "title": "/proc/acpi/alarm set error",
+    "ground_truth_file": "drivers/acpi/sleep/proc.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "get_date_field"
+    ],
+    "product": "ACPI",
+    "component": "Other",
+    "best_strategy": "grep_error_strings",
+    "symptom_categories": [
+      "wrong_output"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "greppable_error_strings",
+      "proc_sys_paths"
+    ],
+    "clue_details": {
+      "error_strings": [
+        " as an invalid input.\n\nSteps to reproduce:\n\n[root@localhost /]# echo "
+      ],
+      "proc_sys_paths": [
+        "/proc/acpi/alarm"
+      ],
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_grep_error_strings"
+}

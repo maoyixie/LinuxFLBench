@@ -1,0 +1,35 @@
+{
+  "id": "200989",
+  "title": "ACPI / LPSS Braswell Lenovo 11e won't boot as of LPSS commit in 4.17.12 (with patch)",
+  "description": "Created attachment 278225 [details]\n[PATCH] ACPI / LPSS: Ensure LPIOEP is always set on resume\n\nHi there.\n\nI've got a 3rd generation Lenovo 11e that locks up on boot. The processor inside is an Intel N3150, which is family 6, model 0x4c, which is one that turns on lpss_quirks. I was able to bisect the problem commit to the merge of 12864ff8545f6b8144fdf1bb89b5663357f29ec4 which skipped over some IOSF updates when exiting D3 that wasn't matched by a call to the handler for entering D3.  \n\nWhat I've been able to see is that on boot, the acpi_lpss_resume() function gets called, but the acpi_lpss_suspend() hasn't.  Because of this, the IOSF write to LPSS_IOSF_UNIT_LPIOEP never happens, and for some reason that freezes the computer.  I've got a minimal patch that allows my system to boot normally by ensuring that write happens whether the matching acpi_lpss_suspend() call takes place or not.\n\nI don't have any other relevant systems to test this patch on so I can't say whether it introduces any regressions, nor do I have a very good handle on why this freezes the boot in the first place.  I'm happy to discuss in whatever way I can.",
+  "patch": [
+    "From 27fda1ab0d800966b0ec1c444fe356812bd2f04e Mon Sep 17 00:00:00 2001\nFrom: Zhang Rui <rui.zhang@intel.com>\nDate: Mon, 3 Sep 2018 10:00:07 +0800\nSubject: [PATCH] ACPI / LPSS: Force lpss quirks on boot\n\nCommit 12864ff8545f (\"ACPI / LPSS: Avoid PM quirks on suspend and resume\nfrom hibernation\") bypasses lpss quirks for S3 and S4, by setting a flag\nfor S3/S4 in acpi_lpss_suspend(), and check that flag in\nacpi_lpss_resume().\n\nBut this overlooks the boot case where acpi_lpss_resume() may get called\nwithout a corresponding acpi_lpss_suspend() having been called.\n\nThus force setting the flag during boot.\n\nFixes: 12864ff8545f (ACPI / LPSS: Avoid PM quirks on suspend and resume from hibernation)\nLink: https://bugzilla.kernel.org/show_bug.cgi?id=200989\nSigned-off-by: Zhang Rui <rui.zhang@intel.com>\n---\n drivers/acpi/acpi_lpss.c | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n\ndiff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c\nindex 9706613..bf64cfa 100644\n--- a/drivers/acpi/acpi_lpss.c\n+++ b/drivers/acpi/acpi_lpss.c\n@@ -879,7 +879,7 @@ static void acpi_lpss_dismiss(struct device *dev)\n #define LPSS_GPIODEF0_DMA_LLP\t\tBIT(13)\n \n static DEFINE_MUTEX(lpss_iosf_mutex);\n-static bool lpss_iosf_d3_entered;\n+static bool lpss_iosf_d3_entered = true;\n \n static void lpss_iosf_enter_d3_state(void)\n {\n-- \n2.7.4\n\n",
+    "From 7eee88ef4e4b918217f0e8c58c6a6d035e970f44 Mon Sep 17 00:00:00 2001\nFrom: Zhang Rui <rui.zhang@intel.com>\nDate: Mon, 10 Sep 2018 11:48:54 +0800\nSubject: [PATCH] 200989\n\nSigned-off-by: Zhang Rui <rui.zhang@intel.com>\n---\n drivers/acpi/acpi_lpss.c | 2 ++\n 1 file changed, 2 insertions(+)\n\ndiff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c\nindex bf64cfa..776424f 100644\n--- a/drivers/acpi/acpi_lpss.c\n+++ b/drivers/acpi/acpi_lpss.c\n@@ -901,6 +901,8 @@ static void lpss_iosf_enter_d3_state(void)\n \n \tmutex_lock(&lpss_iosf_mutex);\n \n+\tlpss_iosf_d3_entered = false;\n+\n \tret = pmc_atom_read(PMC_D3_STS_0, &d3_sts_0);\n \tif (ret)\n \t\tgoto exit;\n-- \n2.7.4\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Other",
+  "Hardware": "Intel Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Zhang Rui",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2018-09-01 07:45 UTC by William Lieurance",
+  "Modified": "2018-09-14 05:02 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "4.17.12",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/acpi_lpss.c"
+  ],
+  "methods": [
+    "acpi_lpss_dismiss"
+  ]
+}

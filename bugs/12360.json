@@ -1,0 +1,38 @@
+{
+  "id": "12360",
+  "title": "with 2.6.28 undock/dock work bad or freeze computer - Dell D430",
+  "description": "Latest working kernel version:2.6.26.2\nEarliest failing kernel version:2.6.28\nDistribution:Debian SID\nHardware Environment: Dell D43\nSoftware Environment: only kernel\nProblem Description: after upgrade kernel and undocking kernel prints info about undock but after while docking  again.See atached dmesg. After this I lost keyboard and mouse. Sometime I get it back.\n\nSteps to reproduce:\ncompile 2.6.28 and undock",
+  "patch": [
+    "diff --git a/drivers/acpi/dock.c b/drivers/acpi/dock.c\nindex 5b30b8d..de397fd 100644\n--- a/drivers/acpi/dock.c\n+++ b/drivers/acpi/dock.c\n@@ -381,6 +381,7 @@ static void hotplug_dock_devices(struct dock_station *ds, u32 event)\n \n \tmutex_lock(&ds->hp_lock);\n \n+\tprintk(KERN_INFO \"DOCK: hotplug_dock_devices()\\n\");\n \t/*\n \t * First call driver specific hotplug functions\n \t */\n@@ -671,6 +672,8 @@ static int handle_eject_request(struct dock_station *ds, u32 event)\n \tif (dock_in_progress(ds))\n \t\treturn -EBUSY;\n \n+\tprintk(KERN_INFO \"DOCK: handle_eject_request\\n\");\n+\n \t/*\n \t * here we need to generate the undock\n \t * event prior to actually doing the undock\n@@ -727,9 +730,12 @@ static void dock_notify(acpi_handle handle, u32 event, void *data)\n \t */\n \tswitch (event) {\n \tcase ACPI_NOTIFY_BUS_CHECK:\n+\t\tprintk(KERN_INFO \"BUS_CHECK\\n\");\n \tcase ACPI_NOTIFY_DEVICE_CHECK:\n+\t\tprintk(KERN_INFO \"DEVICE_CHECK\\n\");\n \t\tif (!dock_in_progress(ds) && acpi_bus_get_device(ds->handle,\n \t\t   &tmp)) {\n+\t\t\tprintk(KERN_INFO \"DOCK: Started docking\\n\");\n \t\t\tbegin_dock(ds);\n \t\t\tdock(ds);\n \t\t\tif (!dock_present(ds)) {\n@@ -743,15 +749,18 @@ static void dock_notify(acpi_handle handle, u32 event, void *data)\n \t\t\tcomplete_dock(ds);\n \t\t\tdock_event(ds, event, DOCK_EVENT);\n \t\t\tdock_lock(ds, 1);\n+\t\t\tprintk(KERN_INFO \"DOCK: Completed docking\\n\");\n \t\t\tbreak;\n \t\t}\n \t\tif (dock_present(ds) || dock_in_progress(ds))\n \t\t\tbreak;\n \t\t/* This is a surprise removal */\n+\t\tprintk(KERN_INFO \"DOCK: Surprise removal\\n\");\n \t\tsurprise_removal = 1;\n \t\tevent = ACPI_NOTIFY_EJECT_REQUEST;\n \t\t/* Fall back */\n \tcase ACPI_NOTIFY_EJECT_REQUEST:\n+\t\tprintk(KERN_INFO \"DOCK: EJECT_REQUEST\\n\");\n \t\tbegin_undock(ds);\n \t\tif ((immediate_undock && !(ds->flags & DOCK_IS_ATA))\n \t\t   || surprise_removal)\n@@ -855,11 +864,15 @@ fdd_out:\n static ssize_t show_docked(struct device *dev,\n \t\t\t   struct device_attribute *attr, char *buf)\n {\n+\tstruct acpi_device *tmp;\n+\n \tstruct dock_station *dock_station = *((struct dock_station **)\n \t\tdev->platform_data);\n-\treturn snprintf(buf, PAGE_SIZE, \"%d\\n\", dock_present(dock_station));\n+\treturn snprintf(buf, PAGE_SIZE, \"%d\\n\",\n+\t\t\tacpi_bus_get_device(dock_station->handle, &tmp));\n \n }\n+\n static DEVICE_ATTR(docked, S_IRUGO, show_docked, NULL);\n \n /*\n",
+    "diff --git a/drivers/acpi/dock.c b/drivers/acpi/dock.c\nindex 5b30b8d..afd5db3 100644\n--- a/drivers/acpi/dock.c\n+++ b/drivers/acpi/dock.c\n@@ -855,10 +855,14 @@ fdd_out:\n static ssize_t show_docked(struct device *dev,\n \t\t\t   struct device_attribute *attr, char *buf)\n {\n+\tstruct acpi_device *tmp;\n+\n \tstruct dock_station *dock_station = *((struct dock_station **)\n \t\tdev->platform_data);\n-\treturn snprintf(buf, PAGE_SIZE, \"%d\\n\", dock_present(dock_station));\n \n+\tif (ACPI_SUCCESS(acpi_bus_get_device(dock_station->handle, &tmp)))\n+\t\treturn snprintf(buf, PAGE_SIZE, \"1\\n\");\n+\treturn snprintf(buf, PAGE_SIZE, \"0\\n\");\n }\n static DEVICE_ATTR(docked, S_IRUGO, show_docked, NULL);\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Config-Hotplug",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Shaohua",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-01-04 12:29 UTC by Daniel Smolik",
+  "Modified": "2009-02-21 09:25 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.28",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/dock.c"
+  ],
+  "methods": [
+    "hotplug_dock_devices",
+    "handle_eject_request",
+    "dock_notify",
+    "show_docked"
+  ]
+}

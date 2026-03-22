@@ -1,0 +1,109 @@
+{
+  "id": "60577",
+  "title": "WiFi doen't work on Intel WiMAX/WiFi Link 5150",
+  "kernel_version": "3.9.9",
+  "product": "Drivers",
+  "component": "network-wireless",
+  "hardware": "x86-64 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/wireless/iwlwifi/pcie/drv.c"
+    ],
+    "buggy_methods": [
+      "DEFINE_PCI_DEVICE_TABLE"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 2059,
+    "description_word_count": 287
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 0,
+    "patch_size": 1,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "DEFINE_PCI_DEVICE_TABLE"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/wireless/iwlwifi/pcie/drv.c",
+    "filename": "drv.c",
+    "directory": "drivers/net/wireless/iwlwifi/pcie",
+    "depth": 6,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/wireless",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:network-wireless"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "60577",
+      "version": "3.9.9",
+      "status": "found",
+      "path": "drivers/net/wireless/iwlwifi/pcie/drv.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "60577",
+    "title": "WiFi doen't work on Intel WiMAX/WiFi Link 5150",
+    "ground_truth_file": "drivers/net/wireless/iwlwifi/pcie/drv.c",
+    "ground_truth_subsystem": "drivers/net",
+    "ground_truth_methods": [
+      "DEFINE_PCI_DEVICE_TABLE"
+    ],
+    "product": "Drivers",
+    "component": "network-wireless",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "performance"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "component": "network-wireless",
+      "product": "Drivers",
+      "modules": [
+        "in"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

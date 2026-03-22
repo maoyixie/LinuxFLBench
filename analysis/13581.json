@@ -1,0 +1,115 @@
+{
+  "id": "13581",
+  "title": "ath9k doesn't work with newer kernels",
+  "kernel_version": "2.6.30",
+  "product": "Networking",
+  "component": "Wireless",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup",
+    "device_not_working",
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/x86/kernel/e820.c"
+    ],
+    "buggy_methods": [
+      "ram_alignment"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 3238,
+    "description_word_count": 366
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 2,
+    "patch_size": 4,
+    "patch_types": [
+      "memory"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "ram_alignment"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "arch/x86/kernel/e820.c",
+    "filename": "e820.c",
+    "directory": "arch/x86/kernel",
+    "depth": 4,
+    "top_level": "arch",
+    "second_level": "x86",
+    "arch": "x86",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Wireless",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13581",
+      "version": "2.6.30",
+      "status": "found",
+      "path": "arch/x86/kernel/e820.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "13581",
+    "title": "ath9k doesn't work with newer kernels",
+    "ground_truth_file": "arch/x86/kernel/e820.c",
+    "ground_truth_subsystem": "arch/x86",
+    "ground_truth_methods": [
+      "ram_alignment"
+    ],
+    "product": "Networking",
+    "component": "Wireless",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "hang/deadlock",
+      "performance"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "Wireless",
+      "product": "Networking",
+      "modules": [
+        "failed"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

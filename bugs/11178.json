@@ -1,0 +1,36 @@
+{
+  "id": "11178",
+  "title": "Secondary hard drive fails during both hibernation and resume.",
+  "": "Show dependency tree",
+  "description": "Latest working kernel version: 2.6.26\nEarliest failing kernel version: 2.6.27-rc1\nDistribution: Ubuntu Hardy (8.04)\nHardware Environment:Intel C2D.  Two hard drives.\nSoftware Environment:64 bit kernel & userspace.\nProblem Description:\n\nDuring hibernation I get errors on the second hard drive, including\n\nata3 revalidation failed errno=-5\n\nHibernation continues anyway (the swap partition is on the first hard drive).  I think these messages don't show up in dmesg afterwards because they happen too late in the hibernation process.\n\nI get much the same errors on resume as well, which do show up in dmesg.\n\nSteps to reproduce:\nBoot in \"rescue mode\" (didn't try init=/bin/bash) and use \"echo disk > /sys/power/state\"",
+  "patch": [
+    "diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c\nindex 15af618..b5224be 100644\n--- a/drivers/pci/msi.c\n+++ b/drivers/pci/msi.c\n@@ -299,9 +299,8 @@ static void __pci_restore_msi_state(struct pci_dev *dev)\n \t\t\t\t  entry->msi_attrib.masked);\n \n \tpci_read_config_word(dev, pos + PCI_MSI_FLAGS, &control);\n-\tcontrol &= ~(PCI_MSI_FLAGS_QSIZE | PCI_MSI_FLAGS_ENABLE);\n-\tif (entry->msi_attrib.maskbit || !entry->msi_attrib.masked)\n-\t\tcontrol |= PCI_MSI_FLAGS_ENABLE;\n+\tcontrol &= ~PCI_MSI_FLAGS_QSIZE;\n+\tcontrol |= PCI_MSI_FLAGS_ENABLE;\n \tpci_write_config_word(dev, pos + PCI_MSI_FLAGS, control);\n }\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "PCI",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_pci@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (3)": "11214 11232 11283",
+  "Depends on": "",
+  "Blocks": "7216 Regressions-2.6.26",
+  "Reported": "2008-07-30 04:53 UTC by Alan Jenkins",
+  "Modified": "2008-12-19 19:31 UTC",
+  "CC List": "9 users",
+  "See Also": "",
+  "Kernel Version": "2.6.27-rc1",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/pci/msi.c"
+  ],
+  "methods": [
+    "__pci_restore_msi_state"
+  ]
+}

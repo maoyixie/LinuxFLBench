@@ -1,0 +1,34 @@
+{
+  "id": "5151",
+  "title": "Driver Mouse - Toshiba touchpad after kernel 2.6.11",
+  "description": "Most recent kernel where this bug did not occur: 2.6.11\nDistribution: Debian 3.1\nHardware Environment: Toshiba satellite 2410\nSoftware Environment: KDE\nProblem Description:\n\nSince the kernel 2.6.12, i have a problem with my touchpad. In Kde, the menus\ndisappear. In thunderbird, if i go to my last message and that i use my\ntouchpad, it returns at the beginning.\n\nBut when i put these lines in comments, all is correct. But not the scroll.\n(Option         \"ZAxisMapping\"          \"4 5\")\n\nSection \"InputDevice\"\n        Identifier      \"Configured Mouse\"\n        Driver          \"mouse\"\n        Option          \"CorePointer\"\n        Option          \"Device\"                \"/dev/psaux\"\n        Option          \"Protocol\"              \"ImPS/2\"\n        #Option         \"ZAxisMapping\"          \"4 5\"\nEndSection\nSection \"InputDevice\"\n        Identifier      \"Generic Mouse\"\n        Driver          \"mouse\"\n        Option          \"SendCoreEvents\"        \"true\"\n        Option          \"Device\"                \"/dev/input/mice\"\n        Option          \"Protocol\"              \"ImPS/2\"\n        #Option         \"ZAxisMapping\"          \"4 5\"\nEndSection\n\nIn 2.6.11, it's ok.\n\nThanks,\n\nPatrick",
+  "patch": [
+    "ALPS: Fix scroll wheel reporting\n\nSigned-off-by: Dmitry Torokhov <dtor@mail.ru>\n---\n\n drivers/input/mouse/alps.c |    2 +-\n 1 files changed, 1 insertion(+), 1 deletion(-)\n\nIndex: linux-2.6.12/drivers/input/mouse/alps.c\n===================================================================\n--- linux-2.6.12.orig/drivers/input/mouse/alps.c\n+++ linux-2.6.12/drivers/input/mouse/alps.c\n@@ -169,7 +169,7 @@ static void alps_process_packet(struct p\n \tinput_report_abs(dev, ABS_PRESSURE, z);\n \tinput_report_key(dev, BTN_TOOL_FINGER, z > 0);\n \n-\tif (priv->i->flags & ALPS_WHEEL)\n+\tif ((priv->i->flags & ALPS_WHEEL) && (packet[0] & 0x70)\n \t\tinput_report_rel(dev, REL_WHEEL, ((packet[0] >> 4) & 0x07) | ((packet[2] >> 2) & 0x08));\n \n \tif (priv->i->flags & (ALPS_FW_BK_1 | ALPS_FW_BK_2)) {\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Input Devices",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 high",
+  "Assignee": "Dmitry Torokhov",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2005-08-29 18:32 UTC by Patrick",
+  "Modified": "2005-12-21 14:44 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.13",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/input/mouse/alps.c"
+  ],
+  "methods": [
+    "alps_process_packet"
+  ]
+}

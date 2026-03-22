@@ -1,0 +1,195 @@
+{
+  "id": "4351",
+  "title": "acpi_get_firmware_table return an invalid block of memory",
+  "kernel_version": "2.6.9",
+  "product": "ACPI",
+  "component": "BIOS",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "wrong_behavior",
+    "power/sleep",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/char/ipmi/ipmi_si_intf.c"
+    ],
+    "buggy_methods": [
+      "try_init_acpi"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "show_regs",
+      "init_ipmi_si",
+      "0xa000000000010640",
+      "die",
+      "ia64_ret_from_syscall",
+      "sys_init_module",
+      "show_stack",
+      "init_one_smi",
+      "ia64_leave_kernel",
+      "ia64_do_page_fault",
+      "Not"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "code should be returned by "
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 5772,
+    "description_word_count": 638
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 5,
+    "lines_removed": 0,
+    "patch_size": 5,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "try_init_acpi"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/char/ipmi/ipmi_si_intf.c",
+    "filename": "ipmi_si_intf.c",
+    "directory": "drivers/char/ipmi",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "char",
+    "driver_subsystem": "char/ipmi",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_11_functions",
+      "component_known:BIOS"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "4351",
+      "version": "2.6.9",
+      "status": "found",
+      "path": "drivers/char/ipmi/ipmi_si_intf.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "4351",
+    "version": "2.6.9",
+    "ground_truth_file": "drivers/char/ipmi/ipmi_si_intf.c",
+    "trace_functions": [
+      "init_one_smi",
+      "show_stack",
+      "show_regs",
+      "die",
+      "ia64_do_page_fault",
+      "ia64_leave_kernel",
+      "init_ipmi_si",
+      "sys_init_module",
+      "ia64_ret_from_syscall",
+      "Not"
+    ],
+    "total_trace_functions": 10,
+    "function_locations": {
+      "init_one_smi": [
+        "drivers/char/ipmi/ipmi_si_intf.c"
+      ],
+      "show_stack": [
+        "arch/m68knommu/kernel/traps.c",
+        "arch/s390/kernel/traps.c",
+        "arch/x86_64/kernel/traps.c",
+        "arch/alpha/kernel/traps.c",
+        "arch/m32r/kernel/traps.c",
+        "arch/um/kernel/sysrq.c",
+        "arch/h8300/kernel/traps.c",
+        "arch/sparc/kernel/process.c",
+        "arch/arm26/kernel/traps.c",
+        "arch/parisc/kernel/traps.c"
+      ],
+      "show_regs": [
+        "arch/h8300/kernel/process.c",
+        "arch/s390/kernel/traps.c",
+        "arch/um/sys-i386/sysrq.c",
+        "arch/um/sys-ppc/sysrq.c",
+        "arch/alpha/kernel/traps.c",
+        "arch/sh64/kernel/process.c",
+        "arch/sparc64/kernel/process.c",
+        "arch/i386/kernel/process.c",
+        "arch/x86_64/kernel/process.c",
+        "arch/cris/arch-v10/kernel/process.c"
+      ],
+      "die": [
+        "arch/ppc/kernel/traps.c",
+        "arch/s390/kernel/traps.c",
+        "arch/ia64/kernel/smp.c",
+        "arch/sh/mm/fault.c",
+        "arch/x86_64/kernel/traps.c",
+        "arch/m32r/mm/fault.c",
+        "arch/x86_64/boot/tools/build.c",
+        "arch/sh64/mm/fault.c",
+        "drivers/isdn/hisax/isdnl3.c",
+        "arch/m32r/kernel/traps.c"
+      ],
+      "ia64_do_page_fault": [],
+      "ia64_leave_kernel": [],
+      "init_ipmi_si": [
+        "drivers/char/ipmi/ipmi_si_intf.c"
+      ],
+      "sys_init_module": [],
+      "ia64_ret_from_syscall": [],
+      "Not": []
+    },
+    "gt_found_via_functions": [
+      "init_one_smi",
+      "init_ipmi_si"
+    ],
+    "other_candidate_files": [
+      "arch/h8300/kernel/process.c",
+      "arch/ppc/kernel/traps.c",
+      "arch/s390/kernel/traps.c",
+      "arch/m68knommu/kernel/traps.c",
+      "arch/ia64/kernel/smp.c",
+      "arch/um/sys-i386/sysrq.c",
+      "arch/sh/mm/fault.c",
+      "arch/x86_64/kernel/traps.c",
+      "arch/um/sys-ppc/sysrq.c",
+      "arch/alpha/kernel/traps.c",
+      "arch/m32r/mm/fault.c",
+      "arch/sh64/kernel/process.c",
+      "arch/x86_64/boot/tools/build.c",
+      "arch/sparc64/kernel/process.c",
+      "arch/i386/kernel/process.c",
+      "arch/sh64/mm/fault.c",
+      "drivers/isdn/hisax/isdnl3.c",
+      "arch/m32r/kernel/traps.c",
+      "arch/x86_64/kernel/process.c",
+      "arch/cris/arch-v10/kernel/process.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

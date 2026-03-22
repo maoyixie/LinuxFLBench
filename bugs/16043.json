@@ -1,0 +1,35 @@
+{
+  "id": "16043",
+  "title": "Resume w/USB remote working in 2.6.33.2, no longer in 2.6.33.10",
+  "": "Show dependency tree",
+  "description": "Using the latest Arch Linux kernel (2.6.33.10-1), the contents of /proc/acpi/wakeup are:\n\n[scott@blargh-htpc ~]$ cat /proc/acpi/wakeup\nDevice  S-state   Status   Sysfs node\nHUB0      S5     disabled  pci:0000:00:09.0\nXVR0      S5     disabled\nXVR1      S5     disabled\nXVR2      S5     disabled\nXVR3      S5     disabled\nXVR4      S5     disabled  pci:0000:00:16.0\nXVR5      S5     disabled\nXVR6      S5     disabled\nUAR1      S5     disabled  pnp:00:08\nUSB0      S4     enabled   pci:0000:00:04.0\nUSB1      S4     disabled  pci:0000:00:06.0\nUSBB      S3     disabled  pci:0000:00:06.1\nUSB2      S3     disabled  pci:0000:00:04.1\nAZAD      S5     disabled  pci:0000:00:08.0\nMMAC      S5     disabled  pci:0000:00:0a.0\n\n[scott@blargh-htpc pkg]$ uname -a\nLinux blargh-htpc 2.6.33-ARCH #1 SMP PREEMPT Thu May 13 11:32:37 CEST 2010 x86_64 Intel(R) Core(TM)2 Duo CPU E8400 @ 3.00GHz GenuineIntel GNU/Linu\nx\n\nThe machine will suspend to RAM correctly, but will no longer be resumed by a USB remote power-on event.  Instead, the power button on the machine must be pressed.  It then resumes correctly.\n\nThis behavior was not present in the previous kernel I was running: 2.6.33.2-1.  In that case, the machine powered back on correctly when the USB remote's power button was pressed.  There was an intermediate kernel release (2.6.33.4-1) that I have not tried, but certainly can do so if that might help determine where the regression was introduced.\n\nAdditionally if there's more information I can provide about the system and my setup, please let me know what is required.",
+  "patch": [
+    "Index: 2.6.33.5/drivers/usb/core/driver.c\n===================================================================\n--- 2.6.33.5.orig/drivers/usb/core/driver.c\n+++ 2.6.33.5/drivers/usb/core/driver.c\n@@ -1790,9 +1790,6 @@ int usb_external_resume_device(struct us\n \n static void choose_wakeup(struct usb_device *udev, pm_message_t msg)\n {\n-\tint\t\t\tw, i;\n-\tstruct usb_interface\t*intf;\n-\n \t/* Remote wakeup is needed only when we actually go to sleep.\n \t * For things like FREEZE and QUIESCE, if the device is already\n \t * autosuspended then its current wakeup setting is okay.\n@@ -1802,18 +1799,10 @@ static void choose_wakeup(struct usb_dev\n \t\treturn;\n \t}\n \n-\t/* If remote wakeup is permitted, see whether any interface drivers\n+\t/* Allow remote wakeup if it is enabled, even if no interface drivers\n \t * actually want it.\n \t */\n-\tw = 0;\n-\tif (device_may_wakeup(&udev->dev) && udev->actconfig) {\n-\t\tfor (i = 0; i < udev->actconfig->desc.bNumInterfaces; i++) {\n-\t\t\tintf = udev->actconfig->interface[i];\n-\t\t\tw |= intf->needs_remote_wakeup;\n-\t\t}\n-\t}\n-\n-\tudev->do_remote_wakeup = w;\n+\tudev->do_remote_wakeup = device_may_wakeup(&udev->dev);\n }\n \n int usb_suspend(struct device *dev, pm_message_t msg)\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "USB",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Alan Stern",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "7216 56331",
+  "Reported": "2010-05-25 03:51 UTC by Scott Sturdivant",
+  "Modified": "2013-04-09 06:23 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.33.5",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/usb/core/driver.c"
+  ],
+  "methods": [
+    "choose_wakeup"
+  ]
+}

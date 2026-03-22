@@ -1,0 +1,106 @@
+{
+  "id": "196375",
+  "title": "MTX load commands fail",
+  "kernel_version": "4.12",
+  "product": "Tools",
+  "component": "Other",
+  "hardware": "Intel Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/scsi/sg.c"
+    ],
+    "buggy_methods": [
+      "sg_is_valid_dxfer",
+      "sg_common_write"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "Code=0 (Unknown?!)"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1068,
+    "description_word_count": 173
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 30,
+    "patch_size": 31,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "synchronization"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "sg_common_write",
+      "sg_new_write"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/scsi/sg.c",
+    "filename": "sg.c",
+    "directory": "drivers/scsi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "scsi",
+    "driver_subsystem": "scsi/sg.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [],
+    "strategies": []
+  },
+  "source_verification": [
+    {
+      "id": "196375",
+      "version": "4.12",
+      "status": "found",
+      "path": "drivers/scsi/sg.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "196375",
+    "title": "MTX load commands fail",
+    "ground_truth_file": "drivers/scsi/sg.c",
+    "ground_truth_subsystem": "drivers/scsi",
+    "ground_truth_methods": [
+      "sg_is_valid_dxfer",
+      "sg_common_write"
+    ],
+    "product": "Tools",
+    "component": "Other",
+    "best_strategy": "semantic_understanding_only",
+    "symptom_categories": [
+      "wrong_output"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "minimal_clues"
+    ],
+    "clue_details": {
+      "product": "Tools"
+    }
+  },
+  "overall_category": "E_semantic_understanding_only"
+}

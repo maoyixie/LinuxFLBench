@@ -1,0 +1,34 @@
+{
+  "id": "11391",
+  "title": "Kernel NULL pointer dereference in do_notify_parent()",
+  "description": "Latest working kernel version: 2.6.26.3\n\nEarliest failing kernel version: 2.6.25.4 (didn't test with former kernels)\n\nDistribution: CentOS 5.1 (with Vanilla kernel from kernel.org)\n\nHardware Environment: several x86_64 plattforms (AMD Opteron, Intel Xeon)\n\nProblem Description:\n-------------------------------------\nBUG: unable to handle kernel NULL pointer dereference at virtual address 0000000000000020\nIP: [<ffffffff8023d5d0>] do_notify_parent+0x66/0x194\nPGD 0\nOops: 0000 [1] SMP\nCPU 1\nModules linked in: ipv6 autofs4 hidp rfcomm l2cap bluetooth sunrpc dm_mirror dm_\nlog dm_multipath dm_mod video output sbs sbshc battery acpi_memhotplug ac lp sg\nfloppy button tg3 serio_raw parport_pc parport k8temp hwmon i2c_amd756 i2c_amd81\n11 i2c_core amd_rng shpchp pcspkr usb_storage 3w_9xxx sata_sil libata sd_mod scs\ni_mod raid456 async_xor async_memcpy async_tx xor ext3 jbd ehci_hcd ohci_hcd uhc\ni_hcd\nPid: 3800, comm: sshd Not tainted 2.6.26.3 #1\nRIP: 0010 [<ffffffff8023d5d0>]  [<ffffffff8023d5d0>] do_notify_parent+0x66/0x194\nRSP: 0018:ffff8101fd943c78  EFLAGS: 00010046\nRAX: 0000000000000000 RBX: ffff8101fe08f2f0 RCX: ffff8101fd956870\nRDX: ffff8101fe08f4c0 RSI: 0000000000000011 RDI: ffff8101fe08f2f0\nRBP: 0000000000000000 R08: 0000000000000009 R09: 0000000000000009\nR10: 0000000000000002 R11: ffffffff802f1c0e R12: 0000000000000011\nR13: ffff8101fe4e00c0 R14: 0000000000000000 R15: 0000000000000001\nFS:  00007fce4b4b2710(0000) GS:ffff8101ff08c8c0(0000) knlGS:0000000000000000\nCS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b\nCR2: 0000000000000020 CR3: 0000000000201000 CR4: 00000000000006e0\nDR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000\nDR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400\nProcess sshd (pid: 3800, threadinfo ffff8101fd942000, task ffff8101fe4e00d0)\nStack:  0000000000000011 ffff8101fec76630 ffff8101fe0e1180 ffffffff8029d597\n 0000000000000008 ffff8101fe0e1180 ffff8101fe7e87c0 ffffffff802a1915\n ffff8101fd856c40 ffff8101fe0e1180 ffff8101fd856c40 0000000000000000\nCall Trace:\n[<ffffffff8029d597>] dput+0x26/0xe7\n[<ffffffff802a1915>] mntput_no_expire+0x20/0x119\n[<ffffffff8028b557>] filp_close+0x5d/0x65\n[<ffffffff80233cd1>] reparent_thread+0x139/0x14d\n[<ffffffff802350ba>] do_exit+0x39a/0x68c\n[<ffffffff80235412>] do_group_exit+0x66/0x96\n[<ffffffff8023d4f7>] get_signal_to_deliver+0x2ea/0x305\n[<ffffffff8020b166>] do_notify_resume+0xaf/0x7de\n[<ffffffff802435de>] autoremove_wake_function+0x0/0x2e\n[<ffffffff80236198>] current_fd_time+0x1e/0x24\n[<ffffffff8036dfdb>] tty_ldisc_deref+0x62/0x75\n[<ffffffff8025bdfe>] autit_syscall_exit+0x2e4/0x303\n[<ffffffff8020bf8c>] int_signal+x012/0x17\n\nCode: 00 48 39 87 30 02 00 00 74 04 0f 0b eb fe 44 89 24 24 c7 44 24 04 00 00 00\n 00 48 8b 83 b8 01 00 00 48 89 df 48 8b 80 98 04 00 00 <48> 8b 70 20 e8 57 39 00\n 00 48 8b 93 a0 04 00 00 89 44 24 10 8b\nRIP  [<ffffffff8023d5c9>] do_notify_parent+0x66/0x194\n RSP <ffff8101f7535c78>\nCR2: 0000000000000020\n---[ end trace 8df15d3ad47033c0 ]---\nFixing recursive fault but reboot is needed!\n-------------------------------------\n\nProblem happens with PID namespaces enabled. After killing the child reaper of a new namespace with SIGKILL, the kernel crashes. I did some debugging and as far as I could see, the NULL pointer dereference happens on this line:\n\ninfo.si_pid = task_pid_nr_ns(tsk, tsk->parent->nsproxy->pid_ns);\n\nI did a BUG_ON(!tsk->parent->nsproxy) one line above and got an appropriate message before the kernel crashed.\n\nSoftware Environment:\n(test program attached)\n\nSteps to reproduce:\n\nCompile the attached test program with \"gcc -o ns_exec ns_exec.c -lpthread\". After being started, it will create a new PID namespace, mount a proc filesystem herein, create a new thread and fork() into an SSHd.\nLogin via SSH (the port of the started SSHd is hardcoded in the test program, so you'll have to modify it appropriately if you wish to do so ;-) ). Do a \"kill -9 1\". On my machines, the kernel crashed in over 90% of all tests.",
+  "patch": [
+    "--- x/kernel/nsproxy.c~\t2008-07-27 17:28:21.000000000 +0400\n+++ x/kernel/nsproxy.c\t2008-08-21 21:17:43.000000000 +0400\n@@ -225,7 +225,8 @@ void switch_task_namespaces(struct task_\n \n \tns = p->nsproxy;\n \n-\trcu_assign_pointer(p->nsproxy, new);\n+\tif (new)\n+\t\trcu_assign_pointer(p->nsproxy, new);\n \n \tif (ns && atomic_dec_and_test(&ns->count)) {\n \t\t/*\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Process Management",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "process_other",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-08-21 05:58 UTC by Robert Rex",
+  "Modified": "2008-09-02 23:39 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.26",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "kernel/nsproxy.c"
+  ],
+  "methods": [
+    "switch_task_namespaces"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "id": "7527",
+  "title": "isicom segmentation fault",
+  "description": "Most recent kernel where this bug did *NOT* occur:\nDistribution: Redhat EL 4\nHardware Environment: Intel x86\nSoftware Environment:\nProblem Description: Unable to access Modem\n\nSteps to reproduce:\n\n[root@dialin-0 ~]# setserial -g /dev/ttyM0\nSegmentation fault\n[root@dialin-0 ~]#\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel: Oops: 0000 [#1]\n\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel: SMP\n\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel: CPU:    0\n\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel: EIP is at isicom_close+0x12/0x1ab [isicom]\n\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel: eax: f5f14000   ebx: 00000000   ecx: f8922cf0   edx: f7f7fa40\n\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel: esi: 00000000   edi: 00000000   ebp: f5f14000   esp: f5fc7e08\n\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel: ds: 007b   es: 007b   ss: 0068\n\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel: Process setserial (pid: 4258, ti=f5fc7000 task=f665ad30\ntask.ti=f5fc7000)\n\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel: Stack: f8922cf0 f7f7fa40 f5f14000 00000000 00000000 00000000\nc020c208 00000000\n\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel:        00000000 000200d0 00000002 00000000 f7f7fa40 c033f600\n000000d0 c034c5e0\n\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel:        00000003 c034c5d0 00000000 00000001 f5fc7e7c c0117e96\n00000000 00000000\n\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel: Call Trace:\n\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel: Code: 89 4d 06 89 c2 89 d8 59 5b 5b 5e 5f 5d e9 79 4e 9b c7 5f\n5d 5b 5e 5f 5d c3 55 89 c5 57 56 53 51 51 89 54 24 04 8b 98 c0 01 00 00 <8b> 43\n1c 85 db 89 04 24 0f 84 84 01 00 00 89 c6 83 c6 14 89 f0\n\nMessage from syslogd@dialin-0 at Tue Nov 14 14:41:38 2006 ...\ndialin-0 kernel: EIP: [<f8922d02>] isicom_close+0x12/0x1ab [isicom] SS:ESP\n0068:f5fc7e08\n\nDMESG:\n\nBUG: unable to handle kernel NULL pointer dereference at virtual address 0000001c\n printing eip:\nf8922d02\n*pde = 35f5c001\nOops: 0000 [#1]\nSMP\nModules linked in: ipv6 autofs4 sunrpc ipt_REJECT xt_tcpudp xt_state\nip_conntrack iptable_filter ip_tables x_tables dm_mirror dm_mod button battery\nasus_acpi ac uhci_hcd ehci_hcd isicom shpchp i2c_i801 i2c_core e1000 floppy ext3\njbd raid1 ata_piix libata sd_mod scsi_mod\nCPU:    0\nEIP:    0060:[<f8922d02>]    Not tainted VLI\nEFLAGS: 00010286   (2.6.18.2 #1)\nEIP is at isicom_close+0x12/0x1ab [isicom]\neax: f5f14000   ebx: 00000000   ecx: f8922cf0   edx: f7f7fa40\nesi: 00000000   edi: 00000000   ebp: f5f14000   esp: f5fc7e08\nds: 007b   es: 007b   ss: 0068\nProcess setserial (pid: 4258, ti=f5fc7000 task=f665ad30 task.ti=f5fc7000)\nStack: f8922cf0 f7f7fa40 f5f14000 00000000 00000000 00000000 c020c208 00000000\n       00000000 000200d0 00000002 00000000 f7f7fa40 c033f600 000000d0 c034c5e0\n       00000003 c034c5d0 00000000 00000001 f5fc7e7c c0117e96 00000000 00000000\nCall Trace:\n [<f8922cf0>] isicom_close+0x0/0x1ab [isicom]\n [<c020c208>] release_dev+0x19b/0x5d4\n [<c0117e96>] __wake_up+0x29/0x3c\n [<c020ac44>] tty_ldisc_enable+0x20/0x22\n [<c020bda0>] init_dev+0x370/0x483\n [<c020c7ef>] tty_open+0x1ae/0x2bb\n [<c01621fb>] chrdev_open+0x12f/0x14c\n [<c01620cc>] chrdev_open+0x0/0x14c\n [<c0159b98>] __dentry_open+0xc6/0x19e\n [<c0159d2a>] nameidata_to_filp+0x19/0x28\n [<c0159c9b>] do_filp_open+0x2b/0x31\n [<c01ca096>] strncpy_from_user+0x3c/0x5b\n [<c0159f03>] do_sys_open+0x3c/0xaf\n [<c0159f8c>] sys_open+0x16/0x18\n [<c0103235>] sysenter_past_esp+0x56/0x79\nCode: 89 4d 06 89 c2 89 d8 59 5b 5b 5e 5f 5d e9 79 4e 9b c7 5f 5d 5b 5e 5f 5d c3\n55 89 c5 57 56 53 51 51 89 54 24 04 8b 98 c0 01 00 00 <8b> 43 1c 85 db 89 04 24\n0f 84 84 01 00 00 89 c6 83 c6 14 89 f0\nEIP: [<f8922d02>] isicom_close+0x12/0x1ab [isicom] SS:ESP 0068:f5fc7e08",
+  "patch": [
+    "diff --git a/drivers/char/isicom.c b/drivers/char/isicom.c\nindex 18a3a40..dcd3ead 100644\n--- a/drivers/char/isicom.c\n+++ b/drivers/char/isicom.c\n@@ -1044,11 +1044,12 @@ static void isicom_shutdown_port(struct \n static void isicom_close(struct tty_struct *tty, struct file *filp)\n {\n \tstruct isi_port *port = tty->driver_data;\n-\tstruct isi_board *card = port->card;\n+\tstruct isi_board *card;\n \tunsigned long flags;\n \n \tif (!port)\n \t\treturn;\n+\tcard = port->card;\n \tif (isicom_paranoia_check(port, tty->name, \"isicom_close\"))\n \t\treturn;\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Serial",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Jiri Slaby",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-11-14 14:47 UTC by Eric",
+  "Modified": "2006-11-19 08:02 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.18",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/char/isicom.c"
+  ],
+  "methods": [
+    "isicom_close"
+  ]
+}

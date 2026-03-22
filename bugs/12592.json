@@ -1,0 +1,34 @@
+{
+  "id": "12592",
+  "title": "fw_card_add adds card to the list even on enable failure",
+  "description": "Latest working kernel version:  never\nEarliest failing kernel version:  always\nDistribution:  Debian\nHardware Environment:  Two \"FireWire (IEEE 1394): Texas Instruments TSB43AB23 IEEE-1394a-2000 Controller (PHY/Link)\" devices in one box, with on-board device ill...\nSoftware Environment:  New FW stack\nProblem Description:\n\nWhen Vista boots on the hardware, it does something bad to the on-board firewire adapter, so it starts failing to enable card:\n\nfirewire_ohci 0000:01:09.0: PCI INT A -> Link[APC4] -> GSI 19 (level, low) -> IRQ 19\nfirewire_ohci 0000:01:09.0: setting latency timer to 64\nfirewire_ohci: failed to set phy reg bits.\nfirewire_ohci 0000:01:09.0: PCI INT A disabled\nfirewire_ohci: probe of 0000:01:09.0 failed with error -5\n\nWhen that happens, fw_add_card adds card to the list of all devices, but then returns an error.  Caller then thinks that things went wrong, and releases card structure.  Then when fw_add_card is invoked for second device, kernel reports linked list corruption, as first (released) card is still in the list...\n\nSteps to reproduce:\n\nGet box with one broken and one working card, and try loading firewire-ohci module.",
+  "patch": [
+    "From Petr Vandrovec <petr@vandrovec.name>\n\nRemove card from list of cards when enable fails.\n\nSigned-off-by: Petr Vandrovec <petr@vandrovec.name>\n\ndiff --git a/drivers/firewire/fw-card.c b/drivers/firewire/fw-card.c\nindex 7be2cf3..a5dd7a6 100644\n--- a/drivers/firewire/fw-card.c\n+++ b/drivers/firewire/fw-card.c\n@@ -412,6 +412,7 @@ fw_card_add(struct fw_card *card,\n {\n \tu32 *config_rom;\n \tsize_t length;\n+\tint err;\n \n \tcard->max_receive = max_receive;\n \tcard->link_speed = link_speed;\n@@ -422,7 +423,13 @@ fw_card_add(struct fw_card *card,\n \tlist_add_tail(&card->link, &card_list);\n \tmutex_unlock(&card_mutex);\n \n-\treturn card->driver->enable(card, config_rom, length);\n+\terr = card->driver->enable(card, config_rom, length);\n+\tif (err < 0) {\n+\t\tmutex_lock(&card_mutex);\n+\t\tlist_del(&card->link);\n+\t\tmutex_unlock(&card_mutex);\n+\t}\n+\treturn err;\n }\n EXPORT_SYMBOL(fw_card_add);\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "IEEE1394",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Stefan Richter",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-02-01 01:26 UTC by Petr Vandrovec",
+  "Modified": "2009-02-09 14:36 UTC",
+  "CC List": "0 users",
+  "See Also": "",
+  "Kernel Version": "2.6.29-rc3",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/firewire/fw-card.c"
+  ],
+  "methods": [
+    "fw_card_add"
+  ]
+}

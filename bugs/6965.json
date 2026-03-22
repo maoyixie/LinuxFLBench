@@ -1,0 +1,34 @@
+{
+  "id": "6965",
+  "title": "Kernel doesn't re-sync usb-raid1 after running mdadm --add",
+  "description": "Most recent kernel where this bug did not occur: 2.6.18-rc2\nDistribution: Slackintosh-Current\nHardware Environment:\n\nMac-Mini (ppc) : Internal Harddisk (rootfs) mirrored to an external\nUSB2 Harddrive\n\nProblem Description:\n\nThe internal harddrive of my MacMini is mirrored to an external\nUSB2-Harddrive via md-raid1.\n\nBecause the kernel doesn't attach the usb-device (sda2) to my\nraid (md0) itself (after a reboot) i'm using something like this in my\n/etc/rc.d/rc.local:\n\n> #!/bin/sh\n> postfix start  (<-- note: postfix ist started before attaching sda2)\n> /sbin/mdadm --manage /dev/md0 --add /dev/sda2\n\nThis worked well with kernels below 2.6.18-rc2 :\nA full sync from hda3 -> sda2 was started after each reboot.\n\nBeginning with 2.6.18-rc2 the kernel didn't sync\nthe drive after attaching it: It was added to the raid without\na full resync.\n\nAccording to 'iostat' the kernel does write to both devices\n*after* mdadm attached the harddrive but it seems like everything\nwritten to md0 before attaching sda2 will never make it to sda2 :-( :\n\nExample:\n--------\nmdadm --manage /dev/md0 -f /dev/hda3\nmdadm --manage /dev/md0 -r /dev/hda3 #sda2 is now the only active disk of md0\nmount /dev/hda3 /mnt/bla\n# cat /var/spool/postfix/pid/master.pid \n             649\n# cat /mnt/bla/var/spool/postfix/pid/master.pid\n             413 <-- ouch!",
+  "patch": [
+    "Status: ok\n\nAvoid backward event updates in md superblock when degraded.\n\nIf we\n  - shut down a clean array,\n  - restart with one (or more) drive(s) missing\n  - make some changes\n  - pause, so that they array gets marked 'clean',\nthe event count on the superblock of included drives\nwill be the same as that of the removed drives.\nSo adding the removed drive back in will cause it\nto be included with no resync.\n\nTo avoid this, we only update the eventcount backwards when the array\nis not degraded.  In this case there can (should) be no non-connected\ndrives that we can get confused with, and this is the particular case\nwhere updating-backwards is valuable.\n\n\nSigned-off-by: Neil Brown <neilb@suse.de>\n\n### Diffstat output\n ./drivers/md/md.c |   13 +++++++++++++\n 1 file changed, 13 insertions(+)\n\ndiff .prev/drivers/md/md.c ./drivers/md/md.c\n--- .prev/drivers/md/md.c\t2006-08-08 09:00:44.000000000 +1000\n+++ ./drivers/md/md.c\t2006-08-08 09:04:04.000000000 +1000\n@@ -1597,6 +1597,19 @@ void md_update_sb(mddev_t * mddev)\n \n repeat:\n \tspin_lock_irq(&mddev->write_lock);\n+\n+\tif (mddev->degraded && mddev->sb_dirty == 3)\n+\t\t/* If the array is degraded, then skipping spares is both\n+\t\t * dangerous and fairly pointless.\n+\t\t * Dangerous because a device that was removed from the array\n+\t\t * might have a event_count that still looks up-to-date,\n+\t\t * so it can be re-added without a resync.\n+\t\t * Pointless because if there are any spares to skip,\n+\t\t * then a recovery will happen and soon that array won't\n+\t\t * be degraded any more and the spare can go back to sleep then.\n+\t\t */\n+\t\tmddev->sb_dirty = 1;\n+\n \tsync_req = mddev->in_sync;\n \tmddev->utime = get_seconds();\n \tif (mddev->sb_dirty == 3)\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "IO/Storage",
+  "Classification": "Unclassified",
+  "Component": "MD",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Neil Brown",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-08-06 01:18 UTC by Adrian Ulrich",
+  "Modified": "2008-03-26 23:15 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.18-rc3",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/md/md.c"
+  ],
+  "methods": [
+    "md_update_sb"
+  ]
+}

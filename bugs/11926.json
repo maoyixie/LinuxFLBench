@@ -1,0 +1,37 @@
+{
+  "id": "11926",
+  "title": "[PATCH]sis190 doesn't detect ethernet cable removal (Realtek PHY)",
+  "description": "Latest working kernel version: unknown\nEarliest failing kernel version: tested with 2.6.27.2 (vanilla), it fails, also other version tested was now old 2.6.24, same issue\nDistribution: Mandriva\nHardware Environment: Clevo M540SS\nSoftware Environment:\n\nProblem Description:\nFor the sis190 I have here it doesn't report link change inside interrupt handler after removing ethernet cable. This makes ethernet cable detection to not work correctly. Network works fine, if you don't remove ethernet cable after first connection, keep it removed for some time, and reconnect.\n\nSteps to reproduce:\n- Remove ethernet cable (after booting with it plugged, or after plugging it after boot). Driver doesn't detect link change.\n\nThis is shown on kernel log after sis190 module is loaded with cable connected:\nsis190 Gigabit Ethernet driver 1.2 loaded.\nsis190 0000:00:04.0: PCI INT A -> GSI 19 (level, low) -> IRQ 19\nsis190 0000:00:04.0: setting latency timer to 64\n0000:00:04.0: Read MAC address from EEPROM\n0000:00:04.0: Realtek PHY RTL8201 transceiver at address 1.\n0000:00:04.0: Using transceiver at address 1 as default.\n0000:00:04.0: SiS 191 PCI Gigabit Ethernet adapter at f8c14000 (IRQ: 19), 00:90:f5:69:e8:8b\neth0: GMII mode.\neth0: Enabling Auto-negotiation.\nADDRCONF(NETDEV_UP): eth0: link is not ready\neth0: mii ext = 0000.\neth0: mii lpa = 40a1 adv = 01e1.\neth0: link on 100 Mbps Half Duplex mode.\nADDRCONF(NETDEV_CHANGE): eth0: link becomes ready\neth0: no IPv6 routers present",
+  "patch": [
+    "---\n drivers/net/sis190.c |   23 ++++++++++++++++++-----\n 1 file changed, 18 insertions(+), 5 deletions(-)\n\ndiff --git a/drivers/net/sis190.c b/drivers/net/sis190.c\nindex 80af4a4..760d9e8 100644\n--- a/drivers/net/sis190.c\n+++ b/drivers/net/sis190.c\n@@ -285,6 +285,11 @@ struct sis190_private {\n \tstruct list_head first_phy;\n \tu32 features;\n \tu32 negotiated_lpa;\n+\tenum {\n+\t\tLNK_OFF,\n+\t\tLNK_ON,\n+\t\tLNK_AUTONEG,\n+\t} link_status;\n };\n \n struct sis190_phy {\n@@ -750,6 +755,7 @@ static irqreturn_t sis190_interrupt(int irq, void *__dev)\n \n \tif (status & LinkChange) {\n \t\tnetif_info(tp, intr, dev, \"link change\\n\");\n+\t\tdel_timer(&tp->timer);\n \t\tschedule_work(&tp->phy_task);\n \t}\n \n@@ -922,12 +928,15 @@ static void sis190_phy_task(struct work_struct *work)\n \tif (val & BMCR_RESET) {\n \t\t// FIXME: needlessly high ?  -- FR 02/07/2005\n \t\tmod_timer(&tp->timer, jiffies + HZ/10);\n-\t} else if (!(mdio_read_latched(ioaddr, phy_id, MII_BMSR) &\n-\t\t     BMSR_ANEGCOMPLETE)) {\n+\t\tgoto out_unlock;\n+\t}\n+\n+\tval = mdio_read_latched(ioaddr, phy_id, MII_BMSR);\n+\tif (!(val & BMSR_ANEGCOMPLETE) && tp->link_status != LNK_AUTONEG) {\n \t\tnetif_carrier_off(dev);\n \t\tnetif_warn(tp, link, dev, \"auto-negotiating...\\n\");\n-\t\tmod_timer(&tp->timer, jiffies + SIS190_PHY_TIMEOUT);\n-\t} else {\n+\t\ttp->link_status = LNK_AUTONEG;\n+\t} else if ((val & BMSR_LSTATUS) && tp->link_status != LNK_ON) {\n \t\t/* Rejoice ! */\n \t\tstruct {\n \t\t\tint val;\n@@ -1000,7 +1009,10 @@ static void sis190_phy_task(struct work_struct *work)\n \n \t\tnetif_info(tp, link, dev, \"link on %s mode\\n\", p->msg);\n \t\tnetif_carrier_on(dev);\n-\t}\n+\t\ttp->link_status = LNK_ON;\n+\t} else if (!(val & BMSR_LSTATUS) && tp->link_status != LNK_AUTONEG)\n+\t\ttp->link_status = LNK_OFF;\n+\tmod_timer(&tp->timer, jiffies + SIS190_PHY_TIMEOUT);\n \n out_unlock:\n \trtnl_unlock();\n@@ -1513,6 +1525,7 @@ static struct net_device * __devinit sis190_init_board(struct pci_dev *pdev)\n \n \ttp->pci_dev = pdev;\n \ttp->mmio_addr = ioaddr;\n+\ttp->link_status = LNK_OFF;\n \n \tsis190_irq_mask_and_ack(ioaddr);\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Network",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_network@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-10-31 14:37 UTC by Herton Ronaldo Krzesinski",
+  "Modified": "2012-05-22 15:09 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.30.1",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/sis190.c"
+  ],
+  "methods": [
+    "sis190_interrupt",
+    "sis190_phy_task",
+    "sis190_init_board",
+    "sis190_private"
+  ]
+}

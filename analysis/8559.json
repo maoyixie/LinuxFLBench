@@ -1,0 +1,128 @@
+{
+  "id": "8559",
+  "title": "no smartbattery status on Laptop",
+  "kernel_version": "2.6.20",
+  "product": "ACPI",
+  "component": "Power-Battery",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/sbs.c"
+    ],
+    "buggy_methods": [
+      "acpi_sbsm_get_info",
+      "acpi_sbs_add",
+      "acpi_sbs",
+      "acpi_sbs_driver"
+    ],
+    "num_methods": 4
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/acpi/battery"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1489,
+    "description_word_count": 224
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 7,
+    "lines_removed": 26,
+    "patch_size": 33,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "synchronization"
+    ],
+    "num_hunks": 7,
+    "hunk_functions": [
+      "acpi_sbsm_get_info",
+      "acpi_sbs_add",
+      "acpi_sbs_resume"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/sbs.c",
+    "filename": "sbs.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/sbs.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Power-Battery"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "8559",
+      "version": "2.6.20",
+      "status": "found",
+      "path": "drivers/acpi/sbs.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "8559",
+    "title": "no smartbattery status on Laptop",
+    "ground_truth_file": "drivers/acpi/sbs.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "acpi_sbsm_get_info",
+      "acpi_sbs_add",
+      "acpi_sbs",
+      "acpi_sbs_driver"
+    ],
+    "product": "ACPI",
+    "component": "Power-Battery",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "locking_fix"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "driver_module_named",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/proc/acpi/battery"
+      ],
+      "component": "Power-Battery",
+      "product": "ACPI",
+      "modules": [
+        "loads"
+      ]
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

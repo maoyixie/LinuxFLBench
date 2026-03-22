@@ -1,0 +1,116 @@
+{
+  "id": "195651",
+  "title": "Boot EC - Asus BIOS contain broken DSDT EC but working ECDT EC",
+  "kernel_version": "4.11",
+  "product": "ACPI",
+  "component": "EC",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "device_not_working",
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/ec.c"
+    ],
+    "buggy_methods": [
+      "ec_parse_device"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": true,
+    "description_length": 2261,
+    "description_word_count": 352
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 50,
+    "lines_removed": 5,
+    "patch_size": 55,
+    "new_functions": [
+      "acpi_ec_config_preference",
+      "acpi_ec_add"
+    ],
+    "patch_types": [
+      "quirk/device_table",
+      "new_function",
+      "logic_change",
+      "error_handling",
+      "init_fix",
+      "memory"
+    ],
+    "num_hunks": 8,
+    "hunk_functions": [
+      "acpi_is_boot_ec",
+      "module_param",
+      "ec_parse_device",
+      "acpi_ec_dsdt_probe",
+      "acpi_ec_add"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/ec.c",
+    "filename": "ec.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/ec.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:EC",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "195651",
+      "version": "4.11",
+      "status": "found",
+      "path": "drivers/acpi/ec.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "195651",
+    "title": "Boot EC - Asus BIOS contain broken DSDT EC but working ECDT EC",
+    "product": "ACPI",
+    "component": "EC",
+    "buggy_file": [
+      "drivers/acpi/ec.c"
+    ],
+    "fix_type": "dmi_quirk_addition",
+    "table_entry_lines_added": 2,
+    "description_clues": [
+      "hardware_model_mentioned",
+      "dmi_info_in_description"
+    ],
+    "patch_size": 55,
+    "potential_strategies": [
+      "search_dmi_tables_in_drivers",
+      "search_for_model_specific_quirks",
+      "narrow_by_component:EC"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

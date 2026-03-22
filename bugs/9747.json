@@ -1,0 +1,35 @@
+{
+  "id": "9747",
+  "title": "Oops on boot from laptop mode writing to /proc/acpi/processor/CPU0/throttling",
+  "": "Show dependency tree",
+  "description": "Latest working kernel version: Unsure.  Later than 2.6.24-rc2\nEarliest failing kernel version: 2.6.24-rc6 (possibly earlier)\nDistribution: Debian\nHardware Environment: Toshiba Portege r500\nSoftware Environment:\nProblem Description:\n\nWhen I boot laptop-mode fires up and tries to write to /proc/acpi/processor/CPU0/throttling which contains <not supported>\n\nI don't quite know what I've done to get it to contain <not supported> but anyway that'll be more fun to track down I'm sure.\n\nIn any case, in this configuration I get this oops even if all I do is\necho stuff >/proc/acpi/processor/CPU0/throttling\n\n[   32.378673] Unable to handle kernel NULL pointer dereference at 0000000000000\n000 RIP: \n[   32.378761]  [<0000000000000000>] _stext+0x7fdf7000/0x1a\n[   32.378965] PGD 37bb3067 PUD 37b2a067 PMD 0 \n[   32.379182] Oops: 0010 [1] SMP \n[   32.379350] CPU 0 \n[   32.379466] Modules linked in: rfcomm l2cap bluetooth acpi_cpufreq cpufreq_st\nats cpufreq_userspace cpufreq_powersave cpufreq_ondemand freq_table sg sr_mod cd\nrom loop arc4 ecb blkcipher snd_hda_intel snd_pcm_oss snd_pcm snd_mixer_oss snd_\nseq_dummy pcmcia snd_seq_oss snd_seq_midi snd_rawmidi snd_seq_midi_event iwl4965\n snd_seq firmware_class sdhci snd_timer snd_seq_device mmc_core mac80211 yenta_s\nocket rsrc_nonstatic pcmcia_core snd psmouse soundcore cfg80211 snd_page_alloc i\nntel_agp battery ac button evdev usb_storage ext3 jbd mbcache dm_mirror dm_snaps\nhot dm_mod ehci_hcd uhci_hcd e1000 sd_mod thermal processor fan\n[   32.382717] Pid: 3267, comm: laptop_mode Not tainted 2.6.24-rc7 #1\n[   32.382797] RIP: 0010:[<0000000000000000>]  [<0000000000000000>] _stext+0x7fd\nf7000/0x1a\n[   32.382948] RSP: 0018:ffff81007b84de80  EFLAGS: 00010296\n[   32.383027] RAX: 0000000000000000 RBX: ffff81007d8c7800 RCX: 0000000000000000\n[   32.383110] RDX: ffff8100826b9000 RSI: 0000000000000000 RDI: ffff81007d8c7800\n[   32.383193] RBP: fffffffffffffffb R08: 000000000000002d R09: 0000000000000000\n[   32.383276] R10: 740174016f017201 R11: ffffffff802d03ef R12: 0000000000000000\n[   32.383359] R13: 0000000000000003 R14: 0000000000000003 R15: 00000000005c5808\n[   32.383442] FS:  00002b6898b11dc0(0000) GS:ffffffff804cd000(0000) knlGS:0000000000000000\n[   32.383545] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b\n[   32.383625] CR2: 0000000000000000 CR3: 000000007ba46000 CR4: 00000000000006e0\n[   32.383707] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000\n[   32.383790] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400\n[   32.383873] Process laptop_mode (pid: 3267, threadinfo ffff81007b84c000, task ffff81007ba40040)\n[   32.383977] Stack:  ffffffff88003c3d 0000000000000003 ffff81007d8c7800 ffff81007b84df50\n[   32.384314]  ffffffff88003e43 00000000000a312d ffff810000000000 ffff81007d897cc0\n[   32.384603]  fffffffffffffffb ffff81007ba57540 ffffffff802b717d ffff81007ba57780\n[   32.384829] Call Trace:\n[   32.384973]  [<ffffffff88003c3d>] :processor:acpi_processor_set_throttling+0x37/0x52\n[   32.385083]  [<ffffffff88003e43>] :processor:acpi_processor_write_throttling+0x61/0x74\n[   32.385191]  [<ffffffff802b717d>] proc_reg_write+0x7e/0x99\n[   32.385273]  [<ffffffff8028205f>] vfs_write+0xc6/0x14f\n[   32.385354]  [<ffffffff802825ad>] sys_write+0x45/0x6e\n[   32.385435]  [<ffffffff8020beee>] system_call+0x7e/0x83\n[   32.385517] \n[   32.385585] \n[   32.385585] Code:  Bad RIP value.\n[   32.385819] RIP  [<0000000000000000>] _stext+0x7fdf7000/0x1a\n[   32.385947]  RSP <ffff81007b84de80>\n[   32.386020] CR2: 0000000000000000\n[   32.386109] ---[ end trace 2ded1a5f4094ec80 ]---",
+  "patch": [
+    "ACPI: processor: Fix null pointer dereference in throttling\n\nFrom: Alexey Starikovskiy <astarikovskiy@suse.de>\n\nSigned-off-by: Alexey Starikovskiy <astarikovskiy@suse.de>\n---\n\n drivers/acpi/processor_throttling.c |    4 ++--\n 1 files changed, 2 insertions(+), 2 deletions(-)\n\ndiff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c\nindex 6742d7b..1685b40 100644\n--- a/drivers/acpi/processor_throttling.c\n+++ b/drivers/acpi/processor_throttling.c\n@@ -775,12 +775,12 @@ int acpi_processor_get_throttling_info(struct acpi_processor *pr)\n \t\tacpi_processor_get_throttling_states(pr) ||\n \t\tacpi_processor_get_platform_limit(pr))\n \t{\n-\t\tif (acpi_processor_get_fadt_info(pr))\n-\t\t\treturn 0;\n \t\tpr->throttling.acpi_processor_get_throttling =\n \t\t    &acpi_processor_get_throttling_fadt;\n \t\tpr->throttling.acpi_processor_set_throttling =\n \t\t    &acpi_processor_set_throttling_fadt;\n+\t\tif (acpi_processor_get_fadt_info(pr))\n+\t\t\treturn 0;\n \t} else {\n \t\tpr->throttling.acpi_processor_get_throttling =\n \t\t    &acpi_processor_get_throttling_ptc;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Config-Processors",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Alexey Starikovskiy",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "9243",
+  "Reported": "2008-01-14 11:19 UTC by Simon Huggins",
+  "Modified": "2008-01-24 12:46 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.24-rc7",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/processor_throttling.c"
+  ],
+  "methods": [
+    "acpi_processor_get_throttling_info"
+  ]
+}

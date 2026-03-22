@@ -1,0 +1,34 @@
+{
+  "id": "16027",
+  "title": "TFP410 driver should use RSEN bit to detect presence of a digital monitor",
+  "description": "Created attachment 26495 [details]\nPatch against linux-2.6.34 to use RSEN instead of HTPLG as monitor present indicator\n\nPresence detection of a digital monitor seems not to be reliable using the\nHTPLG bit, so use the RSEN bit instead.\n\nAs the original Xorg code suffers from the same problem, this \"bug\" is present in a kernels since this inclusion of the Xorg code into the Linux kernel (somewhere around 2.6.29, i think).",
+  "patch": [
+    "Signed-off-by: Dave Müller <dave.mueller@gmx.ch>\n\n--- linux-2.6.34-orig/drivers/gpu/drm/i915/dvo_tfp410.c\t2010-04-20 12:55:12.000000000 +0200\n+++ linux-2.6.34-patched/drivers/gpu/drm/i915/dvo_tfp410.c\t2010-05-22 08:38:39.000000000 +0200\n@@ -216,7 +216,7 @@\n \tuint8_t ctl2;\n \n \tif (tfp410_readb(dvo, TFP410_CTL_2, &ctl2)) {\n-\t\tif (ctl2 & TFP410_CTL_2_HTPLG)\n+\t\tif (ctl2 & TFP410_CTL_2_RSEN)\n \t\t\tret = connector_status_connected;\n \t\telse\n \t\t\tret = connector_status_disconnected;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Video",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_video-dri-intel@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-05-22 08:29 UTC by dave.mueller",
+  "Modified": "2010-08-08 17:14 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.29",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/gpu/drm/i915/dvo_tfp410.c"
+  ],
+  "methods": [
+    "tfp410_detect"
+  ]
+}

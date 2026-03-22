@@ -1,0 +1,127 @@
+{
+  "id": "11879",
+  "title": "Improper ATA cable detection after S2R _only_:  \"limited to UDMA/33 due to 40-wire cable\"",
+  "kernel_version": "2.6.27",
+  "product": "IO/Storage",
+  "component": "Serial ATA",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "performance",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/ata/ata_piix.c"
+    ],
+    "buggy_methods": [
+      "ich_pata_cable_detect",
+      "piix_init_sidpr",
+      "piix_iocfg_bit18_quirk",
+      "piix_init_one",
+      "piix_host_priv",
+      "piix_pci_driver",
+      "ich_laptop"
+    ],
+    "num_methods": 7
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 17,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 5876,
+    "description_word_count": 1004
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 34,
+    "lines_removed": 15,
+    "patch_size": 49,
+    "new_functions": [
+      "piix_remove_one",
+      "piix_iocfg_bit18_quirk",
+      "piix_remove_one"
+    ],
+    "patch_types": [
+      "quirk/device_table",
+      "new_function",
+      "logic_change",
+      "error_handling",
+      "memory"
+    ],
+    "num_hunks": 11,
+    "hunk_functions": [
+      "ich_pata_cable_detect",
+      "piix_iocfg_bit18_quirk",
+      "piix_init_one",
+      "piix_init_sidpr"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/ata/ata_piix.c",
+    "filename": "ata_piix.c",
+    "directory": "drivers/ata",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "ata",
+    "driver_subsystem": "ata/ata_piix.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "dmesg_logs_available",
+      "component_known:Serial ATA",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "11879",
+      "version": "2.6.27",
+      "status": "found",
+      "path": "drivers/ata/ata_piix.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "11879",
+    "title": "Improper ATA cable detection after S2R _only_:  \"limited to UDMA/33 due to 40-wire cable\"",
+    "product": "IO/Storage",
+    "component": "Serial ATA",
+    "buggy_file": [
+      "drivers/ata/ata_piix.c"
+    ],
+    "fix_type": "dmi_quirk_addition",
+    "table_entry_lines_added": 3,
+    "description_clues": [
+      "hardware_model_mentioned",
+      "device_ids_in_description",
+      "dmi_info_in_description",
+      "lspci_lsusb_output"
+    ],
+    "patch_size": 49,
+    "potential_strategies": [
+      "grep_device_id_in_kernel_source",
+      "search_dmi_tables_in_drivers",
+      "map_pci_usb_id_to_driver",
+      "search_for_model_specific_quirks",
+      "narrow_by_component:Serial ATA"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

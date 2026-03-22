@@ -1,0 +1,34 @@
+{
+  "id": "120591",
+  "title": "BUG() in dmesg after loading nouveau module",
+  "description": "Created attachment 220561 [details]\ndmesg\n\nOS: Arch Linux\nVideo adapter: GeForce GTX 780 Ti\nxf86-nouveau: 1.0.12\n\nI blacklisted nouveau module for full OS initialisation before reproducing, then issued:\n# modprobe nouveau debug=trace\n\nAfter that screen becomes black and in dmesg appears:\nBUG: unable to handle kernel NULL pointer dereference at 0000000000000210\n\nBug is not reproducible with 4.7-rc2 or earlier mainline.",
+  "patch": [
+    "diff --git a/drivers/gpu/drm/nouveau/nouveau_fbcon.c b/drivers/gpu/drm/nouveau/nouveau_fbcon.c\nindex 300ea03..d1f248f 100644\n--- a/drivers/gpu/drm/nouveau/nouveau_fbcon.c\n+++ b/drivers/gpu/drm/nouveau/nouveau_fbcon.c\n@@ -552,7 +552,8 @@ nouveau_fbcon_init(struct drm_device *dev)\n \tif (ret)\n \t\tgoto fini;\n \n-\tfbcon->helper.fbdev->pixmap.buf_align = 4;\n+\tif (fbcon->helper.fbdev)\n+\t\tfbcon->helper.fbdev->pixmap.buf_align = 4;\n \treturn 0;\n \n fini:\n-- \n2.9.0\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Video",
+  "Hardware": "x86-64 Linux",
+  "Importance": "P1 high",
+  "Assignee": "drivers_video-dri",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2016-06-18 16:17 UTC by Dmitrii Tcvetkov",
+  "Modified": "2016-06-24 22:30 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "4.7-rc3",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/gpu/drm/nouveau/nouveau_fbcon.c"
+  ],
+  "methods": [
+    "nouveau_fbcon_init"
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "id": "23012",
+  "title": "ftdi_sio /dev/ttyUSB error:  \"Resource Temporarily Unavailable\"",
+  "kernel_version": "2.6.37-rc1",
+  "product": "Drivers",
+  "component": "USB",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/usb/serial/usb-serial.c"
+    ],
+    "buggy_methods": [
+      "usb_serial_register",
+      "usb_serial_driver"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "\"Resource Temporarily Unavailable\".  There is no other process trying to access "
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": true,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 447,
+    "description_word_count": 74
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 3,
+    "lines_removed": 0,
+    "patch_size": 3,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "usb_serial_register"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/usb/serial/usb-serial.c",
+    "filename": "usb-serial.c",
+    "directory": "drivers/usb/serial",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "usb",
+    "driver_subsystem": "usb/serial",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:USB",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "23012",
+      "version": "2.6.37-rc1",
+      "status": "found",
+      "path": "drivers/usb/serial/usb-serial.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "23012",
+    "title": "ftdi_sio /dev/ttyUSB error:  \"Resource Temporarily Unavailable\"",
+    "ground_truth_file": "drivers/usb/serial/usb-serial.c",
+    "ground_truth_subsystem": "drivers/usb",
+    "ground_truth_methods": [
+      "usb_serial_register",
+      "usb_serial_driver"
+    ],
+    "product": "Drivers",
+    "component": "USB",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "USB",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "4380",
+  "title": "(net via_velocity) receiver hang after setting mtu >1500",
+  "description": "Distribution: \n\nDebian testing\n\nHardware Environment:\n\nA normal PC with Pentium M and a VT6122 PCI board.\n\nlspci -vv:\n\n0000:02:04.0 Ethernet controller: VIA Technologies, Inc. VT6120/VT6121/VT6122\nGigabit Ethernet Adapter (rev 11)\n        Subsystem: VIA Technologies, Inc.: Unknown device 0110\n        Control: I/O+ Mem+ BusMaster- SpecCycle- MemWINV+ VGASnoop- ParErr-\nStepping- SERR+ FastB2B-\n        Status: Cap+ 66MHz+ UDF- FastB2B- ParErr- DEVSEL=medium >TAbort-\n<TAbort- <MAbort- >SERR- <PERR-\n        Interrupt: pin A routed to IRQ 201\n        Region 0: I/O ports at 4000 [size=256]\n        Region 1: Memory at e0201000 (32-bit, non-prefetchable) [size=256]\n        Capabilities: [50] Power Management version 2\n                Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=0mA\nPME(D0+,D1+,D2+,D3hot+,D3cold+)\n                Status: D3 PME-Enable- DSel=0 DScale=0 PME-\n\nSoftware Environment:\n\nDebian testing with 2.6.8 or 2.6.10 kernel.\n\nProblem Description:\n\nThe via velocity GE-driver isn't working after setting MTU to higher\nthen 1500 (and setting it to lower than 1500 isn't allowed by the\ndriver, see bug 4001).\n\nOnly a few frames go through after setting the mtu to higher then 1500\n(ifconfig ethX mtu 1600), and in some cases no frames at all. The size\nof the frames don't seem to make any difference. Ethereal indicates\nthat the receiver stops working. Sending of frames still works.\n\nWhen this has occured must the interface be taken down and then up in\norder to get it working again. Just setting the mtu to 1500 again do\nnot solve the problem. Also, the kernel load was 0.67 when this\noccured, on an idle system. The load went down to <0.05 after taking\nthe interface down.\n\nOne oddity in the driver code is this:\n\n--------------------------------------------------------------------------\nstatic int velocity_open(struct net_device *dev)\n{\n        struct velocity_info *vptr = dev->priv;\n        int ret;\n\n        vptr->rx_buf_sz = (dev->mtu <= 1504 ? PKT_BUF_SZ : dev->mtu + 32);\n\n        ret = velocity_init_rings(vptr);\n--------------------------------------------------------------------------\nstatic int velocity_change_mtu(struct net_device *dev, int new_mtu)\n{\n        struct velocity_info *vptr = dev->priv;\n        unsigned long flags;\n        int oldmtu = dev->mtu;\n        int ret = 0;\n\n        if ((new_mtu < VELOCITY_MIN_MTU) || new_mtu > (VELOCITY_MAX_MTU)) {\n                VELOCITY_PRT(MSG_LEVEL_ERR, KERN_NOTICE \"%s: Invalid MTU.\\n\", \n                                vptr->dev->name);\n                return -EINVAL;\n        }\n\n        if (new_mtu != oldmtu) {\n                spin_lock_irqsave(&vptr->lock, flags);\n\n                netif_stop_queue(dev);\n                velocity_shutdown(vptr);\n\n                velocity_free_td_ring(vptr);\n                velocity_free_rd_ring(vptr);\n\n                dev->mtu = new_mtu;\n                if (new_mtu > 8192)\n                        vptr->rx_buf_sz = 9 * 1024;\n                else if (new_mtu > 4096)\n                        vptr->rx_buf_sz = 8192;\n                else\n                        vptr->rx_buf_sz = 4 * 1024;\n\n                ret = velocity_init_rd_ring(vptr);\n--------------------------------------------------------------------------\n\nAnd PKT_BUF_SZ is set to 1540. The resulting size of the rd's isn't\nthe same after changing the mtu to first 1600 and then back to 1500 as\nwhen set to 1500 in open.\n\nSteps to reproduce:\n\n# ifconfig eth0 mtu 1600\nThen run ping.\n\n/ Anders",
+  "patch": [
+    "<HTML>\n<HEAD>\n</HEAD>\n<BODY>\n<H1><a href=\"http://www.kruu.org/jvtm/via-velocity/velocityget-1.19-2.6.12_compile_fix.diff\">http://www.kruu.org/jvtm/via-velocity/velocityget-1.19-2.6.12_compile_fix.diff</a></H1>\n</BODY>\n</HTML>\n",
+    "diff --git a/drivers/net/via-velocity.c b/drivers/net/via-velocity.c\nindex c2d5907..ed1f837 100644\n--- a/drivers/net/via-velocity.c\n+++ b/drivers/net/via-velocity.c\n@@ -1106,6 +1106,9 @@ static void velocity_free_rd_ring(struct\n \n \tfor (i = 0; i < vptr->options.numrx; i++) {\n \t\tstruct velocity_rd_info *rd_info = &(vptr->rd_info[i]);\n+\t\tstruct rx_desc *rd = vptr->rd_ring + i;\n+\n+\t\tmemset(rd, 0, sizeof(*rd));\n \n \t\tif (!rd_info->skb)\n \t\t\tcontinue;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Network",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Jeff Garzik",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2005-03-21 07:23 UTC by Anders Bostr",
+  "Modified": "2006-07-14 17:20 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.8",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/via-velocity.c"
+  ],
+  "methods": [
+    "velocity_free_rd_ring"
+  ]
+}

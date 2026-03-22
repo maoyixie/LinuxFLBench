@@ -1,0 +1,34 @@
+{
+  "id": "19462",
+  "title": "Reproducible Kernel panic/oops during boot and startup - Panasonic Toughbooks",
+  "description": "I've got reproducible kernel panics on recent stable kernels (2.6.32.8/16/23 and 2.6.35.2 specifically), but not on 2.6.30.x kernels. The panic/oops are occurring on two different hardware platforms; the Panasonic Toughbook CF-19 Mark 3 and and Toughbook CF-74 Mark 4. These are the latest revisions of these hardware models and we have seen the issue on multiple units.\n\nI'll attach the dmesg output from a few different panics / oops we've captured. There are two or three variations of kernel panics that repeat, so I'll include representatives from each type. All of the kernel panics I've seen occur during  boot (initramfs or early init boot process). Once a system is up and running fully, I've not seen a single lockup or oops of this type again. I've looked at related bugs with the acpi subsystem, but haven't seen anything quite like our issue, so I am opening a new issue here.\n\nFYI, I build mainline kernels, using the Debian config and package process, with some very minor config tweaks. My base OS is the Squeeze pre-release. My local mirror has the following package versions for key related packages:\n\n * udev 160-1\n * module-init-tools 3.12-1\n * initramfs-tools 0.98.1\n\nI have been *unable* to repeat this issue using either a Lenny baseline or a Squeeze baseline running the 2.6.30 kernel. I'll include the full panic messages to this ticket for each of the crashes, but here is a summary of the fun.\n\n\nThe first type of issue reports bugs in the mm/slab.c or kernel/cred.c code.\n\nkernel BUG at mm/slab.c:2972!\ninvalid opcode: 0000 [#1] SMP \nlast sysfs file: /sys/devices/pci0000:00/0000:00:02.1/resource\n\nkernel BUG at mm/slab.c:2974!\ninvalid opcode: 0000 [#1] SMP\nlast sysfs file: /sys/class/net/lo/operstate\n\nkernel BUG at mm/slab.c:2974!\ninvalid opcode: 0000 [#1] SMP\nlast sysfs file: /sys/class/power_supply/BAT1/technology\n\nkernel BUG at mm/slab.c:2974!\ninvalid opcode: 0000 [#1] SMP\nlast sysfs file: /sys/class/power_supply/BAT1/technology\n\nkernel BUG at kernel/cred.c:101!\ninvalid opcode: 0000 [#1] SMP\nlast sysfs file: /sys/class/net/lo/operstate\n\n\nAnother type of issue is a report of an unable to handle kernel paging request\n\nBUG: unable to handle kernel paging request at 52545346\nIP: [<c11696af>] acpi_ut_update_object_reference+0x1d/0x11b\n*pdpt = 00000000375f1001 *pde = 0000000000000000\nOops: 0000 [#1] SMP\nlast sysfs file: /sys/class/net/lo/operstate\n\n\nThe the last type of issue we've seen are null pointer dereferences.\n\nBUG: unable to handle kernel NULL pointer dereference at (null)\nIP: [<(null)>] (null)\n*pdpt = 000000003673e001 *pde = 0000000000000000\nOops: 0010 [#1] SMP\nlast sysfs file: /sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0A:00/power_supply/BAT1/energy_full\n\nBUG: unable to handle kernel NULL pointer dereference at 0000000c\nIP: [<c112dee8>] acpi_ds_build_internal_object+0x10/0x12f\n*pdpt = 0000000036e03001 *pde = 0000000000000000\nOops: 0002 [#1] SMP\nlast sysfs file: /sys/module/processor/initstate\n\nBUG: unable to handle kernel NULL pointer dereference at 0000000c\nIP: [<c112dee8>] acpi_ds_build_internal_object+0x10/0x12f\n*pdpt = 0000000036ddf001 *pde = 0000000000000000\nOops: 0002 [#1] SMP\nlast sysfs file: /sys/devices/virtual/net/lo/operstate\n\n\n\nNow, it may seem like I'm cluttering up one bug report with too many different bits of information, but this issue I'm seeing does not appear on any of the other dozen or so different manufacturers / models I am testing this kernel on. I've only had issues on these two models and on multiple, different hardware units.\n\nThe steps to reproduce are not exactly easy, but it involves a soft reboot after disk activity and/or fuse file system mounting. I can repeat this for testing any patches you may be willing to supply.\n\nTony",
+  "patch": [
+    "Signed-off-by: Bob Moore <robert.moore@intel.com>\n---\ndiff --git a/drivers/acpi/acpica/dswexec.c b/drivers/acpi/acpica/dswexec.c\nindex d555b37..6b0b5d0 100644\n--- a/drivers/acpi/acpica/dswexec.c\n+++ b/drivers/acpi/acpica/dswexec.c\n@@ -300,10 +300,25 @@ acpi_ds_exec_begin_op(struct acpi_walk_state *walk_state,\n \t\t\t * we must enter this object into the namespace.  The created\n \t\t\t * object is temporary and will be deleted upon completion of\n \t\t\t * the execution of this method.\n+\t\t\t *\n+\t\t\t * Note 10/2010: Except for the Scope() op. This opcode does\n+\t\t\t * not actually create a new object, it refers to an existing\n+\t\t\t * object. However, for Scope(), we want to indeed open a\n+\t\t\t * new scope.\n \t\t\t */\n-\t\t\tstatus = acpi_ds_load2_begin_op(walk_state, NULL);\n+\t\t\tif (op->common.aml_opcode != AML_SCOPE_OP) {\n+\t\t\t\tstatus =\n+\t\t\t\t    acpi_ds_load2_begin_op(walk_state, NULL);\n+\t\t\t} else {\n+\t\t\t\tstatus =\n+\t\t\t\t    acpi_ds_scope_stack_push(op->named.node,\n+\t\t\t\t\t\t\t     op->named.node->\n+\t\t\t\t\t\t\t     type, walk_state);\n+\t\t\t\tif (ACPI_FAILURE(status)) {\n+\t\t\t\t\treturn_ACPI_STATUS(status);\n+\t\t\t\t}\n+\t\t\t}\n \t\t}\n-\n \t\tbreak;\n \n \tcase AML_CLASS_EXECUTE:\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "ACPICA-Core",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Lin Ming",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-10-01 22:28 UTC by Anthony Awtrey",
+  "Modified": "2018-07-24 07:57 UTC",
+  "CC List": "8 users",
+  "See Also": "",
+  "Kernel Version": "2.6.32",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/acpica/dswexec.c"
+  ],
+  "methods": [
+    "acpi_ds_exec_begin_op"
+  ]
+}

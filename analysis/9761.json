@@ -1,0 +1,169 @@
+{
+  "id": "9761",
+  "title": "unsupported ACPI video device - Samsung R70",
+  "kernel_version": "2.6.24",
+  "product": "ACPI",
+  "component": "Other",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/video.c"
+    ],
+    "buggy_methods": [
+      "acpi_video_bus_get_devices"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "system_call",
+      "acpi_format_exception",
+      "ifind",
+      "acpi_ut_update_ref_count",
+      "autoremove_wake_function",
+      "driver_probe_device",
+      "acpi_ut_exception",
+      "bus_for_each_dev",
+      "acpi_evaluate_integer",
+      "sys_init_module",
+      "__driver_attach",
+      "acpi_device_probe",
+      "bus_add_driver"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [
+      {
+        "file": "utglobal",
+        "line": "0126"
+      },
+      {
+        "file": "video",
+        "line": "1721"
+      }
+    ],
+    "error_messages": [
+      "in my dmesg.",
+      "(utglobal-0126): Unknown exception code: 0xFFFFFFFE [20070126]"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1459,
+    "description_word_count": 120
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 1,
+    "patch_size": 3,
+    "patch_types": [
+      "error_handling"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "acpi_video_bus_get_devices"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/video.c",
+    "filename": "video.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/video.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_13_functions",
+      "source_file_line_references"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "use_source_references_to_locate_file"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "9761",
+      "version": "2.6.24",
+      "status": "found",
+      "path": "drivers/acpi/video.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "9761",
+    "version": "2.6.24",
+    "ground_truth_file": "drivers/acpi/video.c",
+    "trace_functions": [
+      "acpi_ut_update_ref_count",
+      "acpi_format_exception",
+      "acpi_ut_exception",
+      "acpi_evaluate_integer",
+      "acpi_video_bus_add",
+      "ifind",
+      "acpi_device_probe",
+      "driver_probe_device",
+      "__driver_attach",
+      "bus_for_each_dev",
+      "bus_add_driver",
+      "acpi_video_init",
+      "sys_init_module",
+      "autoremove_wake_function",
+      "system_call"
+    ],
+    "total_trace_functions": 15,
+    "function_locations": {
+      "acpi_ut_update_ref_count": [],
+      "acpi_format_exception": [
+        "drivers/acpi/utilities/utglobal.c"
+      ],
+      "acpi_ut_exception": [],
+      "acpi_evaluate_integer": [],
+      "acpi_video_bus_add": [
+        "drivers/acpi/video.c"
+      ],
+      "ifind": [
+        "fs/inode.c"
+      ],
+      "acpi_device_probe": [
+        "drivers/acpi/scan.c"
+      ],
+      "driver_probe_device": [
+        "drivers/base/dd.c"
+      ],
+      "__driver_attach": [
+        "drivers/base/dd.c"
+      ],
+      "bus_for_each_dev": [
+        "drivers/base/bus.c"
+      ]
+    },
+    "gt_found_via_functions": [
+      "acpi_video_bus_add"
+    ],
+    "other_candidate_files": [
+      "drivers/base/bus.c",
+      "fs/inode.c",
+      "drivers/acpi/utilities/utglobal.c",
+      "drivers/base/dd.c",
+      "drivers/acpi/scan.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

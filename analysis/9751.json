@@ -1,0 +1,108 @@
+{
+  "id": "9751",
+  "title": "conversion of denormal floats to double is wrong",
+  "kernel_version": "2.6.18",
+  "product": "Platform Specific/Hardware",
+  "component": "Alpha",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/alpha/math-emu/math.c"
+    ],
+    "buggy_methods": [
+      "alpha_fp_emul"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": true,
+    "description_length": 1733,
+    "description_word_count": 288
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "alpha_fp_emul"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "arch/alpha/math-emu/math.c",
+    "filename": "math.c",
+    "directory": "arch/alpha/math-emu",
+    "depth": 4,
+    "top_level": "arch",
+    "second_level": "alpha",
+    "arch": "alpha",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Alpha"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "9751",
+      "version": "2.6.18",
+      "status": "found",
+      "path": "arch/alpha/math-emu/math.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "9751",
+    "title": "conversion of denormal floats to double is wrong",
+    "ground_truth_file": "arch/alpha/math-emu/math.c",
+    "ground_truth_subsystem": "arch/alpha",
+    "ground_truth_methods": [
+      "alpha_fp_emul"
+    ],
+    "product": "Platform Specific/Hardware",
+    "component": "Alpha",
+    "best_strategy": "search_config_related_code",
+    "symptom_categories": [
+      "wrong_output"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "config_options"
+    ],
+    "clue_details": {
+      "component": "Alpha",
+      "product": "Platform Specific/Hardware",
+      "configs": [
+        "CONFIG_MATHEMU"
+      ]
+    }
+  },
+  "overall_category": "E_search_config_related_code"
+}

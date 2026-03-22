@@ -1,0 +1,36 @@
+{
+  "id": "23222",
+  "title": "2.6.36 radeon KMS: [drm] Cannot find any crtc or sizes",
+  "": "Show dependency tree",
+  "description": "Created attachment 37562 [details]\nkernel config\n\nAfter upgrade from 2.6.35 to 2.6.36 I think I have found a regression.\n2.6.36 is booting fine until kernel tries to change resolution. Then my monitor just goes blank, but the booting process continues. Using ssh I'm able to connect to my computer and there are following messages in my dmesg:\n[    4.650041] No connectors reported connected with modes\n[    4.650046] [drm] Cannot find any crtc or sizes - going 1024x768\n\nMy configuration:\nonboard graphic card: ATI Technologies Inc RS482 [Radeon Xpress 200] with both VGA and DVI ports\nmonitor: Samsung SyncMaster 204B\n\nPlease note that this only happens when my monitor is connected with DVI.\nAfter switching to standard VGA cable everything works just fine.",
+  "patch": [
+    "From d2bf53bffbeda172ad0225d615e3a9f96835efb5 Mon Sep 17 00:00:00 2001\nFrom: Alex Deucher <alexdeucher@gmail.com>\nDate: Thu, 18 Nov 2010 17:16:37 -0500\nSubject: [PATCH] drm/radeon/kms: fix i2c pad masks on rs4xx\n\nThese got lost in the last i2c cleanup.  Fixes:\nhttps://bugzilla.kernel.org/show_bug.cgi?id=23222\n\nSigned-off-by: Alex Deucher <alexdeucher@gmail.com>\nCc: stable@kernel.org\n---\n drivers/gpu/drm/radeon/radeon_combios.c |   13 +++++++++++++\n 1 files changed, 13 insertions(+), 0 deletions(-)\n\ndiff --git a/drivers/gpu/drm/radeon/radeon_combios.c b/drivers/gpu/drm/radeon/radeon_combios.c\nindex 7b7ea26..3bddea5 100644\n--- a/drivers/gpu/drm/radeon/radeon_combios.c\n+++ b/drivers/gpu/drm/radeon/radeon_combios.c\n@@ -571,6 +571,7 @@ static struct radeon_i2c_bus_rec combios_setup_i2c_bus(struct radeon_device *rde\n \t}\n \n \tif (clk_mask && data_mask) {\n+\t\t/* system specific masks */\n \t\ti2c.mask_clk_mask = clk_mask;\n \t\ti2c.mask_data_mask = data_mask;\n \t\ti2c.a_clk_mask = clk_mask;\n@@ -579,7 +580,19 @@ static struct radeon_i2c_bus_rec combios_setup_i2c_bus(struct radeon_device *rde\n \t\ti2c.en_data_mask = data_mask;\n \t\ti2c.y_clk_mask = clk_mask;\n \t\ti2c.y_data_mask = data_mask;\n+\t} else if ((ddc_line == RADEON_GPIOPAD_MASK) ||\n+\t\t   (ddc_line == RADEON_MDGPIO_MASK)) {\n+\t\t/* default gpiopad masks */\n+\t\ti2c.mask_clk_mask = (0x20 << 8);\n+\t\ti2c.mask_data_mask = 0x80;\n+\t\ti2c.a_clk_mask = (0x20 << 8);\n+\t\ti2c.a_data_mask = 0x80;\n+\t\ti2c.en_clk_mask = (0x20 << 8);\n+\t\ti2c.en_data_mask = 0x80;\n+\t\ti2c.y_clk_mask = (0x20 << 8);\n+\t\ti2c.y_data_mask = 0x80;\n \t} else {\n+\t\t/* default masks for ddc pads */\n \t\ti2c.mask_clk_mask = RADEON_GPIO_EN_1;\n \t\ti2c.mask_data_mask = RADEON_GPIO_EN_0;\n \t\ti2c.a_clk_mask = RADEON_GPIO_A_1;\n-- \n1.7.1.1\n\n",
+    "From 1f95a072d82227c57b4ba47557eedccee7fbeff2 Mon Sep 17 00:00:00 2001\nFrom: Alex Deucher <alexdeucher@gmail.com>\nDate: Sun, 21 Nov 2010 10:22:26 -0500\nSubject: [PATCH] drm/radeon/kms: fix regression in rs4xx i2c setup\n\ntypo in my last i2c rework.\n\nFixes:\nhttps://bugzilla.kernel.org/show_bug.cgi?id=23222\n\nSigned-off-by: Alex Deucher <alexdeucher@gmail.com>\nCc: stable@kernel.org\n---\n drivers/gpu/drm/radeon/radeon_combios.c |    2 +-\n 1 files changed, 1 insertions(+), 1 deletions(-)\n\ndiff --git a/drivers/gpu/drm/radeon/radeon_combios.c b/drivers/gpu/drm/radeon/radeon_combios.c\nindex 3bddea5..137b807 100644\n--- a/drivers/gpu/drm/radeon/radeon_combios.c\n+++ b/drivers/gpu/drm/radeon/radeon_combios.c\n@@ -729,7 +729,7 @@ void radeon_combios_i2c_init(struct radeon_device *rdev)\n \t\t\t\t\tclk = RBIOS8(offset + 3 + (i * 5) + 3);\n \t\t\t\t\tdata = RBIOS8(offset + 3 + (i * 5) + 4);\n \t\t\t\t\ti2c = combios_setup_i2c_bus(rdev, DDC_MONID,\n-\t\t\t\t\t\t\t\t    clk, data);\n+\t\t\t\t\t\t\t\t    (1 << clk), (1 << data));\n \t\t\t\t\trdev->i2c_bus[4] = radeon_i2c_create(dev, &i2c, \"GPIOPAD_MASK\");\n \t\t\t\t\tbreak;\n \t\t\t\t}\n-- \n1.7.1.1\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Video",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_video-dri",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "16444",
+  "Reported": "2010-11-18 15:33 UTC by Ján Bednár",
+  "Modified": "2010-12-05 19:50 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.36",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/gpu/drm/radeon/radeon_combios.c"
+  ],
+  "methods": [
+    "combios_setup_i2c_bus"
+  ]
+}

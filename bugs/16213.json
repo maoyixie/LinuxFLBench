@@ -1,0 +1,36 @@
+{
+  "id": "16213",
+  "title": "Some NFS/RPC file transfers fail and hang automounting",
+  "description": "Given a file \"foo\" of 50Mb on a remote machine \"remote\". The command\n<localmachine $> cp /remote_mount_point/foo bar\nnever finishes, and bar has a size lesser than foo.\nand the automounting of the local machine is hanged.\n\nThe error message in /var/log/messages is:\nkernel: Callback slot table overflowed\n\nIf foo is lesser than 10Mb, the problem does'nt occur.\nAfter several tries with the source of 50Mb,\nthe different sizes of the target file \"bar\" are random.\n\nThis incident occurs with:\nsunrpc.tcp_slot_table_entries = 16\n\nbut after tunning this parameter, all is fine with:\nsunrpc.tcp_slot_table_entries = 32",
+  "patch": [
+    "commit b44d6b507d40ae805288e0416d005730364d5209\nAuthor: Trond Myklebust <Trond.Myklebust@netapp.com>\nDate:   Wed Jun 16 13:57:32 2010 -0400\n\n    SUNRPC: Fix a re-entrancy bug in xs_tcp_read_calldir()\n    \n    If the attempt to read the calldir fails, then instead of storing the read\n    bytes, we currently discard them. This leads to a garbage final result when\n    upon re-entry to the same routine, we read the remaining bytes.\n    \n    Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>\n\ndiff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c\nindex 2a96751..7ca65c7 100644\n--- a/net/sunrpc/xprtsock.c\n+++ b/net/sunrpc/xprtsock.c\n@@ -210,7 +210,8 @@ struct sock_xprt {\n \t * State of TCP reply receive\n \t */\n \t__be32\t\t\ttcp_fraghdr,\n-\t\t\t\ttcp_xid;\n+\t\t\t\ttcp_xid,\n+\t\t\t\ttcp_calldir;\n \n \tu32\t\t\ttcp_offset,\n \t\t\t\ttcp_reclen;\n@@ -927,7 +928,7 @@ static inline void xs_tcp_read_calldir(struct sock_xprt *transport,\n {\n \tsize_t len, used;\n \tu32 offset;\n-\t__be32\tcalldir;\n+\tchar *p;\n \n \t/*\n \t * We want transport->tcp_offset to be 8 at the end of this routine\n@@ -936,26 +937,33 @@ static inline void xs_tcp_read_calldir(struct sock_xprt *transport,\n \t * transport->tcp_offset is 4 (after having already read the xid).\n \t */\n \toffset = transport->tcp_offset - sizeof(transport->tcp_xid);\n-\tlen = sizeof(calldir) - offset;\n+\tlen = sizeof(transport->tcp_calldir) - offset;\n \tdprintk(\"RPC:       reading CALL/REPLY flag (%Zu bytes)\\n\", len);\n-\tused = xdr_skb_read_bits(desc, &calldir, len);\n+\tp = ((char *) &transport->tcp_calldir) + offset;\n+\tused = xdr_skb_read_bits(desc, p, len);\n \ttransport->tcp_offset += used;\n \tif (used != len)\n \t\treturn;\n \ttransport->tcp_flags &= ~TCP_RCV_READ_CALLDIR;\n-\ttransport->tcp_flags |= TCP_RCV_COPY_CALLDIR;\n-\ttransport->tcp_flags |= TCP_RCV_COPY_DATA;\n \t/*\n \t * We don't yet have the XDR buffer, so we will write the calldir\n \t * out after we get the buffer from the 'struct rpc_rqst'\n \t */\n-\tif (ntohl(calldir) == RPC_REPLY)\n+\tswitch (ntohl(transport->tcp_calldir)) {\n+\tcase RPC_REPLY:\n+\t\ttransport->tcp_flags |= TCP_RCV_COPY_CALLDIR;\n+\t\ttransport->tcp_flags |= TCP_RCV_COPY_DATA;\n \t\ttransport->tcp_flags |= TCP_RPC_REPLY;\n-\telse\n+\t\tbreak;\n+\tcase RPC_CALL:\n+\t\ttransport->tcp_flags |= TCP_RCV_COPY_CALLDIR;\n+\t\ttransport->tcp_flags |= TCP_RCV_COPY_DATA;\n \t\ttransport->tcp_flags &= ~TCP_RPC_REPLY;\n-\tdprintk(\"RPC:       reading %s CALL/REPLY flag %08x\\n\",\n-\t\t\t(transport->tcp_flags & TCP_RPC_REPLY) ?\n-\t\t\t\t\"reply for\" : \"request with\", calldir);\n+\t\tbreak;\n+\tdefault:\n+\t\tdprintk(\"RPC:       invalid request message type\\n\");\n+\t\txprt_force_disconnect(&transport->xprt);\n+\t}\n \txs_tcp_check_fraghdr(transport);\n }\n \n@@ -975,12 +983,10 @@ static inline void xs_tcp_read_common(struct rpc_xprt *xprt,\n \t\t/*\n \t\t * Save the RPC direction in the XDR buffer\n \t\t */\n-\t\t__be32\tcalldir = transport->tcp_flags & TCP_RPC_REPLY ?\n-\t\t\t\t\thtonl(RPC_REPLY) : 0;\n-\n \t\tmemcpy(rcvbuf->head[0].iov_base + transport->tcp_copied,\n-\t\t\t&calldir, sizeof(calldir));\n-\t\ttransport->tcp_copied += sizeof(calldir);\n+\t\t\t&transport->tcp_calldir,\n+\t\t\tsizeof(transport->tcp_calldir));\n+\t\ttransport->tcp_copied += sizeof(transport->tcp_calldir);\n \t\ttransport->tcp_flags &= ~TCP_RCV_COPY_CALLDIR;\n \t}\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "NFS",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Trond Myklebust",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-06-15 11:48 UTC by Philippe Dax",
+  "Modified": "2010-07-23 23:17 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.33",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "net/sunrpc/xprtsock.c"
+  ],
+  "methods": [
+    "xs_tcp_read_calldir",
+    "xs_tcp_read_common",
+    "sock_xprt"
+  ]
+}

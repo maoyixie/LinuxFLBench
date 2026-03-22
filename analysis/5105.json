@@ -1,0 +1,120 @@
+{
+  "id": "5105",
+  "title": "lost ticks - hang check - after loading the CPU",
+  "kernel_version": "2.6.12",
+  "product": "Timers",
+  "component": "Other",
+  "hardware": "i386 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "hang/lockup",
+    "wrong_behavior",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/x86_64/kernel/time.c"
+    ],
+    "buggy_methods": [
+      "unsynchronized_tsc"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [
+      "default_idle"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1680,
+    "description_word_count": 286
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 0,
+    "lines_removed": 3,
+    "patch_size": 3,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "unsynchronized_tsc"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "arch/x86_64/kernel/time.c",
+    "filename": "time.c",
+    "directory": "arch/x86_64/kernel",
+    "depth": 4,
+    "top_level": "arch",
+    "second_level": "x86_64",
+    "arch": "x86_64",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "trace_has_1_functions"
+    ],
+    "strategies": [
+      "match_trace_functions_to_source_files"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "5105",
+      "version": "2.6.12",
+      "status": "found",
+      "path": "arch/x86_64/kernel/time.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "5105",
+    "version": "2.6.12",
+    "ground_truth_file": "arch/x86_64/kernel/time.c",
+    "trace_functions": [
+      "default_idle"
+    ],
+    "total_trace_functions": 1,
+    "function_locations": {
+      "default_idle": [
+        "arch/h8300/kernel/process.c",
+        "arch/sh64/kernel/process.c",
+        "arch/sparc64/kernel/process.c",
+        "arch/mips/kernel/process.c",
+        "arch/i386/kernel/process.c",
+        "arch/ppc64/kernel/idle.c",
+        "arch/x86_64/kernel/process.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "arch/parisc/kernel/process.c",
+        "arch/sparc/kernel/process.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "arch/h8300/kernel/process.c",
+      "arch/ppc64/kernel/idle.c",
+      "arch/x86_64/kernel/process.c",
+      "arch/cris/arch-v10/kernel/process.c",
+      "arch/i386/kernel/process.c",
+      "arch/parisc/kernel/process.c",
+      "arch/sparc/kernel/process.c",
+      "arch/sh64/kernel/process.c",
+      "arch/sparc64/kernel/process.c",
+      "arch/mips/kernel/process.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

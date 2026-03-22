@@ -1,0 +1,36 @@
+{
+  "id": "13250",
+  "title": "Side channel of Intel HDA chip doesn't work anymore, did work with 2.6.29",
+  "": "Show dependency tree",
+  "description": "The ALSA mixer is now missing the side channel, which was present and did work with the previous kernel. I also have a ATI graphics card with HDA chip which I don't use for audio in that machine.\n\nlspci:\n\n00:1b.0 Audio device: Intel Corporation 82801H (ICH8 Family) HD Audio Controller (rev 02)\n\tSubsystem: Intel Corporation Device 2504\n\tFlags: bus master, fast devsel, latency 0, IRQ 22\n\tMemory at d0220000 (64-bit, non-prefetchable) [size=16K]\n\tCapabilities: <access denied>\n\tKernel driver in use: HDA Intel\n\tKernel modules: snd-hda-intel",
+  "patch": [
+    "diff --git a/sound/pci/hda/patch_sigmatel.c b/sound/pci/hda/patch_sigmatel.c\nindex 03b3646..d2fd8ef 100644\n--- a/sound/pci/hda/patch_sigmatel.c\n+++ b/sound/pci/hda/patch_sigmatel.c\n@@ -150,6 +150,7 @@ enum {\n \tSTAC_D965_REF,\n \tSTAC_D965_3ST,\n \tSTAC_D965_5ST,\n+\tSTAC_D965_5ST_NO_FP,\n \tSTAC_DELL_3ST,\n \tSTAC_DELL_BIOS,\n \tSTAC_927X_MODELS\n@@ -2154,6 +2155,13 @@ static unsigned int d965_5st_pin_configs[14] = {\n \t0x40000100, 0x40000100\n };\n \n+static unsigned int d965_5st_no_fp_pin_configs[14] = {\n+\t0x40000100, 0x40000100, 0x0181304e, 0x01014010,\n+\t0x01a19040, 0x01011012, 0x01016011, 0x40000100,\n+\t0x40000100, 0x40000100, 0x40000100, 0x01442070,\n+\t0x40000100, 0x40000100\n+};\n+\n static unsigned int dell_3st_pin_configs[14] = {\n \t0x02211230, 0x02a11220, 0x01a19040, 0x01114210,\n \t0x01111212, 0x01116211, 0x01813050, 0x01112214,\n@@ -2166,6 +2174,7 @@ static unsigned int *stac927x_brd_tbl[STAC_927X_MODELS] = {\n \t[STAC_D965_REF]  = ref927x_pin_configs,\n \t[STAC_D965_3ST]  = d965_3st_pin_configs,\n \t[STAC_D965_5ST]  = d965_5st_pin_configs,\n+\t[STAC_D965_5ST_NO_FP]  = d965_5st_no_fp_pin_configs,\n \t[STAC_DELL_3ST]  = dell_3st_pin_configs,\n \t[STAC_DELL_BIOS] = NULL,\n };\n@@ -2176,6 +2185,7 @@ static const char *stac927x_models[STAC_927X_MODELS] = {\n \t[STAC_D965_REF]\t\t= \"ref\",\n \t[STAC_D965_3ST]\t\t= \"3stack\",\n \t[STAC_D965_5ST]\t\t= \"5stack\",\n+\t[STAC_D965_5ST_NO_FP]\t= \"5stack-no-fp\",\n \t[STAC_DELL_3ST]\t\t= \"dell-3stack\",\n \t[STAC_DELL_BIOS]\t= \"dell-bios\",\n };\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Sound",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Jaroslav Kysela",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "13070",
+  "Reported": "2009-05-05 10:14 UTC by Andreas Juch",
+  "Modified": "2009-05-30 21:35 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.30-rc3",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "sound/pci/hda/patch_sigmatel.c"
+  ],
+  "methods": [
+    "*stac927x_brd_tbl",
+    "*stac927x_models"
+  ]
+}

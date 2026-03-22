@@ -1,0 +1,35 @@
+{
+  "id": "43088",
+  "title": "[965GM] hang at DPMS time",
+  "description": "Created attachment 72873 [details]\nlspci -vvnn\n\nHello,\n\nI have the Ubuntu 12.04 beta2 x86_64 with a mainline kernel 3.2.14 installed on a FUJITSU SIEMENS ESPRIMO Mobile M9400 notebook with an Intel Corporation Mobile GM965/GL960 Integrated Graphics Controller (lspci -vvnn attached), and I'm experiencing GPU hangups several times a day (dmesg output attached).\n\nEverything is well as long as I don't leave the computer for long enough for a DPMS powersaving to kick in (set to 5 minutes in Unity). If I'm away long enough, there is a good chance I'll find the GPU hanged up upon return. Unfortunately, I'm not able to reproduce this issue at will and have to wait for it to happen.\n\nIf there is anything I can do to help to resolve this, I'll gladly do so.\n\nMartin Senft",
+  "patch": [
+    "From a423bc65d3ab32cb295783ab5a32d7cd2c631543 Mon Sep 17 00:00:00 2001\nFrom: Chris Wilson <chris@chris-wilson.co.uk>\nDate: Tue, 10 Apr 2012 22:55:05 +0100\nSubject: [PATCH] drm/i915: Wait for all pending operations to the fb before\n disabling the pipe\n\nDuring modeset we have to disable the pipe to reconfigure its timings\nand maybe its size. Userspace may have queued up command buffers that\ndepend upon the pipe running in a certain configuration and so the\ncommands may become confused across the modeset. At the moment, we use a\nless than satisfactory kick-scanline-waits should the GPU hang during\nthe modeset. It should be more reliable to wait for the pending\noperations to complete first, even though we still have a window for\nuserspace to submit a broken command buffer during the modeset.\n\nSigned-off-by: Chris Wilson <chris@chris-wilson.co.uk>\n---\n drivers/gpu/drm/i915/intel_display.c |   29 ++++++-----------------------\n 1 file changed, 6 insertions(+), 23 deletions(-)\n\ndiff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c\nindex f446e66..f51345d 100644\n--- a/drivers/gpu/drm/i915/intel_display.c\n+++ b/drivers/gpu/drm/i915/intel_display.c\n@@ -2910,16 +2910,16 @@ static void intel_clear_scanline_wait(struct drm_device *dev)\n \n static void intel_crtc_wait_for_pending_flips(struct drm_crtc *crtc)\n {\n-\tstruct drm_i915_gem_object *obj;\n-\tstruct drm_i915_private *dev_priv;\n+\tstruct drm_device *dev;\n \n \tif (crtc->fb == NULL)\n \t\treturn;\n \n-\tobj = to_intel_framebuffer(crtc->fb)->obj;\n-\tdev_priv = crtc->dev->dev_private;\n-\twait_event(dev_priv->pending_flip_queue,\n-\t\t   atomic_read(&obj->pending_flip) == 0);\n+\tdev = crtc->dev;\n+\n+\tmutex_lock(&dev->struct_mutex);\n+\tintel_finish_fb(crtc->fb);\n+\tmutex_unlock(&dev->struct_mutex);\n }\n \n static bool intel_crtc_driving_pch(struct drm_crtc *crtc)\n@@ -3381,23 +3381,6 @@ static void intel_crtc_disable(struct drm_crtc *crtc)\n \tstruct drm_crtc_helper_funcs *crtc_funcs = crtc->helper_private;\n \tstruct drm_device *dev = crtc->dev;\n \n-\t/* Flush any pending WAITs before we disable the pipe. Note that\n-\t * we need to drop the struct_mutex in order to acquire it again\n-\t * during the lowlevel dpms routines around a couple of the\n-\t * operations. It does not look trivial nor desirable to move\n-\t * that locking higher. So instead we leave a window for the\n-\t * submission of further commands on the fb before we can actually\n-\t * disable it. This race with userspace exists anyway, and we can\n-\t * only rely on the pipe being disabled by userspace after it\n-\t * receives the hotplug notification and has flushed any pending\n-\t * batches.\n-\t */\n-\tif (crtc->fb) {\n-\t\tmutex_lock(&dev->struct_mutex);\n-\t\tintel_finish_fb(crtc->fb);\n-\t\tmutex_unlock(&dev->struct_mutex);\n-\t}\n-\n \tcrtc_funcs->dpms(crtc, DRM_MODE_DPMS_OFF);\n \tassert_plane_disabled(dev->dev_private, to_intel_crtc(crtc)->plane);\n \tassert_pipe_disabled(dev->dev_private, to_intel_crtc(crtc)->pipe);\n-- \n1.7.9.5\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Video",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_video-dri-intel@kernel-bugs.osdl.org",
+  "URL": "https://bugs.freedesktop.org/show_bug...",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2012-04-10 20:28 UTC by Martin Senft",
+  "Modified": "2012-04-18 22:12 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "3.2.14",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/gpu/drm/i915/intel_display.c"
+  ],
+  "methods": [
+    "intel_crtc_wait_for_pending_flips",
+    "intel_crtc_disable"
+  ]
+}

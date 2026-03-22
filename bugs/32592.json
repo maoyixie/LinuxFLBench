@@ -1,0 +1,34 @@
+{
+  "id": "32592",
+  "title": "Asus UL30VT backlight control only works with acpi_osi=\"Linux\" acpi_osi=\"!Windows 2009\"",
+  "description": "Created attachment 53362 [details]\nAsus UL30VT Bios 211 DSDT\n\nAsus UL30VT backlight control only works with acpi_osi=\"Linux\" acpi_osi=\"!Windows 2009\".  Without these options, I get a desktop notification for the brightness when using the Fn brightness up/down keys, but no change in display brightness.  Likewise the sysfs brightness control thinks it's doing it's job when I read and write the file, but there's no change in the display state.  Either method causes the display brightness to change when the system is rebooted, as if Linux setup the change, but didn't actually flush it out to hardware.",
+  "patch": [
+    "diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c\nindex b728880..db05f3b 100644\n--- a/drivers/acpi/video_detect.c\n+++ b/drivers/acpi/video_detect.c\n@@ -156,6 +156,14 @@ static struct dmi_system_id video_detect_dmi_table[] = {\n \t\tDMI_MATCH(DMI_BOARD_NAME, \"X360\"),\n \t\t},\n \t},\n+        {\n+         .callback = video_detect_force_vendor,\n+         .ident = \"Asus UL30VT\",\n+         .matches = {\n+                DMI_MATCH(DMI_SYS_VENDOR, \"ASUSTeK Computer Inc.\"),\n+                DMI_MATCH(DMI_PRODUCT_NAME, \"UL30VT\"),\n+                },\n+        },\n \t{ },\n };\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Video",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Lan Tianyu",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2011-04-04 03:16 UTC by Alex Williamson",
+  "Modified": "2013-02-08 18:31 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "3.2",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/video_detect.c"
+  ],
+  "methods": [
+    "video_detect_dmi_table"
+  ]
+}

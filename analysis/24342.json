@@ -1,0 +1,103 @@
+{
+  "id": "24342",
+  "title": "no sound on spdif",
+  "kernel_version": "2.6.35",
+  "product": "Drivers",
+  "component": "Sound",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "sound/pci/hda/patch_realtek.c"
+    ],
+    "buggy_methods": [
+      "alc_auto_init_amp"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 805,
+    "description_word_count": 127
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "alc_auto_init_amp"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "sound/pci/hda/patch_realtek.c",
+    "filename": "patch_realtek.c",
+    "directory": "sound/pci/hda",
+    "depth": 4,
+    "top_level": "sound",
+    "second_level": "pci",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Sound"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "24342",
+      "version": "2.6.35",
+      "status": "found",
+      "path": "sound/pci/hda/patch_realtek.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "24342",
+    "title": "no sound on spdif",
+    "ground_truth_file": "sound/pci/hda/patch_realtek.c",
+    "ground_truth_subsystem": "sound/pci",
+    "ground_truth_methods": [
+      "alc_auto_init_amp"
+    ],
+    "product": "Drivers",
+    "component": "Sound",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "wrong_output"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "Sound",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

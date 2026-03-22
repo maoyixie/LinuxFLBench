@@ -1,0 +1,34 @@
+{
+  "id": "8269",
+  "title": "pnp: Failed to activate device 00:0a - Samsung P35 XVM 1600 III",
+  "description": "Most recent kernel where this bug did *NOT* occur: did occur since S3 works on P35\nDistribution: Gentoo 2006.1\nHardware Environment: Samsung P35 XVM 1600 III\nSoftware Environment:\nProblem Description:\nAfter doing the 2nd resume cycle after S3 dmesg shows this:\n\n1st S3:\npnp: Device 00:08 disabled.\npnp: Device 00:06 disabled.\n1st Resume:\nBoth gets activated.\n\n2nd S3:\npnp: Device 00:08 disabled.\npnp: Device 00:06 disabled.\n2nd Resume:\npnp: Evaluate _CRS failed\npnp: Failed to activate device 00:06.\npnp: Evaluate _CRS failed\npnp: Failed to activate device 00:08.\npnp: Device 00:09 does not support activation.\npnp: Failed to activate device 00:0a.\n\nFor every S3 & Resume again the last messages are there again.\nAlso my irda (nsc_ircc) does not work anymore after second resume as the chip\ntype is wrong now, at first boot its all ok.\n\nSteps to reproduce:\n\nTake a P35 and do two S3 & Resume Cycles. Happens all the time.\n\nkind regards\n\nTorsten",
+  "patch": [
+    "PNP_WRITE requires protocol supports .set. If ACPI doesn't support _SRS, .set ismeanless, so PNP_WRITE.\n\nSigned-off-by: Shaohua Li <shaohua.li@intel.com>\n\n---\n drivers/pnp/pnpacpi/core.c |    2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n\nIndex: linux/drivers/pnp/pnpacpi/core.c\n===================================================================\n--- linux.orig/drivers/pnp/pnpacpi/core.c\t2007-10-19 17:00:43.000000000 +0800\n+++ linux/drivers/pnp/pnpacpi/core.c\t2007-11-15 09:18:18.000000000 +0800\n@@ -183,7 +183,7 @@ static int __init pnpacpi_add_device(str\n \tif (ACPI_SUCCESS(status))\n \t\tdev->capabilities |= PNP_CONFIGURABLE;\n \tdev->capabilities |= PNP_READ;\n-\tif (device->flags.dynamic_status)\n+\tif (device->flags.dynamic_status && (dev->capabilities & PNP_CONFIGURABLE))\n \t\tdev->capabilities |= PNP_WRITE;\n \tif (device->flags.removable)\n \t\tdev->capabilities |= PNP_REMOVABLE;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Sleep-Wake",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Shaohua",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-03-27 06:07 UTC by Torsten Krah",
+  "Modified": "2008-02-10 14:22 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.20",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/pnp/pnpacpi/core.c"
+  ],
+  "methods": [
+    "pnpacpi_add_device"
+  ]
+}

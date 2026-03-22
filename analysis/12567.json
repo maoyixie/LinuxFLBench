@@ -1,0 +1,109 @@
+{
+  "id": "12567",
+  "title": "The rtl-8187b card stops responding and connection is lost on hight trafic (torrent protocol).",
+  "kernel_version": "2.6.28",
+  "product": "Drivers",
+  "component": "network-wireless",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "hang/lockup",
+    "device_not_working"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/wireless/rtl8187_dev.c"
+    ],
+    "buggy_methods": [
+      "rtl8187_tx"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 253,
+    "description_word_count": 45
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 0,
+    "patch_size": 1,
+    "patch_types": [
+      "memory"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "rtl8187_tx"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/wireless/rtl8187_dev.c",
+    "filename": "rtl8187_dev.c",
+    "directory": "drivers/net/wireless",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/wireless",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:network-wireless"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "12567",
+      "version": "2.6.28",
+      "status": "found",
+      "path": "drivers/net/wireless/rtl8187_dev.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "12567",
+    "title": "The rtl-8187b card stops responding and connection is lost on hight trafic (torrent protocol).",
+    "ground_truth_file": "drivers/net/wireless/rtl8187_dev.c",
+    "ground_truth_subsystem": "drivers/net",
+    "ground_truth_methods": [
+      "rtl8187_tx"
+    ],
+    "product": "Drivers",
+    "component": "network-wireless",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named"
+    ],
+    "clue_details": {
+      "component": "network-wireless",
+      "product": "Drivers",
+      "modules": [
+        "doesn"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

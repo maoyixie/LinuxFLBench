@@ -1,0 +1,106 @@
+{
+  "id": "15287",
+  "title": "RadeonKMS segfaults kdm on mobility radeon x700 pcie",
+  "kernel_version": "2.6.34-rc1",
+  "product": "Drivers",
+  "component": "PCI",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "performance",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/pci/quirks.c"
+    ],
+    "buggy_methods": [
+      "quirk_disable_msi"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 932,
+    "description_word_count": 119
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 0,
+    "patch_size": 1,
+    "patch_types": [
+      "quirk/device_table"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "quirk_disable_msi"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/pci/quirks.c",
+    "filename": "quirks.c",
+    "directory": "drivers/pci",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "pci",
+    "driver_subsystem": "pci/quirks.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:PCI",
+      "is_regression",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "15287",
+      "version": "2.6.34-rc1",
+      "status": "found",
+      "path": "drivers/pci/quirks.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "15287",
+    "title": "RadeonKMS segfaults kdm on mobility radeon x700 pcie",
+    "product": "Drivers",
+    "component": "PCI",
+    "buggy_file": [
+      "drivers/pci/quirks.c"
+    ],
+    "fix_type": "pci_usb_id_addition",
+    "table_entry_lines_added": 1,
+    "description_clues": [
+      "device_ids_in_description",
+      "lspci_lsusb_output"
+    ],
+    "patch_size": 1,
+    "potential_strategies": [
+      "grep_device_id_in_kernel_source",
+      "map_pci_usb_id_to_driver",
+      "narrow_by_component:PCI"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

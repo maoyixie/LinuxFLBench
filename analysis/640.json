@@ -1,0 +1,106 @@
+{
+  "id": "640",
+  "title": "2.5.68-mjb2 stops at activating swap",
+  "kernel_version": "2.5.68",
+  "product": "Alternate Trees",
+  "component": "mjb",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/i386/mm/fault.c"
+    ],
+    "buggy_methods": [
+      "do_page_fault"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1055,
+    "description_word_count": 118
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 8,
+    "lines_removed": 0,
+    "patch_size": 8,
+    "patch_types": [
+      "config/ifdef",
+      "memory"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "if"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "arch/i386/mm/fault.c",
+    "filename": "fault.c",
+    "directory": "arch/i386/mm",
+    "depth": 4,
+    "top_level": "arch",
+    "second_level": "i386",
+    "arch": "i386",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:mjb"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "640",
+      "version": "2.5.68",
+      "status": "found",
+      "path": "arch/i386/mm/fault.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "640",
+    "title": "2.5.68-mjb2 stops at activating swap",
+    "ground_truth_file": "arch/i386/mm/fault.c",
+    "ground_truth_subsystem": "arch/i386",
+    "ground_truth_methods": [
+      "do_page_fault"
+    ],
+    "product": "Alternate Trees",
+    "component": "mjb",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "hang/deadlock",
+      "boot_failure"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "mjb",
+      "product": "Alternate Trees"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

@@ -1,0 +1,173 @@
+{
+  "id": "13348",
+  "title": "[PATCH]Unable to clone tagged VLAN interface for use with macvlan driver",
+  "kernel_version": "2.6.29",
+  "product": "Networking",
+  "component": "IPV4",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "performance",
+    "power/sleep",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/macvlan.c"
+    ],
+    "buggy_methods": [
+      "macvlan_init"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "common_interrupt",
+      "irq_exit",
+      "handle_level_irq",
+      "arp_create",
+      "vlan_dev_hard_header",
+      "neigh_timer_handler",
+      "__do_softirq",
+      "macvlan_hard_header",
+      "do_IRQ",
+      "default_idle",
+      "arp_send",
+      "arp_solicit",
+      "run_timer_softirq",
+      "warn_slowpath",
+      "cpu_idle"
+    ],
+    "mentioned_file_paths": [
+      "net/8021q/vlan_dev.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 2338,
+    "description_word_count": 235
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 0,
+    "patch_size": 1,
+    "patch_types": [
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/macvlan.c",
+    "filename": "macvlan.c",
+    "directory": "drivers/net",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/macvlan.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_15_functions",
+      "component_known:IPV4"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13348",
+      "version": "2.6.29",
+      "status": "found",
+      "path": "drivers/net/macvlan.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "13348",
+    "version": "2.6.29",
+    "ground_truth_file": "drivers/net/macvlan.c",
+    "trace_functions": [
+      "vlan_dev_hard_header",
+      "warn_slowpath",
+      "macvlan_hard_header",
+      "arp_create",
+      "arp_send",
+      "arp_solicit",
+      "neigh_timer_handler",
+      "run_timer_softirq",
+      "__do_softirq",
+      "handle_level_irq",
+      "irq_exit",
+      "do_IRQ",
+      "common_interrupt",
+      "default_idle",
+      "cpu_idle"
+    ],
+    "total_trace_functions": 15,
+    "function_locations": {
+      "vlan_dev_hard_header": [
+        "net/8021q/vlan_dev.c"
+      ],
+      "warn_slowpath": [
+        "kernel/panic.c"
+      ],
+      "macvlan_hard_header": [
+        "drivers/net/macvlan.c"
+      ],
+      "arp_create": [
+        "net/ipv4/arp.c"
+      ],
+      "arp_send": [
+        "net/ipv4/arp.c",
+        "drivers/net/bonding/bond_main.c",
+        "drivers/infiniband/ulp/ipoib/ipoib_main.c"
+      ],
+      "arp_solicit": [
+        "net/ipv4/arp.c"
+      ],
+      "neigh_timer_handler": [
+        "net/core/neighbour.c"
+      ],
+      "run_timer_softirq": [
+        "kernel/timer.c"
+      ],
+      "__do_softirq": [
+        "kernel/softirq.c"
+      ],
+      "handle_level_irq": []
+    },
+    "gt_found_via_functions": [
+      "macvlan_hard_header"
+    ],
+    "other_candidate_files": [
+      "net/8021q/vlan_dev.c",
+      "kernel/softirq.c",
+      "drivers/infiniband/ulp/ipoib/ipoib_main.c",
+      "kernel/panic.c",
+      "net/core/neighbour.c",
+      "drivers/net/bonding/bond_main.c",
+      "kernel/timer.c",
+      "net/ipv4/arp.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

@@ -1,0 +1,144 @@
+{
+  "id": "7303",
+  "title": "Dock driver: Scheduling while atomic BUG during docking.",
+  "kernel_version": "2.6.18",
+  "product": "ACPI",
+  "component": "Config-Hotplug",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/dock.c"
+    ],
+    "buggy_methods": [
+      "dock_add_hotplug_device",
+      "dock_del_hotplug_device",
+      "hotplug_dock_devices",
+      "dock_add",
+      "dock_station"
+    ],
+    "num_methods": 5
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 507,
+    "description_word_count": 83
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 8,
+    "lines_removed": 8,
+    "patch_size": 16,
+    "patch_types": [
+      "synchronization"
+    ],
+    "num_hunks": 6,
+    "hunk_functions": [
+      "dock_add",
+      "dock_add_hotplug_device",
+      "hotplug_dock_devices",
+      "dock_del_hotplug_device"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/dock.c",
+    "filename": "dock.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/dock.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Config-Hotplug"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "7303",
+      "version": "2.6.18",
+      "status": "found",
+      "path": "drivers/acpi/dock.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "7303",
+    "version": "2.6.18",
+    "ground_truth_file": "drivers/acpi/dock.c",
+    "trace_functions": [
+      "my"
+    ],
+    "total_trace_functions": 1,
+    "function_locations": {
+      "my": [
+        "drivers/usb/gadget/dummy_hcd.c",
+        "drivers/video/mbx/mbxdebugfs.c",
+        "arch/x86_64/kernel/traps.c",
+        "drivers/char/ftape/zftape/zftape-ctl.c",
+        "drivers/isdn/hisax/l3ni1.c",
+        "drivers/net/tlan.c",
+        "drivers/video/console/dummycon.c",
+        "drivers/video/aty/mach64_ct.c",
+        "fs/xfs/xfs_fsops.c",
+        "drivers/usb/misc/sisusbvga/sisusb_con.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "drivers/usb/gadget/dummy_hcd.c",
+      "drivers/video/console/dummycon.c",
+      "drivers/video/aty/mach64_ct.c",
+      "drivers/video/mbx/mbxdebugfs.c",
+      "arch/x86_64/kernel/traps.c",
+      "drivers/char/ftape/zftape/zftape-ctl.c",
+      "fs/xfs/xfs_fsops.c",
+      "drivers/usb/misc/sisusbvga/sisusb_con.c",
+      "drivers/isdn/hisax/l3ni1.c",
+      "drivers/net/tlan.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "7303",
+    "title": "Dock driver: Scheduling while atomic BUG during docking.",
+    "ground_truth_file": "drivers/acpi/dock.c",
+    "ground_truth_methods": [
+      "dock_add_hotplug_device",
+      "dock_del_hotplug_device",
+      "hotplug_dock_devices",
+      "dock_add",
+      "dock_station"
+    ],
+    "ground_truth_subsystem": "drivers/acpi",
+    "trace_functions_top8": [],
+    "trace_function_locations": {},
+    "trace_subsystems": [],
+    "mismatch_type": "unknown",
+    "gt_calls_trace_func": false,
+    "gt_method_in_trace": false,
+    "product": "ACPI",
+    "component": "Config-Hotplug"
+  },
+  "overall_category": "C_trace_misleads"
+}

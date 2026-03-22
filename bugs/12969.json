@@ -1,0 +1,34 @@
+{
+  "id": "12969",
+  "title": "WARNING: at lib/dma-debug.c:539 check_sync+0xe9/0x341() (Not tainted)",
+  "description": "------------[ cut here ]------------                                                                                                          \nWARNING: at lib/dma-debug.c:539 check_sync+0xe9/0x341() (Not tainted)                                                                         \nHardware name: HP Compaq nx6110 (PY501EA#AB9)                                                                                                 \nb44 0000:02:0e.0: DMA-API: device driver tries to sync DMA memory it has not allocated [device address=0x0000000075941040] [size=1566 bytes]  \nModules linked in: llc bnep l2cap bluetooth autofs4 lm90 hwmon i2c_i801 sunrpc ipv6 cpufreq_ondemand acpi_cpufreq uinput snd_intel8x0m snd_intel8x0 snd_ac97_codec snd_seq_dummy ac97_bus snd_seq_oss snd_seq_midi_event snd_seq snd_seq_device snd_pcm_oss snd_mixer_oss snd_pcm b44 ssb firewire_ohci snd_timer ipw2200 iTCO_wdt mii firewire_core snd iTCO_vendor_support libipw yenta_socket crc_itu_t lib80211 rsrc_nonstatic soundcore snd_page_alloc joydev pcspkr wmi serio_raw ata_generic pata_acpi i915 drm i2c_algo_bit i2c_core video output [last unloaded: scsi_wait_scan]                                                                                                                                             \nPid: 2418, comm: S58ntpd Not tainted 2.6.29-16.fc10.i686.PAE #1                                                                               \nCall Trace:                                                                                                                                   \n [<c04396d1>] warn_slowpath+0x7c/0xbd                                                                                                         \n [<c0457fe1>] ? register_lock_class+0x17/0x290                                                                                                \n [<c0458d61>] ? mark_lock+0x1e/0x349                                                                                                          \n [<c0556448>] ? _raw_spin_unlock+0x74/0x78                                                                                                    \n [<c0458d61>] ? mark_lock+0x1e/0x349                                                                                                          \n [<c055a060>] ? check_sync+0x37/0x341                                                                                                         \n [<c055a112>] check_sync+0xe9/0x341                                                                                                           \n [<c0711245>] ? _spin_unlock_irqrestore+0x45/0x55                                                                                             \n [<c04592db>] ? trace_hardirqs_on+0xb/0xd                                                                                                     \n [<c055a4d1>] debug_dma_sync_single_for_device+0x2f/0x39                                                                                      \n [<f828f722>] dma_sync_single_for_device+0x4a/0x59 [b44]                                                                                      \n [<f828f76f>] ssb_dma_sync_single_for_device+0x3e/0x48 [b44]                                                                                  \n [<f8291d1e>] b44_recycle_rx+0x18c/0x196 [b44]                                                                                                \n [<f8291f9f>] b44_poll+0x277/0x3c0 [b44]                                                                                                      \n [<c0687bb9>] net_rx_action+0xa1/0x1ca                                                                                                        \n [<c043e30a>] __do_softirq+0x9d/0x154                                                                                                         \n [<c043e413>] do_softirq+0x52/0x7e                                                                                                            \n [<c043e56f>] irq_exit+0x49/0x77                                                                                                              \n [<c040b22e>] do_IRQ+0x97/0xad                                                                                                                \n [<c0409dac>] common_interrupt+0x2c/0x34                                                                                                      \n---[ end trace d1aa19a66382cf6a ]---",
+  "patch": [
+    "Index: linux-2.6/drivers/net/b44.c\n===================================================================\n--- linux-2.6.orig/drivers/net/b44.c\t2009-04-06 21:47:55.000000000 +0200\n+++ linux-2.6/drivers/net/b44.c\t2009-04-06 21:50:18.000000000 +0200\n@@ -750,7 +750,7 @@\n \t\t\t\t\t     dest_idx * sizeof(*dest_desc),\n \t\t\t\t\t     DMA_BIDIRECTIONAL);\n \n-\tssb_dma_sync_single_for_device(bp->sdev, le32_to_cpu(src_desc->addr),\n+\tssb_dma_sync_single_for_device(bp->sdev, dest_map->mapping,\n \t\t\t\t       RX_PKT_BUF_SZ,\n \t\t\t\t       DMA_FROM_DEVICE);\n }\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Network",
+  "Hardware": "i386 Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_network@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-03-29 11:43 UTC by Sérgio M Basto",
+  "Modified": "2010-01-19 21:43 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.29",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/b44.c"
+  ],
+  "methods": [
+    "b44_recycle_rx"
+  ]
+}

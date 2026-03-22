@@ -1,0 +1,35 @@
+{
+  "id": "196375",
+  "title": "MTX load commands fail",
+  "description": "After upgrading to 4.12rc0 (also tested on all RC's 4.12, and 4.13 git), the following mtx commands fail on an ML6000 with LTO5 FC drive attached to a qlogic 2462 HBA.  Running Ubuntu Server 16.04\n\nmtx -f /dev/sg19 load 16 0\nLoading media from Storage Element 16 into drive 0...mtx: Request Sense: Long Report=yes\nmtx: Request Sense: Valid Residual=no\nmtx: Request Sense: Error Code=0 (Unknown?!)\nmtx: Request Sense: Sense Key=No Sense\nmtx: Request Sense: FileMark=no\nmtx: Request Sense: EOM=no\nmtx: Request Sense: ILI=no\nmtx: Request Sense: Additional Sense Code = 00\nmtx: Request Sense: Additional Sense Qualifier = 00\nmtx: Request Sense: BPV=no\nmtx: Request Sense: Error in CDB=no\nmtx: Request Sense: SKSV=no\nMOVE MEDIUM from Element Address 4111 to 256 Failed\n\nDowngrading to 4.11.10 resolves the issue.  The issue (and fix) has been replicated on a server running Fedora with an NEOs T48 with an LTO6 SAS drive attached to LSI 3008.  Commit hash from latest version that works is - v4.11-4395-g89c9fea\n\nSorry if anything here is formatted wrong, first bug report.",
+  "patch": [
+    "From: Johannes Thumshirn <jthumshirn@suse.de>\nSubject: [PATCH] scsi: sg: only check for dxfer_len greater than 256M\nTo: \"Martin K . Petersen\" <martin.petersen@oracle.com>\nCc: Jason L Tibbitts III <tibbs@math.uh.edu>,\n\tDoug Gilbert <dgilbert@interlog.com>,\n\tLinux Kernel Mailinglist <linux-kernel@vger.kernel.org>,\n\tLinux SCSI Mailinglist <linux-scsi@vger.kernel.org>,\n\tHannes Reinecke <hare@suse.de>,\n\tJohannes Thumshirn <jthumshirn@suse.de>,\n\tstable@vger.kernel.org\nDate: Thu, 27 Jul 2017 09:11:26 +0200 (5 hours, 42 minutes, 2 seconds ago)\n\nDon't make any assumptions on the sg_io_hdr_t::dxfer_direction or the\nsg_io_hdr_t::dxferp in order to determine if it is a valid request. The\nonly way we can check for bad requests is by checking if the length exceeds\n256M.\n\nSigned-off-by: Johannes Thumshirn <jthumshirn@suse.de>\nFixes: 28676d869bbb (scsi: sg: check for valid direction before starting the\nrequest)\nReported-by: Jason L Tibbitts III <tibbs@math.uh.edu>\nTested-by: Jason L Tibbitts III <tibbs@math.uh.edu>\nSuggested-by: Doug Gilbert <dgilbert@interlog.com>\nCc: Doug Gilbert <dgilbert@interlog.com>\nCc: <stable@vger.kernel.org>\n---\n drivers/scsi/sg.c | 31 +------------------------------\n 1 file changed, 1 insertion(+), 30 deletions(-)\n\ndiff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c\nindex 4fe606b000b4..d7ff71e0c85c 100644\n--- a/drivers/scsi/sg.c\n+++ b/drivers/scsi/sg.c\n@@ -751,35 +751,6 @@ sg_new_write(Sg_fd *sfp, struct file *file, const char __user *buf,\n \treturn count;\n }\n \n-static bool sg_is_valid_dxfer(sg_io_hdr_t *hp)\n-{\n-\tswitch (hp->dxfer_direction) {\n-\tcase SG_DXFER_NONE:\n-\t\tif (hp->dxferp || hp->dxfer_len > 0)\n-\t\t\treturn false;\n-\t\treturn true;\n-\tcase SG_DXFER_FROM_DEV:\n-\t\t/*\n-\t\t * for SG_DXFER_FROM_DEV we always set dxfer_len to > 0. dxferp\n-\t\t * can either be NULL or != NULL so there's no point in checking\n-\t\t * it either. So just return true.\n-\t\t */\n-\t\treturn true;\n-\tcase SG_DXFER_TO_DEV:\n-\tcase SG_DXFER_TO_FROM_DEV:\n-\t\tif (!hp->dxferp || hp->dxfer_len == 0)\n-\t\t\treturn false;\n-\t\treturn true;\n-\tcase SG_DXFER_UNKNOWN:\n-\t\tif ((!hp->dxferp && hp->dxfer_len) ||\n-\t\t    (hp->dxferp && hp->dxfer_len == 0))\n-\t\t\treturn false;\n-\t\treturn true;\n-\tdefault:\n-\t\treturn false;\n-\t}\n-}\n-\n static int\n sg_common_write(Sg_fd * sfp, Sg_request * srp,\n \t\tunsigned char *cmnd, int timeout, int blocking)\n@@ -800,7 +771,7 @@ sg_common_write(Sg_fd * sfp, Sg_request * srp,\n \t\t\t\"sg_common_write:  scsi opcode=0x%02x, cmd_size=%d\\n\",\n \t\t\t(int) cmnd[0], (int) hp->cmd_len));\n \n-\tif (!sg_is_valid_dxfer(hp))\n+\tif (hp->dxfer_len >= SZ_256M)\n \t\treturn -EINVAL;\n \n \tk = sg_start_req(srp, cmnd);\n-- \n2.12.3\n\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Tools",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "Intel Linux",
+  "Importance": "P1 high",
+  "Assignee": "Tools.Other",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2017-07-14 23:22 UTC by evan",
+  "Modified": "2018-06-27 20:22 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "4.12",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/scsi/sg.c"
+  ],
+  "methods": [
+    "sg_is_valid_dxfer",
+    "sg_common_write"
+  ]
+}

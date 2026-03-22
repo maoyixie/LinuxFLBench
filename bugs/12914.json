@@ -1,0 +1,34 @@
+{
+  "id": "12914",
+  "title": "pmac_zilog fails to find IRQ for internal serial modem",
+  "description": "Latest working kernel version: 2.6.11\nEarliest failing kernel version: 2.6.27\nDistribution: OpenSUSE 11.1\nHardware Environment: powerpc ( macintosh Powerbook G3 \"wallstreet\")\nSoftware Environment: gcc 4.3.2\nProblem Description: \n\nAfter upgrade to 2.6.28.8, the internal serial modem\nis no longer configured and /dev/ttyPZ2 does not respond.\n\nThe following is the truncated output of dmesg:\n\nUsing PowerMac machine description\nTotal memory = 160MB; using 512kB for hash table (at c9f80000)\nLinux version 2.6.28.8 (sadd@corinth) (gcc version 4.3.2 [gcc-4_3-branch revisio\nn 141291] (SUSE Linux) ) #1 Thu Mar 19 03:25:12 CDT 2009\nFound a Gatwick mac-io controller, rev: 1, mapped at 0xff780000\nFound a Heathrow mac-io controller, rev: 1, mapped at 0xff700000\nPowerMac motherboard: PowerBook Wallstreet\nPMU driver v2 initialized for PowerBook G3 Series, firmware: 0a\nconsole [udbg0] enabled\nFound Grackle (MPC106) PCI host bridge at 0x0000000080000000. Firmware bus numbe\nr: 0->0\n[...]\npmac_zilog: serial modem detected\n[...]\npmac_zilog: 0.6 (Benjamin Herrenschmidt <benh@kernel.crashing.org>)\nttyPZ0 at MMIO 0xf3013020 (irq = 16) is a Z85c30 ESCC - Serial port\nttyPZ1 at MMIO 0xf3013000 (irq = 17) is a Z85c30 ESCC - Infrared port\nttyPZ2 at MMIO 0xf4013020 (irq = 0) is a Z85c30 ESCC - Internal modem\n\n\nThe following is /proc/tty/driver/ttyPZ\n# cat /proc/tty/driver/ttyPZ \nserinfo:1.0 driver revision:\n0: uart:Z85c30 ESCC - Serial port mmio:0xF3013020 irq:16 tx:0 rx:0 DSR\n1: uart:Z85c30 ESCC - Infrared port mmio:0xF3013000 irq:17 tx:0 rx:0 DSR|CD\n2: uart:Z85c30 ESCC - Internal modem mmio:0xF4013020 irq:0 tx:0 rx:0 DSR\n\nAny attempt to configure the modem irq with \"setserial /dev/ttyPZ2 autoconfig\"\nresults in the error in the system log:\nMar 21 16:34:29 corinth kernel: pmac_zilog 1.00013020:ch-a: Unable to register z\ns interrupt handler.\n\n\nFor kernel 2.6.11, with the same hardware, the modem functioned correctly\nand the IRQ was assigned:\npmac_zilog: 0.6 (Benjamin Herrenschmidt <benh@kernel.crashing.org>)\nttyS0 at MMIO 0xf3013020 (irq = 15) is a Z85c30 ESCC - Serial port\nttyS1 at MMIO 0xf3013000 (irq = 16) is a Z85c30 ESCC - Infrared port\nttyS2 at MMIO 0xf4013020 (irq = 79) is a Z85c30 ESCC - Internal modem\n\nSteps to reproduce:\nBoot a Powerbook G3 using 2.6.28.8 configured to have pmac_zilog and the only\nenabled serial device.",
+  "patch": [
+    "--- linux-2.6/drivers/serial/pmac_zilog.c.orig\t2009-03-23 18:59:41.000000000 +0300\n+++ linux-2.6/drivers/serial/pmac_zilog.c\t2009-03-23 22:27:22.000000000 +0300\n@@ -1532,6 +1532,11 @@ no_dma:\n \t */\n \tuap->port.iotype = UPIO_MEM;\n \tuap->port.irq = irq_of_parse_and_map(np, 0);\n+\tif (uap->port.irq == NO_IRQ) {\n+\t\tprintk(KERN_ERR \"pmac_zilog: can't map interrupt for %s\\n\",\n+\t\t\t\tnp->full_name);\n+\t\treturn -ENODEV;\n+\t}\n \tuap->port.uartclk = ZS_CLOCK;\n \tuap->port.fifosize = 1;\n \tuap->port.ops = &pmz_pops;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Platform Specific/Hardware",
+  "Classification": "Unclassified",
+  "Component": "PPC-32",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "platform_ppc-32",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-03-21 14:43 UTC by Mike Sadd",
+  "Modified": "2012-05-30 14:48 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.28",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/serial/pmac_zilog.c"
+  ],
+  "methods": [
+    "pmz_init_port"
+  ]
+}

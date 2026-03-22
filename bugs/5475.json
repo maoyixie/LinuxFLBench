@@ -1,0 +1,35 @@
+{
+  "id": "5475",
+  "title": "USB mouse freezes in X",
+  "": "Show dependency tree",
+  "description": "Most recent kernel where this bug did not occur: 2.6.10\nDistribution: Ubuntu\nHardware Environment: AMD Athlpn 1300, Nvidia GeForce2, Logitech Optical USB Mouse\nSoftware Environment: Ubuntu 5.04/Ubuntu 5.10\nProblem Description: \n\nBooting into Gnome and reading webpages. Not using the mouse for a while. When I\ngrab the mouse and want to move the pointer, the mouse is frozen. I have to\nswitch terminals (Ctrl+Alt+F1) and back to F7 to get the mouse working again.\n\nSteps to reproduce:\n\n1. Boot, log into Gnome.\n2. Use your computer for a while (eg. type in a bugreport on kernel.org)\n3. Move the mouse pointer. It appears frozen.\n\nThis did not appear in kernel 2.6.10. The problem is apparent also in 2.6.12.",
+  "patch": [
+    "From: Vojtech Pavlik <vojtech@suse.cz>\nDate: Sat Mar  4 11:00:50 CET 2006\nSubject: Fix dying mice on Intel UHCI controllers\nPatch-mainline: 2.6.16 or 2.6.17\nReferences: SuSE bugs #146781, #151719, #94064\n\nThe UHCI controllers can sometimes report an intermittent CRC error, probabl\ndue to hardware problems. There is no need to abort under such\ncircumstances.\n\nSigned-off-by: Vojtech Pavlik <vojtech@suse.cz>\n\ndiff --git a/drivers/usb/input/hid-core.c b/drivers/usb/input/hid-core.c\n--- a/drivers/usb/input/hid-core.c\n+++ b/drivers/usb/input/hid-core.c\n@@ -927,8 +927,8 @@ static void hid_irq_in(struct urb *urb, \n \t\tcase -ENOENT:\n \t\tcase -EPERM:\n \t\tcase -ESHUTDOWN:\t/* unplug */\n-\t\tcase -EILSEQ:\t\t/* unplug timeout on uhci */\n \t\t\treturn;\n+\t\tcase -EILSEQ:\t\t/* CRC error or failed urbs before unplug */\n \t\tcase -ETIMEDOUT:\t/* NAK */\n \t\t\tbreak;\n \t\tdefault:\t\t/* error */\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "USB",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Dmitry Torokhov",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "USB",
+  "Reported": "2005-10-20 14:30 UTC by Christoffer S",
+  "Modified": "2006-04-10 17:11 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.13",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/usb/input/hid-core.c"
+  ],
+  "methods": [
+    "hid_irq_in"
+  ]
+}

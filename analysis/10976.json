@@ -1,0 +1,109 @@
+{
+  "id": "10976",
+  "title": "Soft lockup on (intentionally) corrupted filesystem",
+  "kernel_version": "2.6.25",
+  "product": "File System",
+  "component": "ext3",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "fs/jbd/checkpoint.c"
+    ],
+    "buggy_methods": [
+      "__log_wait_for_space"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 721,
+    "description_word_count": 110
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 17,
+    "lines_removed": 2,
+    "patch_size": 19,
+    "patch_types": [
+      "logic_change",
+      "init_fix",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "__log_wait_for_space"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "fs/jbd/checkpoint.c",
+    "filename": "checkpoint.c",
+    "directory": "fs/jbd",
+    "depth": 3,
+    "top_level": "fs",
+    "second_level": "jbd",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:ext3"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "10976",
+      "version": "2.6.25",
+      "status": "found",
+      "path": "fs/jbd/checkpoint.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "10976",
+    "title": "Soft lockup on (intentionally) corrupted filesystem",
+    "ground_truth_file": "fs/jbd/checkpoint.c",
+    "ground_truth_subsystem": "fs/jbd",
+    "ground_truth_methods": [
+      "__log_wait_for_space"
+    ],
+    "product": "File System",
+    "component": "ext3",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "hang/deadlock",
+      "data_corruption"
+    ],
+    "fix_types": [
+      "locking_fix",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "ext3",
+      "product": "File System"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

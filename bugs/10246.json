@@ -1,0 +1,34 @@
+{
+  "id": "10246",
+  "title": "\"in\" after successful ioperm() results in SEGV after kvm use",
+  "description": "Latest working kernel version: N/A\nEarliest failing kernel version: 2.6.24\nDistribution: Ubuntu, but tested with mainline\nHardware Environment: intel mobo, Intel(R) Core(TM)2 Quad CPU Q6600@2.40GHz\nSoftware Environment: kvm 62 (x86_64)\nProblem Description:\n\nAfter a successful ioperm() call, otherwise valid \"in\" instructions will segv if a kvm VM has started.\n\nSteps to reproduce:\n\n1) run attached reproducer prior to starting a kvm VM, results are:\n# ./ioperm\ngetting 0x3b4-0x3df permission...\nfetching 0x3cc...\nok: 1\n\n2) start a kvm VM (bug exists only after actually starting a guest VM)\n\n3) run reproducer, which now fails:\n# ./ioperm\ngetting 0x3b4-0x3df permission...\nfetching 0x3cc...\nSegmentation fault (core dumped)\n\nNote that it does not always fail.  Running within gdb seems to reduce the chances that it will fail.  But when it does, it is clearly the \"in\" that is failing:\n\nProgram received signal SIGSEGV, Segmentation fault.\n0x00000000004006e4 in inb ()\n(gdb) x/1i $pc\n0x4006e4 <inb+12>:      in     (%dx),%al\n(gdb) info reg rdx\nrdx            0x3cc    972\n\nI have had the sense that running the CPUs at full load (niced) increases the chance for failure.",
+  "patch": [
+    "diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c\nindex 9951ec9..9810608 100644\n--- a/arch/x86/kvm/vmx.c\n+++ b/arch/x86/kvm/vmx.c\n@@ -383,8 +383,6 @@ static void update_exception_bitmap(struct kvm_vcpu *vcpu)\n \n static void reload_tss(void)\n {\n-#ifndef CONFIG_X86_64\n-\n \t/*\n \t * VT restores TR but not its size.  Useless.\n \t */\n@@ -395,7 +393,6 @@ static void reload_tss(void)\n \tdescs = (void *)gdt.base;\n \tdescs[GDT_ENTRY_TSS].type = 9; /* available TSS */\n \tload_TR_desc();\n-#endif\n }\n \n static void load_transition_efer(struct vcpu_vmx *vmx)\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Virtualization",
+  "Classification": "Unclassified",
+  "Component": "kvm",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Avi Kivity",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-03-14 18:48 UTC by Kees Cook",
+  "Modified": "2008-03-26 06:49 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.25-rc5",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/x86/kvm/vmx.c"
+  ],
+  "methods": [
+    "reload_tss"
+  ]
+}

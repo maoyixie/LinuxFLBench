@@ -1,0 +1,115 @@
+{
+  "id": "10042",
+  "title": "Unreal actual_brightness and other strange behavior of video module on FSC Amilo Pi 2515",
+  "kernel_version": "2.6.24",
+  "product": "ACPI",
+  "component": "Power-Video",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/namespace/nsxfeval.c"
+    ],
+    "buggy_methods": [
+      "acpi_evaluate_object"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/class/backlight/acpi_video0/"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 904,
+    "description_word_count": 131
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 16,
+    "lines_removed": 0,
+    "patch_size": 16,
+    "patch_types": [
+      "logic_change",
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "acpi_evaluate_object"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/namespace/nsxfeval.c",
+    "filename": "nsxfeval.c",
+    "directory": "drivers/acpi/namespace",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/namespace",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Power-Video"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "10042",
+      "version": "2.6.24",
+      "status": "found",
+      "path": "drivers/acpi/namespace/nsxfeval.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "10042",
+    "title": "Unreal actual_brightness and other strange behavior of video module on FSC Amilo Pi 2515",
+    "ground_truth_file": "drivers/acpi/namespace/nsxfeval.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "acpi_evaluate_object"
+    ],
+    "product": "ACPI",
+    "component": "Power-Video",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/sys/class/backlight/acpi_video0/"
+      ],
+      "component": "Power-Video",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

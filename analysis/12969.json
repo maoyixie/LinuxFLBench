@@ -1,0 +1,220 @@
+{
+  "id": "12969",
+  "title": "WARNING: at lib/dma-debug.c:539 check_sync+0xe9/0x341() (Not tainted)",
+  "kernel_version": "2.6.29",
+  "product": "Drivers",
+  "component": "Network",
+  "hardware": "i386 Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "performance",
+    "power/sleep",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/b44.c"
+    ],
+    "buggy_methods": [
+      "b44_recycle_rx"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "common_interrupt",
+      "irq_exit",
+      "net_rx_action",
+      "ssb_dma_sync_single_for_device",
+      "__do_softirq",
+      "dma_sync_single_for_device",
+      "b44_poll",
+      "check_sync",
+      "do_softirq",
+      "do_IRQ",
+      "debug_dma_sync_single_for_device",
+      "warn_slowpath",
+      "b44_recycle_rx"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 4465,
+    "description_word_count": 160
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/b44.c",
+    "filename": "b44.c",
+    "directory": "drivers/net",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/b44.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_13_functions",
+      "component_known:Network",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "12969",
+      "version": "2.6.29",
+      "status": "found",
+      "path": "drivers/net/b44.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "12969",
+    "version": "2.6.29",
+    "ground_truth_file": "drivers/net/b44.c",
+    "trace_functions": [
+      "check_sync",
+      "warn_slowpath",
+      "register_lock_class",
+      "mark_lock",
+      "_raw_spin_unlock",
+      "_spin_unlock_irqrestore",
+      "trace_hardirqs_on",
+      "debug_dma_sync_single_for_device",
+      "dma_sync_single_for_device",
+      "ssb_dma_sync_single_for_device",
+      "b44_recycle_rx",
+      "b44_poll",
+      "net_rx_action",
+      "__do_softirq",
+      "do_softirq"
+    ],
+    "total_trace_functions": 18,
+    "function_locations": {
+      "check_sync": [],
+      "warn_slowpath": [
+        "kernel/panic.c"
+      ],
+      "register_lock_class": [],
+      "mark_lock": [
+        "kernel/lockdep.c"
+      ],
+      "_raw_spin_unlock": [
+        "lib/spinlock_debug.c"
+      ],
+      "_spin_unlock_irqrestore": [
+        "kernel/spinlock.c"
+      ],
+      "trace_hardirqs_on": [
+        "kernel/lockdep.c",
+        "kernel/trace/trace_irqsoff.c"
+      ],
+      "debug_dma_sync_single_for_device": [],
+      "dma_sync_single_for_device": [
+        "arch/m68k/kernel/dma.c",
+        "arch/parisc/kernel/pci-dma.c",
+        "arch/sparc/kernel/dma.c",
+        "arch/sparc/kernel/ioport.c",
+        "arch/ia64/sn/pci/pci_dma.c",
+        "arch/mips/mm/dma-default.c"
+      ],
+      "ssb_dma_sync_single_for_device": []
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "kernel/spinlock.c",
+      "arch/m68k/kernel/dma.c",
+      "kernel/trace/trace_irqsoff.c",
+      "arch/parisc/kernel/pci-dma.c",
+      "kernel/panic.c",
+      "arch/sparc/kernel/dma.c",
+      "kernel/lockdep.c",
+      "arch/sparc/kernel/ioport.c",
+      "arch/ia64/sn/pci/pci_dma.c",
+      "lib/spinlock_debug.c",
+      "arch/mips/mm/dma-default.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "12969",
+    "title": "WARNING: at lib/dma-debug.c:539 check_sync+0xe9/0x341() (Not tainted)",
+    "ground_truth_file": "drivers/net/b44.c",
+    "ground_truth_methods": [
+      "b44_recycle_rx"
+    ],
+    "ground_truth_subsystem": "drivers/net",
+    "trace_functions_top8": [
+      "check_sync",
+      "warn_slowpath",
+      "register_lock_class",
+      "mark_lock",
+      "_raw_spin_unlock",
+      "_spin_unlock_irqrestore",
+      "trace_hardirqs_on",
+      "debug_dma_sync_single_for_device"
+    ],
+    "trace_function_locations": {
+      "check_sync": [],
+      "warn_slowpath": [
+        "kernel/panic.c"
+      ],
+      "register_lock_class": [],
+      "mark_lock": [
+        "kernel/lockdep.c"
+      ],
+      "_raw_spin_unlock": [
+        "lib/spinlock_debug.c"
+      ],
+      "_spin_unlock_irqrestore": [
+        "kernel/spinlock.c"
+      ],
+      "trace_hardirqs_on": [
+        "kernel/trace/trace_irqsoff.c",
+        "kernel/lockdep.c"
+      ],
+      "debug_dma_sync_single_for_device": []
+    },
+    "trace_subsystems": [
+      "kernel/panic.c",
+      "lib/spinlock_debug.c",
+      "kernel/spinlock.c",
+      "kernel/trace",
+      "kernel/lockdep.c"
+    ],
+    "mismatch_type": "trace_in_infrastructure",
+    "gt_calls_trace_func": true,
+    "gt_method_in_trace": true,
+    "product": "Drivers",
+    "component": "Network"
+  },
+  "overall_category": "C_trace_misleads"
+}

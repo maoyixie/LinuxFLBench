@@ -1,0 +1,35 @@
+{
+  "id": "13823",
+  "title": "QLA2XXX driver causes kernel oops with a qla2200",
+  "description": "Whenever I insert the qla2xxx module, the kernel always oopses.  Sometimes, the driver will work and detect the drives, but it will oops again later.  I have tried this on multiple machines with different qla2200 cards and they both experience the same oopsing, sometimes resulting in a hard lock.\n\nHere is one of the oops on loading the module:\n[27287.119929] QLogic Fibre Channel HBA Driver: 8.03.00-k4\n[27287.120016] qla2xxx 0000:06:01.0: PCI INT A -> GSI 74 (level, low) -> IRQ 74\n[27287.120070] qla2xxx 0000:06:01.0: Found an ISP2200, irq 74, iobase 0xffffc20000c5c000\n[27287.120281] IRQ 74/qla2xxx: IRQF_DISABLED is not guaranteed on shared IRQs\n[27287.120309] qla2xxx 0000:06:01.0: Configuring PCI space...\n[27287.120510] qla2xxx 0000:06:01.0: Configure NVRAM parameters...\n[27287.205932] qla2xxx 0000:06:01.0: Verifying loaded RISC code...\n[27287.216038] qla2xxx 0000:06:01.0: firmware: requesting ql2200_fw.bin\n[27294.548077] qla2xxx 0000:06:01.0: Allocated (252 KB) for firmware dump...\n[27294.669022] qla2xxx 0000:06:01.0: LIP reset occurred (f7f7).\n[27294.680099] scsi0 : qla2xxx\n[27294.818489] qla2xxx 0000:06:01.0: LOOP UP detected (1 Gbps).\n[27295.684930] BUG: unable to handle kernel NULL pointer dereference at (null)\n[27295.685892] IP: [<ffffffffa0011910>] qla2x00_prep_ms_fdmi_iocb+0x26/0xbc [qla2xxx]\n[27295.685892] PGD 1989d1067 PUD 199007067 PMD 0 \n[27295.685892] Oops: 0002 [#1] SMP \n[27295.685892] last sysfs file: /sys/devices/pci0000:00/0000:00:06.0/0000:05:00.0/0000:06:01.0/firmware/0000:06:01.0/loading\n[27295.685892] CPU 3 \n[27295.685892] Modules linked in: qla2xxx(+)\n[27295.685892] Pid: 14114, comm: qla2xxx_0_dpc Not tainted 2.6.29-gentoo-r5dl380 #2 ProLiant DL380 G4\n[27295.685892] RIP: 0010:[<ffffffffa0011910>]  [<ffffffffa0011910>] qla2x00_prep_ms_fdmi_iocb+0x26/0xbc [qla2xxx]\n[27295.685892] RSP: 0018:ffff88017cdc5c38  EFLAGS: 00010246\n[27295.685892] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000010\n[27295.685892] RDX: 0000000000000010 RSI: 0000000000000000 RDI: 0000000000000000\n[27295.685892] RBP: ffff88017cdc5c40 R08: 0000000000000000 R09: ffff880199bde800\n[27295.685892] R10: 0000000000000010 R11: ffff880199bde540 R12: ffff880199bde540\n[27295.685892] R13: ffff880199bde800 R14: ffff880199bde540 R15: ffff880199bde540\n[27295.685892] FS:  0000000000000000(0000) GS:ffff88019ac52300(0000) knlGS:0000000000000000\n[27295.685892] CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b\n[27295.685892] CR2: 0000000000000000 CR3: 000000019993f000 CR4: 00000000000006e0\n[27295.685892] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000\n[27295.685892] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400\n[27295.685892] Process qla2xxx_0_dpc (pid: 14114, threadinfo ffff88017cdc4000, task ffff8801991314d0)\n[27295.685892] Stack:\n[27295.685892]  0000000000000000 ffff88017cdc5c90 ffffffffa0012384 ffff00007cdc5ce0\n[27295.685892]  ffffffffa000b100 000000cf00000203 0000000000000000 ffff880199bde540\n[27295.685892]  0000000000000003 0000000000000000 ffff880199bde540 ffff88017cdc5ce0\n[27295.685892] Call Trace:\n[27295.685892]  [<ffffffffa0012384>] qla2x00_fdmi_rhba+0x2f/0x490 [qla2xxx]\n[27295.685892]  [<ffffffffa000b100>] ? qla2x00_get_port_name+0x7a/0xf1 [qla2xxx]\n[27295.685892]  [<ffffffffa0012810>] qla2x00_fdmi_register+0x2b/0x449 [qla2xxx]\n[27295.685892]  [<ffffffffa00067b1>] qla2x00_configure_loop+0x9da/0x13fc [qla2xxx]\n[27295.685892]  [<ffffffffa0009bf3>] ? qla2x00_mailbox_command+0x51a/0x56c [qla2xxx]\n[27295.685892]  [<ffffffffa000b308>] ? qla2x00_get_retry_cnt+0x51/0xd2 [qla2xxx]\n[27295.685892]  [<ffffffffa000726b>] qla2x00_loop_resync+0x98/0xf3 [qla2xxx]\n[27295.685892]  [<ffffffffa00026f2>] qla2x00_do_dpc+0x2c1/0x392 [qla2xxx]\n[27295.685892]  [<ffffffffa0002431>] ? qla2x00_do_dpc+0x0/0x392 [qla2xxx]\n[27295.685892]  [<ffffffff8104af29>] kthread+0x49/0x76\n[27295.685892]  [<ffffffff8100d1ba>] child_rip+0xa/0x20\n[27295.685892]  [<ffffffff8104aee0>] ? kthread+0x0/0x76\n[27295.685892]  [<ffffffff8100d1b0>] ? child_rip+0x0/0x20\n[27295.685892] Code: 5b 41 5c 5d c3 55 48 89 e5 48 83 ec 08 49 89 fb 41 89 d2 4c 8b 8f a0 01 00 00 4d 8b 81 70 01 00 00 b9 10 00 00 00 31 c0 4c 89 c7 <f3> ab 41 c6 00 29 41 c6 40 01 01 41 83 b9 30 01 00 00 00 66 41 \n[27295.685892] RIP  [<ffffffffa0011910>] qla2x00_prep_ms_fdmi_iocb+0x26/0xbc [qla2xxx]\n[27295.685892]  RSP <ffff88017cdc5c38>\n[27295.685892] CR2: 0000000000000000\n[27299.116827] ---[ end trace 3eb74739b5f59456 ]---\n[27299.689025] qla2xxx 0000:06:01.0: \n[27299.689027]  QLogic Fibre Channel HBA Driver: 8.03.00-k4\n[27299.689028]   QLogic QLA22xx - \n[27299.689029]   ISP2200: PCI (66 MHz) @ 0000:06:01.0 hdma+, host#=0, fw=2.02.08 TP",
+  "patch": [
+    "diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c\nindex 917534b..52e4dbe 100644\n--- a/drivers/scsi/qla2xxx/qla_gs.c\n+++ b/drivers/scsi/qla2xxx/qla_gs.c\n@@ -1675,6 +1675,9 @@ qla2x00_fdmi_register(scsi_qla_host_t *vha)\n {\n \tint rval;\n \n+\tif (IS_QLA2100(ha) || IS_QLA2200(ha))\n+\t\treturn QLA_FUNCTION_FAILED;\n+\n \trval = qla2x00_mgmt_svr_login(vha);\n \tif (rval)\n \t\treturn rval;\n",
+    "diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c\nindex 917534b..52e4dbe 100644\n--- a/drivers/scsi/qla2xxx/qla_gs.c\n+++ b/drivers/scsi/qla2xxx/qla_gs.c\n@@ -1675,6 +1675,9 @@ qla2x00_fdmi_register(scsi_qla_host_t *vha)\n {\n \tint rval;\n+\tstruct qla_hw_data *ha = vha->hw; \n+\n+\tif (IS_QLA2100(ha) || IS_QLA2200(ha))\n+\t\treturn QLA_FUNCTION_FAILED;\n+\n \trval = qla2x00_mgmt_svr_login(vha);\n \tif (rval)\n \t\treturn rval;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "SCSI Drivers",
+  "Classification": "Unclassified",
+  "Component": "QLOGIC QLA2XXX",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "scsi_drivers-qla2xxx",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-07-25 11:03 UTC by Thomas",
+  "Modified": "2012-06-13 14:15 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.29",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/scsi/qla2xxx/qla_gs.c"
+  ],
+  "methods": [
+    "qla2x00_fdmi_register"
+  ]
+}

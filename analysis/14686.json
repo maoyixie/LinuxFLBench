@@ -1,0 +1,196 @@
+{
+  "id": "14686",
+  "title": "WARNING: at drivers/net/wireless/ath/ath5k/base.c:1142 ath5k_tasklet_rx+0x47a/0x5f0",
+  "kernel_version": "2.6.32",
+  "product": "Drivers",
+  "component": "network-wireless",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "performance",
+    "wrong_behavior",
+    "power/sleep",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/wireless/ath/ath5k/eeprom.c"
+    ],
+    "buggy_methods": [
+      "ath5k_eeprom_init_header"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "common_interrupt",
+      "irq_exit",
+      "do_gettimeofday",
+      "warn_slowpath_fmt",
+      "warn_slowpath_common",
+      "ath5k_tasklet_rx",
+      "tasklet_action",
+      "sys_gettimeofday",
+      "sysenter_do_call",
+      "__do_softirq",
+      "do_IRQ",
+      "do_softirq",
+      "getnstimeofday"
+    ],
+    "mentioned_file_paths": [
+      "drivers/net/wireless/ath/ath5k/base.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1778,
+    "description_word_count": 153
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 2,
+    "patch_size": 3,
+    "patch_types": [
+      "error_handling"
+    ],
+    "num_hunks": 3,
+    "hunk_functions": [
+      "ath5k_eeprom_init_header"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/wireless/ath/ath5k/eeprom.c",
+    "filename": "eeprom.c",
+    "directory": "drivers/net/wireless/ath/ath5k",
+    "depth": 6,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/wireless",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_13_functions",
+      "component_known:network-wireless"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "14686",
+      "version": "2.6.32",
+      "status": "found",
+      "path": "drivers/net/wireless/ath/ath5k/eeprom.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "14686",
+    "version": "2.6.32",
+    "ground_truth_file": "drivers/net/wireless/ath/ath5k/eeprom.c",
+    "trace_functions": [
+      "ath5k_tasklet_rx",
+      "warn_slowpath_common",
+      "warn_slowpath_fmt",
+      "ieee80211_wake_queues",
+      "tasklet_action",
+      "__do_softirq",
+      "ack_apic_level",
+      "handle_IRQ_event",
+      "do_softirq",
+      "irq_exit",
+      "do_IRQ",
+      "common_interrupt",
+      "push_rt_task",
+      "read_hpet",
+      "getnstimeofday"
+    ],
+    "total_trace_functions": 18,
+    "function_locations": {
+      "ath5k_tasklet_rx": [
+        "drivers/net/wireless/ath/ath5k/base.c"
+      ],
+      "warn_slowpath_common": [
+        "kernel/panic.c"
+      ],
+      "warn_slowpath_fmt": [
+        "kernel/panic.c"
+      ],
+      "ieee80211_wake_queues": [
+        "net/mac80211/util.c"
+      ],
+      "tasklet_action": [
+        "drivers/misc/lkdtm.c",
+        "kernel/softirq.c",
+        "drivers/serial/serial_core.c"
+      ],
+      "__do_softirq": [
+        "kernel/softirq.c"
+      ],
+      "ack_apic_level": [
+        "arch/x86/kernel/apic/io_apic.c"
+      ],
+      "handle_IRQ_event": [
+        "kernel/irq/handle.c"
+      ],
+      "do_softirq": [
+        "kernel/softirq.c",
+        "arch/powerpc/kernel/irq.c",
+        "arch/x86/kernel/irq_32.c",
+        "arch/sh/kernel/irq.c",
+        "arch/x86/kernel/irq_64.c",
+        "arch/sparc/kernel/irq_64.c",
+        "arch/s390/kernel/irq.c"
+      ],
+      "irq_exit": [
+        "drivers/staging/vme/bridges/vme_ca91cx42.c",
+        "kernel/softirq.c",
+        "drivers/uio/uio_pdrv_genirq.c",
+        "drivers/mfd/wm831x-irq.c",
+        "drivers/staging/vme/bridges/vme_tsi148.c",
+        "kernel/rcutree.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "arch/x86/kernel/apic/io_apic.c",
+      "arch/x86/kernel/irq_32.c",
+      "drivers/staging/vme/bridges/vme_tsi148.c",
+      "kernel/rcutree.c",
+      "drivers/staging/vme/bridges/vme_ca91cx42.c",
+      "kernel/softirq.c",
+      "drivers/uio/uio_pdrv_genirq.c",
+      "arch/powerpc/kernel/irq.c",
+      "kernel/panic.c",
+      "drivers/net/wireless/ath/ath5k/base.c",
+      "arch/sh/kernel/irq.c",
+      "kernel/irq/handle.c",
+      "arch/s390/kernel/irq.c",
+      "drivers/misc/lkdtm.c",
+      "drivers/mfd/wm831x-irq.c",
+      "net/mac80211/util.c",
+      "drivers/serial/serial_core.c",
+      "arch/sparc/kernel/irq_64.c",
+      "arch/x86/kernel/irq_64.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

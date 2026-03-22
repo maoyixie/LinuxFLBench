@@ -1,0 +1,34 @@
+{
+  "id": "5093",
+  "title": "atmel_cs needs to keep firmware",
+  "description": "Distribution: Debian unstable\nHardware Environment: x86 laptop pentium M compaq nc4000\nSoftware Environment: pcmcia_cs (not udev)\nProblem Description: \n\nMachine hangs on swsusp suspend to disk if 3com 3CRSHPW196 (atmel_cs) is in use,\nafter printing these two lines\n\nYenta O2: res at 0x94/0xD4: 00/ea\nYenta O2: enabling read prefetch/write burst\n\nSome investigation with Magic Sysrq indicates that it stopped in the middle of\nswsusp_write -> device_resume ... -> request_firmware: presumably the pcmcia\ndevice got resumed before the disk it wants to load its firmware from\n\nSteps to reproduce \n# #  -- insert a 3com network card and wait for modules to load --\n# echo platform >/sys/power/disk\n# echo disk >/sys/power/state",
+  "patch": [
+    "--- linux-2.6.12/drivers/net/wireless/atmel.c\t2005-06-17 20:48:29.000000000 +0100\n+++ atmel.c\t2005-08-19 16:10:07.000000000 +0100\n@@ -3680,8 +3680,14 @@\n \t\t\t\t\t\t\tfirmware_modifier[i], fw_table[fw_index].fw_file_ext);\n \t\t\t\t\t\tpriv->firmware_id[31] = '\\0';\n \t\t\t\t\t\tif (request_firmware(&fw_entry, priv->firmware_id, priv->sys_dev) == 0) {\n-\t\t\t\t\t\t\tsuccess = 1;\n-\t\t\t\t\t\t\tbreak;\n+\t\t\t\t\t\t\tif(priv->firmware=kmalloc(fw_entry->size,GFP_KERNEL)) {\n+\t\t\t\t\t\t\t\tsuccess = 1;\n+\t\t\t\t\t\t\t\tbreak;\n+\t\t\t\t\t\t\t} else {\n+\t\t\t\t\t\t\t\tprintk(KERN_ALERT \"%s: kmalloc for firmware image failed, cannot start.\\n\",dev->name);\n+\t\t\t\t\t\t\t\trelease_firmware(fw_entry);\n+\t\t\t\t\t\t\t\tbreak;\n+\t\t\t\t\t\t\t}\n \t\t\t\t\t\t}\n \t\t\t\t\t}\n \t\t\t\t}\n@@ -3696,6 +3702,8 @@\n \t\t\t\n \t\t\tfw = fw_entry->data;\n \t\t\tlen = fw_entry->size;\n+\t\t\tmemcpy(priv->firmware,fw,len);\n+\t\t\tpriv->firmware_length=len;\n \t\t}\n \t\t\n \t        if (len <= 0x6000) {\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "PCMCIA",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "linux-pcmcia",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2005-08-19 07:57 UTC by Daniel Barlow",
+  "Modified": "2009-03-18 08:28 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.12",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/atmel.c"
+  ],
+  "methods": [
+    "reset_atmel_card"
+  ]
+}

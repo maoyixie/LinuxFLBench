@@ -1,0 +1,38 @@
+{
+  "id": "198351",
+  "title": "iwlwifi: 9260: very slow WAN-LAN transfers at 5Ghz",
+  "description": "Created attachment 273399 [details]\ndmesg output\n\nI recently updated my 8260 card to 9260 in laptop.\n\nAfter that download speed from my nas connected over ethernet to router dropped significantly at 5Gz.\nWas around 40MB/s with 8260. Dropped to 4MB/s with 9260.\n\nDownload speeds from internet(google drive) fully saturate my internet channel. eg. ~15MB/s. \nSo it looks like issue exists only for local wan-lan connections.\n\nAlso download speeds at 2.4Ghz is around 10MB/b which is also faster than 5Ghz one.\n\nI'm using most recent firmware-version: 34.0.0\nand most recent kernel 4.15-rc6. (got the same behavior though on 4.14.10)",
+  "patch": [
+    "From f35978844e2eea1b2a6d4a2a6445d66528fc7a06 Mon Sep 17 00:00:00 2001\nFrom: Sara Sharon <sara.sharon@intel.com>\nDate: Tue, 29 Mar 2016 10:56:57 +0300\nSubject: [PATCH] iwlwifi: mvm: fix security bug in PN checking\n\nA previous patch allowed the same PN for packets originating from the\nsame AMSDU by copying PN only for the last packet in the series.\n\nThis however is bogus since we cannot assume the last frame will be\nreceived on the same queue, and if it is received on a different ueue\nwe will end up not incrementing the PN and possibly let the next\npacket to have the same PN and pass through.\n\nChange the logic instead to driver explicitly indicate for the second\nsub frame and on to be allowed to have the same PN as the first\nsubframe. Indicate it to mac80211 as well for the fallback queue.\n\nFixes: f1ae02b186d9 (\"iwlwifi: mvm: allow same PN for de-aggregated AMSDU\")\nSigned-off-by: Sara Sharon <sara.sharon@intel.com>\nSigned-off-by: Luca Coelho <luciano.coelho@intel.com>\n---\n drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c | 39 ++++++++++++++-------------\n 1 file changed, 20 insertions(+), 19 deletions(-)\n\ndiff --git a/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c b/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c\nindex 71d6660c48e1..4a4ccfd11e5b 100644\n--- a/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c\n+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c\n@@ -71,6 +71,7 @@ static inline int iwl_mvm_check_pn(struct iwl_mvm *mvm, struct sk_buff *skb,\n \tstruct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;\n \tstruct ieee80211_rx_status *stats = IEEE80211_SKB_RXCB(skb);\n \tstruct iwl_mvm_key_pn *ptk_pn;\n+\tint res;\n \tu8 tid, keyidx;\n \tu8 pn[IEEE80211_CCMP_PN_LEN];\n \tu8 *extiv;\n@@ -127,12 +128,13 @@ static inline int iwl_mvm_check_pn(struct iwl_mvm *mvm, struct sk_buff *skb,\n \tpn[4] = extiv[1];\n \tpn[5] = extiv[0];\n \n-\tif (memcmp(pn, ptk_pn->q[queue].pn[tid],\n-\t\t   IEEE80211_CCMP_PN_LEN) <= 0)\n+\tres = memcmp(pn, ptk_pn->q[queue].pn[tid], IEEE80211_CCMP_PN_LEN);\n+\tif (res < 0)\n+\t\treturn -1;\n+\tif (!res && !(stats->flag & RX_FLAG_ALLOW_SAME_PN))\n \t\treturn -1;\n \n-\tif (!(stats->flag & RX_FLAG_AMSDU_MORE))\n-\t\tmemcpy(ptk_pn->q[queue].pn[tid], pn, IEEE80211_CCMP_PN_LEN);\n+\tmemcpy(ptk_pn->q[queue].pn[tid], pn, IEEE80211_CCMP_PN_LEN);\n \tstats->flag |= RX_FLAG_PN_VALIDATED;\n \n \treturn 0;\n@@ -314,28 +316,21 @@ static void iwl_mvm_rx_csum(struct ieee80211_sta *sta,\n }\n \n /*\n- * returns true if a packet outside BA session is a duplicate and\n- * should be dropped\n+ * returns true if a packet is a duplicate and should be dropped.\n+ * Updates AMSDU PN tracking info\n  */\n-static bool iwl_mvm_is_nonagg_dup(struct ieee80211_sta *sta, int queue,\n-\t\t\t\t  struct ieee80211_rx_status *rx_status,\n-\t\t\t\t  struct ieee80211_hdr *hdr,\n-\t\t\t\t  struct iwl_rx_mpdu_desc *desc)\n+static bool iwl_mvm_is_dup(struct ieee80211_sta *sta, int queue,\n+\t\t\t   struct ieee80211_rx_status *rx_status,\n+\t\t\t   struct ieee80211_hdr *hdr,\n+\t\t\t   struct iwl_rx_mpdu_desc *desc)\n {\n \tstruct iwl_mvm_sta *mvm_sta;\n \tstruct iwl_mvm_rxq_dup_data *dup_data;\n-\tu8 baid, tid, sub_frame_idx;\n+\tu8 tid, sub_frame_idx;\n \n \tif (WARN_ON(IS_ERR_OR_NULL(sta)))\n \t\treturn false;\n \n-\tbaid = (le32_to_cpu(desc->reorder_data) &\n-\t\tIWL_RX_MPDU_REORDER_BAID_MASK) >>\n-\t\tIWL_RX_MPDU_REORDER_BAID_SHIFT;\n-\n-\tif (baid != IWL_RX_REORDER_DATA_INVALID_BAID)\n-\t\treturn false;\n-\n \tmvm_sta = iwl_mvm_sta_from_mac80211(sta);\n \tdup_data = &mvm_sta->dup_data[queue];\n \n@@ -365,6 +360,12 @@ static bool iwl_mvm_is_nonagg_dup(struct ieee80211_sta *sta, int queue,\n \t\t     dup_data->last_sub_frame[tid] >= sub_frame_idx))\n \t\treturn true;\n \n+\t/* Allow same PN as the first subframe for following sub frames */\n+\tif (dup_data->last_seq[tid] == hdr->seq_ctrl &&\n+\t    sub_frame_idx > dup_data->last_sub_frame[tid] &&\n+\t    desc->mac_flags2 & IWL_RX_MPDU_MFLG2_AMSDU)\n+\t\trx_status->flag |= RX_FLAG_ALLOW_SAME_PN;\n+\n \tdup_data->last_seq[tid] = hdr->seq_ctrl;\n \tdup_data->last_sub_frame[tid] = sub_frame_idx;\n \n@@ -981,7 +982,7 @@ void iwl_mvm_rx_mpdu_mq(struct iwl_mvm *mvm, struct napi_struct *napi,\n \t\tif (ieee80211_is_data(hdr->frame_control))\n \t\t\tiwl_mvm_rx_csum(sta, skb, desc);\n \n-\t\tif (iwl_mvm_is_nonagg_dup(sta, queue, rx_status, hdr, desc)) {\n+\t\tif (iwl_mvm_is_dup(sta, queue, rx_status, hdr, desc)) {\n \t\t\tkfree_skb(skb);\n \t\t\tgoto out;\n \t\t}\n-- \n2.15.1\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "network-wireless",
+  "Hardware": "Intel Linux",
+  "Importance": "P1 high",
+  "Assignee": "DO NOT USE - assign \"network-wireless-intel\" component instead",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (1)": "198417",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2018-01-04 12:00 UTC by sergeidanilov",
+  "Modified": "2018-03-07 07:44 UTC",
+  "CC List": "7 users",
+  "See Also": "",
+  "Kernel Version": "4.15-rc6",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c"
+  ],
+  "methods": [
+    "iwl_mvm_check_pn",
+    "iwl_mvm_rx_csum",
+    "iwl_mvm_is_nonagg_dup",
+    "iwl_mvm_rx_mpdu_mq"
+  ]
+}

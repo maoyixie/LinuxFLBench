@@ -1,0 +1,35 @@
+{
+  "id": "28142",
+  "title": "CIFS: \"Echo Request\" message results in STATUS_ACCESS_DENIED",
+  "": "Show dependency tree",
+  "description": "hi,\n\nafter mounting a CIFS share on a windows server 2003, r2 3790 SP2, and doing \"nothing\"/idling, after about 50-60 seconds accessing the mounted share is not possible anymore due to \"permission denied\" errors.\n\nsniffing the traffic reveals that a \"Echo Request\" message is being sent immediately followed by a \"Echo Response, Error: STATUS_ACCESS_DENIED\" message. after that one has to remount the share in order to access it again.\n\naccessing the share and copying files seems to work fine immediately after mounting, but only until the \"Echo Request\" message.\n\n2.6.37 was not affected. i've tested 2.6.38-rc2 and 2.6.38-rc3 and both suffer from the issues.\n\nmount.cifs version: 1.14-3.5.6, samba-3.5.6\n------------\nCONFIG_CIFS=y\n# CONFIG_CIFS_STATS is not set\nCONFIG_CIFS_WEAK_PW_HASH=y\nCONFIG_CIFS_UPCALL=y\nCONFIG_CIFS_XATTR=y\nCONFIG_CIFS_POSIX=y\n# CONFIG_CIFS_DEBUG2 is not set\nCONFIG_CIFS_DFS_UPCALL=y\nCONFIG_CIFS_ACL=y\nCONFIG_CIFS_EXPERIMENTAL=y\nCONFIG_SMB_FS=m  (module is not loaded)\nCONFIG_SMB_NLS_DEFAULT=y\nCONFIG_SMB_NLS_REMOTE=\"cp850\"\n-------------\ncat /proc/fs/cifs/DebugData \nDisplay Internal CIFS Data Structures for Debugging\n---------------------------------------------------\nCIFS Version 1.69\nFeatures: dfs lanman posix spnego xattr acl\nActive VFS Requests: 0\nServers:\n1) Name: xxxx  Domain: xxxx Uses: 1 OS: Windows Server 2003 R2 3790 Service Pack 2\n        NOS: Windows Server 2003 R2 5.2 Capability: 0x1f3fd\n        SMB session status: 1   TCP status: 1\n        Local Users To Server: 1 SecMode: 0xf Req On Wire: 0\n        Shares:\n        1) xxxx Mounts: 1 Type: NTFS DevInfo: 0x20 Attributes: 0x700ff\nPathComponentMax: 255 Status: 0x1 type: DISK \n\n\ni've now compiled the debug settings too if that helps, but not yet rebooted (and only remote access at the moment).\n\nJG",
+  "patch": [
+    "From cda5fcbf45b9feaae67e244d39db0ab8f2e7fc73 Mon Sep 17 00:00:00 2001\nFrom: Jeff Layton <jlayton@redhat.com>\nDate: Thu, 3 Feb 2011 14:52:29 -0500\nSubject: [PATCH] cifs: enable signing flag in SMB header when server has it on\n\nSigned-off-by: Jeff Layton <jlayton@redhat.com>\n---\n fs/cifs/transport.c |    4 ++++\n 1 files changed, 4 insertions(+), 0 deletions(-)\n\ndiff --git a/fs/cifs/transport.c b/fs/cifs/transport.c\nindex b8c5e2e..fbc5aac 100644\n--- a/fs/cifs/transport.c\n+++ b/fs/cifs/transport.c\n@@ -359,6 +359,10 @@ cifs_call_async(struct TCP_Server_Info *server, struct smb_hdr *in_buf,\n \tif (rc)\n \t\treturn rc;\n \n+\t/* enable signing if server requires it */\n+\tif (server->secMode & (SECMODE_SIGN_REQUIRED | SECMODE_SIGN_ENABLED))\n+\t\tin_buf->Flags2 |= SMBFLG2_SECURITY_SIGNATURE;\n+\n \tmutex_lock(&server->srv_mutex);\n \tmid = AllocMidQEntry(in_buf, server);\n \tif (mid == NULL) {\n-- \n1.7.3.4\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "CIFS",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Jeff Layton",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "27352",
+  "Reported": "2011-02-03 18:54 UTC by JG",
+  "Modified": "2011-02-12 22:45 UTC",
+  "CC List": "6 users",
+  "See Also": "",
+  "Kernel Version": "2.6.38-rc3",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/cifs/transport.c"
+  ],
+  "methods": [
+    "cifs_call_async"
+  ]
+}

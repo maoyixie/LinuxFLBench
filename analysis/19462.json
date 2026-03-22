@@ -1,0 +1,145 @@
+{
+  "id": "19462",
+  "title": "Reproducible Kernel panic/oops during boot and startup - Panasonic Toughbooks",
+  "kernel_version": "2.6.32",
+  "product": "ACPI",
+  "component": "ACPICA-Core",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "wrong_behavior",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/acpica/dswexec.c"
+    ],
+    "buggy_methods": [
+      "acpi_ds_exec_begin_op"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "acpi_ut_update_object_reference",
+      "acpi_ds_build_internal_object"
+    ],
+    "mentioned_file_paths": [
+      "kernel/cred.c",
+      "mm/slab.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/class/power_supply/BAT1/technology",
+      "/sys/devices/virtual/net/lo/operstate",
+      "/sys/module/processor/initstate",
+      "/sys/devices/LNXSYSTM",
+      "/sys/class/net/lo/operstate",
+      "/sys/devices/pci0000"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3732,
+    "description_word_count": 546
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 17,
+    "lines_removed": 2,
+    "patch_size": 19,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "acpi_ds_exec_begin_op"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/acpica/dswexec.c",
+    "filename": "dswexec.c",
+    "directory": "drivers/acpi/acpica",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/acpica",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_2_functions",
+      "proc_sys_paths_hint_subsystem",
+      "component_known:ACPICA-Core",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "19462",
+      "version": "2.6.32",
+      "status": "found",
+      "path": "drivers/acpi/acpica/dswexec.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "19462",
+    "version": "2.6.32",
+    "ground_truth_file": "drivers/acpi/acpica/dswexec.c",
+    "trace_functions": [
+      "acpi_ut_update_object_reference",
+      "acpi_ds_build_internal_object"
+    ],
+    "total_trace_functions": 2,
+    "function_locations": {
+      "acpi_ut_update_object_reference": [],
+      "acpi_ds_build_internal_object": []
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "19462",
+    "title": "Reproducible Kernel panic/oops during boot and startup - Panasonic Toughbooks",
+    "ground_truth_file": "drivers/acpi/acpica/dswexec.c",
+    "ground_truth_methods": [
+      "acpi_ds_exec_begin_op"
+    ],
+    "ground_truth_subsystem": "drivers/acpi",
+    "trace_functions_top8": [
+      "acpi_ut_update_object_reference",
+      "acpi_ds_build_internal_object"
+    ],
+    "trace_function_locations": {
+      "acpi_ut_update_object_reference": [],
+      "acpi_ds_build_internal_object": []
+    },
+    "trace_subsystems": [],
+    "mismatch_type": "unknown",
+    "gt_calls_trace_func": false,
+    "gt_method_in_trace": false,
+    "product": "ACPI",
+    "component": "ACPICA-Core"
+  },
+  "overall_category": "C_trace_misleads"
+}

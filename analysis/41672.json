@@ -1,0 +1,110 @@
+{
+  "id": "41672",
+  "title": "backlight control will not work on Lenovo V570",
+  "kernel_version": "3.1-rc3",
+  "product": "ACPI",
+  "component": "Power-Video",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/video.c"
+    ],
+    "buggy_methods": [
+      "acpi_video_bus_check"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "ACPI Error: Current brightness invalid. "
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 727,
+    "description_word_count": 119
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 9,
+    "lines_removed": 9,
+    "patch_size": 18,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "init_fix"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "acpi_video_bus_check"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/video.c",
+    "filename": "video.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/video.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Power-Video"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "41672",
+      "version": "3.1-rc3",
+      "status": "found",
+      "path": "drivers/acpi/video.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "41672",
+    "title": "backlight control will not work on Lenovo V570",
+    "ground_truth_file": "drivers/acpi/video.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "acpi_video_bus_check"
+    ],
+    "product": "ACPI",
+    "component": "Power-Video",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "wrong_output"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "init_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "component": "Power-Video",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

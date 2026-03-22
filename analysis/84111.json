@@ -1,0 +1,114 @@
+{
+  "id": "84111",
+  "title": "HP Pavilion dv6-3182 shows at least one additional backlight interface",
+  "kernel_version": "3.13",
+  "product": "ACPI",
+  "component": "Power-Video",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/video.c"
+    ],
+    "buggy_methods": [
+      "acpi_video_device_bind",
+      "acpi_video_device_enumerate",
+      "acpi_video_dev_register_backlight"
+    ],
+    "num_methods": 3
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/class/backlight"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 528,
+    "description_word_count": 80
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 33,
+    "lines_removed": 2,
+    "patch_size": 35,
+    "new_functions": [
+      "acpi_video_device_in_dod"
+    ],
+    "patch_types": [
+      "quirk/device_table",
+      "new_function",
+      "logic_change",
+      "init_fix"
+    ],
+    "num_hunks": 4,
+    "hunk_functions": [
+      "acpi_video_device_enumerate",
+      "acpi_video_device_bind",
+      "acpi_video_dev_register_backlight"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/video.c",
+    "filename": "video.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/video.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Power-Video",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "84111",
+      "version": "3.13",
+      "status": "found",
+      "path": "drivers/acpi/video.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "84111",
+    "title": "HP Pavilion dv6-3182 shows at least one additional backlight interface",
+    "product": "ACPI",
+    "component": "Power-Video",
+    "buggy_file": [
+      "drivers/acpi/video.c"
+    ],
+    "fix_type": "unknown",
+    "table_entry_lines_added": 1,
+    "description_clues": [
+      "hardware_model_mentioned"
+    ],
+    "patch_size": 35,
+    "potential_strategies": [
+      "search_for_model_specific_quirks",
+      "narrow_by_component:Power-Video"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

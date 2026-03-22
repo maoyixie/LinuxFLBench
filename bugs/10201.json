@@ -1,0 +1,34 @@
+{
+  "id": "10201",
+  "title": "Yum update of Kernel broke sis900 ethernet driver",
+  "description": "Latest working kernel version:  2.6.23.15-137.fc8.i686\nEarliest failing kernel version: 2.6.24.3-12.fc8.i686\nDistribution:  Fedora Core 8\nHardware Environment:  PC\nSoftware Environment:  Following YUM update\nProblem Description:  After reboot following YUM update to new kernel - SiS 900 PCI Fast Ethernet (driver sis900) can not ifconfig eth0.  Configuration fails with  message \"SIOCSIFFLAGS: Invalid argument\".  System does boot.  SO  To recover, insert FC8 DVD and copy original kernel RPM's to the hard drive.  Then install the old Kernel with \"rpm -ivh --force --hash *.rpm\" and reboot.  System comes up and configures the sis900 eth0 correctly at startup.\n\nSteps to reproduce:  A machine with a SiS 900 PCI Fast Ethernet installed.  INstall RC8 and apply the updates.  After 2.6.24.3, reboot and notice the trouble.\n\n\nDan",
+  "patch": [
+    "--- a/drivers/net/sis900.c\t2008-12-31 09:15:17.000000000 +0100\n+++ b/drivers/net/sis900.c\t2008-12-31 09:24:47.000000000 +0100\n@@ -382,6 +382,25 @@ static int __devinit sis96x_get_mac_addr\n }\n \n /**\n+ *      sis900_check_mac_addr - Check the MAc adress for validity\n+ *\t@net_dev: the net device that has the address to check\n+ *\n+ * \tReturn false (0) if the mac address read from the hardware is\n+ * \tcomposed of all zeros.\n+ */\n+\n+static int __devinit sis900_check_mac_addr(struct net_device *net_dev)\n+{\n+\tint i;\n+\n+\tfor (i = 0; i < 6; i++)\n+\t\tif (net_dev->dev_addr[i] != 0)\n+\t\t\treturn 1;\n+\n+\treturn 0;\n+}\n+\n+/**\n  *\tsis900_probe - Probe for sis900 device\n  *\t@pci_dev: the sis900 pci device\n  *\t@pci_id: the pci device ID\n@@ -504,6 +523,9 @@ static int __devinit sis900_probe(struct\n \telse\n \t\tret = sis900_get_mac_addr(pci_dev, net_dev);\n \n+\tif (sis900_check_mac_addr(net_dev) == 0)\n+\t\tprintk(KERN_WARNING \"%s: Read an invalid MAC address, remember to set one manually\\n\", dev_name);\n+\n \tif (ret == 0) {\n \t\tprintk(KERN_WARNING \"%s: Cannot read MAC address.\\n\", dev_name);\n \t\tret = -ENODEV;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "ETH0_sis900_Trouble",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Network",
+  "Hardware": "All Linux",
+  "Importance": "P1 blocking",
+  "Assignee": "Daniele Venzano",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-03-08 15:36 UTC by Dan McNaul",
+  "Modified": "2008-12-31 00:39 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.24",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/sis900.c"
+  ],
+  "methods": [
+    "sis900_probe"
+  ]
+}

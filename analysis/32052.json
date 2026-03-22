@@ -1,0 +1,110 @@
+{
+  "id": "32052",
+  "title": "Unloading wmi module causes a kernel oops.",
+  "kernel_version": "2.6.37",
+  "product": "Platform Specific/Hardware",
+  "component": "x86-64",
+  "hardware": "x86-64 Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/platform/x86/wmi.c"
+    ],
+    "buggy_methods": [
+      "wmi_free_devices"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": true,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 562,
+    "description_word_count": 90
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 5,
+    "lines_removed": 1,
+    "patch_size": 6,
+    "patch_types": [
+      "logic_change",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "wmi_free_devices"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/platform/x86/wmi.c",
+    "filename": "wmi.c",
+    "directory": "drivers/platform/x86",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "platform",
+    "driver_subsystem": "platform/x86",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:x86-64",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "32052",
+      "version": "2.6.37",
+      "status": "found",
+      "path": "drivers/platform/x86/wmi.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "32052",
+    "title": "Unloading wmi module causes a kernel oops.",
+    "ground_truth_file": "drivers/platform/x86/wmi.c",
+    "ground_truth_subsystem": "drivers/platform",
+    "ground_truth_methods": [
+      "wmi_free_devices"
+    ],
+    "product": "Platform Specific/Hardware",
+    "component": "x86-64",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "x86-64",
+      "product": "Platform Specific/Hardware"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

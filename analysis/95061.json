@@ -1,0 +1,114 @@
+{
+  "id": "95061",
+  "title": "Laptop will not shutdown after suspend to disk (regression)",
+  "kernel_version": "3.19",
+  "product": "Drivers",
+  "component": "Video",
+  "hardware": "Intel Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpu/drm/i915/i915_drv.c"
+    ],
+    "buggy_methods": [
+      "i915_drm_suspend_late",
+      "i915_hibernate_needs_quirk"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/power/disk",
+      "/sys/power/state"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 662,
+    "description_word_count": 105
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 21,
+    "lines_removed": 5,
+    "patch_size": 26,
+    "new_functions": [
+      "i915_hibernate_needs_quirk",
+      "i915_drm_suspend_late"
+    ],
+    "patch_types": [
+      "quirk/device_table",
+      "new_function",
+      "logic_change"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "pci_disable_device"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpu/drm/i915/i915_drv.c",
+    "filename": "i915_drv.c",
+    "directory": "drivers/gpu/drm/i915",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "gpu",
+    "driver_subsystem": "gpu/drm",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Video",
+      "is_regression",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "95061",
+      "version": "3.19",
+      "status": "found",
+      "path": "drivers/gpu/drm/i915/i915_drv.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "95061",
+    "title": "Laptop will not shutdown after suspend to disk (regression)",
+    "product": "Drivers",
+    "component": "Video",
+    "buggy_file": [
+      "drivers/gpu/drm/i915/i915_drv.c"
+    ],
+    "fix_type": "quirk_function_addition",
+    "table_entry_lines_added": 2,
+    "description_clues": [
+      "hardware_model_mentioned"
+    ],
+    "patch_size": 26,
+    "potential_strategies": [
+      "search_for_model_specific_quirks",
+      "narrow_by_component:Video"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

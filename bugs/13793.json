@@ -1,0 +1,34 @@
+{
+  "id": "13793",
+  "title": "2.6.31 regression - boot crash in rcu_process_callbacks - DELL XPS M1330",
+  "description": "Created attachment 22393 [details]\nPhoto of the screen after the crash\n\nKernel 2.6.31 does not boot on my laptop (a DELL XPS M1330). I have tried rc1, rc2, rc3 and today's daily build but none of those will boot on my laptop.\n\nI get the following call trace with today's daily build:\nrcu_do_batch+0x27/0x90\n__rcu_process_callbacks+0xc8/0x100\ntick_handle_oneshot_broadcast+0xdd/0x100\nrcu_process_callbacks+0x20/0x40\ntimer_interrupt+0x21/0x70\nhandle_IRQ_event+0x56/0x120\ndo_softirq+0x3c/0x40\nirq_exit+0x5c/0x70\ndo_IRQ+0x4f/0xc0\ncommon_interrupt+0x29/0x30\nsys_getresuid+0x3b/0x70\nacpi_idle_enter_bm+0x19a/0x1c9\ncpuidle_idle_call+0x6f/0xc0\ncpu_idle+0x42/0x80\nstart_secondary+0xae/0cd0",
+  "patch": [
+    "From a345a80ca7a926c9c6e322a1e8add4817c834d0f Mon Sep 17 00:00:00 2001\nFrom: Stefan Bader <stefan.bader@canonical.com>\nDate: Thu, 23 Jul 2009 11:26:05 +0200\nSubject: [PATCH] jfs: Fix early release of acl in jfs_get_acl\n\nBugLink: http://bugs.launchpad.net/ubuntu/+bug/396780\n\nCommit 073aaa1b142461d91f83da66db1184d7c1b1edea \"helpers for acl\ncaching + switch to those\" introduced new helper functions for\nacl handling but seems to have introduced a regression for jfs as\nthe acl is released before returning it to the caller, instead of\nleaving this for the caller to do.\nThis causes the acl object to be used after freeing it, leading\nto kernel panics in completely different places.\n\nThanks to Christophe Dumez for reporting and bisecting into this.\n\nReported-by: Christophe Dumez <dchris@gmail.com>\nTested-by: Christophe Dumez <dchris@gmail.com>\nSigned-off-by: Stefan Bader <stefan.bader@canonical.com>\nAcked-by: Andy Whitcroft <apw@canonical.com>\n---\n fs/jfs/acl.c |    4 +---\n 1 files changed, 1 insertions(+), 3 deletions(-)\n\ndiff --git a/fs/jfs/acl.c b/fs/jfs/acl.c\nindex f272bf0..3c88d1b 100644\n--- a/fs/jfs/acl.c\n+++ b/fs/jfs/acl.c\n@@ -67,10 +67,8 @@ static struct posix_acl *jfs_get_acl(struct inode *inode, int type)\n \t\tacl = posix_acl_from_xattr(value, size);\n \t}\n \tkfree(value);\n-\tif (!IS_ERR(acl)) {\n+\tif (!IS_ERR(acl))\n \t\tset_cached_acl(inode, type, acl);\n-\t\tposix_acl_release(acl);\n-\t}\n \treturn acl;\n }\n \n-- \n1.5.4.3\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "VFS",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Len Brown",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-07-17 14:49 UTC by Christophe Dumez",
+  "Modified": "2012-06-13 14:10 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.31-rc3",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/jfs/acl.c"
+  ],
+  "methods": [
+    "*jfs_get_acl"
+  ]
+}

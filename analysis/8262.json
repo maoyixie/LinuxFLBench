@@ -1,0 +1,117 @@
+{
+  "id": "8262",
+  "title": "PCMCIA: socket *** DANGER *** unable to remove socket power",
+  "kernel_version": "2.6.20",
+  "product": "Drivers",
+  "component": "PCMCIA",
+  "hardware": "i386 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "performance",
+    "wrong_behavior",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/pcmcia/cs.c"
+    ],
+    "buggy_methods": [
+      "socket_shutdown"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/iomem"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 2960,
+    "description_word_count": 353
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 3,
+    "lines_removed": 3,
+    "patch_size": 6,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 3,
+    "hunk_functions": [
+      "MODULE_LICENSE",
+      "socket_shutdown"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/pcmcia/cs.c",
+    "filename": "cs.c",
+    "directory": "drivers/pcmcia",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "pcmcia",
+    "driver_subsystem": "pcmcia/cs.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:PCMCIA"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "8262",
+      "version": "2.6.20",
+      "status": "found",
+      "path": "drivers/pcmcia/cs.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "8262",
+    "title": "PCMCIA: socket *** DANGER *** unable to remove socket power",
+    "ground_truth_file": "drivers/pcmcia/cs.c",
+    "ground_truth_subsystem": "drivers/pcmcia",
+    "ground_truth_methods": [
+      "socket_shutdown"
+    ],
+    "product": "Drivers",
+    "component": "PCMCIA",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "wrong_output",
+      "performance"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/proc/iomem"
+      ],
+      "component": "PCMCIA",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

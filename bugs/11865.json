@@ -1,0 +1,36 @@
+{
+  "id": "11865",
+  "title": "WOL for E100 Doesn't Work Anymore",
+  "": "Show dependency tree",
+  "description": "Latest working kernel version: 2.6.27\nEarliest failing kernel version: 2.6.27\nDistribution: Gentoo\nHardware Environment: 2x750P3 1G RAM w/ \n\n00:14.0 Ethernet controller: Intel Corporation 82557/8/9 [Ethernet Pro 100] (rev 08)\n\nProblem Description:\nAs of kernel version 2.6.27, WOL has stopped working.  The box no longer powers on after the magic packet has been sent.  Rebooting using kernel-2.6.26*, WOL *does* work!\n\nSteps to reproduce:\n(Not needed.  Self Explanatory.)\n\n\nI noticed 3 lines of code in e100.c added/modified since 2.6.26*, however, I reversed 2 lines of code to 2.6.26 and the other line was just added an additional pointer, for which I left alone.  Recompiled, rebooted and WOL still didn't work using 2.6.27.  I'm guessing, the source of this bug lies elsewhere.",
+  "patch": [
+    "Author: Rafael J. Wysocki <rjw@sisk.pl>\nSubject: e100: Fix WOL regression\n    \nSince dev->power.should_wakeup bit is used by the PCI core to\ndecide whether the device should wake up the system from sleep\nstates, set/unset this bit whenever WOL is enabled/disabled using\ne100_set_wol().\n\nSigned-off-by: Rafael J. Wysocki <rjw@sisk.pl>\n\ndiff --git a/drivers/net/e100.c b/drivers/net/e100.c\nindex 3d69fae..b0ca300 100644\n--- a/drivers/net/e100.c\n+++ b/drivers/net/e100.c\n@@ -2322,7 +2322,8 @@ static int e100_set_wol(struct net_device *netdev, struct ethtool_wolinfo *wol)\n {\n \tstruct nic *nic = netdev_priv(netdev);\n \n-\tif(wol->wolopts != WAKE_MAGIC && wol->wolopts != 0)\n+\tif ((wol->wolopts && wol->wolopts != WAKE_MAGIC) ||\n+\t    !device_can_wakeup(&nic->pdev->dev))\n \t\treturn -EOPNOTSUPP;\n \n \tif(wol->wolopts)\n@@ -2330,6 +2331,8 @@ static int e100_set_wol(struct net_device *netdev, struct ethtool_wolinfo *wol)\n \telse\n \t\tnic->flags &= ~wol_magic;\n \n+\tdevice_set_wakeup_enable(&nic->pdev->dev, wol->wolopts);\n+\n \te100_exec_cb(nic, NULL, e100_configure);\n \n \treturn 0;\n@@ -2734,8 +2737,10 @@ static int __devinit e100_probe(struct pci_dev *pdev,\n \n \t/* Wol magic packet can be enabled from eeprom */\n \tif((nic->mac >= mac_82558_D101_A4) &&\n-\t   (nic->eeprom[eeprom_id] & eeprom_id_wol))\n+\t   (nic->eeprom[eeprom_id] & eeprom_id_wol)) {\n \t\tnic->flags |= wol_magic;\n+\t\tdevice_set_wakeup_enable(&pdev->dev, true);\n+\t}\n \n \t/* ack any pending wake events, disable PME */\n \tpci_pme_active(pdev, false);\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Network",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Rafael J. Wysocki",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "7216 Regressions-2.6.26",
+  "Reported": "2008-10-26 21:56 UTC by Roger",
+  "Modified": "2009-05-21 15:18 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.27",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/e100.c"
+  ],
+  "methods": [
+    "e100_set_wol",
+    "e100_probe"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "id": "13780",
+  "title": "NULL pointer dereference loading powernowk8",
+  "": "Show dependency tree",
+  "description": "Created attachment 22358 [details]\nkernel log\n\nHi,\n\nWhen the \"loadcpufreq\" init script loads the kernel module (powernow_k8?), I get the following error:\nkernel: [   39.822807] BUG: unable to handle kernel NULL pointer dereference at\n0000000000000024\nkernel: [   39.824035] IP: [<ffffffffa034b094>] powernowk8_cpu_init+0x30d/0xa07\n[powernow_k8]\n\nI'm using debian's kernel linux-image-2.6.30-1-amd64 2.6.30-2\n\nIf I don't start that script, I do not get the error.",
+  "patch": [
+    "diff --git a/arch/x86/kernel/cpu/cpufreq/powernow-k8.c b/arch/x86/kernel/cpu/cpufreq/powernow-k8.c\nindex 4dd7e3b..cfe7043 100644\n--- a/arch/x86/kernel/cpu/cpufreq/powernow-k8.c\n+++ b/arch/x86/kernel/cpu/cpufreq/powernow-k8.c\n@@ -617,9 +617,10 @@ static int check_pst_table(struct powernow_k8_data *data, struct pst_s *pst,\n \treturn 0;\n }\n \n-static void invalidate_entry(struct powernow_k8_data *data, unsigned int entry)\n+static void invalidate_entry(struct cpufreq_frequency_table *powernow_table,\n+\t\tunsigned int entry)\n {\n-\tdata->powernow_table[entry].frequency = CPUFREQ_ENTRY_INVALID;\n+\tpowernow_table[entry].frequency = CPUFREQ_ENTRY_INVALID;\n }\n \n static void print_basics(struct powernow_k8_data *data)\n@@ -911,13 +912,13 @@ static int fill_powernow_table_pstate(struct powernow_k8_data *data,\n \t\t\t\t\t\"bad value %d.\\n\", i, index);\n \t\t\tprintk(KERN_ERR PFX \"Please report to BIOS \"\n \t\t\t\t\t\"manufacturer\\n\");\n-\t\t\tinvalidate_entry(data, i);\n+\t\t\tinvalidate_entry(powernow_table, i);\n \t\t\tcontinue;\n \t\t}\n \t\trdmsr(MSR_PSTATE_DEF_BASE + index, lo, hi);\n \t\tif (!(hi & HW_PSTATE_VALID_MASK)) {\n \t\t\tdprintk(\"invalid pstate %d, ignoring\\n\", index);\n-\t\t\tinvalidate_entry(data, i);\n+\t\t\tinvalidate_entry(powernow_table, i);\n \t\t\tcontinue;\n \t\t}\n \n@@ -962,7 +963,7 @@ static int fill_powernow_table_fidvid(struct powernow_k8_data *data,\n \t\t/* verify frequency is OK */\n \t\tif ((freq > (MAX_FREQ * 1000)) || (freq < (MIN_FREQ * 1000))) {\n \t\t\tdprintk(\"invalid freq %u kHz, ignoring\\n\", freq);\n-\t\t\tinvalidate_entry(data, i);\n+\t\t\tinvalidate_entry(powernow_table, i);\n \t\t\tcontinue;\n \t\t}\n \n@@ -970,7 +971,7 @@ static int fill_powernow_table_fidvid(struct powernow_k8_data *data,\n \t\t * BIOSs are using \"off\" to indicate invalid */\n \t\tif (vid == VID_OFF) {\n \t\t\tdprintk(\"invalid vid %u, ignoring\\n\", vid);\n-\t\t\tinvalidate_entry(data, i);\n+\t\t\tinvalidate_entry(powernow_table, i);\n \t\t\tcontinue;\n \t\t}\n \n@@ -989,7 +990,7 @@ static int fill_powernow_table_fidvid(struct powernow_k8_data *data,\n \n \t\t\t\tdprintk(\"double low frequency table entry, \"\n \t\t\t\t\t\t\"ignoring it.\\n\");\n-\t\t\t\tinvalidate_entry(data, i);\n+\t\t\t\tinvalidate_entry(powernow_table, i);\n \t\t\t\tcontinue;\n \t\t\t} else\n \t\t\t\tcntlofreq = i;\n@@ -1001,7 +1002,7 @@ static int fill_powernow_table_fidvid(struct powernow_k8_data *data,\n \t\t\t\t(unsigned int)\n \t\t\t\t(data->acpi_data.states[i].core_frequency\n \t\t\t\t * 1000));\n-\t\t\tinvalidate_entry(data, i);\n+\t\t\tinvalidate_entry(powernow_table, i);\n \t\t\tcontinue;\n \t\t}\n \t}\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Power Management",
+  "Classification": "Unclassified",
+  "Component": "cpufreq",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Mark Langsdorf",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "12398",
+  "Reported": "2009-07-15 18:00 UTC by Kurt Roeckx",
+  "Modified": "2010-01-19 22:03 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.29",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/x86/kernel/cpu/cpufreq/powernow-k8.c"
+  ],
+  "methods": [
+    "check_pst_table",
+    "fill_powernow_table_pstate",
+    "fill_powernow_table_fidvid"
+  ]
+}

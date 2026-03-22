@@ -1,0 +1,122 @@
+{
+  "id": "9704",
+  "title": "ACPI: processor throttling set error",
+  "kernel_version": "2.6.24",
+  "product": "ACPI",
+  "component": "Config-Processors",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/processor_throttling.c"
+    ],
+    "buggy_methods": [
+      "acpi_processor_write_throttling"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "info returned, on the contray, it sets"
+    ],
+    "proc_sys_paths": [
+      "/proc/acpi/processor/CPU0/throttling",
+      "/proc/acpi/processor/"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1809,
+    "description_word_count": 180
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 20,
+    "lines_removed": 17,
+    "patch_size": 37,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "init_fix"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "acpi_processor_write_throttling"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/processor_throttling.c",
+    "filename": "processor_throttling.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/processor_throttling.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Config-Processors"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "9704",
+      "version": "2.6.24",
+      "status": "found",
+      "path": "drivers/acpi/processor_throttling.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "9704",
+    "title": "ACPI: processor throttling set error",
+    "ground_truth_file": "drivers/acpi/processor_throttling.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "acpi_processor_write_throttling"
+    ],
+    "product": "ACPI",
+    "component": "Config-Processors",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "wrong_output"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "error_return_fix",
+      "init_fix",
+      "boundary_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/proc/acpi/processor/",
+        "/proc/acpi/processor/CPU0/throttling"
+      ],
+      "component": "Config-Processors",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "21092",
+  "title": "Kernel 2.6.36 Bug during quotaon on reiserfs",
+  "": "Show dependency tree",
+  "description": "I get this bug during boot at enabling usrquta for a reiser(3)fs since 2.6.36. The kernel is a x86_64 smp. The reiserfs reisdes on a dm raid level 5. The same setup worked with kernel version 2.6.35.7, of course there was no other configuratrion change between 2.6.35.7 and 2.6.36.\n\nREISERFS warning (device dm-4): reiserfs-2500 finish_unfinished: cannot turn on journaled quota: error -3\n------------[ cut here ]------------\nkernel BUG at fs/reiserfs/lock.c:43!\ninvalid opcode: 0000 [#1] SMP \nlast sysfs file: /sys/devices/virtual/vc/vcsa12/uevent\nCPU 5 \nModules linked in: snd_seq_dummy snd_seq_oss snd_seq_midi_event snd_seq snd_seq_device snd_pcm_oss snd_mixer_oss quota_v2 quota_tree snd_hda_codec_atihdmi snd_hda_codec_realtek snd_hda_intel snd_hda_codec snd_pcm psmouse snd_timer evdev firewire_ohci snd pcspkr soundcore processor firewire_core thermal snd_page_alloc button crc_itu_t i5k_amb scsi_transport_iscsi tg3 libphy fuse nfs auth_rpcgss fscache lockd sunrpc dm_crypt dm_mirror dm_region_hash dm_log scsi_wait_scan uhci_hcd usb_storage ehci_hcd sr_mod cdrom sg\n\nPid: 3916, comm: quotaon Not tainted 2.6.36_hope3-xw6600 #1 0A9Ch/HP xw6600 Workstation\nRIP: 0010:[<ffffffff811581a3>]  [<ffffffff811581a3>] reiserfs_write_unlock+0x43/0x50\nRSP: 0018:ffff880127a5dd78  EFLAGS: 00010203\nRAX: ffff880129cef3e0 RBX: ffff8801298115d0 RCX: 000000000000006e\nRDX: ffff88012090c540 RSI: 0000000000000000 RDI: ffff88012a838000\nRBP: ffff880127a5dd78 R08: 000000000000000b R09: ffff8801298115d0\nR10: 00007f5abe320580 R11: 0000000000000246 R12: ffff880129811540\nR13: ffff880129811680 R14: ffff88012adc3400 R15: 0000000000001000\nFS:  00007f5abd54c700(0000) GS:ffff880001940000(0000) knlGS:0000000000000000\nCS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033\nCR2: 00007f5abd5924c5 CR3: 000000012a741000 CR4: 00000000000006e0\nDR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000\nDR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400\nProcess quotaon (pid: 3916, threadinfo ffff880127a5c000, task ffff880129cef3e0)\nStack:\n ffff880127a5ddc8 ffffffff81155d6f ffff880127a5dda8 ffffffff810d505c\n<0> 0000000000000002 ffff880127a5de28 ffff88012adc3400 0000000000000000\n<0> 0000000000000002 ffff88012adc3400 ffff880127a5de68 ffffffff81141071\nCall Trace:\n [<ffffffff81155d6f>] reiserfs_unpack+0x6f/0x160\n [<ffffffff810d505c>] ? path_put+0x2c/0x40\n [<ffffffff81141071>] reiserfs_quota_on+0x171/0x1d0\n [<ffffffff810d8056>] ? do_path_lookup+0x36/0x60\n [<ffffffff81237245>] ? strncpy_from_user+0x45/0x90\n [<ffffffff81119ac5>] do_quotactl+0x4d5/0x520\n [<ffffffff810d505c>] ? path_put+0x2c/0x40\n [<ffffffff8142b181>] ? down_read+0x11/0x30\n [<ffffffff81119bbe>] sys_quotactl+0xae/0x120                                                                                 \n [<ffffffff81002d2b>] system_call_fastpath+0x16/0x1b                                                                          \nCode: 75 29 8b 47 50 ff c8 89 47 50 83 f8 ff 74 09 c9 c3 0f 1f 80 00 00 00 00 48 c7 47 48 00 00 00 00 48 83 c7 28 e8 5f 26 2d 00 c9 c3 <0f> 0b eb fe 66 0f 1f 84 00 00 00 00 00 55 83 fe ff 48 89 e5 74                                                     \nRIP  [<ffffffff811581a3>] reiserfs_write_unlock+0x43/0x50                                                                     \n RSP <ffff880127a5dd78>                                                                                                       \n---[ end trace 488c3fb0de5127fd ]---  \n\n\nDespite the bug the fs in question is accessible, quota of course dont'work. Any susequent try to enable quota result in a stalled quotaon command without any output on console or dmesg.\n\n\nThank you, Markus",
+  "patch": [
+    "From 5bad9463d118228deed9ba61f9ab759ff15fad52 Mon Sep 17 00:00:00 2001\nFrom: Jan Kara <jack@suse.cz>\nDate: Wed, 27 Oct 2010 23:55:31 +0200\nSubject: [PATCH] reiserfs: Fix locking in reiserfs_quota_on()\n\nreiserfs_quota_on() unpacks a tail of quota file in case it has one. But after\nBKL conversion, reiserfs_unpack() expects to be called with write_lock held.\nSo acquire the lock before calling reiserfs_unpack() to avoid assertion\nfailures.\n\nSigned-off-by: Jan Kara <jack@suse.cz>\n---\n fs/reiserfs/super.c |    2 ++\n 1 files changed, 2 insertions(+), 0 deletions(-)\n\ndiff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c\nindex 6e85cfd..73c000f 100644\n--- a/fs/reiserfs/super.c\n+++ b/fs/reiserfs/super.c\n@@ -2059,7 +2059,9 @@ static int reiserfs_quota_on(struct super_block *sb, int type, int format_id,\n \tinode = path->dentry->d_inode;\n \t/* We must not pack tails for quota files on reiserfs for quota IO to work */\n \tif (!(REISERFS_I(inode)->i_flags & i_nopack_mask)) {\n+\t\treiserfs_write_lock(sb);\n \t\terr = reiserfs_unpack(inode, NULL);\n+\t\treiserfs_write_unlock(sb);\n \t\tif (err) {\n \t\t\treiserfs_warning(sb, \"super-6520\",\n \t\t\t\t\"Unpacking tail of quota file failed\"\n-- \n1.7.1\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "ReiserFS",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "ReiseFS developers team",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "16444",
+  "Reported": "2010-10-24 16:57 UTC by markus.gapp",
+  "Modified": "2011-01-06 15:40 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.36",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/reiserfs/super.c"
+  ],
+  "methods": [
+    "reiserfs_quota_on"
+  ]
+}

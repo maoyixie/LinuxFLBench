@@ -1,0 +1,115 @@
+{
+  "id": "117651",
+  "title": "Root NFS and autofs - mount disappears due to inode revalidate failed",
+  "kernel_version": "4.1.15",
+  "product": "File System",
+  "component": "NFS",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "net/sunrpc/xprtsock.c"
+    ],
+    "buggy_methods": [
+      "xs_sock_set_reuseport"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "in such cases."
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1153,
+    "description_word_count": 166
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 10,
+    "lines_removed": 4,
+    "patch_size": 14,
+    "new_functions": [
+      "xs_sock_set_reuseport"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "error_handling",
+      "init_fix"
+    ],
+    "num_hunks": 4,
+    "hunk_functions": [
+      "xs_tcp_finish_connecting",
+      "xs_get_random_port"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "net/sunrpc/xprtsock.c",
+    "filename": "xprtsock.c",
+    "directory": "net/sunrpc",
+    "depth": 3,
+    "top_level": "net",
+    "second_level": "sunrpc",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:NFS",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "117651",
+      "version": "4.1.15",
+      "status": "found",
+      "path": "net/sunrpc/xprtsock.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "117651",
+    "title": "Root NFS and autofs - mount disappears due to inode revalidate failed",
+    "ground_truth_file": "net/sunrpc/xprtsock.c",
+    "ground_truth_subsystem": "net/sunrpc",
+    "ground_truth_methods": [
+      "xs_sock_set_reuseport"
+    ],
+    "product": "File System",
+    "component": "NFS",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "wrong_output"
+    ],
+    "fix_types": [
+      "init_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "NFS",
+      "product": "File System"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

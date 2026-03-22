@@ -1,0 +1,34 @@
+{
+  "id": "14686",
+  "title": "WARNING: at drivers/net/wireless/ath/ath5k/base.c:1142 ath5k_tasklet_rx+0x47a/0x5f0",
+  "description": "Created attachment 23926 [details]\nboot dmesg\n\nHi,\nSince 2.6.32-rc8 I observe the following in my dmesg:\n\nWARNING: at drivers/net/wireless/ath/ath5k/base.c:1142 ath5k_tasklet_rx+0x47a/0x5f0 [ath5k]()\nHardware name: 2007WS4\ninvalid hw_rix: 1b\nModules linked in: vboxnetadp vboxnetflt vboxdrv usb_storage tun sco bridge stp llc bnep acpi_cpufreq cpufreq_powersave binfmt_misc uinput fuse hdaps tp_smapi thinkpad_ec cpufreq_stats cpufreq_ondemand freq_table loop dm_mod btusb snd_hda_codec_analog snd_hda_intel snd_hda_codec snd_pcm_oss snd_mixer_oss snd_pcm snd_seq_midi uhci_hcd snd_rawmidi snd_seq_midi_event snd_seq pcmcia snd_timer snd_seq_device ath5k snd psmouse ehci_hcd ath yenta_socket soundcore snd_page_alloc rsrc_nonstatic serio_raw usbcore evdev pcmcia_core\nPid: 14069, comm: rhythmbox Tainted: G        W  2.6.32-rc8 #1\nCall Trace:\n [<f8889d1a>] ? ath5k_tasklet_rx+0x47a/0x5f0 [ath5k]\n [<f8889d1a>] ? ath5k_tasklet_rx+0x47a/0x5f0 [ath5k]\n [<c1034a2c>] warn_slowpath_common+0x6c/0xc0\n [<f8889d1a>] ? ath5k_tasklet_rx+0x47a/0x5f0 [ath5k]\n [<c1034ac6>] warn_slowpath_fmt+0x26/0x30\n [<f8889d1a>] ath5k_tasklet_rx+0x47a/0x5f0 [ath5k]\n [<c149615a>] ? ieee80211_wake_queues+0xa/0x10\n [<c1039803>] tasklet_action+0x83/0x100\n [<c1039f42>] __do_softirq+0xa2/0x130\n [<c101b976>] ? ack_apic_level+0x66/0x170\n [<c1069ad6>] ? handle_IRQ_event+0x36/0xe0\n [<c103a015>] do_softirq+0x45/0x50\n [<c103a215>] irq_exit+0x65/0x80\n [<c1005a44>] do_IRQ+0x54/0xc0\n [<c1004129>] common_interrupt+0x29/0x30\n [<c103007b>] ? push_rt_task+0x9b/0x2a0\n [<c101ec2f>] ? read_hpet+0xf/0x20\n [<c1052af6>] getnstimeofday+0x56/0x110\n [<c1052c01>] do_gettimeofday+0x11/0x40\n [<c10394cd>] sys_gettimeofday+0x1d/0x70\n [<c1003a90>] sysenter_do_call+0x12/0x2c\n\nboot dmesg and config attached.\n\nThanks,\n    Nico",
+  "patch": [
+    "diff --git a/drivers/net/wireless/ath/ath5k/eeprom.c b/drivers/net/wireless/ath/ath5k/eeprom.c\nindex 644962a..7918852 100644\n--- a/drivers/net/wireless/ath/ath5k/eeprom.c\n+++ b/drivers/net/wireless/ath/ath5k/eeprom.c\n@@ -97,6 +97,7 @@ ath5k_eeprom_init_header(struct ath5k_hw *ah)\n \tstruct ath5k_eeprom_info *ee = &ah->ah_capabilities.cap_eeprom;\n \tint ret;\n \tu16 val;\n+\tu32 cksum, offset;\n \n \t/*\n \t * Read values from EEPROM and store them in the capability structure\n@@ -111,7 +112,6 @@ ath5k_eeprom_init_header(struct ath5k_hw *ah)\n \tif (ah->ah_ee_version < AR5K_EEPROM_VERSION_3_0)\n \t\treturn 0;\n \n-#ifdef notyet\n \t/*\n \t * Validate the checksum of the EEPROM date. There are some\n \t * devices with invalid EEPROMs.\n@@ -124,7 +124,6 @@ ath5k_eeprom_init_header(struct ath5k_hw *ah)\n \t\tATH5K_ERR(ah->ah_sc, \"Invalid EEPROM checksum 0x%04x\\n\", cksum);\n \t\treturn -EIO;\n \t}\n-#endif\n \n \tAR5K_EEPROM_READ_HDR(AR5K_EEPROM_ANT_GAIN(ah->ah_ee_version),\n \t    ee_ant_gain);\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "network-wireless",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_network-wireless@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-11-25 04:59 UTC by Nicolas Stransky",
+  "Modified": "2010-03-04 15:25 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.32",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/ath/ath5k/eeprom.c"
+  ],
+  "methods": [
+    "ath5k_eeprom_init_header"
+  ]
+}

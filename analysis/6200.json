@@ -1,0 +1,106 @@
+{
+  "id": "6200",
+  "title": "Linux 2.4.32 keeps hanging",
+  "kernel_version": "2.4.32",
+  "product": "IO/Storage",
+  "component": "Other",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "fs/nfs/inode.c"
+    ],
+    "buggy_methods": [
+      "__nfs_revalidate_inode"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1910,
+    "description_word_count": 335
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 4,
+    "patch_size": 5,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "__nfs_revalidate_inode"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "fs/nfs/inode.c",
+    "filename": "inode.c",
+    "directory": "fs/nfs",
+    "depth": 3,
+    "top_level": "fs",
+    "second_level": "nfs",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "medium",
+    "signals": [
+      "call_trace_available"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "6200",
+      "version": "2.4.32",
+      "status": "found",
+      "path": "fs/nfs/inode.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "6200",
+    "title": "Linux 2.4.32 keeps hanging",
+    "ground_truth_file": "fs/nfs/inode.c",
+    "ground_truth_subsystem": "fs/nfs",
+    "ground_truth_methods": [
+      "__nfs_revalidate_inode"
+    ],
+    "product": "IO/Storage",
+    "component": "Other",
+    "best_strategy": "semantic_understanding_only",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "minimal_clues"
+    ],
+    "clue_details": {
+      "product": "IO/Storage"
+    }
+  },
+  "overall_category": "E_semantic_understanding_only"
+}

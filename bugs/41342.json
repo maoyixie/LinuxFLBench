@@ -1,0 +1,36 @@
+{
+  "id": "41342",
+  "title": "Audio gain is massively higher in kernel 3.1",
+  "": "Show dependency tree",
+  "description": "The audio volume is much, much louder in 3.1-rc2 and -rc1 compared to kernel 3.0 and earlier for my card:\n\n00:1b.0 Audio device: Intel Corporation 6 Series Chipset Family High Definition Audio Controller (rev 05)\n\tSubsystem: Dell Device 050e\n\tFlags: bus master, fast devsel, latency 0, IRQ 53\n\tMemory at f1c00000 (64-bit, non-prefetchable) [size=16K]\n\tCapabilities: <access denied>\n\tKernel driver in use: snd_hda_intel\n\tKernel modules: snd-hda-intel\n\n\nSound blasts out deafeningly unless I use alsamixer to adjust Master to zero (alsamixer says this is -64dB) and PCM to near to zero (eg a value like 27, ie -29dB).\n\nNote that with kernel 3.0, adjusting PCM in alsamixer does not affect the sound gain, but in 3.1 it (luckily!) does. It's quite difficult to adjust the sound to a non-painful level using gnome-volume control because the gain is biased so high.",
+  "patch": [
+    "diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c\nindex 58717ab..d7ee37d 100644\n--- a/sound/pci/hda/patch_realtek.c\n+++ b/sound/pci/hda/patch_realtek.c\n@@ -1794,6 +1794,7 @@ static const char * const alc_slave_vols[] = {\n \t\"Speaker Playback Volume\",\n \t\"Mono Playback Volume\",\n \t\"Line-Out Playback Volume\",\n+\t\"PCM Playback Volume\",\n \tNULL,\n };\n \n@@ -1808,6 +1809,7 @@ static const char * const alc_slave_sws[] = {\n \t\"Mono Playback Switch\",\n \t\"IEC958 Playback Switch\",\n \t\"Line-Out Playback Switch\",\n+\t\"PCM Playback Switch\",\n \tNULL,\n };\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Sound",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Jaroslav Kysela",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "40982",
+  "Reported": "2011-08-18 08:12 UTC by rocko",
+  "Modified": "2011-08-24 11:30 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "3.0-rc2",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "sound/pci/hda/patch_realtek.c"
+  ],
+  "methods": [
+    "alc_slave_vols",
+    "alc_slave_sws"
+  ]
+}

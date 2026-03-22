@@ -1,0 +1,38 @@
+{
+  "id": "7200",
+  "title": "battery not detected on laptop - nec versa p550",
+  "description": "Most recent kernel where this bug did not occur:\nDistribution: fedora/ubuntu/suse\nHardware Environment: nec versa p550\nSoftware Environment: fedora core <= 5.90, ubuntu <= 6.06, suse 10\nProblem Description: The battery is not found after booting. But when I plugin  \nthe power cord or remove it then the battery is and remains detected.\n\nSteps to reproduce: \nBoot and see: battery not present.\n\nacpi version: 1.04\n\nBattery info after plugging in the cable:\n$ cat /proc/acpi/battery/BAT1/info\npresent:                 yes\ndesign capacity:         4800 mAh\nlast full capacity:      3507 mAh\nbattery technology:      rechargeable\ndesign voltage:          14800 mV\ndesign capacity warning: 400 mAh\ndesign capacity low:     140 mAh\ncapacity granularity 1:  64 mAh\ncapacity granularity 2:  64 mAh\nmodel number:            PC-VP-WP66/OP-570-76620\nserial number:\nbattery type:            LION\nOEM info:                NEC",
+  "patch": [
+    "diff -rup linux-2.6.20-rc6.a/drivers/acpi/battery.c linux-2.6.20-rc6.b/drivers/acpi/battery.c\n--- linux-2.6.20-rc6.a/drivers/acpi/battery.c\t2007-01-29 08:15:58.000000000 +0300\n+++ linux-2.6.20-rc6.b/drivers/acpi/battery.c\t2007-01-29 08:19:07.000000000 +0300\n@@ -324,6 +324,13 @@ static int acpi_battery_check(struct acp\n \treturn result;\n }\n \n+static void acpi_battery_check_present(struct acpi_battery *battery)\n+{\n+\tif (!battery->flags.present) {\n+\t\tacpi_battery_check(battery);\n+\t}\n+}\n+\n /* --------------------------------------------------------------------------\n                               FS Interface (/proc)\n    -------------------------------------------------------------------------- */\n@@ -340,6 +347,8 @@ static int acpi_battery_read_info(struct\n \tif (!battery)\n \t\tgoto end;\n \n+\tacpi_battery_check_present(battery);\n+\n \tif (battery->flags.present)\n \t\tseq_printf(seq, \"present:                 yes\\n\");\n \telse {\n@@ -424,6 +433,8 @@ static int acpi_battery_read_state(struc\n \tif (!battery)\n \t\tgoto end;\n \n+\tacpi_battery_check_present(battery);\n+\n \tif (battery->flags.present)\n \t\tseq_printf(seq, \"present:                 yes\\n\");\n \telse {\n@@ -499,6 +510,8 @@ static int acpi_battery_read_alarm(struc\n \tif (!battery)\n \t\tgoto end;\n \n+\tacpi_battery_check_present(battery);\n+\n \tif (!battery->flags.present) {\n \t\tseq_printf(seq, \"present:                 no\\n\");\n \t\tgoto end;\n@@ -536,6 +549,8 @@ acpi_battery_write_alarm(struct file *fi\n \tif (!battery || (count > sizeof(alarm_string) - 1))\n \t\treturn -EINVAL;\n \n+\tacpi_battery_check_present(battery);\n+\n \tif (!battery->flags.present)\n \t\treturn -ENODEV;\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Battery",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Vladimir Lebedev",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (1)": "6183",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-09-25 04:03 UTC by Stefan Geuns",
+  "Modified": "2007-02-20 22:39 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.20",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/battery.c"
+  ],
+  "methods": [
+    "acpi_battery_read_info",
+    "acpi_battery_read_state",
+    "acpi_battery_read_alarm",
+    "acpi_battery_write_alarm"
+  ]
+}

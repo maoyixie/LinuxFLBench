@@ -1,0 +1,34 @@
+{
+  "id": "9206",
+  "title": "Negative internal write-intent bitmap offset with metadata 1.0 REDUX in raid 6: kernel refuses to start the array",
+  "description": "Most recent kernel where this bug did not occur: 2.6.22\nDistribution: gentoo (vanilla k.o kernel)\nHardware Environment: pentium4\nSoftware Environment: gentoo stable\nProblem Description: \nI believe is directly related to \"[PATCH 007 of 7] md: Change bitmap_unplug and others to void functions.\"\n\nI have confirmed that this problem occurs during initial creation of the MD device with mdadm 2.6.4.\n\nThe specific error I am getting is \nmd3: bitmap initialized from disk: read 28/28 pages, set 0 bits\ncreated bitmap (442 pages) for device md3\nmd3: disabling internal bitmap due to errors\nmd3: failed to create bitmap (-5)\nmd: pers->run() failed ...\n\nsuperblock information from mdstat\nmdadm -E /dev/sx8/0p5\n/dev/sx8/0p5:\n          Magic : a92b4efc\n        Version : 01\n    Feature Map : 0x1\n     Array UUID : b772776b:e2810279:bf64284e:65700530\n           Name : data2\n  Creation Time : Wed Jul 18 11:21:56 2007\n     Raid Level : raid6\n   Raid Devices : 12\n\n  Used Dev Size : 462671664 (220.62 GiB 236.89 GB)\n     Array Size : 4626716160 (2206.19 GiB 2368.88 GB)\n      Used Size : 462671616 (220.62 GiB 236.89 GB)\n   Super Offset : 462671920 sectors\n          State : clean\n    Device UUID : 94d99dda:bad0be35:e7277499:669fbc48\n\nInternal Bitmap : -222 sectors from superblock\n    Update Time : Sat Sep 15 01:09:44 2007\n       Checksum : 403e2ba6 - correct\n         Events : 8\n\n     Chunk Size : 64K\n\n    Array Slot : 0 (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)\n   Array State : Uuuuuuuuuuuu\n\n\nSteps to reproduce:\nevery partition used is 462672000 sectors, 28800 cyls on a 500GB drive, and is a LOGICAL volume not a primary volume\nmdadm -C -e 1.0 -l 6 -b internal /dev/md3 -vv -n 12",
+  "patch": [
+    "Status: ok\n\nFix an unsigned compare to allow creation of bitmaps with v1.0 metadata.\n\nAs page->index is unsigned, this all becomes an unsigned comparison, which\n almost always returns an error.\n\nSigned-off-by: Neil Brown <neilb@suse.de>\n\n### Diffstat output\n ./drivers/md/bitmap.c |    2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n\ndiff .prev/drivers/md/bitmap.c ./drivers/md/bitmap.c\n--- .prev/drivers/md/bitmap.c\t2007-10-22 16:47:52.000000000 +1000\n+++ ./drivers/md/bitmap.c\t2007-10-22 16:50:10.000000000 +1000\n@@ -274,7 +274,7 @@ static int write_sb_page(struct bitmap *\n \t\t\tif (bitmap->offset < 0) {\n \t\t\t\t/* DATA  BITMAP METADATA  */\n \t\t\t\tif (bitmap->offset\n-\t\t\t\t    + page->index * (PAGE_SIZE/512)\n+\t\t\t\t    + (long)(page->index * (PAGE_SIZE/512))\n \t\t\t\t    + size/512 > 0)\n \t\t\t\t\t/* bitmap runs in to metadata */\n \t\t\t\t\treturn -EINVAL;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "IO/Storage",
+  "Classification": "Unclassified",
+  "Component": "MD",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Neil Brown",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-10-21 21:49 UTC by Joshua Charles Campbell",
+  "Modified": "2007-10-22 22:34 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.23",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/md/bitmap.c"
+  ],
+  "methods": [
+    "write_sb_page"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "id": "14143",
+  "title": "OOPS when setting nr_requests for md devices",
+  "": "Show dependency tree",
+  "description": "Hi,\n\nEchoing any value to /sys/block/mdX/queue/nr_requests causes the kernel to OOPS and often to panic within 5-20 seconds.\n\nDoing the same for the underlaying block device works fine.\n\nReproduces easily on all the boxes I've tried.\n\nExample bt:\n[ 6336.680154] BUG: unable to handle kernel NULL pointer dereference at (null)                                                                                 \n[ 6336.680159] IP: [<ffffffff8102c8fc>] __wake_up_common+0x26/0x72                                                                                             \n[ 6336.680167] PGD 8d450067 PUD 8c91e067 PMD 0                                                                                                                 \n[ 6336.680171] Oops: 0000 [#1] PREEMPT SMP                                                                                                                     \n[ 6336.680174] last sysfs file: /sys/devices/virtual/block/md3/queue/nr_requests                                                                               \n[ 6336.680177] CPU 1                                                                                                                                           \n[ 6336.680179] Modules linked in: xt_tcpudp nf_conntrack_ipv4 nf_defrag_ipv4 xt_state nf_conntrack iptable_filter ip_tables x_tables fglrx(P) ipv6 cpufreq_conservative cpufreq_powersave cpufreq_stats cpufreq_userspace cpufreq_ondemand microcode kvm_intel kvm fuse acpi_cpufreq freq_table coretemp it87 hwmon_vid loop snd_hda_codec_atihdmi snd_hda_codec_realtek snd_hda_intel snd_hda_codec snd_pcm_oss snd_mixer_oss snd_pcm snd_seq_oss snd_seq_midi_event hid_a4tech snd_seq snd_timer snd_seq_device usbhid i2c_i801 evdev i2c_core snd soundcore button processor snd_page_alloc sr_mod cdrom uhci_hcd ehci_hcd floppy usbcore nls_base thermal fan thermal_sys [last unloaded: scsi_wait_scan]\n[ 6336.680225] Pid: 13570, comm: bash Tainted: P           2.6.31-rc9 #3 EP45T-DS3\n[ 6336.680227] RIP: 0010:[<ffffffff8102c8fc>]  [<ffffffff8102c8fc>] __wake_up_common+0x26/0x72\n[ 6336.680232] RSP: 0018:ffff880072c59de8  EFLAGS: 00010096\n[ 6336.680234] RAX: 0000000000000000 RBX: ffff88012d0d0058 RCX: 0000000000000000\n[ 6336.680237] RDX: 0000000000000001 RSI: 0000000000000003 RDI: ffff88012d0d0058\n[ 6336.680239] RBP: 0000000000000001 R08: ffffffffffffffe8 R09: 000000000000000a\n[ 6336.680242] R10: 0000000000066f6b R11: 0000000000000002 R12: 0000000000000000\n[ 6336.680244] R13: ffff88012d0d0060 R14: 0000000000000000 R15: 0000000000000000\n[ 6336.680247] FS:  00007f0137db96f0(0000) GS:ffff88002803e000(0000) knlGS:0000000000000000\n[ 6336.680250] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033\n[ 6336.680252] CR2: 0000000000000000 CR3: 0000000072c5c000 CR4: 00000000000026e0\n[ 6336.680255] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000\n[ 6336.680257] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400\n[ 6336.680260] Process bash (pid: 13570, threadinfo ffff880072c58000, task ffff88008d430000)\n[ 6336.680262] Stack:\n[ 6336.680263]  00000003816fb4c0 ffff88012d0d0058 ffff88012d0d0000 0000000000000000\n[ 6336.680267] <0> 0000000000000001 0000000000000046 0000000000000003 ffffffff8102ebe5\n[ 6336.680271] <0> 0000000000002000 0000000000000005 ffffffff8165e170 0000000000000005\n[ 6336.680276] Call Trace:\n[ 6336.680280]  [<ffffffff8102ebe5>] ? __wake_up+0x30/0x44\n[ 6336.680285]  [<ffffffff811d2c67>] ? queue_requests_store+0x183/0x2aa\n[ 6336.680288]  [<ffffffff811d2df2>] ? queue_attr_store+0x64/0x7f\n[ 6336.680292]  [<ffffffff81116130>] ? sysfs_write_file+0xd0/0x107\n[ 6336.680296]  [<ffffffff810c4f87>] ? vfs_write+0xad/0x169\n[ 6336.680299]  [<ffffffff810c50ff>] ? sys_write+0x45/0x6e\n[ 6336.680303]  [<ffffffff8100ba2b>] ? system_call_fastpath+0x16/0x1b\n[ 6336.680305] Code: 01 00 00 00 c3 41 57 41 89 cf 41 56 4d 89 c6 41 55 4c 8d 6f 08 41 54 55 89 d5 53 48 83 ec 08 89 74 24 04 48 8b 47 08 4c 8d 40 e8 <49> 8b 40 18 48 8d 58 e8 eb 2d 45 8b 20 4c 89 f1 44 89 fa 8b 74\n[ 6336.680337] RIP  [<ffffffff8102c8fc>] __wake_up_common+0x26/0x72\n[ 6336.680340]  RSP <ffff880072c59de8>\n[ 6336.680342] CR2: 0000000000000000\n[ 6336.680344] ---[ end trace d5292aec4d1f06a9 ]---\n[ 6336.680347] note: bash[13570] exited with preempt_count 2",
+  "patch": [
+    "diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c\nindex d3aa2aa..b78c9c3 100644\n--- a/block/blk-sysfs.c\n+++ b/block/blk-sysfs.c\n@@ -40,7 +40,12 @@ queue_requests_store(struct request_queue *q, const char *page, size_t count)\n {\n \tstruct request_list *rl = &q->rq;\n \tunsigned long nr;\n-\tint ret = queue_var_store(&nr, page, count);\n+\tint ret;\n+\n+\tif (!q->request_fn)\n+\t\treturn -EINVAL;\n+\n+\tret = queue_var_store(&nr, page, count);\n \tif (nr < BLKDEV_MIN_RQ)\n \t\tnr = BLKDEV_MIN_RQ;\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "IO/Storage",
+  "Classification": "Unclassified",
+  "Component": "Block Layer",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Jens Axboe",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "13615",
+  "Reported": "2009-09-08 08:48 UTC by aCaB",
+  "Modified": "2009-10-12 21:28 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.31",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "block/blk-sysfs.c"
+  ],
+  "methods": [
+    "queue_requests_store"
+  ]
+}

@@ -1,0 +1,181 @@
+{
+  "id": "21092",
+  "title": "Kernel 2.6.36 Bug during quotaon on reiserfs",
+  "kernel_version": "2.6.36",
+  "product": "File System",
+  "component": "ReiserFS",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "fs/reiserfs/super.c"
+    ],
+    "buggy_methods": [
+      "reiserfs_quota_on"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "reiserfs_write_unlock",
+      "system_call_fastpath",
+      "reiserfs_unpack",
+      "do_quotactl",
+      "reiserfs_quota_on",
+      "sys_quotactl"
+    ],
+    "mentioned_file_paths": [
+      "fs/reiserfs/lock.c"
+    ],
+    "source_references": [
+      {
+        "file": "dm",
+        "line": "4"
+      }
+    ],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/devices/virtual/vc/vcsa12/uevent"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3648,
+    "description_word_count": 371
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 0,
+    "patch_size": 2,
+    "patch_types": [
+      "error_handling",
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "reiserfs_quota_on"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "fs/reiserfs/super.c",
+    "filename": "super.c",
+    "directory": "fs/reiserfs",
+    "depth": 3,
+    "top_level": "fs",
+    "second_level": "reiserfs",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_6_functions",
+      "proc_sys_paths_hint_subsystem",
+      "source_file_line_references",
+      "component_known:ReiserFS",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "use_source_references_to_locate_file",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "21092",
+      "version": "2.6.36",
+      "status": "found",
+      "path": "fs/reiserfs/super.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "21092",
+    "version": "2.6.36",
+    "ground_truth_file": "fs/reiserfs/super.c",
+    "trace_functions": [
+      "reiserfs_write_unlock",
+      "reiserfs_unpack",
+      "path_put",
+      "reiserfs_quota_on",
+      "do_path_lookup",
+      "strncpy_from_user",
+      "do_quotactl",
+      "down_read",
+      "sys_quotactl",
+      "system_call_fastpath"
+    ],
+    "total_trace_functions": 10,
+    "function_locations": {
+      "reiserfs_write_unlock": [
+        "fs/reiserfs/lock.c"
+      ],
+      "reiserfs_unpack": [
+        "fs/reiserfs/ioctl.c"
+      ],
+      "path_put": [
+        "fs/namei.c"
+      ],
+      "reiserfs_quota_on": [
+        "fs/reiserfs/super.c"
+      ],
+      "do_path_lookup": [
+        "fs/namei.c"
+      ],
+      "strncpy_from_user": [
+        "arch/m68k/lib/uaccess.c",
+        "arch/mn10300/lib/usercopy.c",
+        "arch/m32r/lib/usercopy.c",
+        "arch/frv/kernel/uaccess.c",
+        "arch/um/kernel/skas/uaccess.c",
+        "arch/x86/lib/usercopy_64.c",
+        "arch/x86/lib/usercopy_32.c"
+      ],
+      "do_quotactl": [
+        "fs/quota/quota.c"
+      ],
+      "down_read": [
+        "lib/rwsem-spinlock.c",
+        "kernel/rwsem.c"
+      ],
+      "sys_quotactl": [],
+      "system_call_fastpath": []
+    },
+    "gt_found_via_functions": [
+      "reiserfs_quota_on"
+    ],
+    "other_candidate_files": [
+      "fs/reiserfs/ioctl.c",
+      "fs/namei.c",
+      "arch/m68k/lib/uaccess.c",
+      "arch/mn10300/lib/usercopy.c",
+      "arch/m32r/lib/usercopy.c",
+      "arch/frv/kernel/uaccess.c",
+      "arch/x86/lib/usercopy_32.c",
+      "fs/quota/quota.c",
+      "arch/um/kernel/skas/uaccess.c",
+      "kernel/rwsem.c",
+      "lib/rwsem-spinlock.c",
+      "arch/x86/lib/usercopy_64.c",
+      "fs/reiserfs/lock.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

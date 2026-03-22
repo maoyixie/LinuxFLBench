@@ -1,0 +1,153 @@
+{
+  "id": "104121",
+  "title": "Esprimo Mobile 9410: Two acpi_video* devices in sysfs, only one working",
+  "kernel_version": "4.2-rc5",
+  "product": "ACPI",
+  "component": "Power-Video",
+  "hardware": "x86-64 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "hang/lockup",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/acpi_video.c"
+    ],
+    "buggy_methods": [
+      "acpi_video_bus_get_one_device",
+      "acpi_video_dev_register_backlight",
+      "acpi_video_bus_register_backlight",
+      "video_dmi_table"
+    ],
+    "num_methods": 4
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/class/backlight/acpi_video0/bl_power",
+      "/sys/class/backlight/acpi_video0/power/runtime_enabled",
+      "/sys/class/backlight/acpi_video0/power/async",
+      "/sys/class/backlight/acpi_video1/power/runtime_suspended_time",
+      "/sys/class/backlight/acpi_video1/brightness",
+      "/sys/class/backlight/acpi_video0/power/runtime_suspended_time",
+      "/sys/class/backlight/acpi_video0/actual_brightness",
+      "/sys/class/backlight/",
+      "/sys/class/backlight/acpi_video1/power/runtime_status",
+      "/sys/class/backlight/acpi_video1/actual_brightness",
+      "/sys/class/backlight/acpi_video0/power/runtime_active_time",
+      "/sys/class/backlight/acpi_video1/type",
+      "/sys/class/backlight/acpi_video0/power/control",
+      "/sys/class/backlight/acpi_video1/max_brightness",
+      "/sys/class/backlight/acpi_video0/power/runtime_usage",
+      "/sys/class/backlight/acpi_video1/bl_power",
+      "/sys/class/backlight/acpi_video1/power/control",
+      "/sys/class/backlight/acpi_video1/power/runtime_usage",
+      "/sys/class/backlight/acpi_video0/power/runtime_active_kids",
+      "/sys/class/backlight",
+      "/sys/class/backlight/acpi_video1/power/runtime_active_time",
+      "/sys/class/backlight/acpi_video0/type",
+      "/sys/class/backlight/acpi_video0/power/autosuspend_delay_ms",
+      "/sys/class/backlight/acpi_video1/power/runtime_active_kids",
+      "/sys/class/backlight/acpi_video1/power/autosuspend_delay_ms",
+      "/sys/class/backlight/acpi_video1/power/async",
+      "/sys/class/backlight/acpi_video1/power/runtime_enabled",
+      "/sys/class/backlight/acpi_video0/brightness",
+      "/sys/class/backlight/acpi_video0/max_brightness",
+      "/sys/class/backlight/acpi_video0/power/runtime_status"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 2644,
+    "description_word_count": 174
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 134,
+    "lines_removed": 24,
+    "patch_size": 158,
+    "new_functions": [
+      "video_set_device_id_scheme",
+      "video_enable_only_lcd",
+      "acpi_video_should_register_backlight",
+      "acpi_video_bus_register_backlight",
+      "video_set_device_id_scheme",
+      "video_enable_only_lcd",
+      "acpi_video_should_register_backlight",
+      "acpi_video_bus_register_backlight"
+    ],
+    "patch_types": [
+      "quirk/device_table",
+      "new_function",
+      "logic_change",
+      "init_fix",
+      "synchronization"
+    ],
+    "num_hunks": 14,
+    "hunk_functions": [
+      "acpi_video_run_bcl_for_osi",
+      "module_param",
+      "acpi_video_bus_get_one_device",
+      "acpi_video_dev_register_backlight",
+      "video_disable_backlight_sysfs_if",
+      "acpi_video_bus_register_backlight"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/acpi_video.c",
+    "filename": "acpi_video.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/acpi_video.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Power-Video",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "104121",
+      "version": "4.2-rc5",
+      "status": "found",
+      "path": "drivers/acpi/acpi_video.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "104121",
+    "title": "Esprimo Mobile 9410: Two acpi_video* devices in sysfs, only one working",
+    "product": "ACPI",
+    "component": "Power-Video",
+    "buggy_file": [
+      "drivers/acpi/acpi_video.c"
+    ],
+    "fix_type": "dmi_quirk_addition",
+    "table_entry_lines_added": 26,
+    "description_clues": [],
+    "patch_size": 158,
+    "potential_strategies": [
+      "narrow_by_component:Power-Video"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "8848",
+  "title": "(pata HPT370) UDMA100 mode isn't available since LibATA has been incorporated to the kernel",
+  "description": "Most recent kernel where this bug did not occur: 2.6.17\n\nDistribution: Linux Debian 3.1 Sarge\n\nHardware Environment: \nm/b ABIT BE6-II ( HPT BIOS updated for LBA48), HDD Seagate ST3160212A 160GB PATA firmware version 3AAJ\n\nSoftware Environment: GRUB boot loader\n\nProblem Description:\nHPT370 max UDMA mode is UDMA66 with the IDE (non-experimantal) driver, and UDMA44 with the LibATA (experimantal) one.\n\nSteps to reproduce:\n\njust boot with kernel newer than 2.6.17. The drive is bootable.\n\nThe GIT versions of kernel ( containing some HPT patches ) don't fix the problem.",
+  "patch": [
+    "diff -u --new-file --recursive --exclude-from /usr/src/exclude linux.vanilla-2.6.24-rc1/drivers/ata/pata_hpt37x.c linux-2.6.24-rc1/drivers/ata/pata_hpt37x.c\n--- linux.vanilla-2.6.24-rc1/drivers/ata/pata_hpt37x.c\t2007-11-01 11:41:54.000000000 +0000\n+++ linux-2.6.24-rc1/drivers/ata/pata_hpt37x.c\t2007-11-05 15:14:34.534443824 +0000\n@@ -295,7 +295,7 @@\n \n static unsigned long hpt370a_filter(struct ata_device *adev, unsigned long mask)\n {\n-\tif (adev->class != ATA_DEV_ATA) {\n+\tif (adev->class == ATA_DEV_ATA) {\n \t\tif (hpt_dma_blacklisted(adev, \"UDMA100\", bad_ata100_5))\n \t\t\tmask &= ~ (0x1F << ATA_SHIFT_UDMA);\n \t}\n@@ -359,28 +359,25 @@\n \t\t{ 0x50, 1, 0x04, 0x04 },\n \t\t{ 0x54, 1, 0x04, 0x04 }\n \t};\n-\tu16 mcr3, mcr6;\n+\tu16 mcr3;\n \tu8 ata66;\n \tstruct ata_port *ap = link->ap;\n \tstruct pci_dev *pdev = to_pci_dev(ap->host->dev);\n+\tunsigned int mcrbase = 0x50 + 4 * ap->port_no;\n \n \tif (!pci_test_config_bits(pdev, &hpt37x_enable_bits[ap->port_no]))\n \t\treturn -ENOENT;\n \n \t/* Do the extra channel work */\n-\tpci_read_config_word(pdev, 0x52, &mcr3);\n-\tpci_read_config_word(pdev, 0x56, &mcr6);\n+\tpci_read_config_word(pdev, mcrbase + 2, &mcr3);\n \t/* Set bit 15 of 0x52 to enable TCBLID as input\n-\t   Set bit 15 of 0x56 to enable FCBLID as input\n \t */\n-\tpci_write_config_word(pdev, 0x52, mcr3 | 0x8000);\n-\tpci_write_config_word(pdev, 0x56, mcr6 | 0x8000);\n+\tpci_write_config_word(pdev, mcrbase + 2, mcr3 | 0x8000);\n \tpci_read_config_byte(pdev, 0x5A, &ata66);\n \t/* Reset TCBLID/FCBLID to output */\n \tpci_write_config_word(pdev, 0x52, mcr3);\n-\tpci_write_config_word(pdev, 0x56, mcr6);\n \n-\tif (ata66 & (1 << ap->port_no))\n+\tif (ata66 & (2 >> ap->port_no))\n \t\tap->cbl = ATA_CBL_PATA40;\n \telse\n \t\tap->cbl = ATA_CBL_PATA80;\n@@ -844,6 +841,22 @@\n \t/* Never went stable */\n \treturn 0;\n }\n+\n+static u32 hpt374_read_freq(struct pci_dev *pdev)\n+{\n+\tu32 freq;\n+\tunsigned long io_base = pci_resource_start(pdev, 4);\n+\tif (PCI_FUNC(pdev->devfn) & 1) {\n+\t\tstruct pci_dev *pdev_0 = pci_get_slot(pdev->bus, pdev->devfn - 1);\n+\t\tio_base = pci_resource_start(pdev_0, 4);\n+\t\tfreq = inl(io_base + 0x90);\n+\t\tpci_dev_put(pdev_0);\n+\t}\n+\telse\n+\t\tfreq = inl(io_base + 0x90);\n+\treturn freq;\n+}\n+\n /**\n  *\thpt37x_init_one\t\t-\tInitialise an HPT37X/302\n  *\t@dev: PCI device\n@@ -902,7 +915,7 @@\n \t\t.flags = ATA_FLAG_SLAVE_POSS,\n \t\t.pio_mask = 0x1f,\n \t\t.mwdma_mask = 0x07,\n-\t\t.udma_mask = 0x0f,\n+\t\t.udma_mask = ATA_UDMA5,\n \t\t.port_ops = &hpt370_port_ops\n \t};\n \t/* HPT370A - UDMA100 */\n@@ -911,7 +924,7 @@\n \t\t.flags = ATA_FLAG_SLAVE_POSS,\n \t\t.pio_mask = 0x1f,\n \t\t.mwdma_mask = 0x07,\n-\t\t.udma_mask = 0x0f,\n+\t\t.udma_mask = ATA_UDMA5,\n \t\t.port_ops = &hpt370a_port_ops\n \t};\n \t/* HPT371, 372 and friends - UDMA133 */\n@@ -1047,9 +1060,14 @@\n \t\toutb(0x0e, iobase + 0x9c);\n \n \t/* Some devices do not let this value be accessed via PCI space\n-\t   according to the old driver */\n+\t   according to the old driver. In addition we must use the value\n+\t   from FN 0 on the HPT374 */\n+\n+\tif (chip_table == &hpt374)\n+\t\tfreq = hpt374_read_freq(dev);\n+\telse\n+\t\tfreq = inl(iobase + 0x90);\n \n-\tfreq = inl(iobase + 0x90);\n \tif ((freq >> 12) != 0xABCDE) {\n \t\tint i;\n \t\tu8 sr;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "IO/Storage",
+  "Classification": "Unclassified",
+  "Component": "Serial ATA",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Alan",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-08-06 22:59 UTC by IvankoB",
+  "Modified": "2007-11-11 17:38 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.22",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/ata/pata_hpt37x.c"
+  ],
+  "methods": [
+    "hpt370a_filter",
+    "hpt374_pre_reset",
+    " hpt37x_init_one",
+    "info_hpt370_33"
+  ]
+}

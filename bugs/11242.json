@@ -1,0 +1,35 @@
+{
+  "id": "11242",
+  "title": "Regression with handling the DEL key on Thinkpad X31",
+  "description": "Latest working kernel version: 2.6.25.10\nEarliest failing kernel version: 2.6.26\nDistribution: Debian unstable\nHardware Environment: IBM Thinkpad X31\nSoftware Environment: Debian unstable\nProblem Description:\n\nI'm running my system without X11 in a fbcon console. Since the update to 2.6.26 the INSERT key is no longer working properly. It seems to lead to a very strange internal \"lock\": If INSERT is pressed, the arrow keys are no longer accepted. If I press INSERT again, the arrow keys work again. This bug is fairly annoying.\nIn X11 the INSERT key is handled properly. 2.6.25 works just fine. \n\nSteps to reproduce:\nRun elinks with an arbitary web site; scroll a few lines up with the INSERT key.",
+  "patch": [
+    "From 252b7805384d12c6857b8bebf1a373e327afbec9 Mon Sep 17 00:00:00 2001\nFrom: Pascal Terjan <pterjan@mandriva.com>\nDate: Wed, 17 Sep 2008 10:51:01 +0200\nSubject: [PATCH] Only register notifiers when the braille console is used.\n\nhttp://bugzilla.kernel.org/show_bug.cgi?id=11242\n\nSigned-off-by: Pascal Terjan <pterjan@mandriva.com>\n---\n drivers/accessibility/braille/braille_console.c |   13 ++++---------\n 1 files changed, 4 insertions(+), 9 deletions(-)\n\ndiff --git a/drivers/accessibility/braille/braille_console.c b/drivers/accessibility/braille/braille_console.c\nindex 0a5f6b2..d672cfe 100644\n--- a/drivers/accessibility/braille/braille_console.c\n+++ b/drivers/accessibility/braille/braille_console.c\n@@ -376,6 +376,8 @@ int braille_register_console(struct console *console, int index,\n \tconsole->flags |= CON_ENABLED;\n \tconsole->index = index;\n \tbraille_co = console;\n+\tregister_keyboard_notifier(&keyboard_notifier_block);\n+\tregister_vt_notifier(&vt_notifier_block);\n \treturn 0;\n }\n \n@@ -383,15 +385,8 @@ int braille_unregister_console(struct console *console)\n {\n \tif (braille_co != console)\n \t\treturn -EINVAL;\n+\tunregister_keyboard_notifier(&keyboard_notifier_block);\n+\tunregister_vt_notifier(&vt_notifier_block);\n \tbraille_co = NULL;\n \treturn 0;\n }\n-\n-static int __init braille_init(void)\n-{\n-\tregister_keyboard_notifier(&keyboard_notifier_block);\n-\tregister_vt_notifier(&vt_notifier_block);\n-\treturn 0;\n-}\n-\n-console_initcall(braille_init);\n-- \n1.6.0.2\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Console/Framebuffers",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "James Simmons",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-08-03 14:10 UTC by Moritz Mühlenhoff",
+  "Modified": "2008-10-02 23:53 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.26",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/accessibility/braille/braille_console.c"
+  ],
+  "methods": [
+    "braille_register_console",
+    "braille_init"
+  ]
+}

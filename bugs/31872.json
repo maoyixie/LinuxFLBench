@@ -1,0 +1,37 @@
+{
+  "id": "31872",
+  "title": "boot panic unless acpi=off, Thread overran stack, or stack corrupted - Toshiba Satellite/mobile P4",
+  "": "Show dependency tree",
+  "description": "Created attachment 51972 [details]\nlspci -vvv\n\nMy laptop cannot boot anymore with latest 2.6.38 kernel (also confirmed\nwith 2.6.38 rc6, rc7 and rc8) while ACPI support is enabled (booting with ACPI=off allows ending the boot sequence but many functionalities are lost). A kernel panic occurs early during the boot.\n\nOlder kernels until 2.6.37.2 did not trigger this bug on that laptop.\n\nIt's the official Debian kernel 2.6.38-1-686.",
+  "patch": [
+    "---\n drivers/acpi/scan.c |   24 +++++++++++++++++-------\n 1 file changed, 17 insertions(+), 7 deletions(-)\n\nIndex: linux-2.6/drivers/acpi/scan.c\n===================================================================\n--- linux-2.6.orig/drivers/acpi/scan.c\n+++ linux-2.6/drivers/acpi/scan.c\n@@ -1322,16 +1322,26 @@ end:\n \n static void acpi_bus_add_power_resource(acpi_handle handle)\n {\n-\tstruct acpi_bus_ops ops = {\n-\t\t.acpi_op_add = 1,\n-\t\t.acpi_op_start = 1,\n-\t};\n+\t//struct acpi_bus_ops ops = {\n+\t//\t.acpi_op_add = 1,\n+\t//\t.acpi_op_start = 1,\n+\t//};\n \tstruct acpi_device *device = NULL;\n \n \tacpi_bus_get_device(handle, &device);\n-\tif (!device)\n-\t\tacpi_add_single_object(&device, handle, ACPI_BUS_TYPE_POWER,\n-\t\t\t\t\tACPI_STA_DEFAULT, &ops);\n+\tif (!device) {\n+\t\tstruct acpi_buffer path = {ACPI_ALLOCATE_BUFFER, NULL};\n+\t\tint result;\n+\n+\t\tresult = acpi_get_name(handle, ACPI_FULL_PATHNAME, &path);\n+\t\tif (!result) {\n+\t\t\tpr_info(\"%s: %s\\n\", __func__, (char*)path.pointer);\n+\t\t\tkfree(path.pointer);\n+\t\t}\n+\n+\t\t//acpi_add_single_object(&device, handle, ACPI_BUS_TYPE_POWER,\n+\t\t//\t\t\tACPI_STA_DEFAULT, &ops);\n+\t}\n }\n \n static int acpi_bus_type_and_status(acpi_handle handle, int *type,\n",
+    "---\n drivers/acpi/scan.c |    4 +++-\n 1 file changed, 3 insertions(+), 1 deletion(-)\n\nIndex: linux-2.6/drivers/acpi/scan.c\n===================================================================\n--- linux-2.6.orig/drivers/acpi/scan.c\n+++ linux-2.6/drivers/acpi/scan.c\n@@ -882,7 +882,9 @@ static int acpi_bus_get_power_flags(stru\n \t\t\tdevice->power.flags.power_resources = 1;\n \t\t\tps->flags.valid = 1;\n \t\t\tfor (j = 0; j < ps->resources.count; j++)\n-\t\t\t\tacpi_bus_add_power_resource(ps->resources.handles[j]);\n+\t\t\t\tif (device->handle != ps->resources.handles[j])\n+\t\t\t\t\tacpi_bus_add_power_resource(\n+\t\t\t\t\t\tps->resources.handles[j]);\n \t\t}\n \n \t\t/* Evaluate \"_PSx\" to see if we can do explicit sets */\n",
+    "---\n drivers/acpi/scan.c |    4 ++++\n 1 file changed, 4 insertions(+)\n\nIndex: linux-2.6/drivers/acpi/scan.c\n===================================================================\n--- linux-2.6.orig/drivers/acpi/scan.c\n+++ linux-2.6/drivers/acpi/scan.c\n@@ -943,6 +943,10 @@ static int acpi_bus_get_flags(struct acp\n \tif (ACPI_SUCCESS(status))\n \t\tdevice->flags.lockable = 1;\n \n+\t/* Power resources cannot be power manageable. */\n+\tif (device->device_type == ACPI_BUS_TYPE_POWER)\n+\t\treturn 0;\n+\n \t/* Presence of _PS0|_PR0 indicates 'power manageable' */\n \tstatus = acpi_get_handle(device->handle, \"_PS0\", &temp);\n \tif (ACPI_FAILURE(status))\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "ACPICA-Core",
+  "Hardware": "i386 Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Rafael J. Wysocki",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "27352",
+  "Reported": "2011-03-25 20:17 UTC by Pascal Dormeau",
+  "Modified": "2011-04-30 19:53 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.38",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/scan.c"
+  ],
+  "methods": [
+    "acpi_bus_add_power_resource"
+  ]
+}

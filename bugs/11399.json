@@ -1,0 +1,34 @@
+{
+  "id": "11399",
+  "title": "(patch queued)possible buffer underflow in ib700wdt.c",
+  "description": "Problem Description:\n\nSteps to a possible buffer_underflow bug in ib700wdt.c, function ibwdt_ioctl:\n\n1. new margin is loaded using get_user(new_margin, p) in case WDIOC_SETTIMEOUT in the function ibwdt_ioctl. Important: assume that new_margin == 30\n2. ibwdt_set_heartbeat(new_margin) is called\n3. the check \"if ((t < 0) || (t > 30))\" in ibwdt_set_heartbeat is not going to fail because t == 30 (t is new_margin)\n4. in the loop, the check wd_times[i] > t is never going to be true because none of the wd_times are greater than the value of t (i.e. 30)\n5. we are exiting the loop with i == -1 and therefore setting wd_margin to -1 in the line wd_margin = i;\n6. we are returning from ibwdt_set_heartbeat and wd_margin is -1\n7. we fall through to case WDIOC_GETTIMEOUT\n8. we access the wd_times array with wd_margin == -1 on line \"return put_user(wd_times[wd_margin], p);\"\n\nI found this bug using my own static checker for low-level systems software whose codename is Smack, which I am developing as a part of my PhD. For the sake of my research (and also I am currently in the process of writing a paper about Smack), I would greatly appreciate if you could confirm/dispute the bug as soon as possible.\n\nThanks a lot!\n-- Zvonimir\n\n\nFurthermore, here are the pieces of code which are causing this buffer-underflow bug in ib700wdt.c:\n\nstatic int wd_times[] = {\n\t30,\t/* 0x0 */\n\t28,\t/* 0x1 */\n\t26,\t/* 0x2 */\n\t24,\t/* 0x3 */\n\t22,\t/* 0x4 */\n\t20,\t/* 0x5 */\n\t18,\t/* 0x6 */\n\t16,\t/* 0x7 */\n\t14,\t/* 0x8 */\n\t12,\t/* 0x9 */\n\t10,\t/* 0xA */\n\t8,\t/* 0xB */\n\t6,\t/* 0xC */\n\t4,\t/* 0xD */\n\t2,\t/* 0xE */\n\t0,\t/* 0xF */\n};\n\nfunction ibwdt_ioctl:\n.....\n  case WDIOC_SETTIMEOUT:\n    if (get_user(new_margin, p))\n      return -EFAULT;\n    if (ibwdt_set_heartbeat(new_margin))\n      return -EINVAL;\n    ibwdt_ping();\n    /* Fall */\n\n  case WDIOC_GETTIMEOUT:\n    return put_user(wd_times[wd_margin], p);\n.....\n\nfunction ibwdt_set_heartbeat:\nstatic int\nibwdt_set_heartbeat(int t)\n{\n\tint i;\n\n\tif ((t < 0) || (t > 30))\n\t\treturn -EINVAL;\n\n\tfor (i = 0x0F; i > -1; i--)\n\t\tif (wd_times[i] > t)\n\t\t\tbreak;\n\twd_margin = i;\n\treturn 0;\n}",
+  "patch": [
+    "commit 7c2500f17d65092d93345f3996cf82ebca17e9ff\nAuthor: Wim Van Sebroeck <wim@iguana.be>\nDate:   Wed Oct 15 08:53:06 2008 +0000\n\n    [WATCHDOG] ib700wdt.c - fix buffer_underflow bug\n    \n    This fixes Bug 11399:\n    if ibwdt_set_heartbeat(int t) is called with value 30 then\n    the check \"if ((t < 0) || (t > 30))\" in ibwdt_set_heartbeat\n    is not going to fail because t == 30, but in the loop, the\n    check wd_times[i] > t is never going to be true because\n    none of the wd_times are greater than the value of t (i.e. 30).\n    So we are exiting the loop with i == -1 and therefore setting\n    wd_margin to -1 which is wrong.\n    \n    Reported-by: Zvonimir Rakamaric <zrakamar@cs.ubc.ca>\n    Signed-off-by: Wim Van Sebroeck <wim@iguana.be>\n\ndiff --git a/drivers/watchdog/ib700wdt.c b/drivers/watchdog/ib700wdt.c\nindex 05a2810..8782ec1 100644\n--- a/drivers/watchdog/ib700wdt.c\n+++ b/drivers/watchdog/ib700wdt.c\n@@ -154,7 +154,7 @@ static int ibwdt_set_heartbeat(int t)\n \t\treturn -EINVAL;\n \n \tfor (i = 0x0F; i > -1; i--)\n-\t\tif (wd_times[i] > t)\n+\t\tif (wd_times[i] >= t)\n \t\t\tbreak;\n \twd_margin = i;\n \treturn 0;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Watchdog",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Alan",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-08-21 17:38 UTC by Zvonimir Rakamaric",
+  "Modified": "2008-12-19 02:26 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.26",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/watchdog/ib700wdt.c"
+  ],
+  "methods": [
+    "ibwdt_set_heartbeat"
+  ]
+}

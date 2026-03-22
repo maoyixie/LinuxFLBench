@@ -1,0 +1,139 @@
+{
+  "id": "15118",
+  "title": "\"ThinkPad\" key on T20 only works after suspend cycle",
+  "kernel_version": "2.6.32",
+  "product": "Drivers",
+  "component": "Platform",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/platform/x86/thinkpad_acpi.c"
+    ],
+    "buggy_methods": [
+      "hotkey_inputdev_open",
+      "hotkey_inputdev_close",
+      "thinkpad_acpi_module_init"
+    ],
+    "num_methods": 3
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/bus/platform/devices/thinkpad_acpi/hotkey_all_mask",
+      "/sys/bus/platform/devices/thinkpad_acpi/hotkey_enable",
+      "/sys/bus/platform/devices/thinkpad_acpi/hotkey_recommended_mask",
+      "/sys/bus/platform/devices/thinkpad_acpi/hotkey_source_mask",
+      "/sys/bus/platform/devices/thinkpad_acpi/hotkey_poll_freq",
+      "/sys/bus/platform/devices/thinkpad_acpi/hotkey_bios_mask",
+      "/sys/bus/platform/devices/thinkpad_acpi/hotkey_report_mode",
+      "/sys/bus/platform/devices/thinkpad_acpi/hotkey_bios_enabled",
+      "/sys/bus/platform/devices/thinkpad_acpi/hotkey_mask"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1004,
+    "description_word_count": 83
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 6,
+    "lines_removed": 9,
+    "patch_size": 15,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 4,
+    "hunk_functions": [
+      "thinkpad_acpi_module_init",
+      "hotkey_inputdev_open"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/platform/x86/thinkpad_acpi.c",
+    "filename": "thinkpad_acpi.c",
+    "directory": "drivers/platform/x86",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "platform",
+    "driver_subsystem": "platform/x86",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Platform"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "15118",
+      "version": "2.6.32",
+      "status": "found",
+      "path": "drivers/platform/x86/thinkpad_acpi.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "15118",
+    "title": "\"ThinkPad\" key on T20 only works after suspend cycle",
+    "ground_truth_file": "drivers/platform/x86/thinkpad_acpi.c",
+    "ground_truth_subsystem": "drivers/platform",
+    "ground_truth_methods": [
+      "hotkey_inputdev_open",
+      "hotkey_inputdev_close",
+      "thinkpad_acpi_module_init"
+    ],
+    "product": "Drivers",
+    "component": "Platform",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "error_return_fix"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "driver_module_named"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/sys/bus/platform/devices/thinkpad_acpi/hotkey_poll_freq",
+        "/sys/bus/platform/devices/thinkpad_acpi/hotkey_recommended_mask",
+        "/sys/bus/platform/devices/thinkpad_acpi/hotkey_bios_mask",
+        "/sys/bus/platform/devices/thinkpad_acpi/hotkey_all_mask",
+        "/sys/bus/platform/devices/thinkpad_acpi/hotkey_report_mode",
+        "/sys/bus/platform/devices/thinkpad_acpi/hotkey_source_mask",
+        "/sys/bus/platform/devices/thinkpad_acpi/hotkey_bios_enabled",
+        "/sys/bus/platform/devices/thinkpad_acpi/hotkey_enable",
+        "/sys/bus/platform/devices/thinkpad_acpi/hotkey_mask"
+      ],
+      "component": "Platform",
+      "product": "Drivers",
+      "modules": [
+        "hotkey"
+      ]
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

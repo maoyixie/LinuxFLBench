@@ -1,0 +1,35 @@
+{
+  "id": "60519",
+  "title": "Wrong battery information reported on Samsung NP540U3C",
+  "description": "Created attachment 106809 [details]\nOutput of acpidump\n\nThe battery information reported in sysfs is wrong since kernel 2.6.34. In older versions the information is correct.\n\nThe affected device is a Samsung NP540U3C. The output of acpidump is attached.\nThese are the contents of /sys/class/power_supply/BAT1/uevent:\n\nCorrect information on 2.6.33:\nPOWER_SUPPLY_NAME=BAT1\nPOWER_SUPPLY_TYPE=Battery\nPOWER_SUPPLY_STATUS=Full\nPOWER_SUPPLY_PRESENT=1\nPOWER_SUPPLY_TECHNOLOGY=Li-ion\nPOWER_SUPPLY_VOLTAGE_MIN_DESIGN=7500000\nPOWER_SUPPLY_VOLTAGE_NOW=8638000\nPOWER_SUPPLY_CURRENT_NOW=0\nPOWER_SUPPLY_CHARGE_FULL_DESIGN=6890000\nPOWER_SUPPLY_CHARGE_FULL=6800000\nPOWER_SUPPLY_CHARGE_NOW=6800000\nPOWER_SUPPLY_MODEL_NAME=\nPOWER_SUPPLY_MANUFACTURER=SAMSUNG Electronics\nPOWER_SUPPLY_SERIAL_NUMBER=\n\nWrong information on 2.6.34:\nPOWER_SUPPLY_NAME=BAT1\nPOWER_SUPPLY_TYPE=Battery\nPOWER_SUPPLY_STATUS=Unknown\nPOWER_SUPPLY_PRESENT=1\nPOWER_SUPPLY_TECHNOLOGY=Unknown\nPOWER_SUPPLY_CYCLE_COUNT=204\nPOWER_SUPPLY_VOLTAGE_MIN_DESIGN=1000\nPOWER_SUPPLY_VOLTAGE_NOW=8638000\nPOWER_SUPPLY_CURRENT_NOW=0\nPOWER_SUPPLY_POWER_NOW=0\nPOWER_SUPPLY_ENERGY_FULL_DESIGN=1000\nPOWER_SUPPLY_ENERGY_FULL=6890000\nPOWER_SUPPLY_ENERGY_NOW=6800000\nPOWER_SUPPLY_MODEL_NAME=\nPOWER_SUPPLY_MANUFACTURER=LION\nPOWER_SUPPLY_SERIAL_NUMBER=",
+  "patch": [
+    "diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c\nindex c760b61..2c9958c 100644\n--- a/drivers/acpi/battery.c\n+++ b/drivers/acpi/battery.c\n@@ -117,6 +117,7 @@ struct acpi_battery {\n \tstruct acpi_device *device;\n \tstruct notifier_block pm_nb;\n \tunsigned long update_time;\n+\tint revision;\n \tint rate_now;\n \tint capacity_now;\n \tint voltage_now;\n@@ -359,6 +360,7 @@ static struct acpi_offsets info_offsets[] = {\n };\n \n static struct acpi_offsets extended_info_offsets[] = {\n+\t{offsetof(struct acpi_battery, revision), 0},\n \t{offsetof(struct acpi_battery, power_unit), 0},\n \t{offsetof(struct acpi_battery, design_capacity), 0},\n \t{offsetof(struct acpi_battery, full_charge_capacity), 0},\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Battery",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Lan Tianyu",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2013-07-05 14:01 UTC by Jan Hoffmann",
+  "Modified": "2013-10-09 09:07 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.34",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/battery.c"
+  ],
+  "methods": [
+    "acpi_battery",
+    "info_offsets"
+  ]
+}

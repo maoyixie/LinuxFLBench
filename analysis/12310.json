@@ -1,0 +1,114 @@
+{
+  "id": "12310",
+  "title": "NOHZ appears to cause ondemand to effectively ignore 'ignore_nice_load'",
+  "kernel_version": "2.6.28",
+  "product": "Power Management",
+  "component": "cpufreq",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/cpufreq/cpufreq_ondemand.c"
+    ],
+    "buggy_methods": [
+      "get_cpu_idle_time_jiffy",
+      "store_ignore_nice_load",
+      "dbs_check_cpu",
+      "cpufreq_governor_dbs"
+    ],
+    "num_methods": 4
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1110,
+    "description_word_count": 175
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 25,
+    "lines_removed": 22,
+    "patch_size": 47,
+    "patch_types": [
+      "logic_change",
+      "synchronization"
+    ],
+    "num_hunks": 5,
+    "hunk_functions": [
+      "dbs_check_cpu",
+      "cpufreq_governor_dbs",
+      "store_ignore_nice_load",
+      "if"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/cpufreq/cpufreq_ondemand.c",
+    "filename": "cpufreq_ondemand.c",
+    "directory": "drivers/cpufreq",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "cpufreq",
+    "driver_subsystem": "cpufreq/cpufreq_ondemand.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:cpufreq"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "12310",
+      "version": "2.6.28",
+      "status": "found",
+      "path": "drivers/cpufreq/cpufreq_ondemand.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "12310",
+    "title": "NOHZ appears to cause ondemand to effectively ignore 'ignore_nice_load'",
+    "ground_truth_file": "drivers/cpufreq/cpufreq_ondemand.c",
+    "ground_truth_subsystem": "drivers/cpufreq",
+    "ground_truth_methods": [
+      "get_cpu_idle_time_jiffy",
+      "store_ignore_nice_load",
+      "dbs_check_cpu",
+      "cpufreq_governor_dbs"
+    ],
+    "product": "Power Management",
+    "component": "cpufreq",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "locking_fix"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "cpufreq",
+      "product": "Power Management"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "25922",
+  "title": "IdeaPad Y530 brightness keys not functioning",
+  "": "Show dependency tree",
+  "description": "After increasing/decreasing brightness by \"Fn+Up/Down\" it changes by some value and after that keys are not responding (not making any change).\nModifying brighntness value by:\necho 0 > /sys/class/backlight/acpi_video0/brightness\nworks good.\n\nLatest kernel that I tried where the issue no occurs was 2.6.36.2.",
+  "patch": [
+    "From 557c45518d39a5b495135909f55f328e1cab1d03 Mon Sep 17 00:00:00 2001\nFrom: Ike Panhc <ike.pan@canonical.com>\nDate: Wed, 23 Feb 2011 10:20:45 +0800\nSubject: [PATCH] ideapad: read brightness setting when have brightness key notify\n\nBugLink: https://bugzilla.kernel.org/show_bug.cgi?id=25922\n\nOn ideapad Y530, the brightness key notify will be blocked if the last notify\nis not responsed by getting the brightness value. Read value when we get the\nnotify shall fix the problem and will not have any difference on other ideapads.\n\nSigned-off-by: Ike Panhc <ike.pan@canonical.com>\n---\n drivers/platform/x86/ideapad-laptop.c |    2 ++\n 1 files changed, 2 insertions(+), 0 deletions(-)\n\ndiff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c\nindex 114d952..21b1018 100644\n--- a/drivers/platform/x86/ideapad-laptop.c\n+++ b/drivers/platform/x86/ideapad-laptop.c\n@@ -459,6 +459,8 @@ static void ideapad_acpi_notify(struct acpi_device *adevice, u32 event)\n \t\tif (test_bit(vpc_bit, &vpc1)) {\n \t\t\tif (vpc_bit == 9)\n \t\t\t\tideapad_sync_rfk_state(adevice);\n+\t\t\telse if (vpc_bit == 4)\n+\t\t\t\tread_ec_data(handle, 0x12, &vpc2);\n \t\t\telse\n \t\t\t\tideapad_input_report(priv, vpc_bit);\n \t\t}\n-- \n1.7.4.1\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Platform_x86",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_platform_x86@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "21782 56331",
+  "Reported": "2010-12-30 12:48 UTC by Tomasz",
+  "Modified": "2013-04-09 06:23 UTC",
+  "CC List": "7 users",
+  "See Also": "",
+  "Kernel Version": "2.6.37-rc8",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/platform/x86/ideapad-laptop.c"
+  ],
+  "methods": [
+    "ideapad_acpi_notify"
+  ]
+}

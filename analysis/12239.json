@@ -1,0 +1,142 @@
+{
+  "id": "12239",
+  "title": "Swap breaks after 2x hibernation failure due to lack of swap",
+  "kernel_version": "2.6.27",
+  "product": "Power Management",
+  "component": "Hibernation/Suspend",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "device_not_working",
+    "wrong_behavior",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "mm/swapfile.c"
+    ],
+    "buggy_methods": [
+      "swap_type_of"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "- \"Cannot find swap device, try swapon -a.\".  Now swapon -a",
+      "4 in libc-2.7.so[7fbd850dc000+158000]",
+      "4 in libc-2.7.so[7fbd850dc000+158000]",
+      "4 in ld-2.7.so[7fb391c4e000+1d000]",
+      "0 in libX11.so.6.2.0[7fcfdab52000+ff000]"
+    ],
+    "proc_sys_paths": [
+      "/proc/swaps"
+    ],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 28,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3991,
+    "description_word_count": 477
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 2,
+    "patch_size": 4,
+    "patch_types": [
+      "synchronization"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "swap_type_of"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "mm/swapfile.c",
+    "filename": "swapfile.c",
+    "directory": "mm",
+    "depth": 2,
+    "top_level": "mm",
+    "second_level": "swapfile.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "medium",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "dmesg_logs_available",
+      "component_known:Hibernation/Suspend"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "12239",
+      "version": "2.6.27",
+      "status": "found",
+      "path": "mm/swapfile.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "12239",
+    "title": "Swap breaks after 2x hibernation failure due to lack of swap",
+    "ground_truth_file": "mm/swapfile.c",
+    "ground_truth_subsystem": "mm/swapfile.c",
+    "ground_truth_methods": [
+      "swap_type_of"
+    ],
+    "product": "Power Management",
+    "component": "Hibernation/Suspend",
+    "best_strategy": "grep_error_strings",
+    "symptom_categories": [
+      "hang/deadlock",
+      "suspend/resume",
+      "wrong_output",
+      "data_corruption"
+    ],
+    "fix_types": [
+      "locking_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "greppable_error_strings",
+      "proc_sys_paths",
+      "kernel_log_messages",
+      "greppable_kernel_messages",
+      "known_component",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "error_strings": [
+        "Cannot find swap device, try swapon -a."
+      ],
+      "proc_sys_paths": [
+        "/proc/swaps"
+      ],
+      "kernel_msg_count": 28,
+      "greppable_kernel_msgs": [
+        "kdeinit[10614]: segfault at 0 ip 00007fbd8515139a sp",
+        "kdeinit[7322]: segfault at 0 ip 00007fbd8515139a sp",
+        "kio_file[7343]: segfault at ffffffff00000000 ip",
+        "Xorg[6928]: segfault at 692 ip 00007fb391c5bb92 sp",
+        "6928 freeing invalid memtype d0020000-d002a000"
+      ],
+      "component": "Hibernation/Suspend",
+      "product": "Power Management"
+    }
+  },
+  "overall_category": "E_grep_error_strings"
+}

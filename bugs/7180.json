@@ -1,0 +1,35 @@
+{
+  "id": "7180",
+  "title": "aic94xx driver locks up on IBM x366 with Calgary IOMMU enabled",
+  "description": "Most recent kernel where this bug did not occur: 2.6.17\nDistribution: Ubuntu 6.06\nHardware Environment: IBM x366, 4x 3.16GHz Xeon, 8G RAM, aic94xx SAS controller,\n6x 36G SAS disks, Calgary IOMMU\nSoftware Environment: netbooted Ubuntu mutant.\nProblem Description: aic94xx driver NMIs the system if calgary iommu is enabled.\n\nSteps to reproduce:\n1. Clone linux-2.6 and add in scsi-misc, scsi-rc-fixes and aic94xx from\ngit.kernel.org.\n2. Build a netbootable \"allmodconfig\" kernel with attached config file.\n3. Calgary IOMMU code activates\n4. Subsequent loading of the aic94xx driver causes the service processor to log\na PCI SERR with a split completion timeout, followed by an NMI, followed by a\nreboot.\n\nNote that disabling the Calgary IOMMU for the bus that the SAS controller is\nconnected to (either via kconfig or iommu=none or calgary=disable=1) will make\nthe problem go away.",
+  "patch": [
+    "diff --git a/arch/x86_64/kernel/pci-calgary.c b/arch/x86_64/kernel/pci-calgary.c\nindex b3296cc..3124265 100644\n--- a/arch/x86_64/kernel/pci-calgary.c\n+++ b/arch/x86_64/kernel/pci-calgary.c\n@@ -732,6 +732,22 @@ static void calgary_watchdog(unsigned lo\n \t}\n }\n \n+#define CONFIG_REGISTER 0x108\n+static void __init calgary_disable_sc_timeout(void __iomem *bbar)\n+{\n+\tu64 val64;\n+\tvoid __iomem *target;\n+\n+\ttarget = calgary_reg(bbar, CONFIG_REGISTER);\n+\tval64 = be64_to_cpu(readq(target));\n+\t/* sets PHB1 timeout to 0x1110, which is a 2s timeout */\n+\tval64 &= 0xFFFFFF0FFFFFFFFF;\n+\tval64 |= 0x000000E000000000;\n+\twriteq(cpu_to_be64(val64), target);\n+\treadq(target); /* flush */\n+}\n+\n+\n static void __init calgary_enable_translation(struct pci_dev *dev)\n {\n \tu32 val32;\n@@ -756,6 +772,9 @@ static void __init calgary_enable_transl\n \twritel(cpu_to_be32(val32), target);\n \treadl(target); /* flush */\n \n+\tif (busnum == 1)\n+\t\tcalgary_disable_sc_timeout(bbar);\n+\n \tinit_timer(&tbl->watchdog_timer);\n \ttbl->watchdog_timer.function = &calgary_watchdog;\n \ttbl->watchdog_timer.data = (unsigned long)dev;\n",
+    "diff -r 3f7bc84201e7 arch/x86_64/kernel/pci-calgary.c\n--- a/arch/x86_64/kernel/pci-calgary.c\tWed Oct 18 09:14:19 2006 +0200\n+++ b/arch/x86_64/kernel/pci-calgary.c\tWed Oct 18 11:48:51 2006 +0200\n@@ -52,7 +52,8 @@\n #define ONE_BASED_CHASSIS_NUM   1\n \n /* register offsets inside the host bridge space */\n-#define PHB_CSR_OFFSET\t\t0x0110\n+#define CALGARY_CONFIG_REG\t0x0108\n+#define PHB_CSR_OFFSET\t\t0x0110 /* Channel Status */\n #define PHB_PLSSR_OFFSET\t0x0120\n #define PHB_CONFIG_RW_OFFSET\t0x0160\n #define PHB_IOBASE_BAR_LOW\t0x0170\n@@ -83,6 +84,8 @@\n #define TAR_VALID\t\t0x0000000000000008UL\n /* CSR (Channel/DMA Status Register) */\n #define CSR_AGENT_MASK\t\t0xffe0ffff\n+/* CCR (Calgary Configuration Register) */\n+#define CCR_2SEC_TIMEOUT        0x000000000000000EUL\n \n #define MAX_NUM_OF_PHBS\t\t8 /* how many PHBs in total? */\n #define MAX_NUM_CHASSIS\t\t8 /* max number of chassis */\n@@ -732,6 +735,45 @@ static void calgary_watchdog(unsigned lo\n \t}\n }\n \n+static void __init calgary_increase_split_completion_timeout(void __iomem *bbar,\n+\tunsigned char busnum)\n+{\n+\tu64 val64;\n+\tvoid __iomem *target;\n+\tunsigned long phb_shift = -1;\n+\tu64 mask;\n+\n+\tswitch (busno_to_phbid(busnum)) {\n+\tcase 0: phb_shift = (63 - 19);\n+\t\tbreak;\n+\tcase 1: phb_shift = (63 - 23);\n+\t\tbreak;\n+\tcase 2: phb_shift = (63 - 27);\n+\t\tbreak;\n+\tcase 3: phb_shift = (63 - 35);\n+\t\tbreak;\n+\tdefault:\n+\t\tBUG_ON(busno_to_phbid(busnum));\n+\t}\n+\n+\ttarget = calgary_reg(bbar, CALGARY_CONFIG_REG);\n+\tval64 = be64_to_cpu(readq(target));\n+\n+\t/* zero out this PHB's timer bits */\n+\tmask = ~(0xFUL << phb_shift);\n+\tprintk(\"Calgary mask: 0x%Lx [%s]\\n\", mask,\n+\t       (mask == 0xFFFFFF0FFFFFFFFF) ? \"same\" : \"different\");\n+\tval64 &= mask;\n+\n+\tval64 |= (CCR_2SEC_TIMEOUT << phb_shift);\n+\tprintk(\"Calgary timeout val: 0x%lx [%s]\\n\",\n+\t       (CCR_2SEC_TIMEOUT << phb_shift),\n+\t       ((CCR_2SEC_TIMEOUT << phb_shift) == 0x000000E000000000) ?\n+\t       \"same\" : \"different\");\n+\twriteq(cpu_to_be64(val64), target);\n+\treadq(target); /* flush */\n+}\n+\n static void __init calgary_enable_translation(struct pci_dev *dev)\n {\n \tu32 val32;\n@@ -755,6 +797,13 @@ static void __init calgary_enable_transl\n \n \twritel(cpu_to_be32(val32), target);\n \treadl(target); /* flush */\n+\n+\t/*\n+\t * Give split completion a longer timeout on bus 1 for aic94xx\n+\t * http://bugzilla.kernel.org/show_bug.cgi?id=7180\n+\t */\n+\tif (busnum == 1)\n+\t\tcalgary_increase_split_completion_timeout(bbar, busnum);\n \n \tinit_timer(&tbl->watchdog_timer);\n \ttbl->watchdog_timer.function = &calgary_watchdog;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "SCSI Drivers",
+  "Classification": "Unclassified",
+  "Component": "AIC94XX",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Muli Ben-Yehuda",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-09-21 18:01 UTC by Darrick J. Wong",
+  "Modified": "2006-10-24 04:50 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.18",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/x86_64/kernel/pci-calgary.c"
+  ],
+  "methods": [
+    "calgary_enable_translation"
+  ]
+}

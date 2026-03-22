@@ -1,0 +1,34 @@
+{
+  "id": "196741",
+  "title": "iwlwifi: unsolicited multicast traffic still dropped when adapter set to allmulti - WIFILNX-1330",
+  "description": "Only frames with link-layer address that is on the list shown by `ip -0 maddress show dev wlp4s0` are received.\nThe wireless device is set to ALLMULTI mode by: `ip link set dev wlp4s0 allmulticast on`\n\nSteps to reproduce:\n1. connect a wireless client to a wireless AP\n2. open Wireshark on the client to monitor icmpv6 traffic\n3. execute on the client: `ip link set dev wlp4s0 allmulticast on`\n4. execute on the AP: ping ff02::1 ... RECEIVED by the client (the link-layer address 33:33:00:00:00:01 is on the list)\n5. execute on the AP: ping ff02::1:ffab:cdef ...  NOT RECEIVED by the client (the link-layer address 33:33:ff:ab:cd:ef is not on the list)\n6. apply workaround\n7. go to step 5; the packets are now received by the client\n\nExpected result:\nThe client should receive packets from ff02::1:ffab:cdef because, even though the address is not in the multicast address list, the adapter is in ALLMULTI mode.\n\n\n\nThe workaround for me was to add more than MAX_MCAST_FILTERING_ADDRESSES (256) using the script below (assuming there is at least one multicast address already present):\n\n#!/bin/bash\nfor i in {0..255}\ndo\n\thex=$(printf '%02x' $i)\n\tip maddress add 33:33:ff:00:00:$hex dev wlp4s0\ndone\n\n\nThe use case for this feature is a IPv6 neighbor discovery proxy using ndppd (NDP Proxy Daemon).\n\n\ndevice info:\nIntel(R) Dual Band Wireless AC 3160, REV=0x164\n\ndriver: iwlwifi\nversion: 4.12.8-2-ARCH\nfirmware-version: 17.459231.0\nexpansion-rom-version: \nbus-info: 0000:04:00.0\nsupports-statistics: yes\nsupports-test: no\nsupports-eeprom-access: no\nsupports-register-dump: no\nsupports-priv-flags: no",
+  "patch": [
+    "From 7322fc6784fa77348c9cd9c46169497533efc6a5 Mon Sep 17 00:00:00 2001\nFrom: Luca Coelho <luciano.coelho@intel.com>\nDate: Fri, 1 Sep 2017 18:57:35 +0300\nSubject: [PATCH] iwlwifi: mvm: handle FIF_ALLMULTI when setting multicast\n addresses\n\nWe were ignoring the FIF_ALLMULTI flag when setting the multicast\naddresses with MCAST_FILTER_CMD.  Check if this flag is set and enable\npass_all accordingly.  We also need to set the count to 0 if pass_all\nis enable so we don't pass addresses to the firmware when not needed\n(as doing so causes an assert).\n\nThis fixes https://bugzilla.kernel.org/show_bug.cgi?id=196741\n\nReported-by: regwz@seznam.cz\nSigned-off-by: Luca Coelho <luciano.coelho@intel.com>\n---\n drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c | 6 ++++++\n 1 file changed, 6 insertions(+)\n\ndiff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c\nindex 36ffabdd3820..6399e6fcf830 100644\n--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c\n+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c\n@@ -1643,6 +1643,12 @@ static void iwl_mvm_configure_filter(struct ieee80211_hw *hw,\n \tif (!cmd)\n \t\tgoto out;\n \n+\tif (changed_flags & FIF_ALLMULTI)\n+\t\tcmd->pass_all = !!(*total_flags & FIF_ALLMULTI);\n+\n+\tif (cmd->pass_all)\n+\t\tcmd->count = 0;\n+\n \tiwl_mvm_recalc_multicast(mvm);\n out:\n \tmutex_unlock(&mvm->mutex);\n-- \n2.14.1\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "network-wireless",
+  "Hardware": "x86-64 Linux",
+  "Importance": "P1 normal",
+  "Assignee": "DO NOT USE - assign \"network-wireless-intel\" component instead",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2017-08-23 14:45 UTC by regwz",
+  "Modified": "2017-09-04 13:24 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "4.12.8",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c"
+  ],
+  "methods": [
+    "iwl_mvm_configure_filter"
+  ]
+}

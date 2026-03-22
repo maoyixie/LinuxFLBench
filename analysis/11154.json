@@ -1,0 +1,148 @@
+{
+  "id": "11154",
+  "title": "NFS hangs with 2.6.25/2.6.26 despite server being reachable",
+  "kernel_version": "2.6.25",
+  "product": "File System",
+  "component": "NFS",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "net/sunrpc/xprtsock.c"
+    ],
+    "buggy_methods": [
+      "xs_tcp_send_request",
+      "xs_close",
+      "xs_udp_finish_connecting",
+      "xs_tcp_finish_connecting",
+      "sock_xprt"
+    ],
+    "num_methods": 5
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [
+      {
+        "file": "x86",
+        "line": "64"
+      }
+    ],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/mounts"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3374,
+    "description_word_count": 547
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 54,
+    "lines_removed": 14,
+    "patch_size": 68,
+    "new_functions": [
+      "xs_save_old_callbacks",
+      "xs_restore_old_callbacks",
+      "xs_tcp_error_report"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "error_handling",
+      "init_fix",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 11,
+    "hunk_functions": [
+      "xs_tcp_send_request",
+      "xs_close",
+      "xs_tcp_state_change",
+      "xs_tcp_finish_connecting",
+      "xs_udp_finish_connecting",
+      "xs_connect"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "net/sunrpc/xprtsock.c",
+    "filename": "xprtsock.c",
+    "directory": "net/sunrpc",
+    "depth": 3,
+    "top_level": "net",
+    "second_level": "sunrpc",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "source_file_line_references",
+      "component_known:NFS",
+      "is_regression"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "use_source_references_to_locate_file",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "11154",
+      "version": "2.6.25",
+      "status": "found",
+      "path": "net/sunrpc/xprtsock.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "11154",
+    "title": "NFS hangs with 2.6.25/2.6.26 despite server being reachable",
+    "ground_truth_file": "net/sunrpc/xprtsock.c",
+    "ground_truth_subsystem": "net/sunrpc",
+    "ground_truth_methods": [
+      "xs_tcp_send_request",
+      "xs_close",
+      "xs_udp_finish_connecting",
+      "xs_tcp_finish_connecting",
+      "sock_xprt"
+    ],
+    "product": "File System",
+    "component": "NFS",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "hang/deadlock",
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/proc/mounts"
+      ],
+      "component": "NFS",
+      "product": "File System"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

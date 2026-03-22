@@ -1,0 +1,154 @@
+{
+  "id": "13823",
+  "title": "QLA2XXX driver causes kernel oops with a qla2200",
+  "kernel_version": "2.6.29",
+  "product": "SCSI Drivers",
+  "component": "QLOGIC QLA2XXX",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/scsi/qla2xxx/qla_gs.c"
+    ],
+    "buggy_methods": [
+      "qla2x00_fdmi_register"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "qla2x00_configure_loop",
+      "qla2x00_prep_ms_fdmi_iocb",
+      "child_rip",
+      "qla2x00_do_dpc",
+      "qla2x00_loop_resync",
+      "kthread",
+      "qla2x00_fdmi_register",
+      "qla2x00_fdmi_rhba"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/devices/pci0000"
+    ],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 60,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 4666,
+    "description_word_count": 478
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 8,
+    "lines_removed": 0,
+    "patch_size": 8,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "qla2x00_fdmi_register"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/scsi/qla2xxx/qla_gs.c",
+    "filename": "qla_gs.c",
+    "directory": "drivers/scsi/qla2xxx",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "scsi",
+    "driver_subsystem": "scsi/qla2xxx",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_8_functions",
+      "proc_sys_paths_hint_subsystem",
+      "dmesg_logs_available",
+      "component_known:QLOGIC QLA2XXX",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13823",
+      "version": "2.6.29",
+      "status": "found",
+      "path": "drivers/scsi/qla2xxx/qla_gs.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "13823",
+    "version": "2.6.29",
+    "ground_truth_file": "drivers/scsi/qla2xxx/qla_gs.c",
+    "trace_functions": [
+      "qla2x00_prep_ms_fdmi_iocb",
+      "qla2x00_fdmi_rhba",
+      "qla2x00_get_port_name",
+      "qla2x00_fdmi_register",
+      "qla2x00_configure_loop",
+      "qla2x00_mailbox_command",
+      "qla2x00_get_retry_cnt",
+      "qla2x00_loop_resync",
+      "qla2x00_do_dpc",
+      "kthread",
+      "child_rip"
+    ],
+    "total_trace_functions": 11,
+    "function_locations": {
+      "qla2x00_prep_ms_fdmi_iocb": [],
+      "qla2x00_fdmi_rhba": [],
+      "qla2x00_get_port_name": [],
+      "qla2x00_fdmi_register": [],
+      "qla2x00_configure_loop": [
+        "drivers/scsi/qla2xxx/qla_init.c"
+      ],
+      "qla2x00_mailbox_command": [],
+      "qla2x00_get_retry_cnt": [],
+      "qla2x00_loop_resync": [],
+      "qla2x00_do_dpc": [
+        "drivers/scsi/qla2xxx/qla_os.c"
+      ],
+      "kthread": [
+        "fs/ecryptfs/kthread.c",
+        "kernel/kthread.c",
+        "fs/btrfs/disk-io.c",
+        "drivers/hwmon/lis3lv02d.c",
+        "drivers/usb/atm/ueagle-atm.c",
+        "drivers/platform/x86/thinkpad_acpi.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "fs/ecryptfs/kthread.c",
+      "kernel/kthread.c",
+      "fs/btrfs/disk-io.c",
+      "drivers/scsi/qla2xxx/qla_init.c",
+      "drivers/hwmon/lis3lv02d.c",
+      "drivers/scsi/qla2xxx/qla_os.c",
+      "drivers/usb/atm/ueagle-atm.c",
+      "drivers/platform/x86/thinkpad_acpi.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

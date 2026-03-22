@@ -1,0 +1,128 @@
+{
+  "id": "30832",
+  "title": "Radeon S-Video Out has become black and white. Works fine in 2.6.37",
+  "kernel_version": "2.6.38-rc6",
+  "product": "Drivers",
+  "component": "Video",
+  "hardware": "IA-64 Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpu/drm/radeon/atombios_crtc.c"
+    ],
+    "buggy_methods": [
+      "atombios_crtc_set_pll"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 99,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": true,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 6092,
+    "description_word_count": 823
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 5,
+    "lines_removed": 1,
+    "patch_size": 6,
+    "patch_types": [
+      "logic_change",
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "atombios_crtc_set_pll"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpu/drm/radeon/atombios_crtc.c",
+    "filename": "atombios_crtc.c",
+    "directory": "drivers/gpu/drm/radeon",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "gpu",
+    "driver_subsystem": "gpu/drm",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "medium",
+    "signals": [
+      "dmesg_logs_available",
+      "component_known:Video",
+      "is_regression"
+    ],
+    "strategies": [
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "30832",
+      "version": "2.6.38-rc6",
+      "status": "found",
+      "path": "drivers/gpu/drm/radeon/atombios_crtc.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "30832",
+    "title": "Radeon S-Video Out has become black and white. Works fine in 2.6.37",
+    "ground_truth_file": "drivers/gpu/drm/radeon/atombios_crtc.c",
+    "ground_truth_subsystem": "drivers/gpu",
+    "ground_truth_methods": [
+      "atombios_crtc_set_pll"
+    ],
+    "product": "Drivers",
+    "component": "Video",
+    "best_strategy": "grep_error_strings",
+    "symptom_categories": [
+      "wrong_output"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "kernel_log_messages",
+      "greppable_kernel_messages",
+      "known_component",
+      "driver_module_named",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "kernel_msg_count": 99,
+      "greppable_kernel_msgs": [
+        "[drm] Initialized drm 1.1.0 20060810",
+        "[drm] radeon defaulting to kernel modesetting.",
+        "[drm] radeon kernel modesetting enabled.",
+        "conflicting fb hw usage radeondrmfb vs VESA VGA - removing generic driver",
+        "[drm] initializing kernel modesetting (RV770 0x1002:0x9442)."
+      ],
+      "component": "Video",
+      "product": "Drivers",
+      "modules": [
+        "supports",
+        "has",
+        "worked"
+      ]
+    }
+  },
+  "overall_category": "E_grep_error_strings"
+}

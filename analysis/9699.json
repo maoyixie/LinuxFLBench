@@ -1,0 +1,269 @@
+{
+  "id": "9699",
+  "title": "radio-sf16fmr2 probably buggy - system inconsistent after probe",
+  "kernel_version": "2.6.24",
+  "product": "v4l-dvb",
+  "component": "radio",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/media/radio/radio-sf16fmr2.c"
+    ],
+    "buggy_methods": [
+      "fmr2_init"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "seq_read",
+      "vsnprintf",
+      "seq_printf",
+      "EFLAGS",
+      "proc_reg_read",
+      "vfs_read",
+      "sys_read",
+      "strnlen",
+      "r_show",
+      "sysenter_past_esp"
+    ],
+    "mentioned_file_paths": [
+      "lib/modules/2.6"
+    ],
+    "source_references": [],
+    "error_messages": [
+      "inserting radio_sf16fmr2 (/lib/modules/2.6.24-rc6/kernel/drivers/media/radio/rad",
+      "inserting radio_sf16fmr2 (/lib/modules/2.6.24-rc6/kernel/drivers/media/radio/rad"
+    ],
+    "proc_sys_paths": [
+      "/proc/ioports"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3008,
+    "description_word_count": 384
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "fmr2_init"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/media/radio/radio-sf16fmr2.c",
+    "filename": "radio-sf16fmr2.c",
+    "directory": "drivers/media/radio",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "media",
+    "driver_subsystem": "media/radio",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_10_functions",
+      "proc_sys_paths_hint_subsystem",
+      "component_known:radio"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "9699",
+      "version": "2.6.24",
+      "status": "found",
+      "path": "drivers/media/radio/radio-sf16fmr2.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "9699",
+    "version": "2.6.24",
+    "ground_truth_file": "drivers/media/radio/radio-sf16fmr2.c",
+    "trace_functions": [
+      "strnlen",
+      "vsnprintf",
+      "seq_printf",
+      "r_show",
+      "seq_read",
+      "proc_reg_read",
+      "vfs_read",
+      "sys_read",
+      "sysenter_past_esp",
+      "EFLAGS"
+    ],
+    "total_trace_functions": 10,
+    "function_locations": {
+      "strnlen": [
+        "arch/x86/boot/string.c",
+        "fs/romfs/inode.c",
+        "lib/string.c",
+        "arch/powerpc/boot/stdio.c",
+        "arch/s390/lib/string.c",
+        "arch/x86/lib/string_32.c"
+      ],
+      "vsnprintf": [
+        "lib/vsprintf.c"
+      ],
+      "seq_printf": [
+        "net/core/sock.c",
+        "fs/seq_file.c",
+        "arch/sparc/kernel/sun4d_irq.c"
+      ],
+      "r_show": [
+        "fs/partitions/check.c",
+        "drivers/s390/block/dasd_devmap.c",
+        "block/deadline-iosched.c",
+        "drivers/leds/led-triggers.c",
+        "drivers/net/netconsole.c",
+        "drivers/parisc/pdc_stable.c",
+        "block/as-iosched.c",
+        "drivers/s390/char/tape_core.c",
+        "mm/slub.c",
+        "fs/reiserfs/procfs.c"
+      ],
+      "seq_read": [
+        "sound/core/seq/seq_clientmgr.c",
+        "fs/seq_file.c",
+        "net/core/skbuff.c"
+      ],
+      "proc_reg_read": [
+        "fs/proc/inode.c",
+        "sound/pci/emu10k1/emu10k1x.c"
+      ],
+      "vfs_read": [
+        "fs/nfsd/vfs.c",
+        "fs/read_write.c"
+      ],
+      "sys_read": [
+        "fs/read_write.c",
+        "fs/proc/proc_sysctl.c",
+        "drivers/video/fb_sys_fops.c"
+      ],
+      "sysenter_past_esp": [],
+      "EFLAGS": []
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "fs/nfsd/vfs.c",
+      "fs/romfs/inode.c",
+      "fs/partitions/check.c",
+      "fs/proc/inode.c",
+      "drivers/s390/block/dasd_devmap.c",
+      "net/core/skbuff.c",
+      "drivers/leds/led-triggers.c",
+      "drivers/net/netconsole.c",
+      "drivers/parisc/pdc_stable.c",
+      "block/as-iosched.c",
+      "drivers/s390/char/tape_core.c",
+      "sound/core/seq/seq_clientmgr.c",
+      "fs/seq_file.c",
+      "mm/slub.c",
+      "fs/reiserfs/procfs.c",
+      "fs/proc/proc_sysctl.c",
+      "sound/pci/emu10k1/emu10k1x.c",
+      "lib/string.c",
+      "arch/powerpc/boot/stdio.c",
+      "arch/x86/lib/string_32.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "9699",
+    "title": "radio-sf16fmr2 probably buggy - system inconsistent after probe",
+    "ground_truth_file": "drivers/media/radio/radio-sf16fmr2.c",
+    "ground_truth_methods": [
+      "fmr2_init"
+    ],
+    "ground_truth_subsystem": "drivers/media",
+    "trace_functions_top8": [
+      "strnlen",
+      "vsnprintf",
+      "seq_printf",
+      "r_show",
+      "seq_read",
+      "proc_reg_read",
+      "vfs_read",
+      "sys_read"
+    ],
+    "trace_function_locations": {
+      "strnlen": [
+        "arch/powerpc/boot/stdio.c",
+        "arch/s390/lib/string.c",
+        "lib/string.c",
+        "arch/x86/lib/string_32.c",
+        "arch/x86/boot/string.c"
+      ],
+      "vsnprintf": [
+        "lib/vsprintf.c"
+      ],
+      "seq_printf": [
+        "arch/sparc/kernel/sun4d_irq.c",
+        "fs/seq_file.c"
+      ],
+      "r_show": [
+        "kernel/resource.c",
+        "fs/reiserfs/procfs.c"
+      ],
+      "seq_read": [
+        "fs/seq_file.c"
+      ],
+      "proc_reg_read": [
+        "fs/proc/inode.c"
+      ],
+      "vfs_read": [
+        "fs/read_write.c"
+      ],
+      "sys_read": [
+        "fs/read_write.c"
+      ]
+    },
+    "trace_subsystems": [
+      "kernel/resource.c",
+      "fs/reiserfs",
+      "fs/read_write.c",
+      "arch/s390",
+      "lib/string.c",
+      "arch/powerpc",
+      "arch/x86",
+      "arch/sparc",
+      "lib/vsprintf.c",
+      "fs/seq_file.c",
+      "fs/proc"
+    ],
+    "mismatch_type": "trace_in_infrastructure",
+    "gt_calls_trace_func": false,
+    "gt_method_in_trace": false,
+    "product": "v4l-dvb",
+    "component": "radio"
+  },
+  "overall_category": "C_trace_misleads"
+}

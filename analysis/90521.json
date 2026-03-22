@@ -1,0 +1,240 @@
+{
+  "id": "90521",
+  "title": "Asus t100ta Buttons not working",
+  "kernel_version": "3.19-rc2",
+  "product": "ACPI",
+  "component": "Config-Interrupts",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "device_not_working",
+    "performance",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpio/gpio-crystalcove.c"
+    ],
+    "buggy_methods": [
+      "crystalcove_gpio_irq_handler"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "warn_slowpath_fmt",
+      "warn_slowpath_common",
+      "irq_thread_fn",
+      "handle_irq_event",
+      "handle_simple_irq",
+      "handle_irq_event_percpu",
+      "ret_from_kernel_thread",
+      "regmap_irq_thread",
+      "kthread",
+      "irq_nested_primary_handler",
+      "crystalcove_gpio_irq_handler",
+      "dump_stack",
+      "generic_handle_irq",
+      "handle_nested_irq",
+      "irq_thread"
+    ],
+    "mentioned_file_paths": [
+      "kernel/irq/handle.c",
+      "kernel/irq/manage.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 101,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 10064,
+    "description_word_count": 920
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "crystalcove_gpio_irq_handler"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpio/gpio-crystalcove.c",
+    "filename": "gpio-crystalcove.c",
+    "directory": "drivers/gpio",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "gpio",
+    "driver_subsystem": "gpio/gpio-crystalcove.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_15_functions",
+      "dmesg_logs_available",
+      "component_known:Config-Interrupts"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "90521",
+      "version": "3.19-rc2",
+      "status": "found",
+      "path": "drivers/gpio/gpio-crystalcove.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "90521",
+    "version": "3.19-rc2",
+    "ground_truth_file": "drivers/gpio/gpio-crystalcove.c",
+    "trace_functions": [
+      "irq_nested_primary_handler",
+      "dump_stack",
+      "warn_slowpath_common",
+      "warn_slowpath_fmt",
+      "handle_irq_event_percpu",
+      "regmap_format_10_14_write",
+      "_regmap_bus_raw_write",
+      "handle_irq_event",
+      "handle_simple_irq",
+      "generic_handle_irq",
+      "crystalcove_gpio_irq_handler",
+      "handle_nested_irq",
+      "regmap_irq_thread",
+      "irq_thread_fn",
+      "irq_thread"
+    ],
+    "total_trace_functions": 22,
+    "function_locations": {
+      "irq_nested_primary_handler": [
+        "kernel/irq/manage.c"
+      ],
+      "dump_stack": [
+        "lib/dump_stack.c",
+        "arch/tile/kernel/stack.c",
+        "kernel/trace/trace.c",
+        "tools/perf/util/util.c",
+        "arch/blackfin/kernel/dumpstack.c",
+        "arch/mips/kernel/process.c"
+      ],
+      "warn_slowpath_common": [
+        "kernel/panic.c"
+      ],
+      "warn_slowpath_fmt": [
+        "kernel/panic.c"
+      ],
+      "handle_irq_event_percpu": [],
+      "regmap_format_10_14_write": [
+        "drivers/base/regmap/regmap.c"
+      ],
+      "_regmap_bus_raw_write": [
+        "drivers/base/regmap/regmap.c"
+      ],
+      "handle_irq_event": [
+        "drivers/misc/lkdtm.c",
+        "kernel/irq/handle.c"
+      ],
+      "handle_simple_irq": [],
+      "generic_handle_irq": [
+        "kernel/irq/irqdesc.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "drivers/misc/lkdtm.c",
+      "lib/dump_stack.c",
+      "arch/tile/kernel/stack.c",
+      "kernel/trace/trace.c",
+      "kernel/panic.c",
+      "drivers/base/regmap/regmap.c",
+      "tools/perf/util/util.c",
+      "arch/blackfin/kernel/dumpstack.c",
+      "kernel/irq/handle.c",
+      "arch/mips/kernel/process.c",
+      "kernel/irq/manage.c",
+      "kernel/irq/irqdesc.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "90521",
+    "title": "Asus t100ta Buttons not working",
+    "ground_truth_file": "drivers/gpio/gpio-crystalcove.c",
+    "ground_truth_methods": [
+      "crystalcove_gpio_irq_handler"
+    ],
+    "ground_truth_subsystem": "drivers/gpio",
+    "trace_functions_top8": [
+      "irq_nested_primary_handler",
+      "dump_stack",
+      "warn_slowpath_common",
+      "warn_slowpath_fmt",
+      "handle_irq_event_percpu",
+      "regmap_format_10_14_write",
+      "_regmap_bus_raw_write",
+      "handle_irq_event"
+    ],
+    "trace_function_locations": {
+      "irq_nested_primary_handler": [
+        "kernel/irq/manage.c"
+      ],
+      "dump_stack": [
+        "tools/perf/util/util.c",
+        "lib/dump_stack.c",
+        "arch/blackfin/kernel/dumpstack.c"
+      ],
+      "warn_slowpath_common": [
+        "kernel/panic.c"
+      ],
+      "warn_slowpath_fmt": [
+        "kernel/panic.c"
+      ],
+      "handle_irq_event_percpu": [],
+      "regmap_format_10_14_write": [
+        "drivers/base/regmap/regmap.c"
+      ],
+      "_regmap_bus_raw_write": [
+        "drivers/base/regmap/regmap.c"
+      ],
+      "handle_irq_event": [
+        "kernel/irq/handle.c"
+      ]
+    },
+    "trace_subsystems": [
+      "kernel/panic.c",
+      "lib/dump_stack.c",
+      "kernel/irq",
+      "drivers/base",
+      "arch/blackfin",
+      "tools/perf"
+    ],
+    "mismatch_type": "trace_in_infrastructure",
+    "gt_calls_trace_func": true,
+    "gt_method_in_trace": true,
+    "product": "ACPI",
+    "component": "Config-Interrupts"
+  },
+  "overall_category": "C_trace_misleads"
+}

@@ -1,0 +1,191 @@
+{
+  "id": "583",
+  "title": "Enabling Coda with Devfs causes Kernel Panic",
+  "kernel_version": "2.5.67",
+  "product": "File System",
+  "component": "Other",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "fs/coda/psdev.c"
+    ],
+    "buggy_methods": [
+      "init_coda_psdev"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "register_chrdev",
+      "register_chrdev_region",
+      "devfs_mk_dir",
+      "init_once",
+      "init",
+      "kmalloc",
+      "init_coda_psdev",
+      "kernel_thread_helper"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "CPU:     0 "
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1546,
+    "description_word_count": 190
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "error_handling"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "fs/coda/psdev.c",
+    "filename": "psdev.c",
+    "directory": "fs/coda",
+    "depth": 3,
+    "top_level": "fs",
+    "second_level": "coda",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_8_functions"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "583",
+      "version": "2.5.67",
+      "status": "found",
+      "path": "fs/coda/psdev.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "583",
+    "version": "2.5.67",
+    "ground_truth_file": "fs/coda/psdev.c",
+    "trace_functions": [
+      "vsnprintf",
+      "devfs_mk_dir",
+      "kmalloc",
+      "register_chrdev_region",
+      "register_chrdev",
+      "init_coda_psdev",
+      "init_once",
+      "init",
+      "kernel_thread_helper"
+    ],
+    "total_trace_functions": 9,
+    "function_locations": {
+      "vsnprintf": [
+        "lib/vsprintf.c"
+      ],
+      "devfs_mk_dir": [
+        "fs/devfs/base.c"
+      ],
+      "kmalloc": [
+        "drivers/atm/firestream.c",
+        "fs/reiserfs/fix_node.c",
+        "sound/core/wrappers.c",
+        "drivers/pnp/pnpbios/core.c",
+        "net/wanrouter/af_wanpipe.c",
+        "drivers/char/ftape/zftape/zftape-buffers.c",
+        "drivers/net/wan/sdlamain.c",
+        "arch/ppc/kernel/irq.c",
+        "drivers/char/sx.c",
+        "drivers/net/wan/sdla_x25.c"
+      ],
+      "register_chrdev_region": [
+        "fs/char_dev.c"
+      ],
+      "register_chrdev": [
+        "fs/char_dev.c",
+        "drivers/isdn/hardware/eicon/divasmain.c",
+        "drivers/isdn/hardware/eicon/divamnt.c",
+        "drivers/isdn/hardware/eicon/divasi.c"
+      ],
+      "init_coda_psdev": [
+        "fs/coda/psdev.c"
+      ],
+      "init_once": [
+        "fs/romfs/inode.c",
+        "fs/proc/inode.c",
+        "fs/ext3/super.c",
+        "mm/shmem.c",
+        "fs/nfs/inode.c",
+        "fs/jfs/jfs_metapage.c",
+        "fs/smbfs/inode.c",
+        "fs/ufs/super.c",
+        "fs/ntfs/super.c",
+        "fs/reiserfs/super.c"
+      ],
+      "init": [
+        "drivers/hotplug/cpci_hotplug_core.c",
+        "arch/arm/mach-pxa/lubbock.c",
+        "arch/m68k/mac/macints.c",
+        "drivers/net/e100/e100_main.c",
+        "drivers/s390/char/tape_block.c",
+        "drivers/input/mouse/amimouse.c",
+        "fs/nls/nls_cp860.c",
+        "drivers/net/pcmcia/axnet_cs.c",
+        "drivers/net/stnic.c",
+        "drivers/oprofile/oprof.c"
+      ],
+      "kernel_thread_helper": [
+        "arch/i386/kernel/process.c"
+      ]
+    },
+    "gt_found_via_functions": [
+      "init_coda_psdev"
+    ],
+    "other_candidate_files": [
+      "drivers/hotplug/cpci_hotplug_core.c",
+      "arch/arm/mach-pxa/lubbock.c",
+      "fs/romfs/inode.c",
+      "fs/proc/inode.c",
+      "drivers/atm/firestream.c",
+      "arch/m68k/mac/macints.c",
+      "fs/reiserfs/fix_node.c",
+      "sound/core/wrappers.c",
+      "drivers/net/e100/e100_main.c",
+      "fs/ext3/super.c",
+      "drivers/pnp/pnpbios/core.c",
+      "drivers/s390/char/tape_block.c",
+      "drivers/isdn/hardware/eicon/divasmain.c",
+      "mm/shmem.c",
+      "fs/nfs/inode.c",
+      "arch/i386/kernel/process.c",
+      "fs/jfs/jfs_metapage.c",
+      "net/wanrouter/af_wanpipe.c",
+      "fs/smbfs/inode.c",
+      "drivers/input/mouse/amimouse.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

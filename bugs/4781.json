@@ -1,0 +1,34 @@
+{
+  "id": "4781",
+  "title": "Conservative governor makes me lose my USB keyboard",
+  "description": "Distribution: Slackware-current \n \nHardware Environment: Bi-Opteron system with Tiger K8W board, Logitech USB \nkeyboard \n \nSoftware Environment: Self-compiled 2.6.12rc6 and 2.6.12 kernels with \nkernel.org sources without patches, GCC 3.4.2, KDE 3.4.1 using the Logitech \ndriver. \n \nProblem Description: \nWhen I set up \"conservative\" as scaling governor (using a simple 'echo \n\"conservative\" > /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor' for \nCPU0 and CPU1 at boot), I cannot type anything in consoles and applications \n(like Kword, for instance) anymore. The oly way I can get my keyboard back is \nrebooting. \nWhen I use \"ondemand\", I don't have such problem at all. \nMy keyboard is a Logitech Internet Navigator USB keyboard. I cannot test a PS/2 \nkeyboard on this system, the PS/2 connector doesn't work since I plugged a \nsecond CPU in it. Everything works find, though, on this system, with any \ngovernor except the \"conservative\" one, so my guess is that it still has some \nquirks. \n \nSteps to reproduce: \nPlug a USB keyboard and set \"conservative\" as CPU governor for both processors \non a dual-Opteron system. It occurs every time to me, usually 10 to 20 seconds \nafter typing something.",
+  "patch": [
+    "\nDon't try to access not-present CPUs. \nConservative governor will always oops on SMP without this fix.\n\nSigned-off-by: Venkatesh Pallipadi <venkatesh.pallipadi@intel.com>\n\nIndex: linux-2.6.12/drivers/cpufreq/cpufreq_conservative.c\n===================================================================\n--- linux-2.6.12.orig/drivers/cpufreq/cpufreq_conservative.c\t2005-06-17 12:48:29.000000000 -0700\n+++ linux-2.6.12/drivers/cpufreq/cpufreq_conservative.c\t2005-09-22 15:26:54.669850424 -0700\n@@ -315,9 +315,9 @@\n \tpolicy = this_dbs_info->cur_policy;\n \n \tif ( init_flag == 0 ) {\n-\t\tfor ( /* NULL */; init_flag < NR_CPUS; init_flag++ ) {\n-\t\t\tdbs_info = &per_cpu(cpu_dbs_info, init_flag);\n-\t\t\trequested_freq[cpu] = dbs_info->cur_policy->cur;\n+\t\tfor_each_online_cpu(j) {\n+\t\t\tdbs_info = &per_cpu(cpu_dbs_info, j);\n+\t\t\trequested_freq[j] = dbs_info->cur_policy->cur;\n \t\t}\n \t\tinit_flag = 1;\n \t}\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Power Management",
+  "Classification": "Unclassified",
+  "Component": "cpufreq",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Venkatesh Pallipadi",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2005-06-23 00:34 UTC by Richard Van Den Boom",
+  "Modified": "2005-10-29 08:50 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.12",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/cpufreq/cpufreq_conservative.c"
+  ],
+  "methods": [
+    "dbs_check_cpu"
+  ]
+}

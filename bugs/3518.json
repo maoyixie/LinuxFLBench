@@ -1,0 +1,34 @@
+{
+  "id": "3518",
+  "title": "disable event LID blocks SLPB and vice versa on wakeup from S3",
+  "description": "Distribution: Slackware 10\nHardware Environment: Notebook Aristo 2500, CPU Celeron 2.40Ghz\nProblem Description:\n\nWhen i go into S3 mode (echo mem >/sys/power/state), i can wakeup\nby pressing SLPB (Fn+ESC on my laptop) or opening LID.\nWhen i do that on a working system, kernel sends events\n\"button/sleep SLPB 00000080 00000000x\" when i'm pressing Fn+ESC\nand \"button/lid LID 000000080 00000000x\" when i'm openning or\nclosing LID.\nBut, when i disable LID (echo LID >/proc/acpi/wakeup) *or*\nSLPB (echo SLPB >/proc/acpi/wakeup), i do cat /proc/acpi/wakeup\nand i see that LID or SLPB is disabled, i can't go back\nfrom S3 state.\n\nSteps to reproduce:\necho LID >/proc/acpi/wakeup or echo SLPB >/proc/acpi/wakeup\nand echo mem >/sys/power/state",
+  "patch": [
+    "--- 2.6/drivers/acpi/sleep/proc.c.orig\t2004-11-11 12:50:00.006278280 +0800\n+++ 2.6/drivers/acpi/sleep/proc.c\t2004-11-11 13:39:41.162073712 +0800\n@@ -395,6 +395,7 @@ acpi_system_write_wakeup_device (\n \tchar\t\tstrbuf[5];\n \tchar\t\tstr[5] = \"\";\n \tint \t\tlen = count;\n+\tstruct acpi_device *found_dev = NULL;\n \n \tif (len > 4) len = 4;\n \n@@ -411,9 +412,25 @@ acpi_system_write_wakeup_device (\n \n \t\tif (!strncmp(dev->pnp.bus_id, str, 4)) {\n \t\t\tdev->wakeup.state.enabled = dev->wakeup.state.enabled ? 0:1;\n+\t\t\tfound_dev = dev;\n \t\t\tbreak;\n \t\t}\n \t}\n+\tif (found_dev) {\n+\t\tlist_for_each_safe(node, next, &acpi_wakeup_device_list) {\n+\t\t\tstruct acpi_device * dev = container_of(node,\n+\t\t\t\tstruct acpi_device, wakeup_list);\n+\n+\t\t\tif ((dev != found_dev) &&\n+\t\t\t\t(dev->wakeup.gpe_number == found_dev->wakeup.gpe_number) &&\n+\t\t\t\t(dev->wakeup.gpe_device == found_dev->wakeup.gpe_device)) {\n+\t\t\t\tprintk(\"Warnning: (%s, %s) have the same GPE, \"\n+\t\t\t\t\t\"can't disable/enable one seperately\\n\",\n+\t\t\t\t\tdev->pnp.bus_id, found_dev->pnp.bus_id);\n+\t\t\t\tdev->wakeup.state.enabled = found_dev->wakeup.state.enabled;\n+\t\t\t}\n+\t\t}\n+\t}\n \tspin_unlock(&acpi_device_lock);\n \treturn count;\n }\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Sleep-Wake",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 blocking",
+  "Assignee": "Shaohua",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2004-10-07 06:39 UTC by Pawel Maziarz",
+  "Modified": "2005-01-26 23:08 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.9",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/sleep/proc.c"
+  ],
+  "methods": [
+    "acpi_system_write_wakeup_device"
+  ]
+}

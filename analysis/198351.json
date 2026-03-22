@@ -1,0 +1,121 @@
+{
+  "id": "198351",
+  "title": "iwlwifi: 9260: very slow WAN-LAN transfers at 5Ghz",
+  "kernel_version": "4.15-rc6",
+  "product": "Drivers",
+  "component": "network-wireless",
+  "hardware": "Intel Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c"
+    ],
+    "buggy_methods": [
+      "iwl_mvm_check_pn",
+      "iwl_mvm_rx_csum",
+      "iwl_mvm_is_nonagg_dup",
+      "iwl_mvm_rx_mpdu_mq"
+    ],
+    "num_methods": 4
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 629,
+    "description_word_count": 98
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 20,
+    "lines_removed": 19,
+    "patch_size": 39,
+    "new_functions": [
+      "iwl_mvm_is_dup"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "error_handling",
+      "memory"
+    ],
+    "num_hunks": 5,
+    "hunk_functions": [
+      "iwl_mvm_rx_csum",
+      "iwl_mvm_rx_mpdu_mq",
+      "iwl_mvm_check_pn",
+      "iwl_mvm_is_nonagg_dup"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c",
+    "filename": "rxmq.c",
+    "directory": "drivers/net/wireless/intel/iwlwifi/mvm",
+    "depth": 7,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/wireless",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:network-wireless"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "198351",
+      "version": "4.15-rc6",
+      "status": "found",
+      "path": "drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "198351",
+    "title": "iwlwifi: 9260: very slow WAN-LAN transfers at 5Ghz",
+    "ground_truth_file": "drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c",
+    "ground_truth_subsystem": "drivers/net",
+    "ground_truth_methods": [
+      "iwl_mvm_check_pn",
+      "iwl_mvm_rx_csum",
+      "iwl_mvm_is_nonagg_dup",
+      "iwl_mvm_rx_mpdu_mq"
+    ],
+    "product": "Drivers",
+    "component": "network-wireless",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "performance"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "component": "network-wireless",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

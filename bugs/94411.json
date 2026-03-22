@@ -1,0 +1,34 @@
+{
+  "id": "94411",
+  "title": "Unwanted delayed execution of _Qxx EC methods",
+  "description": "Created attachment 169541 [details]\ndmesg when function keys are pressed\n\nMy laptop (XPS13 9333) has two function keys to control the screen brightness. When pressed, two _Qxx ACPI methods are called, one to increase and one to decrease the brightness. Both the methods sleep for 200ms.\n\nThis pause of 200ms is causing some problems when I keep one of the function keys pressed. In this situation, more queries than needed are scheduled for a delayed execution, making the screen brightness change even after the function key is released. If I keep the function key pressed for X seconds, it will take roughly 2X seconds for all the queries to be executed.\n\nHere attached see some log lines that show the problem.",
+  "patch": [
+    "From 05a5a68b209d57c2b2e9e8aba1fa6365ec40c52c Mon Sep 17 00:00:00 2001\nMessage-Id: <05a5a68b209d57c2b2e9e8aba1fa6365ec40c52c.1438924516.git.lv.zheng@intel.com>\nIn-Reply-To: <d2029b78c1e914d0c05b28c406a88057858b8a42.1434001323.git.lv.zheng@intel.com>\nReferences: <d2029b78c1e914d0c05b28c406a88057858b8a42.1434001323.git.lv.zheng@intel.com>\nFrom: Lv Zheng <lv.zheng@intel.com>\nDate: Fri, 7 Aug 2015 10:48:41 +0800\nSubject: [PATCH v2] ACPI / EC: Fix an issue caused by the serialized _Qxx\n evaluations.\n\nIt is proven that Windows evaluates _Qxx handlers in a parallel way. This\npatch follows this fact, splits _Qxx evaluations from the NOTIFY queue to\nform a separate queue, so that _Qxx evaluations can be queued up on\ndifferent CPUs rather than being queued up on a CPU0 bound queue.\nEvent handling related callbacks are also renamed and sorted in this patch.\n\nLink: https://bugzilla.kernel.org/show_bug.cgi?id=94411\nReported-by: Gabriele Mazzotta <gabriele.mzt@gmail.com>\nSigned-off-by: Lv Zheng <lv.zheng@intel.com>\n---\n drivers/acpi/ec.c |   76 ++++++++++++++++++++++++++++++++++++++---------------\n 1 file changed, 55 insertions(+), 21 deletions(-)\n\nIndex: linux-acpica/drivers/acpi/ec.c\n===================================================================\n--- linux-acpica.orig/drivers/acpi/ec.c\n+++ linux-acpica/drivers/acpi/ec.c\n@@ -161,8 +161,16 @@ struct transaction {\n \tu8 flags;\n };\n \n+struct acpi_ec_query {\n+\tstruct transaction transaction;\n+\tstruct work_struct work;\n+\tstruct acpi_ec_query_handler *handler;\n+};\n+\n static int acpi_ec_query(struct acpi_ec *ec, u8 *data);\n static void advance_transaction(struct acpi_ec *ec);\n+static void acpi_ec_event_handler(struct work_struct *work);\n+static void acpi_ec_event_processor(struct work_struct *work);\n \n struct acpi_ec *boot_ec, *first_ec;\n EXPORT_SYMBOL(first_ec);\n@@ -974,60 +982,90 @@ void acpi_ec_remove_query_handler(struct\n }\n EXPORT_SYMBOL_GPL(acpi_ec_remove_query_handler);\n \n-static void acpi_ec_run(void *cxt)\n+static struct acpi_ec_query *acpi_ec_create_query(u8 *pval)\n {\n-\tstruct acpi_ec_query_handler *handler = cxt;\n+\tstruct acpi_ec_query *q;\n+\tstruct transaction *t;\n+\n+\tq = kzalloc(sizeof (struct acpi_ec_query), GFP_KERNEL);\n+\tif (!q)\n+\t\treturn NULL;\n+\tINIT_WORK(&q->work, acpi_ec_event_processor);\n+\tt = &q->transaction;\n+\tt->command = ACPI_EC_COMMAND_QUERY;\n+\tt->rdata = pval;\n+\tt->rlen = 1;\n+\treturn q;\n+}\n+\n+static void acpi_ec_delete_query(struct acpi_ec_query *q)\n+{\n+\tif (q) {\n+\t\tif (q->handler)\n+\t\t\tacpi_ec_put_query_handler(q->handler);\n+\t\tkfree(q);\n+\t}\n+}\n+\n+static void acpi_ec_event_processor(struct work_struct *work)\n+{\n+\tstruct acpi_ec_query *q = container_of(work, struct acpi_ec_query, work);\n+\tstruct acpi_ec_query_handler *handler = q->handler;\n \n-\tif (!handler)\n-\t\treturn;\n \tec_dbg_evt(\"Query(0x%02x) started\", handler->query_bit);\n \tif (handler->func)\n \t\thandler->func(handler->data);\n \telse if (handler->handle)\n \t\tacpi_evaluate_object(handler->handle, NULL, NULL, NULL);\n \tec_dbg_evt(\"Query(0x%02x) stopped\", handler->query_bit);\n-\tacpi_ec_put_query_handler(handler);\n+\tacpi_ec_delete_query(q);\n }\n \n static int acpi_ec_query(struct acpi_ec *ec, u8 *data)\n {\n \tu8 value = 0;\n \tint result;\n-\tacpi_status status;\n \tstruct acpi_ec_query_handler *handler;\n-\tstruct transaction t = {.command = ACPI_EC_COMMAND_QUERY,\n-\t\t\t\t.wdata = NULL, .rdata = &value,\n-\t\t\t\t.wlen = 0, .rlen = 1};\n+\tstruct acpi_ec_query *q;\n+\n+\tq = acpi_ec_create_query(&value);\n+\tif (!q)\n+\t\treturn -ENOMEM;\n \n \t/*\n \t * Query the EC to find out which _Qxx method we need to evaluate.\n \t * Note that successful completion of the query causes the ACPI_EC_SCI\n \t * bit to be cleared (and thus clearing the interrupt source).\n \t */\n-\tresult = acpi_ec_transaction(ec, &t);\n-\tif (result)\n-\t\treturn result;\n-\tif (data)\n-\t\t*data = value;\n+\tresult = acpi_ec_transaction(ec, &q->transaction);\n \tif (!value)\n-\t\treturn -ENODATA;\n+\t\tresult = -ENODATA;\n+\tif (result)\n+\t\tgoto err_exit;\n \n \tmutex_lock(&ec->mutex);\n \tlist_for_each_entry(handler, &ec->list, node) {\n \t\tif (value == handler->query_bit) {\n-\t\t\t/* have custom handler for this bit */\n-\t\t\thandler = acpi_ec_get_query_handler(handler);\n+\t\t\tq->handler = acpi_ec_get_query_handler(handler);\n \t\t\tec_dbg_evt(\"Query(0x%02x) scheduled\",\n-\t\t\t\t   handler->query_bit);\n-\t\t\tstatus = acpi_os_execute((handler->func) ?\n-\t\t\t\tOSL_NOTIFY_HANDLER : OSL_GPE_HANDLER,\n-\t\t\t\tacpi_ec_run, handler);\n-\t\t\tif (ACPI_FAILURE(status))\n+\t\t\t\t   q->handler->query_bit);\n+\t\t\t/*\n+\t\t\t * It is reported that _Qxx are evaluated in a\n+\t\t\t * parallel way on Windows:\n+\t\t\t * https://bugzilla.kernel.org/show_bug.cgi?id=94411\n+\t\t\t */\n+\t\t\tif (!schedule_work(&q->work))\n \t\t\t\tresult = -EBUSY;\n \t\t\tbreak;\n \t\t}\n \t}\n \tmutex_unlock(&ec->mutex);\n+\n+err_exit:\n+\tif (result && q)\n+\t\tacpi_ec_delete_query(q);\n+\tif (data)\n+\t\t*data = value;\n \treturn result;\n }\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "EC",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Lv Zheng",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2015-03-06 12:39 UTC by Gabriele Mazzotta",
+  "Modified": "2015-09-14 05:47 UTC",
+  "CC List": "6 users",
+  "See Also": "",
+  "Kernel Version": "3.19",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/ec.c"
+  ],
+  "methods": [
+    "acpi_ec_query"
+  ]
+}

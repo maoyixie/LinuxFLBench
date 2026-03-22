@@ -1,0 +1,104 @@
+{
+  "id": "5151",
+  "title": "Driver Mouse - Toshiba touchpad after kernel 2.6.11",
+  "kernel_version": "2.6.13",
+  "product": "Drivers",
+  "component": "Input Devices",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/input/mouse/alps.c"
+    ],
+    "buggy_methods": [
+      "alps_process_packet"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1181,
+    "description_word_count": 125
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "alps_process_packet"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/input/mouse/alps.c",
+    "filename": "alps.c",
+    "directory": "drivers/input/mouse",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "input",
+    "driver_subsystem": "input/mouse",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Input Devices"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "5151",
+      "version": "2.6.13",
+      "status": "found",
+      "path": "drivers/input/mouse/alps.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "5151",
+    "title": "Driver Mouse - Toshiba touchpad after kernel 2.6.11",
+    "ground_truth_file": "drivers/input/mouse/alps.c",
+    "ground_truth_subsystem": "drivers/input",
+    "ground_truth_methods": [
+      "alps_process_packet"
+    ],
+    "product": "Drivers",
+    "component": "Input Devices",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "Input Devices",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

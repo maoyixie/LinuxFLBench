@@ -1,0 +1,34 @@
+{
+  "id": "11139",
+  "title": "warning in cpufreq.c on E450",
+  "description": "Latest working kernel version: 2.6.24.2\nEarliest failing kernel version: 2.6.26\nDistribution: Debian Sid\nHardware Environment: Sun E450/2x CPU 400Mhz/1GB Ram\nSoftware Environment: Sid\nProblem Description:\nAfter I compile 2.6.26 an boots I get this:\n------------[ cut here ]------------                                            \nWARNING: at drivers/cpufreq/cpufreq.c:1391 cpufreq_register_notifier+0x50/0x60()\nModules linked in:                                                              \nCall Trace:                                                                     \n [0000000000605270] cpufreq_register_notifier+0x58/0x60                         \n [00000000007708e0] start_kernel+0x1f0/0x324                                    \n [0000000000680e08] auxio_probe+0x0/0xe8                                        \n [0000000000000000] 0x8                                                         \n---[ end trace 139ce121c98e96c9 ]---\n\nSteps to reproduce:\nCompile kernel with cpufreq enabled and boot.",
+  "patch": [
+    "From e8d8fa16f2ae1b53af69e2fcabba7b9ee73bbef0 Mon Sep 17 00:00:00 2001\nFrom: Dominik Brodowski <linux@dominikbrodowski.net>\nDate: Wed, 23 Jul 2008 20:56:23 +0200\nSubject: [PATCH 1/1] [PATCH] cpufreq: sparc64 tried to register notifier too early\n\ncpufreq notifiers may only be registered after pure_initcall.\nFixes bugzilla #11139\n\nSigned-off-by: Dominik Brodowski <linux@dominikbrodowski.net>\n---\n arch/sparc64/kernel/time.c |   13 ++++++++-----\n 1 files changed, 8 insertions(+), 5 deletions(-)\n\ndiff --git a/arch/sparc64/kernel/time.c b/arch/sparc64/kernel/time.c\nindex bedc4c1..f6890ca 100644\n--- a/arch/sparc64/kernel/time.c\n+++ b/arch/sparc64/kernel/time.c\n@@ -884,6 +884,14 @@ static struct notifier_block sparc64_cpufreq_notifier_block = {\n \t.notifier_call\t= sparc64_cpufreq_notifier\n };\n \n+\n+static int __init sparc64_cpufreq_register_notifier(void)\n+{\n+\treturn cpufreq_register_notifier(&sparc64_cpufreq_notifier_block,\n+\t\t\t\t\t CPUFREQ_TRANSITION_NOTIFIER);\n+}\n+core_initcall(sparc64_cpufreq_register_notifier); /* needs to be after pure_ */\n+\n #endif /* CONFIG_CPU_FREQ */\n \n static int sparc64_next_event(unsigned long delta,\n@@ -1050,11 +1058,6 @@ void __init time_init(void)\n \t       sparc64_clockevent.mult, sparc64_clockevent.shift);\n \n \tsetup_sparc64_timer();\n-\n-#ifdef CONFIG_CPU_FREQ\n-\tcpufreq_register_notifier(&sparc64_cpufreq_notifier_block,\n-\t\t\t\t  CPUFREQ_TRANSITION_NOTIFIER);\n-#endif\n }\n \n unsigned long long sched_clock(void)\n-- \n1.5.4.3\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Power Management",
+  "Classification": "Unclassified",
+  "Component": "cpufreq",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "cpufreq",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-07-21 15:02 UTC by Daniel Smolik",
+  "Modified": "2008-09-24 04:14 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.26",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/sparc64/kernel/time.c"
+  ],
+  "methods": [
+    "time_init"
+  ]
+}

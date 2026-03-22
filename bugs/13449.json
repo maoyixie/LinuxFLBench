@@ -1,0 +1,34 @@
+{
+  "id": "13449",
+  "title": "Battery disappears after suspend/resume on HP laptop.",
+  "description": "Created attachment 21740 [details]\ndmesg after suspend/resume\n\nMy HP Pavilion dv4-1125br suspends and resumes correctly. However, the battery information provided by ACPI disappears.  Before suspend I can get battery information in /proc/acpi/battery/BAT0/state. After the suspend/resume, BAT0/state shows not present.\n\nThis is a fairly recent laptop, and this problem is present in Fedora kernels as early as 2.6.27. I've found bug reports of this issue for Ubunto and Arch Linux, so I don't believe it is Fedora specific.",
+  "patch": [
+    "From e9e371f1686e4a6021a457ef33fbc7c500a0799e Mon Sep 17 00:00:00 2001\nFrom: Gustavo Maciel Dias Vieira <gustavo@sagui.org>\nDate: Mon, 19 Oct 2009 09:41:53 -0200\nSubject: [PATCH 1/1] ACPI: add DMI entry for SCI_EN resume quirk on HP dv4\n\nFixes the missing battery on sleep problem for yet another HP laptop\n(\"HP Pavilion dv4\").\n\nFixes:\n\thttp://bugzilla.kernel.org/show_bug.cgi?id=13449\n\nSigned-off-by: Gustavo Maciel Dias Vieira <gustavo@sagui.org>\n---\n drivers/acpi/sleep.c |    8 ++++++++\n 1 files changed, 8 insertions(+), 0 deletions(-)\n\ndiff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c\nindex a90afcc..ed9760a 100644\n--- a/drivers/acpi/sleep.c\n+++ b/drivers/acpi/sleep.c\n@@ -413,6 +413,14 @@ static struct dmi_system_id __initdata acpisleep_dmi_table[] = {\n \t\t},\n \t},\n \t{\n+\t.callback = init_set_sci_en_on_resume,\n+\t.ident = \"Hewlett-Packard Pavilion dv4\",\n+\t.matches = {\n+\t\tDMI_MATCH(DMI_SYS_VENDOR, \"Hewlett-Packard\"),\n+\t\tDMI_MATCH(DMI_PRODUCT_NAME, \"HP Pavilion dv4\"),\n+\t\t},\n+\t},\n+\t{\n \t.callback = init_old_suspend_ordering,\n \t.ident = \"Panasonic CF51-2L\",\n \t.matches = {\n-- \n1.6.2.5\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Sleep-Wake",
+  "Hardware": "x86-64 Linux",
+  "Importance": "P1 normal",
+  "Assignee": "acpi_power-sleep-wake",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-06-04 01:51 UTC by Gustavo Vieira",
+  "Modified": "2009-11-23 16:41 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.30",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/sleep.c"
+  ],
+  "methods": [
+    "acpisleep_dmi_table"
+  ]
+}

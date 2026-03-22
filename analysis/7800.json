@@ -1,0 +1,110 @@
+{
+  "id": "7800",
+  "title": "Unable to read DVDs on external IEEE1394 DVD-RW",
+  "kernel_version": "2.6.19",
+  "product": "Drivers",
+  "component": "IEEE1394",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/ieee1394/sbp2.c"
+    ],
+    "buggy_methods": [
+      "sbp2scsi_slave_configure"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "when I have the device plugged in via firewire"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1521,
+    "description_word_count": 247
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 0,
+    "patch_size": 2,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "sbp2scsi_slave_configure"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/ieee1394/sbp2.c",
+    "filename": "sbp2.c",
+    "directory": "drivers/ieee1394",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "ieee1394",
+    "driver_subsystem": "ieee1394/sbp2.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:IEEE1394"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "7800",
+      "version": "2.6.19",
+      "status": "found",
+      "path": "drivers/ieee1394/sbp2.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "7800",
+    "title": "Unable to read DVDs on external IEEE1394 DVD-RW",
+    "ground_truth_file": "drivers/ieee1394/sbp2.c",
+    "ground_truth_subsystem": "drivers/ieee1394",
+    "ground_truth_methods": [
+      "sbp2scsi_slave_configure"
+    ],
+    "product": "Drivers",
+    "component": "IEEE1394",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "performance"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named"
+    ],
+    "clue_details": {
+      "component": "IEEE1394",
+      "product": "Drivers",
+      "modules": [
+        "forced"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

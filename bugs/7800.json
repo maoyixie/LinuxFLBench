@@ -1,0 +1,34 @@
+{
+  "id": "7800",
+  "title": "Unable to read DVDs on external IEEE1394 DVD-RW",
+  "description": "Most recent kernel where this bug did *NOT* occur: 2.6.18 (to my best knowledge)\nDistribution: Archlinux\nHardware Environment: 1 IDE disk, 1 IDE CD-RW (plextor), 1 IEEE1394 DVD-RW\nSoftware Environment: Using udev, 2.6.19.1 with modules sg, sbp2, sr_mod, ieee1394 \nProblem Description: \n\nMy DVD drive is being detected as a CD-ROM drive and seems to only be able to\nplay CDs. I can produce the error when I have the device plugged in via firewire\nand modprobe sbp2. This creates (using udev rules) sr0, sg0 and cdrom1 (cdrom0\nis IDE CD-RW) nodes in /dev. Udev is not getting the message that it is a DVD.\nHowever, even if I manually link /dev/dvd (for the DVD players) to /dev/sr0, I\nget the following errors:\n\nJan  9 19:01:27 neptune end_request: I/O error, dev sr0, sector 15557132\nJan  9 19:01:27 neptune end_request: I/O error, dev sr0, sector 15557128\n\nThis has started happening since I upgraded to 2.6.19. \n\nJan  9 18:54:56 neptune ieee1394: sbp2: Logged out of SBP-2 device\nJan  9 18:55:04 neptune ieee1394: sbp2: Driver forced to serialize I/O\n(serialize_io=1)\nJan  9 18:55:04 neptune ieee1394: sbp2: Try serialize_io=0 for better performance\nJan  9 18:55:04 neptune scsi8 : SBP-2 IEEE-1394\nJan  9 18:55:05 neptune ieee1394: sbp2: Logged into SBP-2 device\nJan  9 18:55:07 neptune scsi 8:0:0:0: CD-ROM            SONY     DVD RW DRU-810A\n 2.0b PQ: 0 ANSI: 0\nJan  9 18:55:13 neptune sr0: scsi-1 drive\nJan  9 18:55:13 neptune sr 8:0:0:0: Attached scsi generic sg0 type 5\n\nSteps to reproduce:\nrmmod sbp2\nmodprobe sbp2",
+  "patch": [
+    "Date: Wed, 10 Jan 2007 20:17:15 +0100 (CET)\nFrom: Stefan Richter <stefanr@s5r6.in-berlin.de>\nSubject: ieee1394: sbp2: fix probing of some DVD-ROM/RWs\n\nSince commit 98e238cd42be6c0852da519303cf0182690f8d9f in Linux 2.6.19,\n\"ieee1394: sbp2: don't prefer MODE SENSE 10\", some FireWire DVD-ROMs and\nDVD-RWs were mistaken as CD-ROM because sr_mod now sent MODE SENSE 6.\nThe MMC command set includes only MODE SENSE 10.\nhttp://bugzilla.kernel.org/show_bug.cgi?id=7800\n\nThis fix lets sbp2 switch scsi_device.use_10_for_rw on for MMC LUs.\nThis should rather be done in the command set driver sr_mod, not in the\nsbp2 transport driver, and an according patch will follow for a next\nLinux release.\n\nSigned-off-by: Stefan Richter <stefanr@s5r6.in-berlin.de>\n---\nIndex: linux-2.6.19.1/drivers/ieee1394/sbp2.c\n===================================================================\n--- linux-2.6.19.1.orig/drivers/ieee1394/sbp2.c\n+++ linux-2.6.19.1/drivers/ieee1394/sbp2.c\n@@ -2530,6 +2530,8 @@ static int sbp2scsi_slave_configure(stru\n \tblk_queue_dma_alignment(sdev->request_queue, (512 - 1));\n \tsdev->use_10_for_rw = 1;\n \n+\tif (sdev->type == TYPE_ROM)\n+\t\tsdev->use_10_for_ms = 1;\n \tif (sdev->type == TYPE_DISK &&\n \t    scsi_id->workarounds & SBP2_WORKAROUND_MODE_SENSE_8)\n \t\tsdev->skip_ms_page_8 = 1;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "IEEE1394",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Stefan Richter",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-01-09 10:57 UTC by Daniel Nolan-Neylan",
+  "Modified": "2007-01-10 23:46 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.19",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/ieee1394/sbp2.c"
+  ],
+  "methods": [
+    "sbp2scsi_slave_configure"
+  ]
+}

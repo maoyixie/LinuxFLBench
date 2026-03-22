@@ -1,0 +1,34 @@
+{
+  "id": "35472",
+  "title": "[bisected] [r600] radeondrmfb rendering is broken and running X makes GPU lock-up on RV770 CE (Radeon HD 4730)",
+  "description": "with 2.6.37 it's all OK but since 2.6.38 from very framebuffer initialization screen is filled with dense grey lines looking like ugly grid. also per every 3cm on my 1920x1080/23' screen there is a distinctive whitish vertical line.\nwhen X try to startup i can see cursor and can move it around for a while (that grey grid is there too) but kdm does not starting up and GPU locks up.\n\nit is the same with 2.6.39. here is `dmesg|grep drm` for 2.6.39:\n[    0.462282] [drm] Initialized drm 1.1.0 20060810\n[    0.462315] [drm] radeon defaulting to kernel modesetting.\n[    0.462337] [drm] radeon kernel modesetting enabled.\n[    0.462575] [drm] initializing kernel modesetting (RV770 0x1002:0x944E).\n[    0.462608] [drm] register mmio base: 0xFDFE0000\n[    0.462630] [drm] register mmio size: 65536\n[    0.463313] [drm] Detected VRAM RAM=512M, BAR=256M\n[    0.463343] [drm] RAM width 128bits DDR\n[    0.463526] [drm] radeon: 512M of VRAM memory ready\n[    0.463549] [drm] radeon: 512M of GTT memory ready.\n[    0.463571] [drm] Supports vblank timestamp caching Rev 1 (10.10.2010).\n[    0.463594] [drm] Driver supports precise vblank timestamp query.\n[    0.463708] [drm] radeon: irq initialized.\n[    0.463733] [drm] GART: num cpu pages 131072, num gpu pages 131072\n[    0.465260] [drm] Loading RV770 Microcode\n[    0.512429] [drm] ring test succeeded in 1 usecs\n[    0.512544] [drm] radeon: ib pool ready.\n[    0.512584] [drm] ib test succeeded in 0 usecs\n[    0.512609] [drm] Enabling audio support\n[    0.512805] [drm] Radeon Display Connectors\n[    0.512827] [drm] Connector 0:\n[    0.512847] [drm]   DVI-I\n[    0.512868] [drm]   HPD2\n[    0.512889] [drm]   DDC: 0x7e60 0x7e60 0x7e64 0x7e64 0x7e68 0x7e68 0x7e6c 0x7e6c\n[    0.512915] [drm]   Encoders:\n[    0.512936] [drm]     DFP1: INTERNAL_UNIPHY\n[    0.512957] [drm]     CRT2: INTERNAL_KLDSCP_DAC2\n[    0.512979] [drm] Connector 1:\n[    0.512999] [drm]   DIN\n[    0.513028] [drm]   Encoders:\n[    0.513049] [drm]     TV1: INTERNAL_KLDSCP_DAC2\n[    0.513070] [drm] Connector 2:\n[    0.513091] [drm]   DVI-I\n[    0.513111] [drm]   HPD1\n[    0.513132] [drm]   DDC: 0x7e20 0x7e20 0x7e24 0x7e24 0x7e28 0x7e28 0x7e2c 0x7e2c\n[    0.513158] [drm]   Encoders:\n[    0.513179] [drm]     CRT1: INTERNAL_KLDSCP_DAC1\n[    0.513201] [drm]     DFP2: INTERNAL_KLDSCP_LVTMA\n[    0.577285] [drm] Internal thermal controller without fan control\n[    0.578307] [drm] radeon: power management initialized\n[    0.657478] [drm] fb mappable at 0xD0142000\n[    0.657500] [drm] vram apper at 0xD0000000\n[    0.657521] [drm] size 8294400\n[    0.657541] [drm] fb depth is 24\n[    0.657562] [drm]    pitch is 7680\n[    0.657632] fbcon: radeondrmfb (fb0) is primary device\n[    1.073319] fb0: radeondrmfb frame buffer device\n[    1.073349] drm: registered panic notifier\n[    1.073379] [drm] Initialized radeon 2.9.0 20080528 for 0000:01:00.0 on minor 0\n[  252.565034] WARNING: at drivers/gpu/drm/radeon/radeon_fence.c:246 radeon_fence_wait+0x3a6/0x400()\n[  252.565102]  [<ffffffff8137c334>] ? drm_ioctl+0x394/0x450\n[  252.565145] [drm] Disabling audio support\n[  252.731618] [drm] ring test succeeded in 1 usecs\n[  252.908838] [drm:r600_ib_test] *ERROR* radeon: ib test failed (scratch(0x8504)=0xCAFEDEAD)\n[  252.908841] [drm:rv770_resume] *ERROR* radeon: failed testing IB (-22).\n[  267.523039] WARNING: at drivers/gpu/drm/radeon/radeon_fence.c:246 radeon_fence_wait+0x3a6/0x400()\n[  267.523107]  [<ffffffff8137c334>] ? drm_ioctl+0x394/0x450\n[  268.216464] [drm] ring test succeeded in 1 usecs\n[  268.216473] [drm] ib test succeeded in 1 usecs\n[  268.216475] [drm] Enabling audio support\n[  273.719044] WARNING: at drivers/gpu/drm/radeon/radeon_fence.c:246 radeon_fence_wait+0x3a6/0x400()\n[  273.719114]  [<ffffffff8137c334>] ? drm_ioctl+0x394/0x450\n[  273.719159] [drm] Disabling audio support\n[  274.411517] [drm] ring test succeeded in 1 usecs\n[  274.588784] [drm:r600_ib_test] *ERROR* radeon: ib test failed (scratch(0x8504)=0xCAFEDEAD)\n[  274.588787] [drm:rv770_resume] *ERROR* radeon: failed testing IB (-22).\n[  290.090036] WARNING: at drivers/gpu/drm/radeon/radeon_fence.c:246 radeon_fence_wait+0x3a6/0x400()\n[  290.090103]  [<ffffffff8137c334>] ? drm_ioctl+0x394/0x450\n[  290.779828] [drm] ring test succeeded in 1 usecs\n[  290.957091] [drm:r600_ib_test] *ERROR* radeon: ib test failed (scratch(0x8504)=0xCAFEDEAD)\n[  290.957094] [drm:rv770_resume] *ERROR* radeon: failed testing IB (-22).\n[  306.459037] WARNING: at drivers/gpu/drm/radeon/radeon_fence.c:246 radeon_fence_wait+0x3a6/0x400()\n[  306.459105]  [<ffffffff8137c334>] ? drm_ioctl+0x394/0x450\n[  307.153106] [drm] ring test succeeded in 1 usecs\n[  307.330842] [drm:r600_ib_test] *ERROR* radeon: ib test failed (scratch(0x8504)=0xCAFEDEAD)\n[  307.330845] [drm:rv770_resume] *ERROR* radeon: failed testing IB (-22).",
+  "patch": [
+    "From bc239235f154b113c93a506b716b00ce81c3f5b8 Mon Sep 17 00:00:00 2001\nFrom: Alex Deucher <alexdeucher@gmail.com>\nDate: Wed, 29 Jun 2011 09:36:04 -0400\nSubject: [PATCH] drm/radeon/kms: Fix chremap setup on RV770 CE\n\nCE variant requires a different chremap setup.\n\nFixes:\nhttps://bugzilla.kernel.org/show_bug.cgi?id=35472\n\nSigned-off-by: Alex Deucher <alexdeucher@gmail.com>\nCc: stable@kernel.org\n---\n drivers/gpu/drm/radeon/rv770.c |    6 ++++++\n 1 files changed, 6 insertions(+), 0 deletions(-)\n\ndiff --git a/drivers/gpu/drm/radeon/rv770.c b/drivers/gpu/drm/radeon/rv770.c\nindex 6f508ff..8bb347d 100644\n--- a/drivers/gpu/drm/radeon/rv770.c\n+++ b/drivers/gpu/drm/radeon/rv770.c\n@@ -575,6 +575,12 @@ static void rv770_program_channel_remap(struct radeon_device *rdev)\n \telse\n \t\ttcp_chan_steer = 0x00fac688;\n \n+\t/* RV770 CE has special chremap setup */\n+\tif (rdev->pdev->device == 0x944e) {\n+\t\ttcp_chan_steer = 0x00b08b08;\n+\t\tmc_shared_chremap = 0x00b08b08;\n+\t}\n+\n \tWREG32(TCP_CHAN_STEER, tcp_chan_steer);\n \tWREG32(MC_SHARED_CHREMAP, mc_shared_chremap);\n }\n-- \n1.7.1.1\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Video",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_video-dri",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2011-05-20 04:03 UTC by Sergey Kondakov",
+  "Modified": "2011-07-05 11:38 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.38",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/gpu/drm/radeon/rv770.c"
+  ],
+  "methods": [
+    "rv770_program_channel_remap"
+  ]
+}

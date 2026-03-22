@@ -1,0 +1,214 @@
+{
+  "id": "15407",
+  "title": "All Lenovo i5/i7 notebooks do not resume properly after suspend - system resumes but will hang if resumed a second time",
+  "kernel_version": "2.6.32",
+  "product": "ACPI",
+  "component": "Power-Sleep-Wake",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/sleep.c"
+    ],
+    "buggy_methods": [
+      "acpisleep_dmi_table"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "handle_fasteoi_irq",
+      "ret_from_intr",
+      "do_IRQ",
+      "handle_irq",
+      "__report_bad_irq",
+      "note_interrupt"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 18,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1562,
+    "description_word_count": 141
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 32,
+    "lines_removed": 0,
+    "patch_size": 32,
+    "patch_types": [
+      "quirk/device_table"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/sleep.c",
+    "filename": "sleep.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/sleep.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "call_trace_available",
+      "trace_has_6_functions",
+      "dmesg_logs_available",
+      "component_known:Power-Sleep-Wake",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "15407",
+      "version": "2.6.32",
+      "status": "found",
+      "path": "drivers/acpi/sleep.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "15407",
+    "version": "2.6.32",
+    "ground_truth_file": "drivers/acpi/sleep.c",
+    "trace_functions": [
+      "__report_bad_irq",
+      "note_interrupt",
+      "read_tsc",
+      "handle_fasteoi_irq",
+      "handle_irq",
+      "do_IRQ",
+      "ret_from_intr",
+      "acpi_idle_enter_bm",
+      "cpuidle_idle_call",
+      "cpu_idle",
+      "start_secondary",
+      "acpi_irq"
+    ],
+    "total_trace_functions": 12,
+    "function_locations": {
+      "__report_bad_irq": [],
+      "note_interrupt": [
+        "kernel/irq/spurious.c"
+      ],
+      "read_tsc": [
+        "arch/x86/kvm/vmx.c",
+        "arch/x86/kernel/tsc.c",
+        "arch/x86/kernel/rtc.c"
+      ],
+      "handle_fasteoi_irq": [],
+      "handle_irq": [
+        "drivers/hwmon/ams/ams-core.c",
+        "arch/arm/mach-pxa/am200epd.c",
+        "drivers/video/au1200fb.c",
+        "arch/ia64/kernel/irq_ia64.c",
+        "arch/x86/kernel/irq_32.c",
+        "arch/blackfin/mach-common/ints-priority.c",
+        "drivers/platform/x86/sony-laptop.c",
+        "drivers/video/sa1100fb.c",
+        "arch/x86/kernel/cpu/perf_event.c",
+        "drivers/video/pxa168fb.c"
+      ],
+      "do_IRQ": [
+        "arch/cris/kernel/irq.c",
+        "arch/microblaze/kernel/irq.c",
+        "arch/xtensa/kernel/irq.c",
+        "arch/powerpc/kernel/irq.c",
+        "arch/h8300/kernel/irq.c",
+        "arch/cris/arch-v10/kernel/irq.c",
+        "arch/score/kernel/irq.c",
+        "arch/avr32/mach-at32ap/intc.c",
+        "arch/m68knommu/kernel/irq.c",
+        "arch/sh/kernel/irq.c"
+      ],
+      "ret_from_intr": [],
+      "acpi_idle_enter_bm": [
+        "drivers/acpi/processor_idle.c"
+      ],
+      "cpuidle_idle_call": [
+        "drivers/cpuidle/cpuidle.c"
+      ],
+      "cpu_idle": [
+        "arch/h8300/kernel/process.c",
+        "arch/blackfin/kernel/process.c",
+        "arch/xtensa/kernel/process.c",
+        "arch/mips/kernel/process.c",
+        "arch/mn10300/kernel/process.c",
+        "arch/avr32/kernel/process.c",
+        "arch/x86/kernel/process_32.c",
+        "arch/parisc/kernel/process.c",
+        "arch/m68knommu/kernel/process.c",
+        "arch/um/kernel/process.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "drivers/hwmon/ams/ams-core.c",
+      "arch/h8300/kernel/process.c",
+      "arch/cris/kernel/irq.c",
+      "arch/arm/mach-pxa/am200epd.c",
+      "arch/microblaze/kernel/irq.c",
+      "drivers/video/au1200fb.c",
+      "arch/blackfin/kernel/process.c",
+      "arch/ia64/kernel/irq_ia64.c",
+      "arch/xtensa/kernel/irq.c",
+      "arch/x86/kernel/irq_32.c",
+      "arch/xtensa/kernel/process.c",
+      "arch/mips/kernel/process.c",
+      "arch/blackfin/mach-common/ints-priority.c",
+      "arch/mn10300/kernel/process.c",
+      "arch/avr32/kernel/process.c",
+      "arch/x86/kernel/process_32.c",
+      "arch/powerpc/kernel/irq.c",
+      "arch/h8300/kernel/irq.c",
+      "arch/cris/arch-v10/kernel/irq.c",
+      "kernel/irq/spurious.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "quirk_analysis": {
+    "id": "15407",
+    "title": "All Lenovo i5/i7 notebooks do not resume properly after suspend - system resumes but will hang if resumed a second time",
+    "product": "ACPI",
+    "component": "Power-Sleep-Wake",
+    "buggy_file": [
+      "drivers/acpi/sleep.c"
+    ],
+    "fix_type": "dmi_quirk_addition",
+    "table_entry_lines_added": 8,
+    "description_clues": [
+      "hardware_model_mentioned",
+      "dmi_info_in_description"
+    ],
+    "patch_size": 32,
+    "potential_strategies": [
+      "search_dmi_tables_in_drivers",
+      "search_for_model_specific_quirks",
+      "narrow_by_component:Power-Sleep-Wake"
+    ]
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

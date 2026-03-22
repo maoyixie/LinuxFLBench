@@ -1,0 +1,117 @@
+{
+  "id": "4380",
+  "title": "(net via_velocity) receiver hang after setting mtu >1500",
+  "kernel_version": "2.6.8",
+  "product": "Drivers",
+  "component": "Network",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "hang/lockup",
+    "wrong_behavior",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/via-velocity.c"
+    ],
+    "buggy_methods": [
+      "velocity_free_rd_ring"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 3471,
+    "description_word_count": 412
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 3,
+    "lines_removed": 0,
+    "patch_size": 3,
+    "patch_types": [
+      "memory"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "velocity_free_rd_ring"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/via-velocity.c",
+    "filename": "via-velocity.c",
+    "directory": "drivers/net",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/via-velocity.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Network"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "4380",
+      "version": "2.6.8",
+      "status": "found",
+      "path": "drivers/net/via-velocity.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "4380",
+    "title": "(net via_velocity) receiver hang after setting mtu >1500",
+    "ground_truth_file": "drivers/net/via-velocity.c",
+    "ground_truth_subsystem": "drivers/net",
+    "ground_truth_methods": [
+      "velocity_free_rd_ring"
+    ],
+    "product": "Drivers",
+    "component": "Network",
+    "best_strategy": "grep_error_strings",
+    "symptom_categories": [
+      "hang/deadlock",
+      "wrong_output"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "greppable_error_strings",
+      "known_component",
+      "driver_module_named",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "error_strings": [
+        "%s: Invalid MTU.\\n"
+      ],
+      "component": "Network",
+      "product": "Drivers",
+      "modules": [
+        "isn",
+        "code"
+      ]
+    }
+  },
+  "overall_category": "E_grep_error_strings"
+}

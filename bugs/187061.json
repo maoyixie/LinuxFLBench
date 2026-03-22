@@ -1,0 +1,35 @@
+{
+  "id": "187061",
+  "title": "Poweroff and reboot hungs the PC with screen off and leds blinking on Latitude E7250",
+  "description": "Created attachment 243731 [details]\nScreenshot just before hanging\n\nWhen doing a poweroff or a reboot the PC stops for a few seconds, apparently at the very end of the process, then it hungs. Screen is blank but leds (disk, power and wifi) blink.\n\nI compile the vanilla kernel myself (and the attached files refers to my kernel) but the same problem affects all the kernels I tested, including the original 4.8.0 deloivered with debian SID, and kernel 4.8 delivered with Ubuntu 16.10.\n\nI am attaching a screenshot of the console during the seconds of waiting just before the screen goes blank and the leds start blinking. I am also attaching dmesg result with the last running kernel (4.7.10) and with the latest 4.9.0-rc4 kernel.\n\nAny help on how to further analyze the source of the bug is welcome.\n\nGianpaolo",
+  "patch": [
+    "diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c\nindex 2b38c1b..7a2e4d4 100644\n--- a/drivers/acpi/sleep.c\n+++ b/drivers/acpi/sleep.c\n@@ -47,32 +47,15 @@ static void acpi_sleep_tts_switch(u32 acpi_state)\n \t}\n }\n \n-static void acpi_sleep_pts_switch(u32 acpi_state)\n-{\n-\tacpi_status status;\n-\n-\tstatus = acpi_execute_simple_method(NULL, \"\\\\_PTS\", acpi_state);\n-\tif (ACPI_FAILURE(status) && status != AE_NOT_FOUND) {\n-\t\t/*\n-\t\t * OS can't evaluate the _PTS object correctly. Some warning\n-\t\t * message will be printed. But it won't break anything.\n-\t\t */\n-\t\tprintk(KERN_NOTICE \"Failure in evaluating _PTS object\\n\");\n-\t}\n-}\n-\n-static int sleep_notify_reboot(struct notifier_block *this,\n+static int tts_notify_reboot(struct notifier_block *this,\n \t\t\tunsigned long code, void *x)\n {\n \tacpi_sleep_tts_switch(ACPI_STATE_S5);\n-\n-\tacpi_sleep_pts_switch(ACPI_STATE_S5);\n-\n \treturn NOTIFY_DONE;\n }\n \n-static struct notifier_block sleep_notifier = {\n-\t.notifier_call\t= sleep_notify_reboot,\n+static struct notifier_block tts_notifier = {\n+\t.notifier_call\t= tts_notify_reboot,\n \t.next\t\t= NULL,\n \t.priority\t= 0,\n };\n@@ -916,9 +899,9 @@ int __init acpi_sleep_init(void)\n \tpr_info(PREFIX \"(supports%s)\\n\", supported);\n \n \t/*\n-\t * Register the sleep_notifier to reboot notifier list so that the _TTS\n-\t * and _PTS object can also be evaluated when the system enters S5.\n+\t * Register the tts_notifier to reboot notifier list so that the _TTS\n+\t * object can also be evaluated when the system enters S5.\n \t */\n-\tregister_reboot_notifier(&sleep_notifier);\n+\tregister_reboot_notifier(&tts_notifier);\n \treturn 0;\n }\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Off",
+  "Hardware": "Intel Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Ocean He",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2016-11-06 10:55 UTC by Gianpaolo",
+  "Modified": "2016-12-06 14:25 UTC",
+  "CC List": "8 users",
+  "See Also": "151631",
+  "Kernel Version": "4.9-rc4",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/sleep.c"
+  ],
+  "methods": [
+    "acpi_sleep_tts_switch",
+    "acpi_sleep_init"
+  ]
+}

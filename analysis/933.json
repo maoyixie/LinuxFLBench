@@ -1,0 +1,103 @@
+{
+  "id": "933",
+  "title": "FTP NAT doesn't work in 2.6.0-test1",
+  "kernel_version": "2.5.75",
+  "product": "Networking",
+  "component": "Netfilter/Iptables",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "device_not_working"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "net/ipv4/netfilter/ip_nat_helper.c"
+    ],
+    "buggy_methods": [
+      "ip_nat_mangle_tcp_packet"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 579,
+    "description_word_count": 90
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "csum_partial"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "net/ipv4/netfilter/ip_nat_helper.c",
+    "filename": "ip_nat_helper.c",
+    "directory": "net/ipv4/netfilter",
+    "depth": 4,
+    "top_level": "net",
+    "second_level": "ipv4",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Netfilter/Iptables"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "933",
+      "version": "2.5.75",
+      "status": "found",
+      "path": "net/ipv4/netfilter/ip_nat_helper.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "933",
+    "title": "FTP NAT doesn't work in 2.6.0-test1",
+    "ground_truth_file": "net/ipv4/netfilter/ip_nat_helper.c",
+    "ground_truth_subsystem": "net/ipv4",
+    "ground_truth_methods": [
+      "ip_nat_mangle_tcp_packet"
+    ],
+    "product": "Networking",
+    "component": "Netfilter/Iptables",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "type_cast_fix"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "Netfilter/Iptables",
+      "product": "Networking"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

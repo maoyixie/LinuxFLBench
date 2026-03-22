@@ -1,0 +1,105 @@
+{
+  "id": "16027",
+  "title": "TFP410 driver should use RSEN bit to detect presence of a digital monitor",
+  "kernel_version": "2.6.29",
+  "product": "Drivers",
+  "component": "Video",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpu/drm/i915/dvo_tfp410.c"
+    ],
+    "buggy_methods": [
+      "tfp410_detect"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 424,
+    "description_word_count": 71
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpu/drm/i915/dvo_tfp410.c",
+    "filename": "dvo_tfp410.c",
+    "directory": "drivers/gpu/drm/i915",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "gpu",
+    "driver_subsystem": "gpu/drm",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Video",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "16027",
+      "version": "2.6.29",
+      "status": "found",
+      "path": "drivers/gpu/drm/i915/dvo_tfp410.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "16027",
+    "title": "TFP410 driver should use RSEN bit to detect presence of a digital monitor",
+    "ground_truth_file": "drivers/gpu/drm/i915/dvo_tfp410.c",
+    "ground_truth_subsystem": "drivers/gpu",
+    "ground_truth_methods": [
+      "tfp410_detect"
+    ],
+    "product": "Drivers",
+    "component": "Video",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "Video",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

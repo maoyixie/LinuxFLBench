@@ -1,0 +1,107 @@
+{
+  "id": "31572",
+  "title": "BUG in vb_alloc() - firewire crash at boot",
+  "kernel_version": "2.6.38-rc2",
+  "product": "Memory Management",
+  "component": "Other",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "mm/vmalloc.c"
+    ],
+    "buggy_methods": [
+      "*vb_alloc"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 2682,
+    "description_word_count": 379
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 11,
+    "lines_removed": 3,
+    "patch_size": 14,
+    "patch_types": [
+      "error_handling",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 4,
+    "hunk_functions": [
+      "free_unmap_vmap_area_addr"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "mm/vmalloc.c",
+    "filename": "vmalloc.c",
+    "directory": "mm",
+    "depth": 2,
+    "top_level": "mm",
+    "second_level": "vmalloc.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "is_regression"
+    ],
+    "strategies": [
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "31572",
+      "version": "2.6.38-rc2",
+      "status": "found",
+      "path": "mm/vmalloc.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "31572",
+    "title": "BUG in vb_alloc() - firewire crash at boot",
+    "ground_truth_file": "mm/vmalloc.c",
+    "ground_truth_subsystem": "mm/vmalloc.c",
+    "ground_truth_methods": [
+      "*vb_alloc"
+    ],
+    "product": "Memory Management",
+    "component": "Other",
+    "best_strategy": "check_recent_commits",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "locking_fix",
+      "type_cast_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "product": "Memory Management"
+    }
+  },
+  "overall_category": "E_check_recent_commits"
+}

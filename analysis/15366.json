@@ -1,0 +1,198 @@
+{
+  "id": "15366",
+  "title": "sysfs oops when reading current_clocksource if GENERIC_TIME=n",
+  "kernel_version": "2.6.32",
+  "product": "Timers",
+  "component": "Other",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "kernel/time/clocksource.c"
+    ],
+    "buggy_methods": [
+      "clocksource_done_booting"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "psr",
+      "lr"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "Oops: 17 [#1] PREEMPT"
+    ],
+    "proc_sys_paths": [
+      "/sys/devices/system/clocksource/clocksource0/current_clocksource"
+    ],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 33,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 2646,
+    "description_word_count": 302
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 4,
+    "lines_removed": 0,
+    "patch_size": 4,
+    "patch_types": [
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "clocksource_select"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "kernel/time/clocksource.c",
+    "filename": "clocksource.c",
+    "directory": "kernel/time",
+    "depth": 3,
+    "top_level": "kernel",
+    "second_level": "time",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_2_functions",
+      "proc_sys_paths_hint_subsystem",
+      "dmesg_logs_available"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "grep_error_messages_in_kernel_source"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "15366",
+      "version": "2.6.32",
+      "status": "found",
+      "path": "kernel/time/clocksource.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "15366",
+    "version": "2.6.32",
+    "ground_truth_file": "kernel/time/clocksource.c",
+    "trace_functions": [
+      "sysfs_show_current_clocksources",
+      "sysdev_show",
+      "sysfs_read_file",
+      "vfs_read",
+      "sys_read",
+      "ret_fast_syscall",
+      "lr",
+      "psr"
+    ],
+    "total_trace_functions": 8,
+    "function_locations": {
+      "sysfs_show_current_clocksources": [],
+      "sysdev_show": [],
+      "sysfs_read_file": [],
+      "vfs_read": [
+        "fs/nfsd/vfs.c",
+        "fs/read_write.c"
+      ],
+      "sys_read": [
+        "fs/proc/proc_sysctl.c",
+        "drivers/video/fb_sys_fops.c"
+      ],
+      "ret_fast_syscall": [],
+      "lr": [
+        "drivers/video/geode/suspend_gx.c",
+        "drivers/net/fs_enet/mii-bitbang.c",
+        "arch/x86/mm/pageattr.c",
+        "drivers/net/bnx2x_main.c",
+        "drivers/net/igb/igb_main.c",
+        "drivers/block/cpqarray.c",
+        "drivers/scsi/u14-34f.c",
+        "drivers/scsi/bfa/bfa_fcport.c",
+        "arch/arm/mach-davinci/dma.c",
+        "arch/sparc/kernel/sbus.c"
+      ],
+      "psr": [
+        "arch/ia64/kernel/perfmon.c",
+        "arch/sparc/kernel/traps_64.c",
+        "arch/ia64/kvm/vcpu.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "fs/nfsd/vfs.c",
+      "arch/arm/mach-davinci/dma.c",
+      "fs/proc/proc_sysctl.c",
+      "arch/ia64/kvm/vcpu.c",
+      "drivers/video/geode/suspend_gx.c",
+      "drivers/net/fs_enet/mii-bitbang.c",
+      "arch/sparc/kernel/sbus.c",
+      "arch/ia64/kernel/perfmon.c",
+      "arch/x86/mm/pageattr.c",
+      "drivers/block/cpqarray.c",
+      "arch/sparc/kernel/traps_64.c",
+      "drivers/net/bnx2x_main.c",
+      "drivers/video/fb_sys_fops.c",
+      "drivers/net/igb/igb_main.c",
+      "fs/read_write.c",
+      "drivers/scsi/u14-34f.c",
+      "drivers/scsi/bfa/bfa_fcport.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "15366",
+    "title": "sysfs oops when reading current_clocksource if GENERIC_TIME=n",
+    "ground_truth_file": "kernel/time/clocksource.c",
+    "ground_truth_methods": [
+      "clocksource_done_booting"
+    ],
+    "ground_truth_subsystem": "kernel/time",
+    "trace_functions_top8": [
+      "sysfs_show_current_clocksources",
+      "sysdev_show",
+      "sysfs_read_file",
+      "vfs_read",
+      "sys_read",
+      "ret_fast_syscall",
+      "lr",
+      "psr"
+    ],
+    "trace_function_locations": {
+      "sysfs_show_current_clocksources": [],
+      "sysdev_show": [],
+      "sysfs_read_file": [],
+      "vfs_read": [
+        "fs/read_write.c"
+      ],
+      "sys_read": [],
+      "ret_fast_syscall": [],
+      "lr": [],
+      "psr": []
+    },
+    "trace_subsystems": [
+      "fs/read_write.c"
+    ],
+    "mismatch_type": "cross_subsystem_propagation",
+    "gt_calls_trace_func": true,
+    "gt_method_in_trace": false,
+    "product": "Timers",
+    "component": "Other"
+  },
+  "overall_category": "C_trace_misleads"
+}

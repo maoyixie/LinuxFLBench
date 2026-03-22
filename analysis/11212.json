@@ -1,0 +1,164 @@
+{
+  "id": "11212",
+  "title": "PROBLEM: abituguru3 module does not recognize my ip35 pro since 2.6.26",
+  "kernel_version": "2.6.26",
+  "product": "Drivers",
+  "component": "Hardware Monitoring",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "device_not_working"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/hwmon/abituguru3.c"
+    ],
+    "buggy_methods": [
+      "abituguru3_detect",
+      "abituguru3_init",
+      "abituguru3_motherboard_info",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "static struct platform_driver abituguru3_driver",
+      "static struct platform_device *abituguru3_pdev;"
+    ],
+    "num_methods": 21
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [
+      {
+        "file": "march",
+        "line": "18"
+      }
+    ],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 827,
+    "description_word_count": 129
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 101,
+    "lines_removed": 41,
+    "patch_size": 142,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "config/ifdef",
+      "init_fix",
+      "memory"
+    ],
+    "num_hunks": 26,
+    "hunk_functions": [
+      "abituguru3_detect",
+      "abituguru3_init",
+      "abituguru3_probe"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/hwmon/abituguru3.c",
+    "filename": "abituguru3.c",
+    "directory": "drivers/hwmon",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "hwmon",
+    "driver_subsystem": "hwmon/abituguru3.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "source_file_line_references",
+      "component_known:Hardware Monitoring",
+      "is_regression"
+    ],
+    "strategies": [
+      "use_source_references_to_locate_file",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "11212",
+      "version": "2.6.26",
+      "status": "found",
+      "path": "drivers/hwmon/abituguru3.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "11212",
+    "title": "PROBLEM: abituguru3 module does not recognize my ip35 pro since 2.6.26",
+    "ground_truth_file": "drivers/hwmon/abituguru3.c",
+    "ground_truth_subsystem": "drivers/hwmon",
+    "ground_truth_methods": [
+      "abituguru3_detect",
+      "abituguru3_init",
+      "abituguru3_motherboard_info",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "abituguru3_motherboards",
+      "static struct platform_driver abituguru3_driver",
+      "static struct platform_device *abituguru3_pdev;"
+    ],
+    "product": "Drivers",
+    "component": "Hardware Monitoring",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "error_return_fix",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "Hardware Monitoring",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

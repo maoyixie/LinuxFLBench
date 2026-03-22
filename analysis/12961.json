@@ -1,0 +1,137 @@
+{
+  "id": "12961",
+  "title": "Kernel panics in early boot: IO-APIC + timer doesn't work",
+  "kernel_version": "2.6.29",
+  "product": "Platform Specific/Hardware",
+  "component": "x86-64",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "device_not_working"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/x86/kernel/hpet.c"
+    ],
+    "buggy_methods": [
+      "hpet_stop_counter",
+      "hpet_restart_counter",
+      "hpet_set_mode",
+      "hpet_set_mode"
+    ],
+    "num_methods": 4
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 11,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1085,
+    "description_word_count": 164
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 17,
+    "lines_removed": 1,
+    "patch_size": 18,
+    "new_functions": [
+      "hpet_reset_counter"
+    ],
+    "patch_types": [
+      "new_function",
+      "error_handling",
+      "synchronization"
+    ],
+    "num_hunks": 4,
+    "hunk_functions": [
+      "hpet_stop_counter",
+      "hpet_set_mode",
+      "hpet_setup_msi_irq",
+      "hpet_start_counter"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "arch/x86/kernel/hpet.c",
+    "filename": "hpet.c",
+    "directory": "arch/x86/kernel",
+    "depth": 4,
+    "top_level": "arch",
+    "second_level": "x86",
+    "arch": "x86",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "medium",
+    "signals": [
+      "call_trace_available",
+      "dmesg_logs_available",
+      "component_known:x86-64",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "12961",
+      "version": "2.6.29",
+      "status": "found",
+      "path": "arch/x86/kernel/hpet.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "12961",
+    "title": "Kernel panics in early boot: IO-APIC + timer doesn't work",
+    "ground_truth_file": "arch/x86/kernel/hpet.c",
+    "ground_truth_subsystem": "arch/x86",
+    "ground_truth_methods": [
+      "hpet_stop_counter",
+      "hpet_restart_counter",
+      "hpet_set_mode",
+      "hpet_set_mode"
+    ],
+    "product": "Platform Specific/Hardware",
+    "component": "x86-64",
+    "best_strategy": "grep_error_strings",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "kernel_log_messages",
+      "greppable_kernel_messages",
+      "known_component",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "kernel_msg_count": 11,
+      "greppable_kernel_msgs": [
+        "ENABLING IO-APIC IRQs",
+        "..TIMER: vector=0x30 apic1=0 pin1=2 apic2=0 pin2=0",
+        "..MP-BIOS bug: 8254 timer not connected to IO-APIC",
+        "...trying to set up timer (IRQ0) through the 8259A ...",
+        "..... (found apic 0 pin 0) ..."
+      ],
+      "component": "x86-64",
+      "product": "Platform Specific/Hardware"
+    }
+  },
+  "overall_category": "E_grep_error_strings"
+}

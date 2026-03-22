@@ -1,0 +1,214 @@
+{
+  "id": "2423",
+  "title": "2.6.4-rc3 OOPSes on insertion/removal of bluetooth dongle",
+  "kernel_version": "2.6.5",
+  "product": "Drivers",
+  "component": "USB",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "device_not_working"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/usb/core/message.c"
+    ],
+    "buggy_methods": [
+      "usb_set_configuration"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "hci_usb_probe",
+      "usb_set_interface",
+      "bus_add_device",
+      "usb_new_device",
+      "usb_set_configuration",
+      "default_wake_function",
+      "device_attach",
+      "hub_port_connect_change",
+      "usb_probe_interface",
+      "hub_thread",
+      "alloc_inode",
+      "hub_events",
+      "bus_match",
+      "sysfs_new_inode",
+      "device_add",
+      "kernel_thread_helper",
+      "Not"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/usb/devices"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": true,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 2024,
+    "description_word_count": 225
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 22,
+    "lines_removed": 3,
+    "patch_size": 25,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "init_fix"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/usb/core/message.c",
+    "filename": "message.c",
+    "directory": "drivers/usb/core",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "usb",
+    "driver_subsystem": "usb/core",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_17_functions",
+      "proc_sys_paths_hint_subsystem",
+      "component_known:USB"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "2423",
+      "version": "2.6.5",
+      "status": "found",
+      "path": "drivers/usb/core/message.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "2423",
+    "version": "2.6.5",
+    "ground_truth_file": "drivers/usb/core/message.c",
+    "trace_functions": [
+      "usb_disable_interface",
+      "usb_set_interface",
+      "hci_usb_probe",
+      "alloc_inode",
+      "sysfs_new_inode",
+      "usb_probe_interface",
+      "bus_match",
+      "device_attach",
+      "bus_add_device",
+      "device_add",
+      "usb_set_configuration",
+      "usb_new_device",
+      "hub_port_connect_change",
+      "hub_events",
+      "hub_thread"
+    ],
+    "total_trace_functions": 18,
+    "function_locations": {
+      "usb_disable_interface": [
+        "drivers/usb/core/message.c"
+      ],
+      "usb_set_interface": [
+        "drivers/usb/core/message.c"
+      ],
+      "hci_usb_probe": [
+        "drivers/bluetooth/hci_usb.c"
+      ],
+      "alloc_inode": [
+        "fs/romfs/inode.c",
+        "fs/proc/inode.c",
+        "fs/ext3/super.c",
+        "mm/shmem.c",
+        "fs/hfsplus/super.c",
+        "fs/nfs/inode.c",
+        "fs/smbfs/inode.c",
+        "fs/dquot.c",
+        "fs/ufs/super.c",
+        "fs/reiserfs/super.c"
+      ],
+      "sysfs_new_inode": [
+        "fs/sysfs/inode.c"
+      ],
+      "usb_probe_interface": [
+        "drivers/usb/core/usb.c"
+      ],
+      "bus_match": [
+        "drivers/zorro/zorro-driver.c",
+        "drivers/s390/net/iucv.c",
+        "drivers/scsi/scsi_sysfs.c",
+        "drivers/acpi/scan.c",
+        "drivers/pci/pci-driver.c",
+        "drivers/base/bus.c",
+        "drivers/s390/cio/ccwgroup.c",
+        "drivers/ieee1394/nodemgr.c",
+        "drivers/eisa/eisa-bus.c",
+        "drivers/mca/mca-bus.c"
+      ],
+      "device_attach": [
+        "drivers/base/bus.c",
+        "arch/ia64/sn/io/sn2/pcibr/pcibr_slot.c",
+        "drivers/pnp/driver.c",
+        "arch/ia64/sn/io/sn2/pic.c",
+        "arch/ia64/sn/io/sn2/pciio.c"
+      ],
+      "bus_add_device": [
+        "drivers/base/bus.c"
+      ],
+      "device_add": [
+        "drivers/base/class_simple.c",
+        "drivers/base/class.c",
+        "drivers/scsi/libata-core.c",
+        "drivers/base/core.c"
+      ]
+    },
+    "gt_found_via_functions": [
+      "usb_disable_interface",
+      "usb_set_interface"
+    ],
+    "other_candidate_files": [
+      "fs/romfs/inode.c",
+      "fs/proc/inode.c",
+      "fs/ext3/super.c",
+      "drivers/zorro/zorro-driver.c",
+      "fs/sysfs/inode.c",
+      "mm/shmem.c",
+      "fs/hfsplus/super.c",
+      "fs/nfs/inode.c",
+      "drivers/s390/net/iucv.c",
+      "fs/smbfs/inode.c",
+      "fs/dquot.c",
+      "drivers/scsi/scsi_sysfs.c",
+      "drivers/acpi/scan.c",
+      "fs/ufs/super.c",
+      "arch/ia64/sn/io/sn2/pciio.c",
+      "drivers/pci/pci-driver.c",
+      "drivers/base/bus.c",
+      "drivers/s390/cio/ccwgroup.c",
+      "drivers/scsi/libata-core.c",
+      "fs/reiserfs/super.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

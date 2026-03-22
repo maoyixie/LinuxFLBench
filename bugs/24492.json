@@ -1,0 +1,34 @@
+{
+  "id": "24492",
+  "title": "SBS - Battery status is updated only on AC/DC event, not every minute - Acer Travelmate 2301",
+  "description": "On a Acer Travelmate 2301, the battery status (energy, current, etc.)  doesn't get updated, unless events are triggered (e.g. charger disconnection).\n\nExample, with charger on, an old reading is reported:\n\ntestuser@castor:~$ cat /sys/class/power_supply/BAT0/energy_now\n1120000\n\nImmediately after, having unplugged the charger in order to trigger an event,\nsysfs gets updated:\n\ntestuser@castor:~$ cat /sys/class/power_supply/BAT0/energy_now\n13600000",
+  "patch": [
+    "diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c\nindex 51ae379..428f310 100644\n--- a/drivers/acpi/sbs.c\n+++ b/drivers/acpi/sbs.c\n@@ -187,6 +187,7 @@ static int acpi_battery_technology(struct acpi_battery *battery)\n \treturn POWER_SUPPLY_TECHNOLOGY_UNKNOWN;\n }\n \n+static int acpi_battery_get_state(struct acpi_battery *battery);\n static int acpi_sbs_battery_get_property(struct power_supply *psy,\n \t\t\t\t\t enum power_supply_property psp,\n \t\t\t\t\t union power_supply_propval *val)\n@@ -195,6 +196,9 @@ static int acpi_sbs_battery_get_property(struct power_supply *psy,\n \n \tif ((!battery->present) && psp != POWER_SUPPLY_PROP_PRESENT)\n \t\treturn -ENODEV;\n+\n+\tacpi_battery_get_state(battery);\n+\n \tswitch (psp) {\n \tcase POWER_SUPPLY_PROP_STATUS:\n \t\tif (battery->rate_now < 0)\n@@ -224,12 +228,18 @@ static int acpi_sbs_battery_get_property(struct power_supply *psy,\n \tcase POWER_SUPPLY_PROP_CURRENT_NOW:\n \tcase POWER_SUPPLY_PROP_POWER_NOW:\n \t\tval->intval = abs(battery->rate_now) *\n-\t\t\t\tacpi_battery_ipscale(battery) * 1000;\n+\t\t\tacpi_battery_ipscale(battery) * 1000;\n+\t\tval->intval *= (acpi_battery_mode(battery)) ?\n+\t\t\t(battery->voltage_now *\n+\t\t\tacpi_battery_vscale(battery)/1000) : 1;\n \t\tbreak;\n \tcase POWER_SUPPLY_PROP_CURRENT_AVG:\n \tcase POWER_SUPPLY_PROP_POWER_AVG:\n \t\tval->intval = abs(battery->rate_avg) *\n-\t\t\t\tacpi_battery_ipscale(battery) * 1000;\n+\t\t\tacpi_battery_ipscale(battery) * 1000;\n+\t\tval->intval *= (acpi_battery_mode(battery)) ?\n+\t\t\t(battery->voltage_now *\n+\t\t\tacpi_battery_vscale(battery) / 1000) : 1;\n \t\tbreak;\n \tcase POWER_SUPPLY_PROP_CAPACITY:\n \t\tval->intval = battery->state_of_charge;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Battery",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "Lan Tianyu",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-12-08 22:41 UTC by Lorenzo Masellis",
+  "Modified": "2011-08-06 02:08 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.32",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/sbs.c"
+  ],
+  "methods": [
+    "acpi_sbs_battery_get_property"
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "id": "12061",
+  "title": "snd_hda_intel: power_save: sound cracks on powerdown",
+  "kernel_version": "2.6.28-rc5",
+  "product": "Drivers",
+  "component": "Sound",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "sound/pci/hda/patch_sigmatel.c"
+    ],
+    "buggy_methods": [
+      "stac92xx_suspend"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/asound/pcm",
+      "/proc/asound/cards"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 653,
+    "description_word_count": 91
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 11,
+    "lines_removed": 57,
+    "patch_size": 68,
+    "patch_types": [
+      "logic_change",
+      "memory"
+    ],
+    "num_hunks": 9,
+    "hunk_functions": [
+      "stac92xx_power_down",
+      "stac92xx_suspend",
+      "stac92xx_capture_pcm_prepare",
+      "stac92xx_init",
+      "stac92xx_capture_pcm_cleanup",
+      "stac92xx_resume"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "sound/pci/hda/patch_sigmatel.c",
+    "filename": "patch_sigmatel.c",
+    "directory": "sound/pci/hda",
+    "depth": 4,
+    "top_level": "sound",
+    "second_level": "pci",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Sound",
+      "is_regression"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "12061",
+      "version": "2.6.28-rc5",
+      "status": "found",
+      "path": "sound/pci/hda/patch_sigmatel.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "12061",
+    "title": "snd_hda_intel: power_save: sound cracks on powerdown",
+    "ground_truth_file": "sound/pci/hda/patch_sigmatel.c",
+    "ground_truth_subsystem": "sound/pci",
+    "ground_truth_methods": [
+      "stac92xx_suspend"
+    ],
+    "product": "Drivers",
+    "component": "Sound",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/proc/asound/cards",
+        "/proc/asound/pcm"
+      ],
+      "component": "Sound",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

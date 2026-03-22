@@ -1,0 +1,36 @@
+{
+  "id": "117651",
+  "title": "Root NFS and autofs - mount disappears due to inode revalidate failed",
+  "description": "Created attachment 215321 [details]\nlog fragment with failed getattr\n\nAfter upgrading from 3.14.12 to 4.1.15 I've got strange behaviour with autofs. \n\nIt happens on diskless machine with root on NFS. There is autofs indirect mount on /storage, where NFS volumes are mounted on demand.\n\nEverything mounts normally, but after mount expiration\n(during unmount) autofs mount disappears - that is, not only /storage/<volume>\nunmounts, but /storage is also unmounted. This happens quite often - usually on the very first expiration.\n\nautomount logs umount error in such cases.\n\nWithout autofs, mount/umount of the same NFS volume works correctly. \n\nWith NFS debug enabled, I've got following errors:\n\nNFS reply getattr: -512\nnfs_revalidate_inode: (0:15/6291480) getattr failed, error=-512\nNFS: nfs_lookup_revalidate(/storage) is invalid\n\nAfter inode revalidate failure all mounts on this inode are unmounted and so autofs mount disappears, while automount daemon itself continue to run.\n\ntcpdump shows, that server replies to getattr without error, but client\ndoesn't see this reply, and returning error instead.\n\n\nI am ready to supply additional information.",
+  "patch": [
+    "From 8129c6bfdc7e588a90a7d6942fd34c43c6a4f8b8 Mon Sep 17 00:00:00 2001\nFrom: Nicholas Krause <xerofoify@gmail.com>\nDate: Sun, 31 Jul 2016 16:45:33 -0400\nSubject: [PATCH] sunrpc\n\nSigned-off-by: Nicholas Krause <xerofoify@gmail.com>\n---\n net/sunrpc/xprtsock.c | 6 +++---\n 1 file changed, 3 insertions(+), 3 deletions(-)\n\ndiff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c\nindex 111767a..1bf3014 100644\n--- a/net/sunrpc/xprtsock.c\n+++ b/net/sunrpc/xprtsock.c\n@@ -1743,11 +1743,11 @@ static unsigned short xs_get_random_port(void)\n  * Note that this function has to be called on all sockets that share the\n  * same port, and it must be called before binding.\n  */\n-static void xs_sock_set_reuseport(struct socket *sock)\n+static void xs_sock_set_reuseport(struct socket *sock,int family)\n {\n \tint opt = 1;\n \n-\tkernel_setsockopt(sock, SOL_SOCKET, SO_REUSEPORT,\n+\tkernel_setsockopt(sock, family, SO_REUSEPORT,\n \t\t\t(char *)&opt, sizeof(opt));\n }\n \n@@ -1943,7 +1943,7 @@ static struct socket *xs_create_sock(struct rpc_xprt *xprt,\n \txs_reclassify_socket(family, sock);\n \n \tif (reuseport)\n-\t\txs_sock_set_reuseport(sock);\n+\t\txs_sock_set_reuseport(sock,family);\n \n \terr = xs_bind(transport, sock);\n \tif (err) {\n-- \n2.7.4\n\n",
+    "From 398e8a7af6294cca1976310598e954739407bcc6 Mon Sep 17 00:00:00 2001\nFrom: Nicholas Krause <xerofoify@gmail.com>\nDate: Mon, 1 Aug 2016 10:53:27 -0400\nSubject: [PATCH] set up socket for port reuse correctly in xs_create_sock\n\nSigned-off-by: Nicholas Krause <xerofoify@gmail.com>\n---\n net/sunrpc/xprtsock.c | 4 +++-\n 1 file changed, 3 insertions(+), 1 deletion(-)\n\ndiff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c\nindex 111767a..1e0a179 100644\n--- a/net/sunrpc/xprtsock.c\n+++ b/net/sunrpc/xprtsock.c\n@@ -1942,8 +1942,10 @@ static struct socket *xs_create_sock(struct rpc_xprt *xprt,\n \t}\n \txs_reclassify_socket(family, sock);\n \n-\tif (reuseport)\n+\tif (reuseport) {\n+\t\tsock->sk->sk_reuse = SK_CAN_REUSE;\n \t\txs_sock_set_reuseport(sock);\n+\t}\n \n \terr = xs_bind(transport, sock);\n \tif (err) {\n-- \n2.7.4\n\n",
+    "From 1f4c17a03ba7f430d63dba8c8e08ff1e2712581d Mon Sep 17 00:00:00 2001\nFrom: Trond Myklebust <trond.myklebust@primarydata.com>\nDate: Mon, 1 Aug 2016 13:36:08 -0400\nSubject: [PATCH] SUNRPC: Handle EADDRNOTAVAIL on connection failures\n\nIf the connect attempt immediately fails with an EADDRNOTAVAIL error, then\nthat means our choice of source port number was bad.\nThis error is expected when we set the SO_REUSEPORT socket option and we\nhave 2 sockets sharing the same source and destination address and port\ncombinations.\n\nSigned-off-by: Trond Myklebust <trond.myklebust@primarydata.com>\nFixes: 402e23b4ed9ed (\"SUNRPC: Fix stupid typo in xs_sock_set_reuseport\")\nCc: stable@vger.kernel.org # v4.0+\n---\n net/sunrpc/xprtsock.c | 4 ++++\n 1 file changed, 4 insertions(+)\n\ndiff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c\nindex 111767ab124a..c6b1d48c4319 100644\n--- a/net/sunrpc/xprtsock.c\n+++ b/net/sunrpc/xprtsock.c\n@@ -2295,6 +2295,10 @@ static int xs_tcp_finish_connecting(struct rpc_xprt *xprt, struct socket *sock)\n \t\t/* SYN_SENT! */\n \t\tif (xprt->reestablish_timeout < XS_TCP_INIT_REEST_TO)\n \t\t\txprt->reestablish_timeout = XS_TCP_INIT_REEST_TO;\n+\t\tbreak;\n+\tcase -EADDRNOTAVAIL:\n+\t\t/* Source port number is unavailable. Try a new one! */\n+\t\ttransport->srcport = 0;\n \t}\n out:\n \treturn ret;\n-- \n2.7.4\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "NFS",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Trond Myklebust",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2016-05-05 11:21 UTC by alexpro",
+  "Modified": "2016-08-02 13:44 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "4.1.15",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "net/sunrpc/xprtsock.c"
+  ],
+  "methods": [
+    "xs_sock_set_reuseport"
+  ]
+}

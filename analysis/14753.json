@@ -1,0 +1,124 @@
+{
+  "id": "14753",
+  "title": "ACPI Errors: Index beyond end of object, parse/execution failed, _BCM failed - Asus Notebook X5DIJ-SX101L",
+  "kernel_version": "2.6.32",
+  "product": "ACPI",
+  "component": "Power-Video",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/blacklist.c"
+    ],
+    "buggy_methods": [
+      "acpi_osi_dmi_table"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [
+      {
+        "file": "exoparg2",
+        "line": "445"
+      },
+      {
+        "file": "psparse",
+        "line": "0537"
+      },
+      {
+        "file": "psparse",
+        "line": "0537"
+      },
+      {
+        "file": "video",
+        "line": "528"
+      }
+    ],
+    "error_messages": [
+      "(psparse-0537): Method parse/execution failed [\\_SB_.PCI0.SBRG.EC0_.STBR] (Node ",
+      "(psparse-0537): Method parse/execution failed [\\_SB_.PCI0.VGA_.LCDD._BCM] (Node ",
+      "Evaluating _BCM failed (20090903/video-528)"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1200,
+    "description_word_count": 166
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 14,
+    "lines_removed": 0,
+    "patch_size": 14,
+    "patch_types": [
+      "quirk/device_table"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "DMI_MATCH",
+      "dmi_disable_osi_vista"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/blacklist.c",
+    "filename": "blacklist.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/blacklist.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "source_file_line_references",
+      "component_known:Power-Video",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "use_source_references_to_locate_file",
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "14753",
+      "version": "2.6.32",
+      "status": "found",
+      "path": "drivers/acpi/blacklist.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "14753",
+    "title": "ACPI Errors: Index beyond end of object, parse/execution failed, _BCM failed - Asus Notebook X5DIJ-SX101L",
+    "product": "ACPI",
+    "component": "Power-Video",
+    "buggy_file": [
+      "drivers/acpi/blacklist.c"
+    ],
+    "fix_type": "dmi_quirk_addition",
+    "table_entry_lines_added": 3,
+    "description_clues": [
+      "hardware_model_mentioned"
+    ],
+    "patch_size": 14,
+    "potential_strategies": [
+      "search_for_model_specific_quirks",
+      "narrow_by_component:Power-Video"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

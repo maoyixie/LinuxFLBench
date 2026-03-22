@@ -1,0 +1,34 @@
+{
+  "id": "2829",
+  "title": "posix_locks_deadlock() loops infinitely",
+  "description": "Distribution: debian\nHardware Environment:\nSoftware Environment:\nProblem Description: Using POSIX threads makes posix_locks_deadlock() loop\ninfinitely.\n\nSteps to reproduce:\n\nThere are 3 processes; \"A\", \"B\" and \"C\".\nEach process opens \"file1\", \"file2\" and \"file3\".\n\n\"A\" creates 3 POSIX threads; \"A1\", \"A2\" and \"A3\". (These threads' PIDs are the\nsame.)\n\"B\" creates 2 POSIX threads; \"B1\" and \"B2\". (These threads' PIDs are the same.)\n\"C\" creates 1 POSIX thread; \"C1\".\n\n\n1. \"A1\" locks \"file1\" exclusively.\n2. \"B1\" locks \"file2\" exclusively.\n3. \"C1\" locks \"file3\" exclusively.\n4. \"A2\" trys to lock \"file2\" and sleeps (blocked by \"B1\").\n5. \"A3\" trys to lock \"file3\" and sleeps (blocked by \"C1\").\n6. \"B2\" trys to lock \"file1\".\n   Here, posix_locks_deadlock() must detect deadlock, but\n   it does not. Then \"B2\" sleeps (blocked \"A1\").\n\n  \"A\"                                    \"B\"\n   |                                      |\n   +--A1(LOCK)---->(file1)<-B2(*deadlock)-+\n   |                                      |\n   |                                      |\n   +--A2(BLOCK)--->(file2)<---B1(LOCK)----+\n   |\n   |\n   +--A3(BLOCK)--->(file3)<---C1(LOCK)----\"C\"\n\n    block_list -> A3(BLOCK) -> A2(BLOCK)\n\n\n7. \"C1\" unlocks \"file3\". (\"A3\" wakes up and locks \"file3\".)\n8. \"A3\" unlocks \"file3\".\n9. Another process locks \"file1\".\n   This makes posix_locks_deadlock() loop infinitely.",
+  "patch": [
+    "From 4db21bd89a9850133a72e139e00ce435d6f8408f Mon Sep 17 00:00:00 2001\nFrom: J. Bruce Fields <bfields@citi.umich.edu>\nDate: Sun, 28 Oct 2007 12:22:38 -0400\nSubject: [PATCH] locks: fix possible infinite loop in posix deadlock detection\n\nIt's currently possible to send posix_locks_deadlock() into an infinite\nloop (under the BKL).\n\nFor now, fix this just by bailing out after a few iterations.  We may\nwant to fix this in a way that better clarifies the semantics of\ndeadlock detection.  But that will take more time, and this minimal fix\nis probably adequate for any realistic scenario, and is simple enough to\nbe appropriate for applying to stable kernels now.\n\nThanks to George Davis for reporting the problem.\n\nCc: \"George G. Davis\" <gdavis@mvista.com>\nSigned-off-by: J. Bruce Fields <bfields@citi.umich.edu>\n---\n fs/locks.c |   11 +++++++++++\n 1 files changed, 11 insertions(+), 0 deletions(-)\n\ndiff --git a/fs/locks.c b/fs/locks.c\nindex 0127a28..8b8388e 100644\n--- a/fs/locks.c\n+++ b/fs/locks.c\n@@ -696,17 +696,28 @@ EXPORT_SYMBOL(posix_test_lock);\n  * Note: the above assumption may not be true when handling lock requests\n  * from a broken NFS client. But broken NFS clients have a lot more to\n  * worry about than proper deadlock detection anyway... --okir\n+ *\n+ * However, the failure of this assumption (also possible in the case of\n+ * multiple tasks sharing the same open file table) also means there's no\n+ * guarantee that the loop below will terminate.  As a hack, we give up\n+ * after a few iterations.\n  */\n+\n+#define MAX_DEADLK_ITERATIONS 10\n+\n static int posix_locks_deadlock(struct file_lock *caller_fl,\n \t\t\t\tstruct file_lock *block_fl)\n {\n \tstruct file_lock *fl;\n+\tint i = 0;\n \n next_task:\n \tif (posix_same_owner(caller_fl, block_fl))\n \t\treturn 1;\n \tlist_for_each_entry(fl, &blocked_list, fl_link) {\n \t\tif (posix_same_owner(fl, block_fl)) {\n+\t\t\tif (i++ > MAX_DEADLK_ITERATIONS)\n+\t\t\t\treturn 0;\n \t\t\tfl = fl->fl_next;\n \t\t\tblock_fl = fl;\n \t\t\tgoto next_task;\n-- \n1.5.3.4.208.gc990\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "VFS",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "fs_vfs",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2004-06-03 22:45 UTC by i-sakamoto",
+  "Modified": "2008-03-03 20:37 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.6",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/locks.c"
+  ],
+  "methods": [
+    "posix_locks_deadlock"
+  ]
+}

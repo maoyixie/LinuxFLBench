@@ -1,0 +1,195 @@
+{
+  "id": "14957",
+  "title": "Blank screen with KMS enabled",
+  "kernel_version": "2.6.33-rc2",
+  "product": "ACPI",
+  "component": "Other",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "performance",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpu/drm/i915/intel_lvds.c"
+    ],
+    "buggy_methods": [
+      "bad_lid_status"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "driver_register",
+      "drm_get_dev",
+      "do_one_initcall",
+      "bus_for_each_dev",
+      "pci_device_probe",
+      "i915_driver_load",
+      "sysenter_do_call",
+      "__driver_attach",
+      "local_pci_probe",
+      "drm_helper_initial_config",
+      "drm_init",
+      "sys_init_module",
+      "__pci_register_driver",
+      "i915_pci_probe",
+      "bus_add_driver",
+      "warn_slowpath_fmt",
+      "warn_slowpath_common",
+      "driver_attach",
+      "driver_probe_device",
+      "i915_init"
+    ],
+    "mentioned_file_paths": [
+      "drivers/gpu/drm/drm_crtc_helper.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": true,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 2440,
+    "description_word_count": 234
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 14,
+    "lines_removed": 0,
+    "patch_size": 14,
+    "patch_types": [
+      "quirk/device_table",
+      "error_handling"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "intel_lvds_mode_set"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpu/drm/i915/intel_lvds.c",
+    "filename": "intel_lvds.c",
+    "directory": "drivers/gpu/drm/i915",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "gpu",
+    "driver_subsystem": "gpu/drm",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_20_functions",
+      "is_regression",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "bisect_or_check_recent_commits",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "14957",
+      "version": "2.6.33-rc2",
+      "status": "found",
+      "path": "drivers/gpu/drm/i915/intel_lvds.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "14957",
+    "version": "2.6.33-rc2",
+    "ground_truth_file": "drivers/gpu/drm/i915/intel_lvds.c",
+    "trace_functions": [
+      "drm_helper_initial_config",
+      "warn_slowpath_common",
+      "warn_slowpath_fmt",
+      "i915_driver_load",
+      "drm_get_dev",
+      "i915_pci_probe",
+      "local_pci_probe",
+      "pci_device_probe",
+      "driver_probe_device",
+      "__driver_attach",
+      "bus_for_each_dev",
+      "driver_attach",
+      "bus_add_driver",
+      "kset_find_obj",
+      "driver_register"
+    ],
+    "total_trace_functions": 21,
+    "function_locations": {
+      "drm_helper_initial_config": [
+        "drivers/gpu/drm/drm_crtc_helper.c"
+      ],
+      "warn_slowpath_common": [
+        "kernel/panic.c"
+      ],
+      "warn_slowpath_fmt": [
+        "kernel/panic.c"
+      ],
+      "i915_driver_load": [
+        "drivers/gpu/drm/i915/i915_dma.c"
+      ],
+      "drm_get_dev": [
+        "drivers/gpu/drm/drm_stub.c"
+      ],
+      "i915_pci_probe": [],
+      "local_pci_probe": [
+        "drivers/pci/pci-driver.c"
+      ],
+      "pci_device_probe": [
+        "drivers/pci/pci-driver.c"
+      ],
+      "driver_probe_device": [
+        "drivers/base/dd.c"
+      ],
+      "__driver_attach": [
+        "drivers/base/dd.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "drivers/pci/pci-driver.c",
+      "drivers/gpu/drm/i915/i915_dma.c",
+      "kernel/panic.c",
+      "drivers/gpu/drm/drm_stub.c",
+      "drivers/gpu/drm/drm_crtc_helper.c",
+      "drivers/base/dd.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "quirk_analysis": {
+    "id": "14957",
+    "title": "Blank screen with KMS enabled",
+    "product": "ACPI",
+    "component": "Other",
+    "buggy_file": [
+      "drivers/gpu/drm/i915/intel_lvds.c"
+    ],
+    "fix_type": "dmi_quirk_addition",
+    "table_entry_lines_added": 4,
+    "description_clues": [
+      "hardware_model_mentioned",
+      "driver_name_mentioned"
+    ],
+    "patch_size": 14,
+    "potential_strategies": [
+      "search_for_model_specific_quirks"
+    ]
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

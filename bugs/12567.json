@@ -1,0 +1,34 @@
+{
+  "id": "12567",
+  "title": "The rtl-8187b card stops responding and connection is lost on hight trafic (torrent protocol).",
+  "description": "The rtl8187 module driver doesn't work properly on hight traffic. When foe example I am downloading torrents the card doesn't respond an the connection is lost. I have to unload and load the module again. I only happens with me when the torrents are on.",
+  "patch": [
+    "From: Larry Finger <Larry.Finger@lwfinger.net>\n\nThe RTL8187 and RTL8187B devices can stall unless an explicit termination\npacket is sent.\n\nThis change was incorporated in mainline with hash 2fcbab044a3\nand entitled \"rtl8187: Add termination packet to prevent stall\".\n\nThis change should be applied to 2.6.27 and 2.6.28.\n\nSigned-off-by: Larry Finger <Larry.Finger@lwfinger.net>\nSigned-off-by: John W. Linville <linville@tuxdriver.com>\n---\n\nIndex: linux-2.6/drivers/net/wireless/rtl8187_dev.c\n===================================================================\n--- linux-2.6.orig/drivers/net/wireless/rtl8187_dev.c\n+++ linux-2.6/drivers/net/wireless/rtl8187_dev.c\n@@ -263,6 +263,7 @@ static int rtl8187_tx(struct ieee80211_h\n \n \tusb_fill_bulk_urb(urb, priv->udev, usb_sndbulkpipe(priv->udev, ep),\n \t\t\t  buf, skb->len, rtl8187_tx_cb, skb);\n+\turb->transfer_flags |= URB_ZERO_PACKET;\n \trc = usb_submit_urb(urb, GFP_ATOMIC);\n \tif (rc < 0) {\n \t\tusb_free_urb(urb);\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "network-wireless",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "drivers_network-wireless@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-01-28 14:06 UTC by Alexander Kaltsas",
+  "Modified": "2009-08-06 00:07 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.28",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/rtl8187_dev.c"
+  ],
+  "methods": [
+    "rtl8187_tx"
+  ]
+}

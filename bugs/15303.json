@@ -1,0 +1,36 @@
+{
+  "id": "15303",
+  "title": "WLAN cannot be activated if booted with activated RF kill switch on Sony notebook (iwl3945)",
+  "": "Show dependency tree",
+  "description": "Keywords:\nWLAN, RF kill switch, iwl3945, sony-laptop\n\nKernel version:\nLinux version 2.6.32-13-generic (buildd@vernadsky) (gcc version 4.4.3 (Ubuntu 4.4.3-2ubuntu1) ) #18-Ubuntu SMP Wed Feb 10 21:24:20 UTC 2010\n(I was also able to confirm the problem with Ubuntu Karmic and Fedora 12)\n\nDescription:\nIf the RF kill switch is activated during booting my Sony Notebook (VGN-TX3HP) WLAN cannot be activated later. If WLAN is activated during boot it can be deactivated and reactivated without problems.\n\nI was able to narrow down the problem: If I unload the sony-laptop module before disabling the kill switch, WLAN becomes active without problems. Then I can load sony-laptop without it is causing problems.\n\nThis problem did not occur with Kernel versions <=2.6.28 (at least).\n\nSteps to reproduce the problem:\n- get a Sony Vaio laptop with iwl3945 hardware (my is a TX3HP)\n- enable RF kill switch (disable WLAN)\n- boot Linux\n- disable RF kill switch (enable WLAN)\n- WLAN does not become available  \n\nSteps to reproduce my workaround:\n- get a Sony Vaio laptop with iwl3945 hardware (my is a TX3HP)\n- enable RF kill switch (disable WLAN)\n- boot Linux\n- unload sony-laptop module\n- disable RF kill switch (enable WLAN)\n- WLAN becomes available  \n- load sony-laptop module",
+  "patch": [
+    "diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c\nindex 1387c5f..0784b15 100644\n--- a/drivers/platform/x86/sony-laptop.c\n+++ b/drivers/platform/x86/sony-laptop.c\n@@ -1570,8 +1570,8 @@ static struct sonypi_event sonypi_blueev[] = {\n \n /* The set of possible wireless events */\n static struct sonypi_event sonypi_wlessev[] = {\n-\t{ 0x59, SONYPI_EVENT_WIRELESS_ON },\n-\t{ 0x5a, SONYPI_EVENT_WIRELESS_OFF },\n+\t{ 0x59, 0 },\n+\t{ 0x5a, 0 },\n \t{ 0, 0 }\n };\n \n@@ -2710,7 +2710,14 @@ static irqreturn_t sony_pic_irq(int irq, void *dev_id)\n \t\t\tif (ev == dev->event_types[i].events[j].data) {\n \t\t\t\tdevice_event =\n \t\t\t\t\tdev->event_types[i].events[j].event;\n-\t\t\t\tgoto found;\n+\t\t\t\tif (device_event)\n+\t\t\t\t\tgoto found;\n+\t\t\t\telse {\n+\t\t\t\t\tdprintk(\"ignoring event \"\n+\t\t\t\t\t\t\t\"[0x%.2x] [0x%.2x]\\n\",\n+\t\t\t\t\t\t\tev, data_mask);\n+\t\t\t\t\tgoto ignored;\n+\t\t\t\t}\n \t\t\t}\n \t\t}\n \t}\n@@ -2729,7 +2736,7 @@ found:\n \tsony_laptop_report_input_event(device_event);\n \tacpi_bus_generate_proc_event(dev->acpi_dev, 1, device_event);\n \tsonypi_compat_report_event(device_event);\n-\n+ignored:\n \treturn IRQ_HANDLED;\n }\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Platform",
+  "Hardware": "i386 Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Mattia Dongili",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "56331",
+  "Reported": "2010-02-14 22:59 UTC by Thomas Klose",
+  "Modified": "2013-04-09 06:23 UTC",
+  "CC List": "6 users",
+  "See Also": "",
+  "Kernel Version": "2.6.32",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/platform/x86/sony-laptop.c"
+  ],
+  "methods": [
+    "sony_pic_irq",
+    "sonypi_blueev"
+  ]
+}

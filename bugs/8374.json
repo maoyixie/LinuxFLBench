@@ -1,0 +1,35 @@
+{
+  "id": "8374",
+  "title": "ACPI: Unable to turn cooling device [c146aec8] 'on'",
+  "description": "Most recent kernel where this bug did *NOT* occur: None\nDistribution: Debian 4.0 - Etch (Final)\nHardware Environment: HP/Compaq nc6000 (laptop), Pentium M 1.6 GHz, Intel ICH4,\nATI Radeon Mobility 9600, 512 MB RAM, newest available BIOS\nSoftware Environment: Debian Etch, no self-compiled tools but the kernel\nProblem Description: This is gonna be quite a long but hopefully equally useful\ndescription:\nShortly after I bought the laptop and installed Linux on it, I noticed that it\nsometimes turned itself off while I was away and did not turn off the computer.\nIt took me quite a while to figure out what was wrong until the laptop shut down\nby itself while I was using it.\nThe kernel printed a message that a ACPI critical trip point was reached and\nshut the system down to prevent damage. After I knew there was a temperature\nproblem I wrote a script to log the temperatures and after it happend again I\nsaw that the temperatures suddenly started to rise from about 40",
+  "patch": [
+    "From: Thomas Renninger <trenn@suse.de>\n\nexport acpi_handle to user space doesn't make sense.\nuse the object name shown in ACPI namespace instead.\n\nSigned-off-by: Zhang Rui <rui.zhang@intel.com>\n---\n drivers/acpi/thermal.c |   33 +++++++++++++++++----------------\n 1 files changed, 17 insertions(+), 16 deletions(-)\n\nIndex: linux-2.6.21-rc5/drivers/acpi/thermal.c\n===================================================================\n--- linux-2.6.21-rc5.orig/drivers/acpi/thermal.c\t2007-03-26 14:24:41.000000000 +0800\n+++ linux-2.6.21-rc5/drivers/acpi/thermal.c\t2007-04-29 11:37:18.000000000 +0800\n@@ -586,7 +586,7 @@ static void acpi_thermal_active(struct a\n \tint i = 0;\n \tint j = 0;\n \tunsigned long maxtemp = 0;\n-\n+\tstruct acpi_device *device;\n \n \tif (!tz)\n \t\treturn;\n@@ -612,17 +612,17 @@ static void acpi_thermal_active(struct a\n \t\t\t\t    acpi_bus_set_power(active->devices.\n \t\t\t\t\t\t       handles[j],\n \t\t\t\t\t\t       ACPI_STATE_D0);\n+\t\t\t\tacpi_bus_get_device(active->devices.handles[j], &device);\n \t\t\t\tif (result) {\n \t\t\t\t\tprintk(KERN_WARNING PREFIX\n-\t\t\t\t\t\t      \"Unable to turn cooling device [%p] 'on'\\n\",\n-\t\t\t\t\t\t      active->devices.\n-\t\t\t\t\t\t      handles[j]);\n+\t\t\t\t\t\t      \"Unable to turn cooling device [%4.4s] 'on', result is %d\\n\",\n+\t\t\t\t\t\t      acpi_device_bid(device), result);\n \t\t\t\t\tcontinue;\n \t\t\t\t}\n \t\t\t\tactive->flags.enabled = 1;\n \t\t\t\tACPI_DEBUG_PRINT((ACPI_DB_INFO,\n-\t\t\t\t\t\t  \"Cooling device [%p] now 'on'\\n\",\n-\t\t\t\t\t\t  active->devices.handles[j]));\n+\t\t\t\t\t\t  \"Cooling device [%4.4s] now 'on'\\n\",\n+\t\t\t\t\t\t  acpi_device_bid(device)));\n \t\t\t}\n \t\t\tcontinue;\n \t\t}\n@@ -637,16 +637,17 @@ static void acpi_thermal_active(struct a\n \t\tfor (j = 0; j < active->devices.count; j++) {\n \t\t\tresult = acpi_bus_set_power(active->devices.handles[j],\n \t\t\t\t\t\t    ACPI_STATE_D3);\n+\t\t\tacpi_bus_get_device(active->devices.handles[j], &device);\n \t\t\tif (result) {\n \t\t\t\tprintk(KERN_WARNING PREFIX\n-\t\t\t\t\t      \"Unable to turn cooling device [%p] 'off'\\n\",\n-\t\t\t\t\t      active->devices.handles[j]);\n+\t\t\t\t\t      \"Unable to turn cooling device [%4.4s] 'off'\\n\",\n+\t\t\t\t\t      acpi_device_bid(device));\n \t\t\t\tcontinue;\n \t\t\t}\n \t\t\tactive->flags.enabled = 0;\n \t\t\tACPI_DEBUG_PRINT((ACPI_DB_INFO,\n \t\t\t\t\t  \"Cooling device [%p] now 'off'\\n\",\n-\t\t\t\t\t  active->devices.handles[j]));\n+\t\t\t\t\t  acpi_device_bid(device)));\n \t\t}\n \t}\n }\n@@ -840,7 +841,7 @@ static int acpi_thermal_trip_seq_show(st\n \tstruct acpi_thermal *tz = seq->private;\n \tint i = 0;\n \tint j = 0;\n-\n+\tstruct acpi_device *device;\n \n \tif (!tz)\n \t\tgoto end;\n@@ -860,9 +861,8 @@ static int acpi_thermal_trip_seq_show(st\n \t\t\t   tz->trips.passive.tc1, tz->trips.passive.tc2,\n \t\t\t   tz->trips.passive.tsp);\n \t\tfor (j = 0; j < tz->trips.passive.devices.count; j++) {\n-\n-\t\t\tseq_printf(seq, \"0x%p \",\n-\t\t\t\t   tz->trips.passive.devices.handles[j]);\n+\t\t\tacpi_bus_get_device(tz->trips.passive.devices.handles[j], &device);\n+\t\t\tseq_printf(seq, \"%4.4s \", acpi_device_bid(device));\n \t\t}\n \t\tseq_puts(seq, \"\\n\");\n \t}\n@@ -873,9 +873,10 @@ static int acpi_thermal_trip_seq_show(st\n \t\tseq_printf(seq, \"active[%d]:               %ld C: devices=\",\n \t\t\t   i,\n \t\t\t   KELVIN_TO_CELSIUS(tz->trips.active[i].temperature));\n-\t\tfor (j = 0; j < tz->trips.active[i].devices.count; j++)\n-\t\t\tseq_printf(seq, \"0x%p \",\n-\t\t\t\t   tz->trips.active[i].devices.handles[j]);\n+\t\tfor (j = 0; j < tz->trips.active[i].devices.count; j++) {\n+\t\t\tacpi_bus_get_device(tz->trips.active[i].devices.handles[j], &device);\n+\t\t\tseq_printf(seq, \"%4.4s \", acpi_device_bid(device));\n+\t\t}\n \t\tseq_puts(seq, \"\\n\");\n \t}\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Fan",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Zhang Rui",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-04-27 01:16 UTC by Peter Ganzhorn",
+  "Modified": "2008-08-07 21:04 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.21",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/thermal.c"
+  ],
+  "methods": [
+    "acpi_thermal_active",
+    "acpi_thermal_trip_seq_show"
+  ]
+}

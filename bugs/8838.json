@@ -1,0 +1,34 @@
+{
+  "id": "8838",
+  "title": "Random data in files created on NFS (over OCFS2 over DRBD)",
+  "description": "Most recent kernel where this bug did not occur: 2.6.21.6\nDistribution: very custom based on slackware (quite old glibc 2.3 gcc 3.4)\nHardware Environment:\nMB: 2 opteron X64  raid controler 3com series 95XX\nSoftware Environment:\nOCFS2 over DRBD 8.0.4 (active/active) over hardware raid volume\nNFS servers (version 1.1 from source)\nProblem Description:\nNFS shares ocfs2 file systems. \nProblem appears on NFS3 and NFS4 (both over tcp )\n\nWhen I write to file over NFS - content of the file is destroyed and contains random bytes. Size of file is preserved. Kernel report no errors.  Read works correctly. \nFile written directly on nfs server is OK (I can read it on server and client station). \nOn the same server NFS over reiserfs works correctly.\n\n\nSteps to reproduce:\ntry to mount nfs share on client workstation, and execute echo \"test\" >> mytestfile",
+  "patch": [
+    "From 5792765939156bd6560220c3d8bde06840ffd1ec Mon Sep 17 00:00:00 2001\nFrom: Mark Fasheh <mark.fasheh@oracle.com>\nDate: Fri, 10 Aug 2007 14:17:04 -0700\nSubject: ocfs2: Fix bad source start calculation during kernel writes\n\nFor in-kernel writes ocfs2_get_write_source() should be starting the buffer\nat a page boundary as the math in ocfs2_map_and_write_user_data() will pad\nit back out to the correct write offset. Instead, we were passing the raw\noffset, which caused ocfs2_map_and_write_user_data() start too far into the\nbuffer, resulting in corruptions from nfs client writes.\n\nSigned-off-by: Mark Fasheh <mark.fasheh@oracle.com>\n---\n fs/ocfs2/file.c |    2 +-\n 1 files changed, 1 insertions(+), 1 deletions(-)\n\ndiff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c\nindex ac6c964..e0cd750 100644\n--- a/fs/ocfs2/file.c\n+++ b/fs/ocfs2/file.c\n@@ -1353,7 +1353,7 @@ static struct page * ocfs2_get_write_source(struct ocfs2_buffered_write_priv *bp\n \t\telse\n \t\t\tsrc_page = ERR_PTR(-EFAULT);\n \t} else {\n-\t\tbp->b_src_buf = buf;\n+\t\tbp->b_src_buf = (char *)((unsigned long)buf & PAGE_CACHE_MASK);\n \t}\n \n \treturn src_page;\n-- \n1.5.0.6\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "Mark Fasheh",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-08-02 02:36 UTC by Pawel Zawora",
+  "Modified": "2008-02-25 17:22 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.22",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/ocfs2/file.c"
+  ],
+  "methods": [
+    "*ocfs2_get_write_source"
+  ]
+}

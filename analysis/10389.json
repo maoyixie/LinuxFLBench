@@ -1,0 +1,118 @@
+{
+  "id": "10389",
+  "title": "kernel 2.6.24-1 doesn't detect my laptop correctly",
+  "kernel_version": "2.6.24",
+  "product": "ACPI",
+  "component": "ACPICA-Core",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/asus_acpi.c"
+    ],
+    "buggy_methods": [
+      "asus_hotk_get_info"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/acpi/dsdt"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1697,
+    "description_word_count": 249
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 0,
+    "patch_size": 2,
+    "patch_types": [
+      "error_handling",
+      "memory"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "asus_hotk_get_info"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/asus_acpi.c",
+    "filename": "asus_acpi.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/asus_acpi.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:ACPICA-Core",
+      "is_regression"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "10389",
+      "version": "2.6.24",
+      "status": "found",
+      "path": "drivers/acpi/asus_acpi.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "10389",
+    "title": "kernel 2.6.24-1 doesn't detect my laptop correctly",
+    "ground_truth_file": "drivers/acpi/asus_acpi.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "asus_hotk_get_info"
+    ],
+    "product": "ACPI",
+    "component": "ACPICA-Core",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "performance"
+    ],
+    "fix_types": [
+      "error_return_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/proc/acpi/dsdt"
+      ],
+      "component": "ACPICA-Core",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

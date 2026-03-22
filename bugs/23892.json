@@ -1,0 +1,34 @@
+{
+  "id": "23892",
+  "title": "fcntl(..., F_GETLK, ...) does not return correct info about a read lock which is set on server",
+  "description": "Created attachment 38442 [details]\nPrograms for reproducing\n\nEnvironment:\n\nDebian Lenny with kernel 2.6.37-rc3 i686\nnfs-common         1:1.1.2-6lenny2\nnfs-kernel-server  1:1.1.2-6lenny2\n172.22.0.10 is a server\n172.22.0.11 is a client\n\n/etc/exports on a server:\n/srv/test  172.22.0.11(rw,sync,no_subtree_check)\n\n\nSteps to reproduce:\n\nclient# mount -t nfs 172.22.0.10:/srv/test /srv/test\n\nserver$ cd /srv/test\nserver$ ./linlock r file\npress Ctrl-C...\n\nclient$ cd /srv/test\nclient$ ./linlock w file\nfcntl: Resource temporary unavailable\nclient$ ./lockinfo file\nF_UNLCK SEEK_SET start 0 len 0\n\n./linlock tool set read (r) or write (w) lock on a file. ./lockinfo shows what F_GETLK returns. This test shows that a client can not set a write lock on a read lock of server but F_GETLK tells that file is not locked.\n\n\nThe bug does not occur if client with 2.6.21 kernel.\nThe bug occurs if client with 2.6.22-rc1 and higher.",
+  "patch": [
+    "From 84532fe502d996dcade62b6f81bfb77e750edee1 Mon Sep 17 00:00:00 2001\nFrom: Sergey Vlasov <vsu@altlinux.ru>\nDate: Sun, 28 Nov 2010 19:35:17 +0300\nSubject: [PATCH] NFS: Fix fcntl F_GETLK not reporting some conflicts\n\nThe commit 129a84de2347002f09721cda3155ccfd19fade40 (locks: fix\nF_GETLK regression (failure to find conflicts)) fixed the\nposix_test_lock() function by itself, however, its usage in NFS\nchanged by the commit 9d6a8c5c213e34c475e72b245a8eb709258e968c (locks:\ngive posix_test_lock same interface as ->lock) remained broken -\nsubsequent NFS-specific locking code received F_UNLCK instead of the\nuser-specified lock type.  Therefore fl->fl_type needs to be saved\nbefore the posix_test_lock() call and restored if no local conflicts\nwere reported.\n\nReference: https://bugzilla.kernel.org/show_bug.cgi?id=23892\n\nSigned-off-by: Sergey Vlasov <vsu@altlinux.ru>\n---\n fs/nfs/file.c |    2 ++\n 1 files changed, 2 insertions(+), 0 deletions(-)\n\ndiff --git a/fs/nfs/file.c b/fs/nfs/file.c\nindex 60677f9..7bf029e 100644\n--- a/fs/nfs/file.c\n+++ b/fs/nfs/file.c\n@@ -693,6 +693,7 @@ do_getlk(struct file *filp, int cmd, struct file_lock *fl, int is_local)\n {\n \tstruct inode *inode = filp->f_mapping->host;\n \tint status = 0;\n+\tunsigned int saved_type = fl->fl_type;\n \n \t/* Try local locking first */\n \tposix_test_lock(filp, fl);\n@@ -700,6 +701,7 @@ do_getlk(struct file *filp, int cmd, struct file_lock *fl, int is_local)\n \t\t/* found a conflict */\n \t\tgoto out;\n \t}\n+\tfl->fl_type = saved_type;\n \n \tif (nfs_have_delegation(inode, FMODE_READ))\n \t\tgoto out_noconflict;\n-- \n1.7.3.2\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "NFS",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Trond Myklebust",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-11-28 14:49 UTC by Alexander Morozov",
+  "Modified": "2013-10-11 21:15 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.22-rc1",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/nfs/file.c"
+  ],
+  "methods": [
+    "do_getlk"
+  ]
+}

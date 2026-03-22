@@ -1,0 +1,35 @@
+{
+  "id": "1930",
+  "title": "2.6.1 fails to mount large iso9660 dvd discs with ATAPI drivers, succeeds with SCSI.",
+  "description": "Distribution: Gentoo\n\nHardware Environment: \nAbit NF-7 (nforce2) Mobo, Athlon-XP 2500 (Barton), TDK Indi DVD+RW, Creative PC-DVD.\n\n################################################################################\n\nSoftware Environment: \nLinux gentoo 2.6.1 #3 Wed Jan 21 17:53:53 CST 2004 i686 AMD Athlon(tm) XP 2500+\nAuthenticAMD GNU/Linux\n \nGnu C                  3.2.3\nGnu make               3.80\nutil-linux             2.11z\nmount                  2.11z\nmodule-init-tools      0.9.15-pre4\ne2fsprogs              1.34\nnfs-utils              1.0.6\nLinux C Library        2.3.2\nDynamic linker (ldd)   2.3.2\nProcps                 3.1.12\nNet-tools              1.60\nKbd                    1.08\nSh-utils               5.0.91\nModules Loaded         nvnet nvidia\n################################################################################\n\nProblem Description:\nI've used growisofs (a mkisofs frontend) to write big (1.4 Gb) .avi's to my\nDVD+RW under both 2.4.xx and 2.6 kernels (atapi on the 2.6). However, none of my\n2.6 kernels (atapi only) seem to be able to mount nearly full dvd's, while my\n2.4.24 kernel (scsi-emulation) can mount dvd's that are full (about 4.3 Gb).\nEnabling scsi emulation and passing hdc=ide-scsi at boot fixes the problem for\nlinux-2.6.1, so it seems that there may be a problem with an atapi-only dvdrom\nmounting dvd's with over 3.3 Gb on them.\n\nI also have a regular dvdplayer attched and it is known as:\n\n/dev/cdroms/cdrom0 -> ../ide/host0/bus1/target1/lun0/cd\n\nThis drive reports \"No medium found\" for any large iso9660 dvd's, but can mount\nUDF disks no problem.\n\nSteps to reproduce:\n\n# Big iso9660 (4.0 Gb total)\n$ mount /mnt/dvdburner/\nmount: block device /dev/cdroms/cdrom0 is write-protected, mounting read-only\nmount: wrong fs type, bad option, bad superblock on /dev/cdroms/cdrom0,\nor too many mounted file systems\n\n# Output from tail -f /var/log/kernel/current\nJan 21 10:29:05 [kernel] Unable to identify CD-ROM format.\n\n###############################################\n\n# Smaller iso9660 (3.3 Gb total)\n$ mount /mnt/dvdburner/\nmount: block device /dev/cdroms/cdrom0 is write-protected, mounting read-only\n\n# Output from tail -f /var/log/kernel/current\nJan 21 10:32:12 [kernel] ISO 9660 Extensions: Microsoft Joliet Level 3\nJan 21 10:32:12 [kernel] ISO 9660 Extensions: RRIP_1991A\n\n############################################### \n\nBoth of these DVD's were made using growisofs, and the only difference I can see\nis that they are of different size.\nPlease let me know if there is anything else I can do to further troubleshoot\nthis problem.\nThanks.",
+  "patch": [
+    "--- a/drivers/ide/ide-cd.c\t2004-12-10 23:06:18.000000000 +0100\n+++ b/drivers/ide/ide-cd.c\t2004-12-17 19:30:56.000000000 +0100\n@@ -2356,25 +2356,31 @@\n \t/* Read the multisession information. */\n \tif (toc->hdr.first_track != CDROM_LEADOUT) {\n \t\t/* Read the multisession information. */\n-\t\tstat = cdrom_read_tocentry(drive, 0, 1, 1, (char *)&ms_tmp,\n+\t\tstat = cdrom_read_tocentry(drive, 0, 0, 1, (char *)&ms_tmp,\n \t\t\t\t\t   sizeof(ms_tmp), sense);\n \t\tif (stat) return stat;\n+\t\n+\t\ttoc->last_session_lba = be32_to_cpu(ms_tmp.ent.addr.lba);\n \t} else {\n-\t\tms_tmp.ent.addr.msf.minute = 0;\n-\t\tms_tmp.ent.addr.msf.second = 2;\n-\t\tms_tmp.ent.addr.msf.frame  = 0;\n \t\tms_tmp.hdr.first_track = ms_tmp.hdr.last_track = CDROM_LEADOUT;\n+\t\ttoc->last_session_lba = msf_to_lba(0, 2, 0); /* 0m 2s 0f */\n \t}\n \n #if ! STANDARD_ATAPI\n-\tif (CDROM_CONFIG_FLAGS(drive)->tocaddr_as_bcd)\n+\tif (CDROM_CONFIG_FLAGS(drive)->tocaddr_as_bcd) {\n+\t\t/* Re-read multisession information using MSF format */\n+\t\tstat = cdrom_read_tocentry(drive, 0, 1, 1, (char *)&ms_tmp,\n+\t\t\t\t\t   sizeof(ms_tmp), sense);\n+\t\tif (stat)\n+\t\t\treturn stat;\n+\n \t\tmsf_from_bcd (&ms_tmp.ent.addr.msf);\n+\t\ttoc->last_session_lba = msf_to_lba(ms_tmp.ent.addr.msf.minute,\n+\t\t\t\t\t  \t   ms_tmp.ent.addr.msf.second,\n+\t\t\t\t\t\t   ms_tmp.ent.addr.msf.frame);\n+\t}\n #endif  /* not STANDARD_ATAPI */\n \n-\ttoc->last_session_lba = msf_to_lba (ms_tmp.ent.addr.msf.minute,\n-\t\t\t\t\t    ms_tmp.ent.addr.msf.second,\n-\t\t\t\t\t    ms_tmp.ent.addr.msf.frame);\n-\n \ttoc->xa_flag = (ms_tmp.hdr.first_track != ms_tmp.hdr.last_track);\n \n \t/* Now try to get the total cdrom capacity. */\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "IO/Storage",
+  "Classification": "Unclassified",
+  "Component": "IDE",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Luca Tettamanti",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (1)": "3882",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2004-01-21 16:28 UTC by Jeff Gardner",
+  "Modified": "2004-12-18 14:31 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.1",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/ide/ide-cd.c"
+  ],
+  "methods": [
+    "cdrom_read_toc"
+  ]
+}

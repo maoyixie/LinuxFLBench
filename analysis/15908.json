@@ -1,0 +1,194 @@
+{
+  "id": "15908",
+  "title": "Not able to use nozomi modem",
+  "kernel_version": "2.6.34-rc6",
+  "product": "Drivers",
+  "component": "Other",
+  "hardware": "i386 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/char/nozomi.c"
+    ],
+    "buggy_methods": [
+      "ntty_install"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "EFLAGS",
+      "mutex_lock"
+    ],
+    "mentioned_file_paths": [
+      "lib/tls/i686/cmov/libc.so",
+      "net/mon.wlan0"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/devices/pci0000"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 7290,
+    "description_word_count": 747
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 3,
+    "lines_removed": 1,
+    "patch_size": 4,
+    "patch_types": [
+      "synchronization"
+    ],
+    "num_hunks": 3,
+    "hunk_functions": [
+      "ntty_activate",
+      "ntty_install"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/char/nozomi.c",
+    "filename": "nozomi.c",
+    "directory": "drivers/char",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "char",
+    "driver_subsystem": "char/nozomi.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_2_functions",
+      "proc_sys_paths_hint_subsystem"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "15908",
+      "version": "2.6.34-rc6",
+      "status": "found",
+      "path": "drivers/char/nozomi.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "15908",
+    "version": "2.6.34-rc6",
+    "ground_truth_file": "drivers/char/nozomi.c",
+    "trace_functions": [
+      "mutex_lock",
+      "ntty_write_room",
+      "ntty_write",
+      "tty_write_room",
+      "n_tty_poll",
+      "tty_poll",
+      "do_select",
+      "__pollwait",
+      "elv_rb_add",
+      "cfq_insert_request",
+      "vsnprintf",
+      "raw_pci_write",
+      "up",
+      "release_console_sem",
+      "__mem_cgroup_try_charge"
+    ],
+    "total_trace_functions": 35,
+    "function_locations": {
+      "mutex_lock": [
+        "fs/lockd/host.c",
+        "kernel/mutex.c",
+        "kernel/rtmutex.c",
+        "kernel/rtmutex-debug.c"
+      ],
+      "ntty_write_room": [
+        "drivers/char/nozomi.c"
+      ],
+      "ntty_write": [
+        "drivers/char/nozomi.c"
+      ],
+      "tty_write_room": [
+        "drivers/isdn/i4l/isdn_tty.c",
+        "net/bluetooth/rfcomm/tty.c",
+        "drivers/usb/class/cdc-acm.c",
+        "drivers/char/tty_ioctl.c",
+        "drivers/isdn/capi/capi.c",
+        "drivers/net/wan/pc300_tty.c",
+        "drivers/char/nozomi.c",
+        "drivers/s390/char/sclp_tty.c",
+        "drivers/staging/dream/smd/smd_tty.c",
+        "net/irda/ircomm/ircomm_tty.c"
+      ],
+      "n_tty_poll": [
+        "drivers/char/n_tty.c"
+      ],
+      "tty_poll": [
+        "drivers/char/n_tty.c",
+        "drivers/bluetooth/hci_ldisc.c",
+        "drivers/char/tty_io.c",
+        "drivers/char/n_hdlc.c",
+        "drivers/net/ppp_async.c"
+      ],
+      "do_select": [
+        "fs/select.c"
+      ],
+      "__pollwait": [
+        "fs/select.c"
+      ],
+      "elv_rb_add": [
+        "block/elevator.c"
+      ],
+      "cfq_insert_request": [
+        "block/cfq-iosched.c"
+      ]
+    },
+    "gt_found_via_functions": [
+      "ntty_write_room",
+      "ntty_write",
+      "tty_write_room"
+    ],
+    "other_candidate_files": [
+      "drivers/char/n_tty.c",
+      "kernel/rtmutex-debug.c",
+      "drivers/usb/class/cdc-acm.c",
+      "drivers/char/tty_ioctl.c",
+      "net/bluetooth/rfcomm/tty.c",
+      "fs/select.c",
+      "block/elevator.c",
+      "drivers/isdn/i4l/isdn_tty.c",
+      "kernel/rtmutex.c",
+      "drivers/isdn/capi/capi.c",
+      "fs/lockd/host.c",
+      "drivers/s390/char/sclp_tty.c",
+      "drivers/staging/dream/smd/smd_tty.c",
+      "drivers/net/ppp_async.c",
+      "drivers/bluetooth/hci_ldisc.c",
+      "drivers/net/wan/pc300_tty.c",
+      "block/cfq-iosched.c",
+      "drivers/char/tty_io.c",
+      "kernel/mutex.c",
+      "drivers/char/n_hdlc.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

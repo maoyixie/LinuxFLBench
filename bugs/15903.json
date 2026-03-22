@@ -1,0 +1,35 @@
+{
+  "id": "15903",
+  "title": "PNP resource assignment fails",
+  "description": "Pavel wrote:\n> i am playing with old PIII computer (HP Vectra VE) and ISA soundcards.\n> Soundcards are PNP(yamaha,opti,ess,...) and no PNP (multisound).\n> Machine\n> is old, but ACPI compliant - old BIOS.\n> \n> Computer booting OK. PNP0 devices allocate resources OK, but PNP1\n> devices (one ISA slot) not. PNP soundcard driver is not correctly\n> loaded\n> - soundcard device not created.\n\n> 2.6.33 kernel working without problem.",
+  "patch": [
+    "diff --git a/drivers/pnp/resource.c b/drivers/pnp/resource.c\nindex 2e54e6a..e3446ab 100644\n--- a/drivers/pnp/resource.c\n+++ b/drivers/pnp/resource.c\n@@ -211,6 +211,8 @@ int pnp_check_port(struct pnp_dev *dev, struct resource *res)\n \t\t\tif (tres->flags & IORESOURCE_IO) {\n \t\t\t\tif (cannot_compare(tres->flags))\n \t\t\t\t\tcontinue;\n+\t\t\t\tif (tres->flags & IORESOURCE_WINDOW)\n+\t\t\t\t\tcontinue;\n \t\t\t\ttport = &tres->start;\n \t\t\t\ttend = &tres->end;\n \t\t\t\tif (ranged_conflict(port, end, tport, tend))\n@@ -271,6 +273,8 @@ int pnp_check_mem(struct pnp_dev *dev, struct resource *res)\n \t\t\tif (tres->flags & IORESOURCE_MEM) {\n \t\t\t\tif (cannot_compare(tres->flags))\n \t\t\t\t\tcontinue;\n+\t\t\t\tif (tres->flags & IORESOURCE_WINDOW)\n+\t\t\t\t\tcontinue;\n \t\t\t\ttaddr = &tres->start;\n \t\t\t\ttend = &tres->end;\n \t\t\t\tif (ranged_conflict(addr, end, taddr, tend))\n\n\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "PNP",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Bjorn Helgaas",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-05-03 15:23 UTC by Bjorn Helgaas",
+  "Modified": "2010-05-20 03:05 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.34-rc6",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/pnp/resource.c"
+  ],
+  "methods": [
+    "pnp_check_port",
+    "pnp_check_mem"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "id": "4312",
+  "title": "tridentfb: flicker when disk I/O is happening",
+  "description": "Distribution: Debian/sarge\nHardware Environment: VIA Mini-ITX with onboard graphic\nlspci -v:\n0000:01:00.0 VGA compatible controller: Trident Microsystems CyberBlade/i1 (rev\n6a) (prog-if 00 [VGA])\n        Subsystem: Trident Microsystems CyberBlade/i1\n        Flags: bus master, 66MHz, medium devsel, latency 32, IRQ 11\n        Memory at e1800000 (32-bit, non-prefetchable) [size=8M]\n        Memory at e2000000 (32-bit, non-prefetchable) [size=128K]\n        Memory at e1000000 (32-bit, non-prefetchable) [size=8M]\n        Capabilities: [80] AGP version 2.0\n                Status: RQ=33 Iso- ArqSz=0 Cal=0 SBA+ ITACoh- GART64- HTrans-\n64bit- FW- AGP3- Rate=x1,x2,x4\n                Command: RQ=1 ArqSz=0 Cal=0 SBA- AGP- GART64- 64bit- FW-\nRate=<none>\n        Capabilities: [90] Power Management version 1\n                Flags: PMEClk- DSI+ D1+ D2+ AuxCurrent=0mA\nPME(D0-,D1-,D2-,D3hot-,D3cold-)\n                Status: D0 PME-Enable- DSel=0 DScale=0 PME-\n\nProblem Description:\nWhen there is disk I/O happening, the framebuffer has a little snow on the \nscreen.  Once I/O has finished, no garbage remains on screen.\n\nSteps to reproduce:\nboot with video=tridentfb (tried with and without noaccel).\nmodule via_agp is loaded with no special options, kernel command line contains\nagp_try_unsupported=1",
+  "patch": [
+    "drivers/video/tridentfb.c: needs update\nIndex: drivers/video/tridentfb.c\n===================================================================\n--- beed7ce23e1c31df16f16ac54a0db3cd6de583fe/drivers/video/tridentfb.c  (mode:100644)\n+++ uncommitted/drivers/video/tridentfb.c  (mode:100644)\n@@ -900,7 +900,7 @@\n \twrite3X4(DRAMControl, tmp);\t//both IO,linear enable\n \n \twrite3X4(InterfaceSel, read3X4(InterfaceSel) | 0x40);\n-\twrite3X4(Performance,0x20);\n+\twrite3X4(Performance,0x92);\n \twrite3X4(PCIReg,0x07);\t\t//MMIO & PCI read and write burst enable\n \n \t/* convert from picoseconds to MHz */\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Console/Framebuffers",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Antonino Daplas",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2005-03-08 10:49 UTC by Jochen Hein",
+  "Modified": "2005-08-31 01:13 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.11",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/video/tridentfb.c"
+  ],
+  "methods": [
+    "tridentfb_set_par"
+  ]
+}

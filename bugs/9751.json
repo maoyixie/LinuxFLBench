@@ -1,0 +1,34 @@
+{
+  "id": "9751",
+  "title": "conversion of denormal floats to double is wrong",
+  "description": "Latest working kernel version: none\nEarliest failing kernel version: tested on 2.6.18, but should not work anywhere\nDistribution: Debian\nHardware Environment: alphaev56, alphaev68\nSoftware Environment: mathemu=y\nProblem Description: conversion from denormal float to double is wrong\n\nSteps to reproduce:\n\nCompile with -O0 -mieee or -O2 -mieee:\n\n#include <stdio.h>\nfloat x = 1.0;\ndouble y;\n\nint g(float z)\n{\n  printf (\"%g\\n\", z);\n}\n\nint main()\n{\n  x *= (1.0f / 65536.0f);\n  x *= (1.0f / 65536.0f);\n  x *= (1.0f / 65536.0f);\n  x *= (1.0f / 65536.0f);\n  x *= (1.0f / 65536.0f);\n  x *= (1.0f / 65536.0f);\n  x *= (1.0f / 65536.0f);\n  x *= (1.0f / 65536.0f);\n  x *= (1.0f / 65536.0f);\n  x *= (1.0f / 32.0f);\n  g(x);\n  y = x;\n  g(y);\n}\n\nCorrect value should be:\n\n1.4013e-45\n1.4013e-45\n\nActual value is:\n\n2.65249e-315\n2.65249e-315\n\nor\n\n2.65249e-315\n0\n\nThe right value is 2-149, that is 1.4013e-45, but the alpha does not do it.  The architecture handbook says \"A trap handler can convert an S_ floating denormal value into the corresponding T_ floating finite value by adding 896 to the exponent and normalizing\", but here 896 is not added (math-emu should, at least on older alphas where it is relevant) and I get a denormal double, 2.65249e-315.\n\nActually both compiled programs are correct.  You get a zero if the denormal is casted back to float (which makes a zero, because it is way off the range of a float); you get 2.65249e-315 if the compiler performs some copy propagation and sees through the conversion (because if it was not for the errata, the two values should indeed have been equal).\n\nThe bug reproduces both on alphaev56 and on alphaev68 (where math-emu should not be relevant, or so I'm told), both with CONFIG_MATHEMU=y.",
+  "patch": [
+    "alpha: fix conversion from denormal float to double\n\nThe trap handler does properly update the fraction,\nbut not the exponent...\n\nThanks to Paolo Bonzini <bonzini@gnu.org> for the bug report\nand the testcase.\n\nSigned-off-by: Ivan Kokshaysky <ink@jurassic.park.msu.ru>\n---\n arch/alpha/math-emu/math.c |    2 +-\n 1 files changed, 1 insertions(+), 1 deletions(-)\n\ndiff --git a/arch/alpha/math-emu/math.c b/arch/alpha/math-emu/math.c\nindex ae79dd9..58c2669 100644\n--- a/arch/alpha/math-emu/math.c\n+++ b/arch/alpha/math-emu/math.c\n@@ -225,7 +225,7 @@ alpha_fp_emul (unsigned long pc)\n \t\t\t\tFP_UNPACK_SP(SB, &vb);\n \t\t\t\tDR_c = DB_c;\n \t\t\t\tDR_s = DB_s;\n-\t\t\t\tDR_e = DB_e;\n+\t\t\t\tDR_e = DB_e + (1024 - 128);\n \t\t\t\tDR_f = SB_f << (52 - 23);\n \t\t\t\tgoto pack_d;\n \t\t\t}\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Platform Specific/Hardware",
+  "Classification": "Unclassified",
+  "Component": "Alpha",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Richard Henderson",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-01-15 00:43 UTC by Paolo Bonzini",
+  "Modified": "2008-06-02 20:56 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.18",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/alpha/math-emu/math.c"
+  ],
+  "methods": [
+    "alpha_fp_emul"
+  ]
+}

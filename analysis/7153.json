@@ -1,0 +1,102 @@
+{
+  "id": "7153",
+  "title": "oops on ipmi_msghandler removal for non ipmi systems",
+  "kernel_version": "2.6.17",
+  "product": "Drivers",
+  "component": "Other",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/char/ipmi/ipmi_si_intf.c"
+    ],
+    "buggy_methods": [
+      "init_ipmi_si"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "path. The ipmi_si module"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 355,
+    "description_word_count": 61
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 0,
+    "patch_size": 1,
+    "patch_types": [
+      "error_handling",
+      "memory"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "init_ipmi_si"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/char/ipmi/ipmi_si_intf.c",
+    "filename": "ipmi_si_intf.c",
+    "directory": "drivers/char/ipmi",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "char",
+    "driver_subsystem": "char/ipmi",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [],
+    "strategies": []
+  },
+  "source_verification": [
+    {
+      "id": "7153",
+      "version": "2.6.17",
+      "status": "found",
+      "path": "drivers/char/ipmi/ipmi_si_intf.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "7153",
+    "title": "oops on ipmi_msghandler removal for non ipmi systems",
+    "ground_truth_file": "drivers/char/ipmi/ipmi_si_intf.c",
+    "ground_truth_subsystem": "drivers/char",
+    "ground_truth_methods": [
+      "init_ipmi_si"
+    ],
+    "product": "Drivers",
+    "component": "Other",
+    "best_strategy": "semantic_understanding_only",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "minimal_clues"
+    ],
+    "clue_details": {
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_semantic_understanding_only"
+}

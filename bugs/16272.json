@@ -1,0 +1,35 @@
+{
+  "id": "16272",
+  "title": "switching to 2.6.34 broke audio on toshiba satellite x205-s9800 using snd_hda_intel module",
+  "": "Show dependency tree",
+  "description": "I switched from 3.6.33 on both sabayon and archlinux distros and both suffer the same symptom of no audio.\n\nalsaconf yeilds:\nLoading driver...\n:: Saving ALSA Levels [BUSY]\n/usr/sbin/alsactl: save_state:1504: No soundcards found.. [DONE]\n:: Restoring ALSA Levels [BUSY]\n/usr/sbin/alsactl: load_state:1610: No soundcards found...... [FAIL]\nSetting default volumes...\namixer: Mixer attach default error: No such file or directory\n---------\nand if I try to force it by adding snd_hda_intel to modules I hang on boot.\nalso going to attach dmesg ........\nreinstalled 3.6.33 and problem is gone, went back to 3.6.34 and broken.\n\nafter no luck fixing it on archforum I was told to post it \"upstream\" so here it is.\n\nthanks for all of the work you do.\nlet me know if any more info is required.",
+  "patch": [
+    "From fbe618f216830f47b183858c3380d4767b1ad02f Mon Sep 17 00:00:00 2001\nFrom: Takashi Iwai <tiwai@suse.de>\nDate: Fri, 11 Jun 2010 11:24:58 +0200\nSubject: [PATCH] ALSA: hda - Don't check capture source mixer if no ADC is available\n\nWith multiple codec configurations, some codec might have no ADC, thus\nit keeps spec->adc_nids = NULL.  This causes an Oops in alc_build_controls().\n\nReference: kernel bug #16156\n\thttps://bugzilla.kernel.org/show_bug.cgi?id=16156\n\nCc: <stable@kernel.org>\nSigned-off-by: Takashi Iwai <tiwai@suse.de>\n---\n sound/pci/hda/patch_realtek.c |   22 ++++++++++++----------\n 1 files changed, 12 insertions(+), 10 deletions(-)\n\ndiff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c\nindex fc767b6..f6cd8ed 100644\n--- a/sound/pci/hda/patch_realtek.c\n+++ b/sound/pci/hda/patch_realtek.c\n@@ -2619,16 +2619,18 @@ static int alc_build_controls(struct hda_codec *codec)\n \t}\n \n \t/* assign Capture Source enums to NID */\n-\tkctl = snd_hda_find_mixer_ctl(codec, \"Capture Source\");\n-\tif (!kctl)\n-\t\tkctl = snd_hda_find_mixer_ctl(codec, \"Input Source\");\n-\tfor (i = 0; kctl && i < kctl->count; i++) {\n-\t\thda_nid_t *nids = spec->capsrc_nids;\n-\t\tif (!nids)\n-\t\t\tnids = spec->adc_nids;\n-\t\terr = snd_hda_add_nid(codec, kctl, i, nids[i]);\n-\t\tif (err < 0)\n-\t\t\treturn err;\n+\tif (spec->capsrc_nids || spec->adc_nids) {\n+\t\tkctl = snd_hda_find_mixer_ctl(codec, \"Capture Source\");\n+\t\tif (!kctl)\n+\t\t\tkctl = snd_hda_find_mixer_ctl(codec, \"Input Source\");\n+\t\tfor (i = 0; kctl && i < kctl->count; i++) {\n+\t\t\thda_nid_t *nids = spec->capsrc_nids;\n+\t\t\tif (!nids)\n+\t\t\t\tnids = spec->adc_nids;\n+\t\t\terr = snd_hda_add_nid(codec, kctl, i, nids[i]);\n+\t\t\tif (err < 0)\n+\t\t\t\treturn err;\n+\t\t}\n \t}\n \tif (spec->cap_mixer) {\n \t\tconst char *kname = kctl ? kctl->id.name : NULL;\n-- \n1.7.0.2\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Sound",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "Jaroslav Kysela",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "15310",
+  "Reported": "2010-06-22 21:48 UTC by wiggyxoxox",
+  "Modified": "2010-09-10 10:05 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.34",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "sound/pci/hda/patch_realtek.c"
+  ],
+  "methods": [
+    "alc_build_controls"
+  ]
+}

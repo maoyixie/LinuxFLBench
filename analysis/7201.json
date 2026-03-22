@@ -1,0 +1,203 @@
+{
+  "id": "7201",
+  "title": "Connecting Nokia E70 via USB - unregistering non-registered device?",
+  "kernel_version": "2.6.18",
+  "product": "Drivers",
+  "component": "USB",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/usb/net/rndis_host.c"
+    ],
+    "buggy_methods": [
+      "rndis_bind"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "usb_register_driver",
+      "driver_attach",
+      "usb_probe_interface",
+      "usbnet_probe",
+      "bus_for_each_dev",
+      "sys_init_module",
+      "__driver_attach",
+      "syscall_call",
+      "driver_probe_device",
+      "bus_add_driver",
+      "Not"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3288,
+    "description_word_count": 417
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 14,
+    "lines_removed": 9,
+    "patch_size": 23,
+    "patch_types": [
+      "error_handling",
+      "memory"
+    ],
+    "num_hunks": 6,
+    "hunk_functions": [
+      "dev_err",
+      "if"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/usb/net/rndis_host.c",
+    "filename": "rndis_host.c",
+    "directory": "drivers/usb/net",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "usb",
+    "driver_subsystem": "usb/net",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_11_functions",
+      "component_known:USB"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "7201",
+      "version": "2.6.18",
+      "status": "found",
+      "path": "drivers/usb/net/rndis_host.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "7201",
+    "version": "2.6.18",
+    "ground_truth_file": "drivers/usb/net/rndis_host.c",
+    "trace_functions": [
+      "usbnet_probe",
+      "__driver_attach",
+      "usb_probe_interface",
+      "driver_probe_device",
+      "bus_for_each_dev",
+      "driver_attach",
+      "bus_add_driver",
+      "usb_register_driver",
+      "sys_init_module",
+      "syscall_call",
+      "Not"
+    ],
+    "total_trace_functions": 11,
+    "function_locations": {
+      "usbnet_probe": [],
+      "__driver_attach": [
+        "drivers/base/dd.c"
+      ],
+      "usb_probe_interface": [
+        "drivers/usb/core/driver.c"
+      ],
+      "driver_probe_device": [
+        "drivers/base/dd.c"
+      ],
+      "bus_for_each_dev": [
+        "drivers/base/bus.c"
+      ],
+      "driver_attach": [
+        "drivers/base/dd.c",
+        "drivers/acpi/scan.c"
+      ],
+      "bus_add_driver": [
+        "drivers/base/bus.c"
+      ],
+      "usb_register_driver": [
+        "drivers/usb/core/driver.c"
+      ],
+      "sys_init_module": [],
+      "syscall_call": []
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "drivers/usb/core/driver.c",
+      "drivers/base/bus.c",
+      "drivers/base/dd.c",
+      "drivers/acpi/scan.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "7201",
+    "title": "Connecting Nokia E70 via USB - unregistering non-registered device?",
+    "ground_truth_file": "drivers/usb/net/rndis_host.c",
+    "ground_truth_methods": [
+      "rndis_bind"
+    ],
+    "ground_truth_subsystem": "drivers/usb",
+    "trace_functions_top8": [
+      "usbnet_probe",
+      "__driver_attach",
+      "usb_probe_interface",
+      "driver_probe_device",
+      "bus_for_each_dev",
+      "driver_attach",
+      "bus_add_driver",
+      "usb_register_driver"
+    ],
+    "trace_function_locations": {
+      "usbnet_probe": [],
+      "__driver_attach": [
+        "drivers/base/dd.c"
+      ],
+      "usb_probe_interface": [
+        "drivers/usb/core/driver.c"
+      ],
+      "driver_probe_device": [
+        "drivers/base/dd.c"
+      ],
+      "bus_for_each_dev": [
+        "drivers/base/bus.c"
+      ],
+      "driver_attach": [
+        "drivers/base/dd.c"
+      ],
+      "bus_add_driver": [
+        "drivers/base/bus.c"
+      ],
+      "usb_register_driver": [
+        "drivers/usb/core/driver.c"
+      ]
+    },
+    "trace_subsystems": [
+      "drivers/usb",
+      "drivers/base"
+    ],
+    "mismatch_type": "same_subsystem_different_file",
+    "gt_calls_trace_func": true,
+    "gt_method_in_trace": false,
+    "product": "Drivers",
+    "component": "USB"
+  },
+  "overall_category": "C_trace_misleads"
+}

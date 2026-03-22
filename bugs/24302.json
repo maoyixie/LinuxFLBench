@@ -1,0 +1,35 @@
+{
+  "id": "24302",
+  "title": "Kernel crashes when repeatedly trying to mount nfs share that is failing",
+  "description": "ARCH: x86_64 (not tested on i386)\n\nTestcase:\n\nOn the server side, configure an export that will be denied to mount (used sec=krb5 as that gives a permission denied for me)\n\n--- server /etc/exports ---\n/foo *(rw,krb5)\n\nOn the client side, autofs gets configured to try to automount server:/foo\n\n--- client /etc/auto.master ---\n/auto /etc/auto.auto\n\n--- client /etc/auto.auto ---\nfoo -tcp server:/foo\n\n[optional]\nStop the autofs service and start the automounter in the foreground (automount -d -f) to see the permission denied message.\n\nCreate a symlink pointing to the autofs:\nln -s /auto/foo foo\n\nThe following is done in a loop as the crash sometimes takes longer than other times:\n\nwhile true; do ls foo/; sleep 1; done\n\nIt seems to take longer on the newest kernel, but eventually there will be a panic.",
+  "patch": [
+    "From dcc0a9d5d9490680ea9faa7b90de3224c3aba7e3 Mon Sep 17 00:00:00 2001\nFrom: Chuck Lever <chuck.lever@oracle.com>\nDate: Wed, 8 Dec 2010 19:07:12 -0500\nSubject: [PATCH] NFS: Fix panic after nfs_umount()\n\nAfter a few unsuccessful NFS mount attempts in which the client and\nserver cannot agree on an authentication flavor both support, the\nclient panics.  nfs_umount() is invoked in the kernel in this case.\n\nTurns out this particular UMNT RPC invocation causes the RPC client to\nwrite off the end of the rpc_clnt's iostat array.  This is because the\nmount client's nrprocs field is initialized with the count of defined\nprocedures (two: MNT and UMNT), rather than the size of the client's\nproc array (four).\n\nThe fix is to use the same initialization technique used by most other\nupper layer clients in the kernel.\n\nIntroduced by commit 0b524123, which failed to update nrprocs when it\nadded support for UMNT.\n\nBugLink: https://bugzilla.kernel.org/show_bug.cgi?id=24302\nBugLink: http://bugs.launchpad.net/bugs/683938\n\nReported-by: Stefan Bader <stefan.bader@canonical.com>\nTested-by: Stefan Bader <stefan.bader@canonical.com>\nCC: stable@kernel.org # >= 2.6.32\nSigned-off-by: Chuck Lever <chuck.lever@oracle.com>\n---\n fs/nfs/mount_clnt.c |    4 ++--\n 1 files changed, 2 insertions(+), 2 deletions(-)\n\ndiff --git a/fs/nfs/mount_clnt.c b/fs/nfs/mount_clnt.c\nindex 59047f8..50552c5 100644\n--- a/fs/nfs/mount_clnt.c\n+++ b/fs/nfs/mount_clnt.c\n@@ -503,13 +503,13 @@ static struct rpc_procinfo mnt3_procedures[] = {\n \n static struct rpc_version mnt_version1 = {\n \t.number\t\t= 1,\n-\t.nrprocs\t= 2,\n+\t.nrprocs\t= ARRAY_SIZE(mnt_procedures),\n \t.procs\t\t= mnt_procedures,\n };\n \n static struct rpc_version mnt_version3 = {\n \t.number\t\t= 3,\n-\t.nrprocs\t= 2,\n+\t.nrprocs\t= ARRAY_SIZE(mnt_procedures),\n \t.procs\t\t= mnt3_procedures,\n };\n \n-- \n1.7.0.4\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "NFS",
+  "Hardware": "x86-64 Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Trond Myklebust",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-12-03 20:20 UTC by Stefan Bader",
+  "Modified": "2011-01-24 12:51 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.32",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/nfs/mount_clnt.c"
+  ],
+  "methods": [
+    "rpc_version mnt_version1",
+    "rpc_version mnt_version3"
+  ]
+}

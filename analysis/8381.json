@@ -1,0 +1,117 @@
+{
+  "id": "8381",
+  "title": "(net forcedeth) doesn't wol on suspend",
+  "kernel_version": "2.6.21",
+  "product": "Drivers",
+  "component": "Network",
+  "hardware": "i386 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "device_not_working",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/forcedeth.c"
+    ],
+    "buggy_methods": [
+      "nv_suspend",
+      "fe_priv"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/power/state"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 5887,
+    "description_word_count": 654
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 45,
+    "lines_removed": 13,
+    "patch_size": 58,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "nv_suspend"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/forcedeth.c",
+    "filename": "forcedeth.c",
+    "directory": "drivers/net",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/forcedeth.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Network"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "8381",
+      "version": "2.6.21",
+      "status": "found",
+      "path": "drivers/net/forcedeth.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "8381",
+    "title": "(net forcedeth) doesn't wol on suspend",
+    "ground_truth_file": "drivers/net/forcedeth.c",
+    "ground_truth_subsystem": "drivers/net",
+    "ground_truth_methods": [
+      "nv_suspend",
+      "fe_priv"
+    ],
+    "product": "Drivers",
+    "component": "Network",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/sys/power/state"
+      ],
+      "component": "Network",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "10507",
+  "title": "Kernel fails to properly identify SATA drives",
+  "description": "Latest working kernel version: 2.6.22.9 and 2.6.23.17\n\nEarliest failing kernel version: 2.6.24\n\nDistribution: Ubuntu x86_64\n\nHardware Environment: Asus M2R32-MVP 580X SB600 (AM2)\n                      AMD X2 4000+\n                      4GB DDR2\n                      SATAII HDD\n                      SATA DVD R/W\n\nSoftware Environment: Ubuntu Gutsy w/ distribution kernel (2.6.22-14)\n\nProblem Description: All 2.6.24 and 2.6.25 kernels fail to boot properly, with the following error looping indefinitely:\n\nata1.00: failed to IDENTIFY (I/O error, err_mask=0x4)\nata2.00: failed to IDENTIFY (I/O error, err_mask=0x4)\n\nThe above correspond to my two SATA physical drives.  All 2.6.22 and 2.6.23 kernels work perfectly on this same machine.  Was there some type of change starting with the 2.6.24 kernels that is rendering my PC inoperable?  \nI have tried looking for similar reports on this, and so far I have only found one entry on the mailing list that deals with the same issue.  The problem was apparently solved by a BIOS flash to the latest revision, which I'm reluctant to do since the newest BIOS from ASUS has several bugs that renders my particular system unusable.\n\n\nSteps to reproduce:\nUsing the 0906 BIOS revision for the M2R32-MVP motherboard and SATA drives.",
+  "patch": [
+    "---\n drivers/ata/ahci.c |    2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n\nIndex: tree0/drivers/ata/ahci.c\n===================================================================\n--- tree0.orig/drivers/ata/ahci.c\n+++ tree0/drivers/ata/ahci.c\n@@ -433,7 +433,7 @@ static const struct ata_port_info ahci_p\n \t/* board_ahci_sb600 */\n \t{\n \t\tAHCI_HFLAGS\t(AHCI_HFLAG_IGN_SERR_INTERNAL |\n-\t\t\t\t AHCI_HFLAG_32BIT_ONLY |\n+\t\t\t\t AHCI_HFLAG_32BIT_ONLY | AHCI_HFLAG_NO_MSI |\n \t\t\t\t AHCI_HFLAG_SECT255 | AHCI_HFLAG_NO_PMP),\n \t\t.flags\t\t= AHCI_FLAG_COMMON,\n \t\t.link_flags\t= AHCI_LFLAG_COMMON,\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "IO/Storage",
+  "Classification": "Unclassified",
+  "Component": "Serial ATA",
+  "Hardware": "All Linux",
+  "Importance": "P1 blocking",
+  "Assignee": "Tejun Heo",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-04-22 18:38 UTC by Melcar",
+  "Modified": "2008-05-23 14:30 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.24",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/ata/ahci.c"
+  ],
+  "methods": [
+    "ahci_port_info"
+  ]
+}

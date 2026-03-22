@@ -1,0 +1,105 @@
+{
+  "id": "13621",
+  "title": "xfs hangs with assertion failed",
+  "kernel_version": "2.6.30",
+  "product": "File System",
+  "component": "XFS",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "fs/xfs/xfs_log.c"
+    ],
+    "buggy_methods": [
+      "xlog_state_want_sync"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 307,
+    "description_word_count": 49
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "fs/xfs/xfs_log.c",
+    "filename": "xfs_log.c",
+    "directory": "fs/xfs",
+    "depth": 3,
+    "top_level": "fs",
+    "second_level": "xfs",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:XFS",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13621",
+      "version": "2.6.30",
+      "status": "found",
+      "path": "fs/xfs/xfs_log.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "13621",
+    "title": "xfs hangs with assertion failed",
+    "ground_truth_file": "fs/xfs/xfs_log.c",
+    "ground_truth_subsystem": "fs/xfs",
+    "ground_truth_methods": [
+      "xlog_state_want_sync"
+    ],
+    "product": "File System",
+    "component": "XFS",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "locking_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "XFS",
+      "product": "File System"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

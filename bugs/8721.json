@@ -1,0 +1,34 @@
+{
+  "id": "8721",
+  "title": "trace dump: \"kobject_add failed for audio with -EEXIST, ...\"",
+  "description": "Most recent kernel where this bug did not occur: dunno - jumped from 2.4.34.5 to 2.6.21.5\nDistribution: Debian 3.1\nHardware Environment: pc\nSoftware Environment: Linux 2.6.21.5 + patch suspend2-2.2.10\nProblem Description: trace dump loading module snd-pcm-oss\n\nSteps to reproduce: load the module\n\nhere's the dmesg dump:\n\nSoftware Watchdog Timer: 0.07 initialized. soft_noboot=0 soft_margin=60 sec (nowayout= 0)\nDevice driver i2c-9191 lacks bus and class support for being resumed.\nPCI driver via686a lacks driver specific resume support.\ninput: Power Button (FF) as /class/input/input3\nACPI: Power Button (FF) [PWRF]\ninput: Power Button (CM) as /class/input/input4\nACPI: Power Button (CM) [PWRB]\ni2c /dev entries driver\nDevice driver i2c-0 lacks bus and class support for being resumed.\nPCI driver vt596_smbus lacks driver specific resume support.\nit87: Found IT8712F chip at 0x290, revision 5\nCapability LSM initialized\nkobject_add failed for audio with -EEXIST, don't try to register things with the same name in the same directory.\n [<c01f5016>] kobject_shadow_add+0x86/0x130\n [<c027001d>] device_add+0x9d/0x570\n [<c027086e>] device_create+0x8e/0xc0\n [<f881c1ac>] sound_insert_unit+0xcc/0x110 [soundcore]\n [<f881c2e9>] register_sound_special_device+0x79/0x140 [soundcore]\n [<f88e332d>] snd_register_oss_device+0xed/0x180 [snd]\n [<f8b6d8ef>] register_oss_dsp+0x5f/0xa0 [snd_pcm_oss]\n [<c01f47eb>] idr_get_new_above_int+0x6b/0x130\n [<c01f48ea>] idr_get_new+0xa/0x30\n [<c01a988d>] get_inode_number+0x3d/0x80\n [<c01aa0c2>] create_proc_entry+0x72/0xb0\n [<f88e0595>] snd_info_register+0x85/0xb0 [snd]\n [<f8b6d838>] snd_pcm_oss_proc_init+0x78/0x90 [snd_pcm_oss]\n [<f8b6d9b9>] snd_pcm_oss_register_minor+0x89/0x100 [snd_pcm_oss]\n [<c013f0c2>] load_module+0xa82/0xcf0\n [<c03337c4>] __mutex_lock_slowpath+0x174/0x220\n [<f892d6f7>] snd_pcm_notify+0xa7/0xc0 [snd_pcm]\n [<f8874030>] alsa_pcm_oss_init+0x30/0x82 [snd_pcm_oss]\n [<c013f425>] sys_init_module+0xd5/0x140\n [<c01041b0>] syscall_call+0x7/0xb\n =======================\nusbcore: registered new interface driver usbkbd\nUSB driver usbkbd lacks resume support.\ndrivers/usb/input/usbkbd.c: :USB HID Boot Protocol keyboard driver\nusbcore: registered new interface driver usbmouse\n\nlspci:\n0000:00:00.0 Host bridge: VIA Technologies, Inc. VT8377 [KT400/KT600 AGP] Host Bridge (rev 80)\n0000:00:01.0 PCI bridge: VIA Technologies, Inc. VT8237 PCI Bridge\n0000:00:10.0 USB Controller: VIA Technologies, Inc. VT82xxxxx UHCI USB 1.1 Controller (rev 80)\n0000:00:10.1 USB Controller: VIA Technologies, Inc. VT82xxxxx UHCI USB 1.1 Controller (rev 80)\n0000:00:10.2 USB Controller: VIA Technologies, Inc. VT82xxxxx UHCI USB 1.1 Controller (rev 80)\n0000:00:10.3 USB Controller: VIA Technologies, Inc. USB 2.0 (rev 82)\n0000:00:11.0 ISA bridge: VIA Technologies, Inc. VT8235 ISA Bridge\n0000:00:11.1 IDE interface: VIA Technologies, Inc. VT82C586A/B/VT82C686/A/B/VT823x/A/C PIPC Bus Master IDE (rev 06)\n0000:00:11.5 Multimedia audio controller: VIA Technologies, Inc. VT8233/A/8235/8237 AC97 Audio Controller (rev 50)\n0000:00:12.0 Ethernet controller: VIA Technologies, Inc. VT6102 [Rhine-II] (rev 74)\n0000:01:00.0 VGA compatible controller: ATI Technologies Inc RV280 [Radeon 9200 SE] (rev 01)\n0000:01:00.1 Display controller: ATI Technologies Inc RV280 [Radeon 9200 SE] (Secondary) (rev 01)\n\ndmidecode:\nBIOS Information\n        Vendor: Award Software, Inc.\n        Version: ASUS A7V8X-X ACPI BIOS Revision 1008\n        Release Date: 12/29/2003\n\ngot same trace on another pc with same MB, so I think hw failure can be reasonably excluded.\n\nthanks\n--\npaolo",
+  "patch": [
+    "--- sound/sound_core.c.orig\t2007-09-04 23:50:42.000000000 +0200\n+++ sound/sound_core.c\t2007-09-05 02:03:38.000000000 +0200\n@@ -166,9 +166,9 @@\n \tif (r < 0)\n \t\tgoto fail;\n \telse if (r < SOUND_STEP)\n-\t\tsprintf(s->name, \"sound/%s\", name);\n+\t\tsprintf(s->name, \"%s\", name);\n \telse\n-\t\tsprintf(s->name, \"sound/%s%d\", name, r / SOUND_STEP);\n+\t\tsprintf(s->name, \"%s%d\", name, r / SOUND_STEP);\n \n \tdevice_create(sound_class, dev, MKDEV(SOUND_MAJOR, s->unit_minor),\n \t\t      s->name+6);\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Sound",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Jaroslav Kysela",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-07-07 07:58 UTC by paolo",
+  "Modified": "2009-03-23 11:14 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.21",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "sound/sound_core.c"
+  ],
+  "methods": [
+    "sound_insert_unit"
+  ]
+}

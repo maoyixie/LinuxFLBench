@@ -1,0 +1,34 @@
+{
+  "id": "9133",
+  "title": "aacraid driver fails with Dell PowerEdge Expandable RAID Controller 3/Di",
+  "description": "Most recent kernel where this bug did not occur: 2.6.20.4 (see description)\nDistribution: PLD Linux Distribution 2.0 (Ac)\n\nHardware Environment:\nDell PowerEdge 1650 with Dell PowerEdge Expandable RAID Controller 3/Di (rev 01), 2 disks, mirror, PCI ID 1028:000a\n\nProblem Description:\n\nSystem does not boot at all using aacraid SCSI driver with Dell PERC 3/Di controller. Machine is currently running kernel 2.6.20.4 and it works perfectly. Few days ago I was trying upgrade to 2.6.22.9 and system failed to boot.\n\nDriver correctly detects controller and then following messages are displayed on console:\n\nscsi 0:0:0:0 Direct-Access DELL mirror V1.0 PQ: 0 ANSI: 2\nAAC:AAC received an unrecognized command [601]\naacraid: Host adapter abort request (0,1,0,0)\naacraid: Host adapter abort request (0,1,0,0)\naacraid: Host adapter reset request. SCSI hang ?\nscsi 0:1:0:0 scsi: Device offlined - not ready after error recovery\n\n... and so on for every scsi id and scsi host (0:1:1:0, 0:1:2:0, ... , 0:2:15:0). Then system fails with kernel panic: unable to mount root filesystem which is obvious.\n\nI wasn't trying to build 2.6.20.x kernel series newer than .4. I've tried 2.6.21.4 and 2.6.22.5 and they failed same way 2.6.22.9 did.\n\nSteps to reproduce: try to boot with root fs on machine with Dell PERC 3/Di.",
+  "patch": [
+    "diff -ru a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c\n--- a/drivers/scsi/aacraid/aachba.c\t2007-10-10 12:19:01.535349381 -0400\n+++ b/drivers/scsi/aacraid/aachba.c\t2007-10-10 12:19:57.353314177 -0400\n@@ -1190,6 +1190,15 @@\n \t\t\t\t  (fib_callback) aac_srb_callback, (void *) cmd);\n }\n \n+static int aac_scsi_32_64(struct fib * fib, struct scsi_cmnd * cmd)\n+{\n+\tif ((sizeof(dma_addr_t) > 4) &&\n+\t (num_physpages > (0xFFFFFFFFULL >> PAGE_SHIFT)) &&\n+\t (fib->dev->adapter_info.options & AAC_OPT_SGMAP_HOST64))\n+\t\treturn FAILED;\n+\treturn aac_scsi_32(fib, cmd);\n+}\n+\n int aac_get_adapter_info(struct aac_dev* dev)\n {\n \tstruct fib* fibptr;\n@@ -1376,7 +1385,9 @@\n \t * interface.\n \t */\n \tdev->a_ops.adapter_scsi = (dev->dac_support)\n-\t\t\t\t? aac_scsi_64\n+\t  ? ((aac_get_driver_ident(dev->cardtype)->quirks & AAC_QUIRK_31BIT)\n+\t\t\t\t? aac_scsi_32_64\n+\t\t\t\t: aac_scsi_64)\n \t\t\t\t: aac_scsi_32;\n \tif (dev->raw_io_interface) {\n \t\tdev->a_ops.adapter_bounds = (dev->raw_io_64)\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "SCSI Drivers",
+  "Classification": "Unclassified",
+  "Component": "AACRAID",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "scsi_drivers-aacraid",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-10-08 10:14 UTC by Marcin Krol",
+  "Modified": "2009-03-24 09:19 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.22",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/scsi/aacraid/aachba.c"
+  ],
+  "methods": [
+    "aac_get_adapter_info"
+  ]
+}

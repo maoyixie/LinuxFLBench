@@ -1,0 +1,34 @@
+{
+  "id": "7306",
+  "title": "Yenta-socket causes oops on insertion of any PCMCIA card",
+  "description": "Most recent kernel where this bug did not occur: 2.6.12\nDistribution: Gentoo 2006.1\nHardware Environment: Apple PowerBook G3 (Lombard)\nSoftware Environment: Gentoo Linux 2006.1 (GCC 4.1.1)\nProblem Description: Machine panics with \"Oops: ...machine check...\" message on insertion of (also if card \nis already in slot on boot) any PCMCIA card with Yenta-socket driver, either as module, or compiled in.  \nFailure appears to be caused by pcmcia_read_cis_mem call according to stacktrace.\n\nSteps to reproduce: Compile yenta-socket support either into kernel or as module and insert PCMCIA card.",
+  "patch": [
+    "Index: linux-work/arch/powerpc/kernel/pci-common.c\n===================================================================\n--- linux-work.orig/arch/powerpc/kernel/pci-common.c\t2008-07-31 14:45:20.000000000 +1000\n+++ linux-work/arch/powerpc/kernel/pci-common.c\t2008-07-31 14:57:31.000000000 +1000\n@@ -650,11 +650,18 @@ void __devinit pci_process_bridge_OF_ran\n \t\t}\n \t}\n \n-\t/* Out of paranoia, let's put the ISA hole last if any */\n-\tif (isa_hole >= 0 && memno > 0 && isa_hole != (memno-1)) {\n-\t\tstruct resource tmp = hose->mem_resources[isa_hole];\n-\t\those->mem_resources[isa_hole] = hose->mem_resources[memno-1];\n-\t\those->mem_resources[memno-1] = tmp;\n+\t/* If there's an ISA hole and the pci_mem_offset is -not- matching\n+\t * the ISA hole offset, then we need to remove the ISA hole from\n+\t * the resource list for that brige\n+\t */\n+\tif (isa_hole >= 0 && hose->pci_mem_offset != isa_mb) {\n+\t\tunsigned int next = isa_hole + 1;\n+\t\tprintk(KERN_INFO \" Removing ISA hole at 0x%016llx\\n\", isa_mb);\n+\t\tif (next < memno)\n+\t\t\tmemmove(&hose->mem_resources[isa_hole],\n+\t\t\t\t&hose->mem_resources[next],\n+\t\t\t\tsizeof(struct resource) * (memno - next));\n+\t\those->mem_resources[--memno].flags = 0;\n \t}\n }\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "PCMCIA",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 high",
+  "Assignee": "Jon Sharp",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-10-11 07:17 UTC by Jon Sharp",
+  "Modified": "2009-03-18 08:50 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.26",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/powerpc/kernel/pci-common.c"
+  ],
+  "methods": [
+    "pci_process_bridge_OF_ranges"
+  ]
+}

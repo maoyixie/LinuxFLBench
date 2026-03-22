@@ -1,0 +1,34 @@
+{
+  "id": "101521",
+  "title": "iwlwifi: WARNING when setting Tx power with WEXT while in RFKILL - MWG100249491",
+  "description": "Created attachment 182661 [details]\nlspci -vvvx\n\nI am testing vanilla linux-4.1.2 kernel on Dell Vostro 3550 laptop with A12 BIOS. During cold boot I received:\n\n[   20.114785] r8169 0000:05:00.0: Direct firmware load for rtl_nic/rtl8168e-2.fw failed with error -2\n[   20.114795] r8169 0000:05:00.0 enp5s0: unable to load firmware patch rtl_nic/rtl8168e-2.fw (-2)\n[   20.138835] r8169 0000:05:00.0 enp5s0: link down\n[   20.493918] ------------[ cut here ]------------\n[   20.493928] WARNING: CPU: 2 PID: 3162 at net/mac80211/driver-ops.h:12 ieee80211_bss_info_change_notify+0x1e2/0x1f0()\n[   20.493930] wlp9s0:  Failed check-sdata-in-driver check, flags: 0x0\n[   20.493931] Modules linked in: fuse x86_pkg_temp_thermal intel_powerclamp kvm_intel kvm ums_realtek uas iwldvm usb_storage iwlwifi dell_smo8800\n[   20.493942] CPU: 2 PID: 3162 Comm: iwconfig Not tainted 4.1.2-default-pciehp #2\n[   20.493943] Hardware name: Dell Inc. Vostro 3550/, BIOS A12 02/18/2014\n[   20.493945]  ffffffff81dadc75 ffff88040aff7b68 ffffffff819c6a7d ffffffff81128822\n[   20.493947]  ffff88040aff7bb8 ffff88040aff7ba8 ffffffff810d2f05 0000000000000000\n[   20.493950]  0000000000040000 ffff8800d97089e0 ffff88040ced4a00 ffff8800d9708460\n[   20.493952] Call Trace:\n[   20.493957]  [<ffffffff819c6a7d>] dump_stack+0x45/0x57\n[   20.493960]  [<ffffffff81128822>] ? console_unlock+0x282/0x4a0\n[   20.493963]  [<ffffffff810d2f05>] warn_slowpath_common+0x85/0xc0\n[   20.493965]  [<ffffffff810d2f81>] warn_slowpath_fmt+0x41/0x50\n[   20.493967]  [<ffffffff8195b1d2>] ieee80211_bss_info_change_notify+0x1e2/0x1f0\n[   20.493970]  [<ffffffff81974afd>] ieee80211_recalc_txpower+0x2d/0x40\n[   20.493973]  [<ffffffff8197bab7>] ieee80211_set_tx_power+0x47/0x1a0\n[   20.493975]  [<ffffffff81955bea>] cfg80211_wext_siwtxpower+0xaa/0x1d0\n[   20.493977]  [<ffffffff81958b9f>] ioctl_standard_call+0x4f/0xe0\n[   20.493979]  [<ffffffff81958b50>] ? ioctl_standard_iw_point+0x3a0/0x3a0\n[   20.493981]  [<ffffffff8195873d>] wireless_process_ioctl.constprop.9+0x8d/0x100\n[   20.493983]  [<ffffffff81958ddd>] wext_handle_ioctl+0x5d/0xb0\n[   20.493985]  [<ffffffff81806fd9>] dev_ioctl+0x339/0x6f0\n[   20.493990]  [<ffffffff817ce2a2>] sock_ioctl+0x142/0x2e0\n[   20.493993]  [<ffffffff81210968>] do_vfs_ioctl+0x2f8/0x530\n[   20.493996]  [<ffffffff8121c4a4>] ? __fget_light+0x64/0x90\n[   20.493998]  [<ffffffff81210bdc>] SyS_ioctl+0x3c/0x80\n[   20.494001]  [<ffffffff819d279b>] system_call_fastpath+0x16/0x73\n[   20.494002] ---[ end trace 0c521a819f5fe0d4 ]---\n[   21.784629] r8169 0000:05:00.0 enp5s0: link up\n\n\n05:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 06)\n09:00.0 Network controller: Intel Corporation Centrino Wireless-N 1030 [Rainbow Peak] (rev 34)\n\n\n05:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 06)\n        Subsystem: Dell RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller\n        Flags: bus master, fast devsel, latency 0, IRQ 30\n        I/O ports at e000 [size=256]\n        Memory at f1104000 (64-bit, prefetchable) [size=4K]\n        Memory at f1100000 (64-bit, prefetchable) [size=16K]\n        Capabilities: [40] Power Management version 3\n        Capabilities: [50] MSI: Enable+ Count=1/1 Maskable- 64bit+\n        Capabilities: [70] Express Endpoint, MSI 01\n        Capabilities: [b0] MSI-X: Enable- Count=4 Masked-\n        Capabilities: [d0] Vital Product Data\n        Capabilities: [100] Advanced Error Reporting\n        Capabilities: [140] Virtual Channel\n        Capabilities: [160] Device Serial Number 01-00-00-00-68-4c-e0-00\n        Kernel driver in use: r8169\n\n09:00.0 Network controller: Intel Corporation Centrino Wireless-N 1030 [Rainbow Peak] (rev 34)\n        Subsystem: Intel Corporation Centrino Wireless-N 1030 BGN\n        Flags: bus master, fast devsel, latency 0, IRQ 42\n        Memory at f7e00000 (64-bit, non-prefetchable) [size=8K]\n        Capabilities: [c8] Power Management version 3\n        Capabilities: [d0] MSI: Enable+ Count=1/1 Maskable- 64bit+\n        Capabilities: [e0] Express Endpoint, MSI 00\n        Capabilities: [100] Advanced Error Reporting\n        Capabilities: [140] Device Serial Number 4c-80-93-ff-ff-15-e6-c7\n        Kernel driver in use: iwlwifi\n        Kernel modules: iwlwifi",
+  "patch": [
+    "From ac99d0dac74970d97dbfc0a6d640162179b20795 Mon Sep 17 00:00:00 2001\nFrom: Emmanuel Grumbach <emmanuel.grumbach@intel.com>\nDate: Mon, 2 Nov 2015 14:01:35 +0200\nSubject: [PATCH] mac80211: ensure we don't update tx power on a non-running\n sdata\n\nWe can't update the Tx power on the device unless it is\nrunning.\n\ntype=bugfix\nbug=cq:MWG100249491\nfixes=unknown\n\nChange-Id: I42a1a4785053f5d70b5174bb80aef3ac9e5231fb\nSigned-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>\n---\nI think it fixes:\ncommit db82d8a966ded064bd4cf0e1fcca13442f50d0ae\nAuthor: Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>\nDate:   Wed Jan 14 12:55:08 2015 +0100\n    mac80211: enable TPC through mac80211 stack\nBut I am not sure\n---\n net/mac80211/iface.c | 3 ++-\n 1 file changed, 2 insertions(+), 1 deletion(-)\n\ndiff --git a/net/mac80211/iface.c b/net/mac80211/iface.c\nindex c864fd5..dc469f3 100644\n--- a/net/mac80211/iface.c\n+++ b/net/mac80211/iface.c\n@@ -77,7 +77,8 @@ bool __ieee80211_recalc_txpower(struct ieee80211_sub_if_data *sdata)\n void ieee80211_recalc_txpower(struct ieee80211_sub_if_data *sdata,\n \t\t\t      bool update_bss)\n {\n-\tif (__ieee80211_recalc_txpower(sdata) || update_bss)\n+\tif (__ieee80211_recalc_txpower(sdata) ||\n+\t    (update_bss && ieee80211_sdata_running(sdata)))\n \t\tieee80211_bss_info_change_notify(sdata, BSS_CHANGED_TXPOWER);\n }\n \n-- \n2.5.0\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "network-wireless",
+  "Hardware": "x86-64 Linux",
+  "Importance": "P1 normal",
+  "Assignee": "DO NOT USE - assign \"network-wireless-intel\" component instead",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2015-07-14 20:35 UTC by Martin Mokrejs",
+  "Modified": "2015-11-02 19:42 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "4.1.2",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "net/mac80211/iface.c"
+  ],
+  "methods": [
+    "ieee80211_recalc_txpower"
+  ]
+}

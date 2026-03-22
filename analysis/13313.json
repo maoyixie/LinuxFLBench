@@ -1,0 +1,140 @@
+{
+  "id": "13313",
+  "title": "vm86old oops",
+  "kernel_version": "2.6.30",
+  "product": "Platform Specific/Hardware",
+  "component": "i386",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/x86/kernel/vm86_32.c"
+    ],
+    "buggy_methods": [
+      "do_sys_vm86"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "EFLAGS",
+      "lockdep_sys_exit"
+    ],
+    "mentioned_file_paths": [
+      "lib/libc.so",
+      "lib/libpci.so",
+      "lib/libx86.so",
+      "lib/libresolv.so",
+      "lib/libz.so"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/devices/platform/coretemp",
+      "/sys/bus/pci"
+    ],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 21,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": true,
+    "description_length": 6690,
+    "description_word_count": 678
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 5,
+    "lines_removed": 4,
+    "patch_size": 9,
+    "patch_types": [
+      "quirk/device_table",
+      "config/ifdef",
+      "init_fix",
+      "synchronization"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "do_sys_vm86"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "arch/x86/kernel/vm86_32.c",
+    "filename": "vm86_32.c",
+    "directory": "arch/x86/kernel",
+    "depth": 4,
+    "top_level": "arch",
+    "second_level": "x86",
+    "arch": "x86",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_2_functions",
+      "proc_sys_paths_hint_subsystem",
+      "dmesg_logs_available",
+      "component_known:i386",
+      "is_regression",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13313",
+      "version": "2.6.30",
+      "status": "found",
+      "path": "arch/x86/kernel/vm86_32.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "13313",
+    "version": "2.6.30",
+    "ground_truth_file": "arch/x86/kernel/vm86_32.c",
+    "trace_functions": [
+      "lockdep_sys_exit",
+      "copy_vm86_regs_from_user",
+      "resume_userspace",
+      "syscall_call",
+      "EFLAGS"
+    ],
+    "total_trace_functions": 5,
+    "function_locations": {
+      "lockdep_sys_exit": [
+        "kernel/lockdep.c"
+      ],
+      "copy_vm86_regs_from_user": [
+        "arch/x86/kernel/vm86_32.c"
+      ],
+      "resume_userspace": [],
+      "syscall_call": [],
+      "EFLAGS": []
+    },
+    "gt_found_via_functions": [
+      "copy_vm86_regs_from_user"
+    ],
+    "other_candidate_files": [
+      "kernel/lockdep.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

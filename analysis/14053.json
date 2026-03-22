@@ -1,0 +1,121 @@
+{
+  "id": "14053",
+  "title": "Kernel blocks during rsync to NFS-mounted directory exported from Sun OS machine",
+  "kernel_version": "2.6.27",
+  "product": "File System",
+  "component": "NFS",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "net/sunrpc/clnt.c"
+    ],
+    "buggy_methods": [
+      "rpc_task_force_reencode"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [
+      {
+        "file": "2",
+        "line": "7"
+      }
+    ],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/version"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1246,
+    "description_word_count": 185
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 0,
+    "patch_size": 1,
+    "patch_types": [
+      "error_handling",
+      "init_fix"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "rpc_task_force_reencode"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "net/sunrpc/clnt.c",
+    "filename": "clnt.c",
+    "directory": "net/sunrpc",
+    "depth": 3,
+    "top_level": "net",
+    "second_level": "sunrpc",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "source_file_line_references",
+      "component_known:NFS"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "use_source_references_to_locate_file",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "14053",
+      "version": "2.6.27",
+      "status": "found",
+      "path": "net/sunrpc/clnt.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "14053",
+    "title": "Kernel blocks during rsync to NFS-mounted directory exported from Sun OS machine",
+    "ground_truth_file": "net/sunrpc/clnt.c",
+    "ground_truth_subsystem": "net/sunrpc",
+    "ground_truth_methods": [
+      "rpc_task_force_reencode"
+    ],
+    "product": "File System",
+    "component": "NFS",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "init_fix"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/proc/version"
+      ],
+      "component": "NFS",
+      "product": "File System"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

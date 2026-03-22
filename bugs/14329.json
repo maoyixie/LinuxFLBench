@@ -1,0 +1,35 @@
+{
+  "id": "14329",
+  "title": "Sata disk doesn't wake up after S3 suspend",
+  "": "Show dependency tree",
+  "description": "Created attachment 23274 [details]\nmessages\n\nAfter suspend one of my secondary disks doesn't resume. It works ok under kernel 2.6.30.9 and previous. I have 4 disk connected to the same Nvidia sata controller: 3 identical maxtor (sda/b/c) and 1 Hitachi (sdd), and this last one doesn't wakes up.\nIn attachment the interesting lines from /var/log/messages and the output of hdparm -I.\nThank you.",
+  "patch": [
+    "diff --git a/drivers/ata/sata_nv.c b/drivers/ata/sata_nv.c\nindex 86a4058..1eb4e02 100644\n--- a/drivers/ata/sata_nv.c\n+++ b/drivers/ata/sata_nv.c\n@@ -1594,9 +1594,21 @@ static int nv_hardreset(struct ata_link *link, unsigned int *class,\n \t    !ata_dev_enabled(link->device))\n \t\tsata_link_hardreset(link, sata_deb_timing_hotplug, deadline,\n \t\t\t\t    NULL, NULL);\n-\telse if (!(ehc->i.flags & ATA_EHI_QUIET))\n-\t\tata_link_printk(link, KERN_INFO,\n-\t\t\t\t\"nv: skipping hardreset on occupied port\\n\");\n+\telse {\n+\t\tconst unsigned long *timing = sata_ehc_deb_timing(ehc);\n+\t\tint rc;\n+\n+\t\tif (!(ehc->i.flags & ATA_EHI_QUIET))\n+\t\t\tata_link_printk(link, KERN_INFO, \"nv: skipping \"\n+\t\t\t\t\t\"hardreset on occupied port\\n\");\n+\n+\t\t/* make sure the link is online */\n+\t\trc = sata_link_resume(link, timing, deadline);\n+\t\t/* whine about phy resume failure but proceed */\n+\t\tif (rc && rc != -EOPNOTSUPP)\n+\t\t\tata_link_printk(link, KERN_WARNING, \"failed to resume \"\n+\t\t\t\t\t\"link (errno=%d)\\n\", rc);\n+\t}\n \n \t/* device signature acquisition is unreliable */\n \treturn -EAGAIN;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "IO/Storage",
+  "Classification": "Unclassified",
+  "Component": "Serial ATA",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Tejun Heo",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "7216 13615 14616",
+  "Reported": "2009-10-05 22:58 UTC by frodone",
+  "Modified": "2009-11-17 08:55 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.31",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/ata/sata_nv.c"
+  ],
+  "methods": [
+    "nv_hardreset"
+  ]
+}

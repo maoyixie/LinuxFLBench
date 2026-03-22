@@ -1,0 +1,131 @@
+{
+  "id": "7206",
+  "title": "acpi not recognize residual charge on packard bell easynote S5011",
+  "kernel_version": "2.6.20",
+  "product": "ACPI",
+  "component": "Power-Battery",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "wrong_behavior",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/battery.c"
+    ],
+    "buggy_methods": [
+      "acpi_battery_read_info",
+      "acpi_battery_read_state",
+      "acpi_battery_read_alarm",
+      "acpi_battery_write_alarm"
+    ],
+    "num_methods": 4
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/acpi/battery/BAT1/state",
+      "/proc/acpi/battery/BAT1/info"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1080,
+    "description_word_count": 123
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 15,
+    "lines_removed": 0,
+    "patch_size": 15,
+    "new_functions": [
+      "acpi_battery_check_present"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 5,
+    "hunk_functions": [
+      "acpi_battery_read_state",
+      "acpi_battery_check",
+      "acpi_battery_read_alarm",
+      "acpi_battery_read_info",
+      "acpi_battery_write_alarm"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/battery.c",
+    "filename": "battery.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/battery.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Power-Battery"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "7206",
+      "version": "2.6.20",
+      "status": "found",
+      "path": "drivers/acpi/battery.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "7206",
+    "title": "acpi not recognize residual charge on packard bell easynote S5011",
+    "ground_truth_file": "drivers/acpi/battery.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "acpi_battery_read_info",
+      "acpi_battery_read_state",
+      "acpi_battery_read_alarm",
+      "acpi_battery_write_alarm"
+    ],
+    "product": "ACPI",
+    "component": "Power-Battery",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "wrong_output"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/proc/acpi/battery/BAT1/state",
+        "/proc/acpi/battery/BAT1/info"
+      ],
+      "component": "Power-Battery",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

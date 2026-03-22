@@ -1,0 +1,34 @@
+{
+  "id": "13134",
+  "title": "ALPS Touchpad not getting recognized anymore",
+  "description": "Created attachment 21037 [details]\ndmesg with i8042.debug kernel option\n\nI'm using an ALPS Touchpad in my Toshiba Satellite Pro M10.\n\"Advanced features\" in X like vertical/horizontal scrolling don't work\nbecause kernel doesn't recognize the mouse as a touchpad but as a \"PS/2\nGeneric Mouse\". I've looked in launchpad/google/debian bugtrack systems\nand this problem affects a lot of distros/hardware. All points it's a\nproblem with the input subsystem. I've seen reports of people that say\nadding i8042.nomux=1 on boot fixes it for them. It doesn't for me. It's\nnot a hardware error (at least in my case) because touchpad works\nflawless in windows.",
+  "patch": [
+    "Input: ALPS - add signature for Toshiba Satellite Pro M10\n\nThis toshiba has a touchpad with trackpoint and 2 sets of left\nand right buttons (above and below touchpad).\n\nSigned-off-by: Dmitry Torokhov <dtor@mail.ru>\n---\n\n drivers/input/mouse/alps.c |    1 +\n 1 files changed, 1 insertions(+), 0 deletions(-)\n\n\ndiff --git a/drivers/input/mouse/alps.c b/drivers/input/mouse/alps.c\nindex cbedf95..daecc75 100644\n--- a/drivers/input/mouse/alps.c\n+++ b/drivers/input/mouse/alps.c\n@@ -37,6 +37,7 @@\n #define ALPS_FW_BK_2\t0x40\n \n static const struct alps_model_info alps_model_data[] = {\n+\t{ { 0x32, 0x02, 0x14 },\t0xf8, 0xf8, ALPS_PASS | ALPS_DUALPOINT }, /* Toshiba Salellite Pro M10 */\n \t{ { 0x33, 0x02, 0x0a },\t0x88, 0xf8, ALPS_OLDPROTO },\t\t/* UMAX-530T */\n \t{ { 0x53, 0x02, 0x0a },\t0xf8, 0xf8, 0 },\n \t{ { 0x53, 0x02, 0x14 },\t0xf8, 0xf8, 0 },\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Input Devices",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Dmitry Torokhov",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-04-18 01:30 UTC by Pablo López Martín",
+  "Modified": "2009-10-20 05:20 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.29",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/input/mouse/alps.c"
+  ],
+  "methods": [
+    "alps_model_data"
+  ]
+}

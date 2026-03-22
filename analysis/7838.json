@@ -1,0 +1,128 @@
+{
+  "id": "7838",
+  "title": "Missing important feature: libata bus shutdown and device shutdown",
+  "kernel_version": "2.6.20",
+  "product": "IO/Storage",
+  "component": "Serial ATA",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "wrong_behavior",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/scsi/sd.c"
+    ],
+    "buggy_methods": [
+      "sd_probe",
+      "sd_shutdown",
+      "scsi_disk",
+      "sd_disk_attrs"
+    ],
+    "num_methods": 4
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3193,
+    "description_word_count": 550
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 60,
+    "lines_removed": 0,
+    "patch_size": 60,
+    "new_functions": [
+      "sd_stop_device"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "error_handling",
+      "init_fix",
+      "memory"
+    ],
+    "num_hunks": 8,
+    "hunk_functions": [
+      "sd_store_cache_type",
+      "sd_probe",
+      "sd_show_fua",
+      "sd_shutdown",
+      "scsi_disk_release",
+      "MODULE_ALIAS_BLOCKDEV_MAJOR"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/scsi/sd.c",
+    "filename": "sd.c",
+    "directory": "drivers/scsi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "scsi",
+    "driver_subsystem": "scsi/sd.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Serial ATA"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "7838",
+      "version": "2.6.20",
+      "status": "found",
+      "path": "drivers/scsi/sd.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "7838",
+    "title": "Missing important feature: libata bus shutdown and device shutdown",
+    "ground_truth_file": "drivers/scsi/sd.c",
+    "ground_truth_subsystem": "drivers/scsi",
+    "ground_truth_methods": [
+      "sd_probe",
+      "sd_shutdown",
+      "scsi_disk",
+      "sd_disk_attrs"
+    ],
+    "product": "IO/Storage",
+    "component": "Serial ATA",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "suspend/resume",
+      "wrong_output",
+      "data_corruption"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "error_return_fix",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "Serial ATA",
+      "product": "IO/Storage"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

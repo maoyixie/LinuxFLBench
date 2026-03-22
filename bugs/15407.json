@@ -1,0 +1,34 @@
+{
+  "id": "15407",
+  "title": "All Lenovo i5/i7 notebooks do not resume properly after suspend - system resumes but will hang if resumed a second time",
+  "description": "After unloading drivers that cause problems with suspend (xhci, bluetooth, etc) the system can suspend OK.  On resume however this message is displayed in dmesg:\n\n[18446744064.763411] irq 9: nobody cared (try booting with the \"irqpoll\" option)\n[18446744064.763419] Pid: 0, comm: swapper Tainted: G        W  2.6.32-14-generic #20-Ubuntu\n[18446744064.763423] Call Trace:\n[18446744064.763426]  <IRQ>  [<ffffffff810c4c1b>] __report_bad_irq+0x2b/0xa0\n[18446744064.763439]  [<ffffffff810c4e1c>] note_interrupt+0x18c/0x1d0\n[18446744064.763446]  [<ffffffff81019f09>] ? read_tsc+0x9/0x20\n[18446744064.763452]  [<ffffffff810c551d>] handle_fasteoi_irq+0xdd/0x100\n[18446744064.763457]  [<ffffffff81015d52>] handle_irq+0x22/0x30\n[18446744064.763465]  [<ffffffff81563bdc>] do_IRQ+0x6c/0xf0\n[18446744064.763472]  [<ffffffff81013b53>] ret_from_intr+0x0/0x11\n[18446744064.763475]  <EOI>  [<ffffffff813086c0>] ? acpi_idle_enter_bm+0x283/0x2b7\n[18446744064.763486]  [<ffffffff813086b9>] ? acpi_idle_enter_bm+0x27c/0x2b7\n[18446744064.763492]  [<ffffffff8144c567>] ? cpuidle_idle_call+0xa7/0x140\n[18446744064.763497]  [<ffffffff81011ea3>] ? cpu_idle+0xb3/0x110\n[18446744064.763504]  [<ffffffff81558aad>] ? start_secondary+0xa8/0xaa\n[18446744064.763508] handlers:\n[18446744064.763510] [<ffffffff812de974>] (acpi_irq+0x0/0x31)\n[18446744064.763517] Disabling IRQ #9\n\n\nIf the system is suspended a second time, it will not resume and instead shows a BIOS screen and must be hard booted.\n\nNote this issue likely affects the following Lenovo models:\n\nT410\nT410s\nT510\nT510i\nW510\nW510i\nW710",
+  "patch": [
+    "diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c\nindex f74834a..b770fc8 100644\n--- a/drivers/acpi/sleep.c\n+++ b/drivers/acpi/sleep.c\n@@ -450,6 +450,38 @@ static struct dmi_system_id __initdata acpisleep_dmi_table[] = {\n \t\t},\n \t},\n \t{\n+\t.callback = init_set_sci_en_on_resume,\n+\t.ident = \"Lenovo ThinkPad T410\",\n+\t.matches = {\n+\t\tDMI_MATCH(DMI_SYS_VENDOR, \"LENOVO\"),\n+\t\tDMI_MATCH(DMI_PRODUCT_VERSION, \"ThinkPad T410\"),\n+\t\t},\n+\t},\n+\t{\n+\t.callback = init_set_sci_en_on_resume,\n+\t.ident = \"Lenovo ThinkPad T510\",\n+\t.matches = {\n+\t\tDMI_MATCH(DMI_SYS_VENDOR, \"LENOVO\"),\n+\t\tDMI_MATCH(DMI_PRODUCT_VERSION, \"ThinkPad T510\"),\n+\t\t},\n+\t},\n+\t{\n+\t.callback = init_set_sci_en_on_resume,\n+\t.ident = \"Lenovo ThinkPad W510\",\n+\t.matches = {\n+\t\tDMI_MATCH(DMI_SYS_VENDOR, \"LENOVO\"),\n+\t\tDMI_MATCH(DMI_PRODUCT_VERSION, \"ThinkPad W510\"),\n+\t\t},\n+\t},\n+\t{\n+\t.callback = init_set_sci_en_on_resume,\n+\t.ident = \"Lenovo ThinkPad X201\",\n+\t.matches = {\n+\t\tDMI_MATCH(DMI_SYS_VENDOR, \"LENOVO\"),\n+\t\tDMI_MATCH(DMI_PRODUCT_VERSION, \"ThinkPad X201\"),\n+\t\t},\n+\t},\n+\t{\n \t.callback = init_old_suspend_ordering,\n \t.ident = \"Panasonic CF51-2L\",\n \t.matches = {\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Sleep-Wake",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "acpi_power-sleep-wake",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-02-27 00:31 UTC by Bryn Hughes",
+  "Modified": "2015-03-17 02:27 UTC",
+  "CC List": "16 users",
+  "See Also": "",
+  "Kernel Version": "2.6.32",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/sleep.c"
+  ],
+  "methods": [
+    "acpisleep_dmi_table"
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "id": "7527",
+  "title": "isicom segmentation fault",
+  "kernel_version": "2.6.18",
+  "product": "Drivers",
+  "component": "Serial",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/char/isicom.c"
+    ],
+    "buggy_methods": [
+      "isicom_close"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "tty_open",
+      "sys_open",
+      "do_sys_open",
+      "do_filp_open",
+      "release_dev",
+      "strncpy_from_user",
+      "__dentry_open",
+      "chrdev_open",
+      "sysenter_past_esp",
+      "__wake_up",
+      "isicom_close",
+      "nameidata_to_filp",
+      "tty_ldisc_enable",
+      "Not",
+      "init_dev"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 4096,
+    "description_word_count": 574
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 1,
+    "patch_size": 3,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "isicom_shutdown_port"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/char/isicom.c",
+    "filename": "isicom.c",
+    "directory": "drivers/char",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "char",
+    "driver_subsystem": "char/isicom.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_15_functions",
+      "component_known:Serial"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "7527",
+      "version": "2.6.18",
+      "status": "found",
+      "path": "drivers/char/isicom.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "7527",
+    "version": "2.6.18",
+    "ground_truth_file": "drivers/char/isicom.c",
+    "trace_functions": [
+      "isicom_close",
+      "release_dev",
+      "__wake_up",
+      "tty_ldisc_enable",
+      "init_dev",
+      "tty_open",
+      "chrdev_open",
+      "__dentry_open",
+      "nameidata_to_filp",
+      "do_filp_open",
+      "strncpy_from_user",
+      "do_sys_open",
+      "sys_open",
+      "sysenter_past_esp",
+      "Not"
+    ],
+    "total_trace_functions": 15,
+    "function_locations": {
+      "isicom_close": [
+        "drivers/char/isicom.c"
+      ],
+      "release_dev": [
+        "drivers/pci/probe.c",
+        "drivers/pcmcia/ds.c",
+        "drivers/rapidio/rio-scan.c",
+        "arch/sparc64/kernel/of_device.c",
+        "sound/aoa/soundbus/i2sbus/i2sbus-core.c",
+        "drivers/block/pktcdvd.c",
+        "drivers/infiniband/core/uverbs_main.c",
+        "drivers/macintosh/macio_asic.c",
+        "drivers/ide/ide-probe.c",
+        "drivers/char/tty_io.c"
+      ],
+      "__wake_up": [
+        "kernel/sched.c"
+      ],
+      "tty_ldisc_enable": [
+        "drivers/char/tty_io.c"
+      ],
+      "init_dev": [
+        "drivers/ieee1394/eth1394.c",
+        "net/ipv4/igmp.c",
+        "fs/reiserfs/journal.c",
+        "drivers/isdn/pcbit/drv.c",
+        "drivers/isdn/pcbit/module.c",
+        "drivers/char/tty_io.c",
+        "drivers/media/video/em28xx/em28xx-video.c",
+        "drivers/net/ne-h8300.c",
+        "fs/jbd/journal.c",
+        "net/ipv6/mcast.c"
+      ],
+      "tty_open": [
+        "arch/um/drivers/tty.c",
+        "drivers/isdn/i4l/isdn_tty.c",
+        "drivers/char/n_tty.c",
+        "drivers/bluetooth/hci_ldisc.c",
+        "drivers/char/viocons.c",
+        "arch/v850/kernel/memcons.c",
+        "net/bluetooth/rfcomm/tty.c",
+        "drivers/usb/class/cdc-acm.c",
+        "drivers/isdn/capi/capi.c",
+        "drivers/net/wan/pc300_tty.c"
+      ],
+      "chrdev_open": [
+        "drivers/ide/ide-tape.c",
+        "fs/char_dev.c",
+        "drivers/scsi/3w-9xxx.c",
+        "drivers/scsi/3w-xxxx.c"
+      ],
+      "__dentry_open": [
+        "fs/open.c"
+      ],
+      "nameidata_to_filp": [
+        "fs/open.c"
+      ],
+      "do_filp_open": [
+        "fs/open.c"
+      ]
+    },
+    "gt_found_via_functions": [
+      "isicom_close"
+    ],
+    "other_candidate_files": [
+      "drivers/pci/probe.c",
+      "arch/sparc64/kernel/of_device.c",
+      "drivers/char/n_tty.c",
+      "fs/reiserfs/journal.c",
+      "arch/v850/kernel/memcons.c",
+      "drivers/usb/class/cdc-acm.c",
+      "drivers/block/pktcdvd.c",
+      "drivers/infiniband/core/uverbs_main.c",
+      "drivers/scsi/3w-xxxx.c",
+      "drivers/ide/ide-tape.c",
+      "drivers/media/video/em28xx/em28xx-video.c",
+      "drivers/scsi/3w-9xxx.c",
+      "net/ipv6/mcast.c",
+      "net/bluetooth/rfcomm/tty.c",
+      "drivers/ieee1394/eth1394.c",
+      "sound/aoa/soundbus/i2sbus/i2sbus-core.c",
+      "arch/um/drivers/tty.c",
+      "drivers/isdn/pcbit/drv.c",
+      "drivers/isdn/pcbit/module.c",
+      "fs/char_dev.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

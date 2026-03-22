@@ -1,0 +1,34 @@
+{
+  "id": "13348",
+  "title": "[PATCH]Unable to clone tagged VLAN interface for use with macvlan driver",
+  "description": "It is not possible to make clone of tagged VLAN interface to be used as\nmac-based vlan interfave.\n\nHow reproducible:\nUse any 802.1q tagged vlan interface, e.g. eth2.700 and clone it:\n\n  ip link add link eth2.700 address 00:04:75:cb:38:09 macvlan0 type macvlan\n  ip link set dev macvlan0 up\n  ip addr add 10.195.1.1/24 dev macvlan0\n\nSo far, so good. Now try to ping anything via macvlan0:\n\n  ping 10.195.1.2\n\n\nActual results:\nFor every attempted packet tx kernel writes to console:\n\n------------[ cut here ]------------\nWARNING: at net/8021q/vlan_dev.c:254 vlan_dev_hard_header+0x36/0x126 [8021q]()\nHardware name: M22ES\nModules linked in: arptable_filter arp_tables bridge veth macvlan arc4 ecb ppp_mppe ppp_async crc_ccitt ppp_generic slhc autofs4 sunrpc 8021q garp stp ipt_REJECT nf_conntrack_ipv4 nf_defrag_ipv4 xt_state nf_conntrack xt_tcpudp x_tables dm_mirror dm_region_hash dm_log dm_multipath dm_mod sbs sbshc lp floppy snd_intel8x0 joydev snd_seq_dummy snd_intel8x0m snd_ac97_codec ide_cd_mod ac97_bus snd_seq_oss cdrom snd_seq_midi_event serio_raw snd_seq snd_seq_device snd_pcm_oss snd_mixer_oss parport_pc snd_pcm parport battery 8139cp snd_timer i2c_sis96x ac button snd rtc_cmos rtc_core 8139too soundcore rtc_lib mii i2c_core pcspkr snd_page_alloc pata_sis libata sd_mod scsi_mod ext3 jbd ehci_hcd ohci_hcd uhci_hcd [last unloaded: ip_tables]\nPid: 0, comm: swapper Tainted: G        W  2.6.29.3 #1\nCall Trace:\n [<c0425f48>] warn_slowpath+0x60/0x9f\n [<c0425f6f>] warn_slowpath+0x87/0x9f\n [<dffb850d>] vlan_dev_hard_header+0x0/0x126 [8021q]\n [<dffb8543>] vlan_dev_hard_header+0x36/0x126 [8021q]\n [<dffb850d>] vlan_dev_hard_header+0x0/0x126 [8021q]\n [<df83155d>] macvlan_hard_header+0x3c/0x47 [macvlan]\n [<df831521>] macvlan_hard_header+0x0/0x47 [macvlan]\n [<c062bf3f>] arp_create+0xef/0x1ff\n [<c062c08c>] arp_send+0x3d/0x54\n [<c062c916>] arp_solicit+0x16c/0x177\n [<c05fadd2>] neigh_timer_handler+0x227/0x269\n [<c05fabab>] neigh_timer_handler+0x0/0x269\n [<c042ce4d>] run_timer_softirq+0xf0/0x141\n [<c0429e5a>] __do_softirq+0x76/0xf8\n [<c0429de4>] __do_softirq+0x0/0xf8\n <IRQ>  [<c044fb67>] handle_level_irq+0x0/0xad\n [<c0429db7>] irq_exit+0x35/0x62\n [<c04046bb>] do_IRQ+0xdf/0xf4\n [<c04035a7>] common_interrupt+0x27/0x2c\n [<c04079c5>] default_idle+0x2a/0x3d\n [<c0401bb6>] cpu_idle+0x57/0x70\n---[ end trace 2def39ad9ce2acf6 ]---",
+  "patch": [
+    "--- linux-2.6.29.3/drivers/net/macvlan.c\t2009-05-09 01:47:21.000000000 +0300\n+++ linux-2.6.29.3-macvlan-patch/drivers/net/macvlan.c\t2009-05-20 17:40:29.000000000 +0300\n@@ -311,6 +311,7 @@\n \t\t\t\t  (lowerdev->state & MACVLAN_STATE_MASK);\n \tdev->features \t\t= lowerdev->features & MACVLAN_FEATURES;\n \tdev->iflink\t\t= lowerdev->ifindex;\n+\tdev->hard_header_len \t= lowerdev->hard_header_len;\n \n \tmacvlan_set_lockdep_class(dev);\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Networking",
+  "Classification": "Unclassified",
+  "Component": "IPV4",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Stephen Hemminger",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-05-20 00:52 UTC by sg.tweak",
+  "Modified": "2012-06-07 10:57 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.29",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/macvlan.c"
+  ],
+  "methods": [
+    "macvlan_init"
+  ]
+}

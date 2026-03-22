@@ -1,0 +1,34 @@
+{
+  "id": "7062",
+  "title": "nanosleep blocks indefinitely when CONFIG_HPET_TIMER is enabled",
+  "description": "Most recent kernel where this bug did not occur:\n2.6.17.3\nI did not test 2.6.17.11 yet but I'm pretty sure the bug was introduced in\n2.6.18-rc1\n\nDistribution:\nDebian unstable\n\nHardware Environment:\nThinkpad Z61m\nIt has a Pentium M CoreDuo. /proc/cpuinfo says:\nGenuine Intel(R) CPU           T2500  @ 2.00GHz\n\nProblem Description:\nWhen CONFIG_HPET_TIMER is enabled any call to nanosleep blocks indefinitely. \nFor me that's in a initramfs during udevsettle. Alt+PrintScreen+T says \nsomething about nanosleep. replaceing udevsettle with \"busybox sleep 1\" blocks \nas well with similar results for Alt+PrintScreen+T. The waiting process can be \nkilled with Alt+PrintScreen+I and the boot process continues until the next \nnanosleep.\nWhen CONFIG_HPET_TIMER is disabled the problem does not occur.\n\nI have tested 2.6.18-rc1 - 2.6.18-rc4 and several 2.6.18-rc?-mm? kernels. The \nproblem occurs for all of them. I assume the bug was intoduced with the big \ni386 timer related patches.\n\"indefinitely\" is of course a guess. I did however wait for serveral minutes \nfor a \"busybox sleep 1\" to complete.",
+  "patch": [
+    "diff --git a/arch/i386/kernel/hpet.c b/arch/i386/kernel/hpet.c\nindex c6737c3..17647a5 100644\n--- a/arch/i386/kernel/hpet.c\n+++ b/arch/i386/kernel/hpet.c\n@@ -35,7 +35,7 @@ static int __init init_hpet_clocksource(\n \tvoid __iomem* hpet_base;\n \tu64 tmp;\n \n-\tif (!hpet_address)\n+\tif (!is_hpet_enabled())\n \t\treturn -ENODEV;\n \n \t/* calculate the hpet address: */\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Timers",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "john stultz",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-08-27 06:08 UTC by Michael Olbrich",
+  "Modified": "2006-09-06 16:45 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.18-rc4",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/i386/kernel/hpet.c"
+  ],
+  "methods": [
+    "init_hpet_clocksource"
+  ]
+}

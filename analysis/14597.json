@@ -1,0 +1,103 @@
+{
+  "id": "14597",
+  "title": "thinkpad-acpi: driver fails to load on old BIOS for the A31, T23-T30, X30-X31",
+  "kernel_version": "2.6.32-rc1",
+  "product": "Drivers",
+  "component": "Platform",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "device_not_working"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/platform/x86/thinkpad_acpi.c"
+    ],
+    "buggy_methods": [
+      "TPV_Q_X"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 506,
+    "description_word_count": 87
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 18,
+    "lines_removed": 6,
+    "patch_size": 24,
+    "patch_types": [
+      "quirk/device_table"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "tpacpi_remove_driver_attributes"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/platform/x86/thinkpad_acpi.c",
+    "filename": "thinkpad_acpi.c",
+    "directory": "drivers/platform/x86",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "platform",
+    "driver_subsystem": "platform/x86",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Platform",
+      "is_regression",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "14597",
+      "version": "2.6.32-rc1",
+      "status": "found",
+      "path": "drivers/platform/x86/thinkpad_acpi.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "14597",
+    "title": "thinkpad-acpi: driver fails to load on old BIOS for the A31, T23-T30, X30-X31",
+    "product": "Drivers",
+    "component": "Platform",
+    "buggy_file": [
+      "drivers/platform/x86/thinkpad_acpi.c"
+    ],
+    "fix_type": "quirk_function_addition",
+    "table_entry_lines_added": 0,
+    "description_clues": [
+      "dmi_info_in_description",
+      "driver_name_mentioned"
+    ],
+    "patch_size": 24,
+    "potential_strategies": [
+      "search_dmi_tables_in_drivers",
+      "narrow_by_component:Platform"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

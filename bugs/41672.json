@@ -1,0 +1,34 @@
+{
+  "id": "41672",
+  "title": "backlight control will not work on Lenovo V570",
+  "description": "No backlight options will be available on a Lenovo V570.  I've tried it with several different kernel versions including 3.1-rc3.  In all cases dmesg has the error  ACPI Error: Current brightness invalid. \n\nIt appears the kernel believes the machine is multi-headed.  It does the right thing for the first head it sees and then gets the invalid brightness on the second head which causes it to assume acpi brightness won't work.  The laptop has the standard external D-sub connector for an external monitor, but there is nothing connected to it.  In fact, if I make the ugly hack of commenting out the multihead check in acpi_video_bus_check() then backlight control works fine.\n\nI'll attach the acpidump, dmesg, and ugly hack.",
+  "patch": [
+    "From 79ed9ec8ff5622e7fbc6e05d77154651aeb50717 Mon Sep 17 00:00:00 2001\nFrom: Bill Pemberton <wfp5p@virginia.edu>\nDate: Wed, 24 Aug 2011 14:45:45 -0400\nSubject: [PATCH] Ugly hack to fix backlight on V570\n\nThis is clearly not the right way to fix the problem.  It does,\nhowever, have the effect of fixing the problem.\n---\n drivers/acpi/video.c |   18 +++++++++---------\n 1 files changed, 9 insertions(+), 9 deletions(-)\n\ndiff --git a/drivers/acpi/video.c b/drivers/acpi/video.c\nindex 08a44b5..b0a7ef1 100644\n--- a/drivers/acpi/video.c\n+++ b/drivers/acpi/video.c\n@@ -910,15 +910,15 @@ static int acpi_video_bus_check(struct acpi_video_bus *video)\n \t */\n \n \t/* Does this device support video switching? */\n-\tif (video->cap._DOS || video->cap._DOD) {\n-\t\tif (!video->cap._DOS) {\n-\t\t\tprintk(KERN_WARNING FW_BUG\n-\t\t\t\t\"ACPI(%s) defines _DOD but not _DOS\\n\",\n-\t\t\t\tacpi_device_bid(video->device));\n-\t\t}\n-\t\tvideo->flags.multihead = 1;\n-\t\tstatus = 0;\n-\t}\n+\t/* if (video->cap._DOS || video->cap._DOD) { */\n+\t/* \tif (!video->cap._DOS) { */\n+\t/* \t\tprintk(KERN_WARNING FW_BUG */\n+\t/* \t\t\t\"ACPI(%s) defines _DOD but not _DOS\\n\", */\n+\t/* \t\t\tacpi_device_bid(video->device)); */\n+\t/* \t} */\n+\t/* \tvideo->flags.multihead = 1; */\n+\t/* \tstatus = 0; */\n+\t/* } */\n \n \t/* Does this device support retrieving a video ROM? */\n \tif (video->cap._ROM) {\n-- \n1.7.6\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Video",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Zhang Rui",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2011-08-24 19:25 UTC by Bill Pemberton",
+  "Modified": "2012-11-29 05:09 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "3.1-rc3",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/video.c"
+  ],
+  "methods": [
+    "acpi_video_bus_check"
+  ]
+}

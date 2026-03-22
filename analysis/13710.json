@@ -1,0 +1,206 @@
+{
+  "id": "13710",
+  "title": "Corrupted low memory after resume",
+  "kernel_version": "2.6.31-rc1",
+  "product": "ACPI",
+  "component": "Power-Sleep-Wake",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "performance",
+    "power/sleep",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/x86/kernel/setup.c"
+    ],
+    "buggy_methods": [
+      "bad_bios_dmi_table"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "worker_thread",
+      "warn_slowpath_fmt",
+      "warn_slowpath_common",
+      "child_rip",
+      "enter_state",
+      "do_one_initcall",
+      "check_corruption",
+      "pm_suspend",
+      "kernel_init",
+      "test_suspend",
+      "suspend_devices_and_enter",
+      "kthread",
+      "check_for_bios_corruption",
+      "suspend_test_finish"
+    ],
+    "mentioned_file_paths": [
+      "arch/x86/kernel/check.c",
+      "kernel/power/suspend_test.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 46,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 3581,
+    "description_word_count": 342
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 7,
+    "lines_removed": 0,
+    "patch_size": 7,
+    "patch_types": [
+      "quirk/device_table"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "arch/x86/kernel/setup.c",
+    "filename": "setup.c",
+    "directory": "arch/x86/kernel",
+    "depth": 4,
+    "top_level": "arch",
+    "second_level": "x86",
+    "arch": "x86",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_14_functions",
+      "dmesg_logs_available",
+      "component_known:Power-Sleep-Wake",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13710",
+      "version": "2.6.31-rc1",
+      "status": "found",
+      "path": "arch/x86/kernel/setup.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "13710",
+    "version": "2.6.31-rc1",
+    "ground_truth_file": "arch/x86/kernel/setup.c",
+    "trace_functions": [
+      "check_for_bios_corruption",
+      "warn_slowpath_common",
+      "warn_slowpath_fmt",
+      "check_corruption",
+      "worker_thread",
+      "autoremove_wake_function",
+      "kthread",
+      "child_rip",
+      "suspend_test_finish",
+      "suspend_devices_and_enter",
+      "enter_state",
+      "rtc_time_to_tm",
+      "pm_suspend",
+      "test_suspend",
+      "do_one_initcall"
+    ],
+    "total_trace_functions": 18,
+    "function_locations": {
+      "check_for_bios_corruption": [
+        "arch/x86/kernel/check.c"
+      ],
+      "warn_slowpath_common": [
+        "kernel/panic.c"
+      ],
+      "warn_slowpath_fmt": [
+        "kernel/panic.c"
+      ],
+      "check_corruption": [
+        "arch/x86/kernel/check.c"
+      ],
+      "worker_thread": [
+        "kernel/workqueue.c",
+        "drivers/scsi/ipr.c"
+      ],
+      "autoremove_wake_function": [
+        "kernel/wait.c"
+      ],
+      "kthread": [
+        "fs/ecryptfs/kthread.c",
+        "kernel/kthread.c",
+        "fs/btrfs/disk-io.c",
+        "drivers/usb/atm/ueagle-atm.c",
+        "drivers/platform/x86/thinkpad_acpi.c"
+      ],
+      "child_rip": [],
+      "suspend_test_finish": [
+        "kernel/power/suspend_test.c"
+      ],
+      "suspend_devices_and_enter": [
+        "kernel/power/suspend.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "fs/ecryptfs/kthread.c",
+      "kernel/kthread.c",
+      "kernel/panic.c",
+      "fs/btrfs/disk-io.c",
+      "kernel/power/suspend.c",
+      "kernel/workqueue.c",
+      "kernel/wait.c",
+      "arch/x86/kernel/check.c",
+      "kernel/power/suspend_test.c",
+      "drivers/usb/atm/ueagle-atm.c",
+      "drivers/scsi/ipr.c",
+      "drivers/platform/x86/thinkpad_acpi.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "quirk_analysis": {
+    "id": "13710",
+    "title": "Corrupted low memory after resume",
+    "product": "ACPI",
+    "component": "Power-Sleep-Wake",
+    "buggy_file": [
+      "arch/x86/kernel/setup.c"
+    ],
+    "fix_type": "dmi_quirk_addition",
+    "table_entry_lines_added": 1,
+    "description_clues": [
+      "hardware_model_mentioned",
+      "device_ids_in_description",
+      "dmi_info_in_description"
+    ],
+    "patch_size": 7,
+    "potential_strategies": [
+      "grep_device_id_in_kernel_source",
+      "search_dmi_tables_in_drivers",
+      "search_for_model_specific_quirks",
+      "narrow_by_component:Power-Sleep-Wake"
+    ]
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

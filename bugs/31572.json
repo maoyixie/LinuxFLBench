@@ -1,0 +1,37 @@
+{
+  "id": "31572",
+  "title": "BUG in vb_alloc() - firewire crash at boot",
+  "": "Show dependency tree",
+  "description": "Created attachment 51502 [details]\nphoto of oops\n\nComputer crash randomly at boot with one flashdisk or usb cdrom connected.\nTested with kernel 2.6.38-rc2 and 2.6.38.\n\nComputer: AMD Phenom x6, M4A88TD-V EVO/USB3 motherboard, 8GB RAM.\n\nlspci:\n\n00:00.0 Host bridge: Advanced Micro Devices [AMD] RS880 Host Bridge\n00:01.0 PCI bridge: ASUSTeK Computer Inc. RS880 PCI to PCI bridge (int gfx)\n00:09.0 PCI bridge: Advanced Micro Devices [AMD] RS780/RS880 PCI to PCI bridge (PCIE port 4)\n00:0a.0 PCI bridge: Advanced Micro Devices [AMD] RS780/RS880 PCI to PCI bridge (PCIE port 5)\n00:11.0 SATA controller: ATI Technologies Inc SB700/SB800 SATA Controller [IDE mode] (rev 40)\n00:12.0 USB Controller: ATI Technologies Inc SB700/SB800 USB OHCI0 Controller\n00:12.2 USB Controller: ATI Technologies Inc SB700/SB800 USB EHCI Controller\n00:13.0 USB Controller: ATI Technologies Inc SB700/SB800 USB OHCI0 Controller\n00:13.2 USB Controller: ATI Technologies Inc SB700/SB800 USB EHCI Controller\n00:14.0 SMBus: ATI Technologies Inc SBx00 SMBus Controller (rev 42)\n00:14.1 IDE interface: ATI Technologies Inc SB700/SB800 IDE Controller (rev 40)\n00:14.2 Audio device: ATI Technologies Inc SBx00 Azalia (Intel HDA) (rev 40)\n00:14.3 ISA bridge: ATI Technologies Inc SB700/SB800 LPC host controller (rev 40)\n00:14.4 PCI bridge: ATI Technologies Inc SBx00 PCI to PCI Bridge (rev 40)\n00:14.5 USB Controller: ATI Technologies Inc SB700/SB800 USB OHCI2 Controller\n00:15.0 PCI bridge: ATI Technologies Inc Device 43a0\n00:15.1 PCI bridge: ATI Technologies Inc Device 43a1\n00:16.0 USB Controller: ATI Technologies Inc SB700/SB800 USB OHCI0 Controller\n00:16.2 USB Controller: ATI Technologies Inc SB700/SB800 USB EHCI Controller\n00:18.0 Host bridge: Advanced Micro Devices [AMD] Family 10h Processor HyperTransport Configuration\n00:18.1 Host bridge: Advanced Micro Devices [AMD] Family 10h Processor Address Map\n00:18.2 Host bridge: Advanced Micro Devices [AMD] Family 10h Processor DRAM Controller\n00:18.3 Host bridge: Advanced Micro Devices [AMD] Family 10h Processor Miscellaneous Control\n00:18.4 Host bridge: Advanced Micro Devices [AMD] Family 10h Processor Link Control\n01:05.0 VGA compatible controller: ATI Technologies Inc RS880 [Radeon HD 4250]\n01:05.1 Audio device: ATI Technologies Inc RS880 Audio Device [Radeon HD 4200]\n02:00.0 FireWire (IEEE 1394): VIA Technologies, Inc. VT6315 Series Firewire Controller\n02:00.1 IDE interface: VIA Technologies, Inc. VT6415 PATA IDE Host Controller (rev a0)\n03:00.0 USB Controller: NEC Corporation uPD720200 USB 3.0 Host Controller (rev 03)\n06:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/8168B PCI Express Gigabit Ethernet controller (rev 06)",
+  "patch": [
+    "--- a/mm/vmalloc.c\n+++ b/mm/vmalloc.c\n@@ -915,6 +915,10 @@ static void *vb_alloc(unsigned long size, gfp_t gfp_mask)\n \tunsigned int order;\n \tint purge = 0;\n \n+\tprintk(KERN_DEBUG \"*** vb_alloc(%lu):\\n\", size);\n+\tprintk(KERN_DEBUG \"VMAP_BLOCK_SIZE: %#x\\n\", (u32)VMAP_BLOCK_SIZE);\n+\tprintk(KERN_DEBUG \"vmap_initialized: %u\\n\", vmap_initialized);\n+\n \tBUG_ON(size & ~PAGE_MASK);\n \tBUG_ON(size > PAGE_SIZE*VMAP_MAX_ALLOC);\n \torder = get_order(size);\n@@ -926,6 +930,8 @@ again:\n \t\tint i;\n \n \t\tspin_lock(&vb->lock);\n+\t\tprintk(KERN_DEBUG \"va: %#lx-%#lx\\n\",\n+\t\t       vb->va->va_start, vb->va->va_end);\n \t\tif (vb->free < 1UL << order)\n \t\t\tgoto next;\n \n@@ -941,6 +947,7 @@ again:\n \t\t\tgoto next;\n \t\t}\n \t\taddr = vb->va->va_start + (i << PAGE_SHIFT);\n+\t\tprintk(KERN_DEBUG \"found: i: %d, addr: %#lx\\n\", i, addr);\n \t\tBUG_ON(addr_to_vb_idx(addr) !=\n \t\t\t\taddr_to_vb_idx(vb->va->va_start));\n \t\tvb->free -= 1UL << order;\n",
+    "From: Clemens Ladisch <clemens@ladisch.de>\nDate: Tue, 21 Jun 2011 22:09:50 +0200\nSubject: [PATCH] mm: fix wrong vmap address calculations with odd NR_CPUS values\n\nCommit db64fe02258f (mm: rewrite vmap layer) introduced code that does\naddress calculations under the assumption that VMAP_BLOCK_SIZE is\na power of two.  However, this might not be true if CONFIG_NR_CPUS is\nnot set to a power of two.\n\nWrong vmap_block index/offset values could lead to memory corruption.\nHowever, this has never been observed in practice (or never been\ndiagnosed correctly); what caught this was the BUG_ON in vb_alloc() that\nchecks for inconsistent vmap_block indices.\n\nTo fix this, ensure that VMAP_BLOCK_SIZE always is a power of two.\n\nBugLink: https://bugzilla.kernel.org/show_bug.cgi?id=31572\nReported-by: Pavel Kysilka <goldenfish@linuxsoft.cz>\nReported-by: Matias A. Fonzo <selk@dragora.org>\nSigned-off-by: Clemens Ladisch <clemens@ladisch.de>\nCc: 2.6.28+ <stable@kernel.org>\n---\n mm/vmalloc.c |    7 ++++---\n 1 files changed, 4 insertions(+), 3 deletions(-)\n\ndiff --git a/mm/vmalloc.c b/mm/vmalloc.c\nindex 1d34d75..d3d451b 100644\n--- a/mm/vmalloc.c\n+++ b/mm/vmalloc.c\n@@ -732,9 +732,10 @@ static void free_unmap_vmap_area_addr(unsigned long addr)\n #define VMAP_BBMAP_BITS_MIN\t(VMAP_MAX_ALLOC*2)\n #define VMAP_MIN(x, y)\t\t((x) < (y) ? (x) : (y)) /* can't use min() */\n #define VMAP_MAX(x, y)\t\t((x) > (y) ? (x) : (y)) /* can't use max() */\n-#define VMAP_BBMAP_BITS\t\tVMAP_MIN(VMAP_BBMAP_BITS_MAX,\t\t\\\n-\t\t\t\t\tVMAP_MAX(VMAP_BBMAP_BITS_MIN,\t\\\n-\t\t\t\t\t\tVMALLOC_PAGES / NR_CPUS / 16))\n+#define VMAP_BBMAP_BITS\t\t\\\n+\t\tVMAP_MIN(VMAP_BBMAP_BITS_MAX,\t\\\n+\t\tVMAP_MAX(VMAP_BBMAP_BITS_MIN,\t\\\n+\t\t\tVMALLOC_PAGES / roundup_pow_of_two(NR_CPUS) / 16))\n \n #define VMAP_BLOCK_SIZE\t\t(VMAP_BBMAP_BITS * PAGE_SIZE)\n \n-- \n1.7.3.2\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Memory Management",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Andrew Morton",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (1)": "firewire_ohci",
+  "Depends on": "",
+  "Blocks": "27352",
+  "Reported": "2011-03-21 12:40 UTC by Pavel Kysilka",
+  "Modified": "2011-08-15 09:19 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.38-rc2",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "mm/vmalloc.c"
+  ],
+  "methods": [
+    "*vb_alloc"
+  ]
+}

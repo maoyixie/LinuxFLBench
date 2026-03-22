@@ -1,0 +1,35 @@
+{
+  "id": "13621",
+  "title": "xfs hangs with assertion failed",
+  "": "Show dependency tree",
+  "description": "Mounting external HD is fine, but extensive r/w (rsync) or attempting to unmount the device makes the kernel hang in the following sense: The device keeps mounted, no operations possible, every process accessing the device becomes unkillable. Apparently no major damage to the fs is caused. Log is attached.",
+  "patch": [
+    "commit ff18a82d96026c2fed999e2ccb73a17d8f6b0723\nAuthor: Christoph Hellwig <hch@lst.de>\nDate:   Mon Aug 10 10:40:47 2009 +0200\n\n    [XFS] Replace spin_is_locked due to regression\n    \n    Replace ASSERT(spin_is_locked()) by assert_spin_locked().\n    This fixes bug #13621.\n    \n    Author: Christoph Hellwig <hch@lst.de>\n    Tested-by: Johannes Engel <jcnengel@googlemail.com>\n\ndiff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c\nindex 3750f04..9dbdff3 100644\n--- a/fs/xfs/xfs_log.c\n+++ b/fs/xfs/xfs_log.c\n@@ -3180,7 +3180,7 @@ try_again:\n STATIC void\n xlog_state_want_sync(xlog_t *log, xlog_in_core_t *iclog)\n {\n-\tASSERT(spin_is_locked(&log->l_icloglock));\n+\tassert_spin_locked(&log->l_icloglock);\n \n \tif (iclog->ic_state == XLOG_STATE_ACTIVE) {\n \t\txlog_state_switch_iclogs(log, iclog, 0);\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "XFS",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "Christoph Hellwig",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "13070",
+  "Reported": "2009-06-25 10:07 UTC by Johannes Engel",
+  "Modified": "2017-07-23 16:48 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.30",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/xfs/xfs_log.c"
+  ],
+  "methods": [
+    "xlog_state_want_sync"
+  ]
+}

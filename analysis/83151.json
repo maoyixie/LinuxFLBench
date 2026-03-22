@@ -1,0 +1,125 @@
+{
+  "id": "83151",
+  "title": "Intel Turbo can't be disabled/enabled under certain conditions",
+  "kernel_version": "3.16",
+  "product": "Power Management",
+  "component": "intel_pstate",
+  "hardware": "Intel Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/cpufreq/intel_pstate.c"
+    ],
+    "buggy_methods": [
+      "store_no_turbo",
+      "intel_pstate_get_min_max",
+      "intel_pstate_set_pstate",
+      "intel_pstate_set_policy",
+      "intel_pstate_cpu_init",
+      "perf_limits"
+    ],
+    "num_methods": 6
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 650,
+    "description_word_count": 116
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 72,
+    "lines_removed": 27,
+    "patch_size": 99,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "init_fix"
+    ],
+    "num_hunks": 20,
+    "hunk_functions": [
+      "intel_pstate_reset_all_pid",
+      "intel_pstate_set_policy",
+      "intel_pstate_get_min_max",
+      "intel_pstate_set_pstate",
+      "store_min_perf_pct",
+      "intel_pstate_debug_expose_params",
+      "store_no_turbo",
+      "intel_pstate_cpu_init"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/cpufreq/intel_pstate.c",
+    "filename": "intel_pstate.c",
+    "directory": "drivers/cpufreq",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "cpufreq",
+    "driver_subsystem": "cpufreq/intel_pstate.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:intel_pstate"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "83151",
+      "version": "3.16",
+      "status": "found",
+      "path": "drivers/cpufreq/intel_pstate.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "83151",
+    "title": "Intel Turbo can't be disabled/enabled under certain conditions",
+    "ground_truth_file": "drivers/cpufreq/intel_pstate.c",
+    "ground_truth_subsystem": "drivers/cpufreq",
+    "ground_truth_methods": [
+      "store_no_turbo",
+      "intel_pstate_get_min_max",
+      "intel_pstate_set_pstate",
+      "intel_pstate_set_policy",
+      "intel_pstate_cpu_init",
+      "perf_limits"
+    ],
+    "product": "Power Management",
+    "component": "intel_pstate",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "error_return_fix",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "intel_pstate",
+      "product": "Power Management"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

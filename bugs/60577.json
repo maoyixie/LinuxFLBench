@@ -1,0 +1,34 @@
+{
+  "id": "60577",
+  "title": "WiFi doen't work on Intel WiMAX/WiFi Link 5150",
+  "description": "Created attachment 106926 [details]\nlspci -vv\n\nI have notebook Dell 11z with WiMAX/WiFi adapter Intel Link 5150. \nWhen I tried to list network interfaces, i didn't see any WiFi interfaces.\n\n>ifconfig\n\nenp0s29f7u5: flags=129<UP,NOARP>  mtu 1400\n        ether 00:1d:e1:1b:40:a2  txqueuelen 20  (Ethernet)\n        RX packets 0  bytes 0 (0.0 B)\n        RX errors 0  dropped 0  overruns 0  frame 0\n        TX packets 0  bytes 0 (0.0 B)\n        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0\nenp2s0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500\n        ether 00:26:b9:c8:83:86  txqueuelen 1000  (Ethernet)\n        RX packets 0  bytes 0 (0.0 B)\n        RX errors 0  dropped 0  overruns 0  frame 0\n        TX packets 0  bytes 0 (0.0 B)\n        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0\nlo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536\n        inet 127.0.0.1  netmask 255.0.0.0\n        inet6 ::1  prefixlen 128  scopeid 0x10<host>\n        loop  txqueuelen 0  (Local Loopback)\n        RX packets 212  bytes 18372 (17.9 KiB)\n        RX errors 0  dropped 0  overruns 0  frame 0\n        TX packets 212  bytes 18372 (17.9 KiB)\n        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0\n\nBTW: enp2s0  - ethernet, enp0s29f7u5 - WiMax \n\nModule for my WiFi adapter named iwlwifi.\n> lsmod | grep iwlwifi\n\niwlwifi    173477 0\ncfg        510937 1 iwlwifi\n\n\nBut, when i tried to list pci devices (lspci -vv), i didn't see string  \"driver in use: iwlwifi\" string in this:\n\n08:00.0 Network controller: Intel Corporation WiMAX/WiFi Link 5150\n        Subsystem: Intel Corporation Device 1326\n        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx-\n        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-\n        Latency: 0, Cache Line Size: 64 bytes\n        Interrupt: pin A routed to IRQ 11\n        Region 0: Memory at f0600000 (64-bit, non-prefetchable) [size=8K]\n        Capabilities: <access denied>\n\n(the full \"lspci -vv\" in the attachment)",
+  "patch": [
+    "From 5e0ca023f0598057c8f01b6d90e602437902f5d3 Mon Sep 17 00:00:00 2001\nFrom: Emmanuel Grumbach <emmanuel.grumbach@intel.com>\nDate: Thu, 18 Jul 2013 19:11:26 +0300\nSubject: [PATCH] iwlwifi: add DELL SKU for 5150 HMC\n\nThis SKU was missing in the list of supported devices\n\nhttps://bugzilla.kernel.org/show_bug.cgi?id=60577\n\nChange-Id: I3b0669dd076f678934decb61bffcb789be51476c\nCc: <stable@vger.kernel.org> [all-versiions]\nSigned-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>\n---\n drivers/net/wireless/iwlwifi/pcie/drv.c | 1 +\n 1 file changed, 1 insertion(+)\n\ndiff --git a/drivers/net/wireless/iwlwifi/pcie/drv.c b/drivers/net/wireless/iwlwifi/pcie/drv.c\nindex de9f5da..654d8da 100644\n--- a/drivers/net/wireless/iwlwifi/pcie/drv.c\n+++ b/drivers/net/wireless/iwlwifi/pcie/drv.c\n@@ -130,6 +130,7 @@ static DEFINE_PCI_DEVICE_TABLE(iwl_hw_card_ids) = {\n \t{IWL_PCI_DEVICE(0x423C, 0x1306, iwl5150_abg_cfg)}, /* Half Mini Card */\n \t{IWL_PCI_DEVICE(0x423C, 0x1221, iwl5150_agn_cfg)}, /* Mini Card */\n \t{IWL_PCI_DEVICE(0x423C, 0x1321, iwl5150_agn_cfg)}, /* Half Mini Card */\n+\t{IWL_PCI_DEVICE(0x423C, 0x1326, iwl5150_abg_cfg)}, /* Half Mini Card */\n \n \t{IWL_PCI_DEVICE(0x423D, 0x1211, iwl5150_agn_cfg)}, /* Mini Card */\n \t{IWL_PCI_DEVICE(0x423D, 0x1311, iwl5150_agn_cfg)}, /* Half Mini Card */\n-- \n1.8.1.msysgit.1\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "network-wireless",
+  "Hardware": "x86-64 Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_network-wireless@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2013-07-18 13:18 UTC by Arthur Sudneko",
+  "Modified": "2014-05-08 05:43 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "3.9.9",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/iwlwifi/pcie/drv.c"
+  ],
+  "methods": [
+    "DEFINE_PCI_DEVICE_TABLE"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "id": "40042",
+  "title": "iwlagn: bad 802.11n performance and \"aggregation not enabled\" flood in dmesg",
+  "description": "Hi.\n\nI'm trying to get 802.11n working with followed card:\n\n   02:00.0 Network controller: Intel Corporation WiFi Link 5100\n\nIt's inside ASUS F6A laptop. I'm connecting it to another machine with:\n   \n   01:00.0 Network controller: Atheros Communications Inc. AR5008 Wireless Network Adapter (rev 01)\n\nAtheros card is in AP mode (with hostapd). And just after connecting I'm getting followed messages:\n\n[132378.252140] iwlagn 0000:02:00.0: iwlagn_tx_agg_start on ra = 00:21:91:f3:c8:a1 tid = 0\n[132404.533559] iwlagn 0000:02:00.0: Aggregation not enabled for tid 0 because load = 3\n[132427.820093] iwlagn 0000:02:00.0: iwlagn_tx_agg_start on ra = 00:21:91:f3:c8:a1 tid = 0\n[132445.826017] iwlagn 0000:02:00.0: Aggregation not enabled for tid 0 because load = 1\n[132448.868061] iwlagn 0000:02:00.0: iwlagn_tx_agg_start on ra = 00:21:91:f3:c8:a1 tid = 0\n[132472.781121] iwlagn 0000:02:00.0: Aggregation not enabled for tid 0 because load = 0\n[132479.995679] iwlagn 0000:02:00.0: Aggregation not enabled for tid 0 because load = 9\n[132482.848072] iwlagn 0000:02:00.0: iwlagn_tx_agg_start on ra = 00:21:91:f3:c8:a1 tid = 0\n[132505.042703] iwlagn 0000:02:00.0: Aggregation not enabled for tid 0 because load = 0\n[132532.848067] iwlagn 0000:02:00.0: iwlagn_tx_agg_start on ra = 00:21:91:f3:c8:a1 tid = 0\n[132551.187911] iwlagn 0000:02:00.0: Aggregation not enabled for tid 0 because load = 0\n\nI'm gettint something around 2.5Mbyte/sec while downloading some large file (fully intranet). Preinstalled Windows Vista is able to download same file at 5-6 mb/sec.",
+  "patch": [
+    "From 2a57013065767d2fe77aacf98395cce3819d7c2a Mon Sep 17 00:00:00 2001\nFrom: Wey-Yi Guy <wey-yi.w.guy@intel.com>\nDate: Mon, 25 Jul 2011 12:16:42 -0700\nSubject: [PATCH 1/1] iwlagn: always trigger aggregation\n\nSigned-off-by: Wey-Yi Guy <wey-yi.w.guy@intel.com>\n---\n drivers/net/wireless/iwlwifi/iwl-agn-rs.c |    2 ++\n 1 files changed, 2 insertions(+), 0 deletions(-)\n\ndiff --git a/drivers/net/wireless/iwlwifi/iwl-agn-rs.c b/drivers/net/wireless/iwlwifi/iwl-agn-rs.c\nindex 3789ff4..8be2b49 100644\n--- a/drivers/net/wireless/iwlwifi/iwl-agn-rs.c\n+++ b/drivers/net/wireless/iwlwifi/iwl-agn-rs.c\n@@ -421,6 +421,8 @@ static int rs_tl_turn_on_agg_for_tid(struct iwl_priv *priv,\n \n \tload = rs_tl_get_load(lq_data, tid);\n \n+\t/* always trigger HT */\n+\tload = IWL_AGG_LOAD_THRESHOLD + 1;\n \tif (load > IWL_AGG_LOAD_THRESHOLD) {\n \t\tIWL_DEBUG_HT(priv, \"Starting Tx agg: STA: %pM tid: %d\\n\",\n \t\t\t\tsta->addr, tid);\n-- \n1.7.0.4\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "network-wireless",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_network-wireless@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2011-07-25 18:46 UTC by Dmitry Nezhevenko",
+  "Modified": "2012-01-13 19:06 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "3.0",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/iwlwifi/iwl-agn-rs.c"
+  ],
+  "methods": [
+    "rs_tl_turn_on_agg_for_tid"
+  ]
+}

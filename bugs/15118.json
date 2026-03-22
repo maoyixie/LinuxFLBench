@@ -1,0 +1,36 @@
+{
+  "id": "15118",
+  "title": "\"ThinkPad\" key on T20 only works after suspend cycle",
+  "description": "Reported-by: Florian Zumbiehl <florz@florz.de>\n\nThe vendor (\"ThinkPad\") key on a T20 with latest T22 BIOS only works after a S3 suspend/resume cycle.  Tested with direct (no userspace script) S3 sleep.\n\nThe T20 is running a patched kernel to fix the EC DoS problem.\n\nThe key is operating in NVRAM polling mode.\n\nIt breaks again when thinkpad-acpi is unloaded and then reloaded.\n\nDriver hotkey state dump:\n| /sys/bus/platform/devices/thinkpad_acpi/hotkey_all_mask:0x0088080c\n| /sys/bus/platform/devices/thinkpad_acpi/hotkey_bios_enabled:0\n| /sys/bus/platform/devices/thinkpad_acpi/hotkey_bios_mask:0x0000080c\n| /sys/bus/platform/devices/thinkpad_acpi/hotkey_enable:1\n| /sys/bus/platform/devices/thinkpad_acpi/hotkey_mask:0x0088080c\n| /sys/bus/platform/devices/thinkpad_acpi/hotkey_poll_freq:10\n| /sys/bus/platform/devices/thinkpad_acpi/hotkey_recommended_mask:0x0088080c\n| /sys/bus/platform/devices/thinkpad_acpi/hotkey_report_mode:1\n| /sys/bus/platform/devices/thinkpad_acpi/hotkey_source_mask:0x00880000",
+  "patch": [
+    "commit c3088839a54ff2f15fca7b2134dc5ece8ba9b5f5\nAuthor: Henrique de Moraes Holschuh <hmh@hmh.eng.br>\nDate:   Tue Jan 26 23:08:58 2010 -0200\n\n    thinkpad-acpi: fix poll thread auto-start\n    \n    The driver was not starting the NVRAM polling thread if the input\n    device was bound immediately after registration.\n    \n    This fixes:\n    http://bugzilla.kernel.org/show_bug.cgi?id=15118\n    \n    Reported-by: Florian Zumbiehl <florz@florz.de>\n    Signed-off-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>\n\ndiff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c\nindex 675ef96..9582d2e 100644\n--- a/drivers/platform/x86/thinkpad_acpi.c\n+++ b/drivers/platform/x86/thinkpad_acpi.c\n@@ -2610,16 +2610,11 @@ static int hotkey_inputdev_open(struct input_dev *dev)\n {\n \tswitch (tpacpi_lifecycle) {\n \tcase TPACPI_LIFE_INIT:\n-\t\t/*\n-\t\t * hotkey_init will call hotkey_poll_setup_safe\n-\t\t * at the appropriate moment\n-\t\t */\n-\t\treturn 0;\n-\tcase TPACPI_LIFE_EXITING:\n-\t\treturn -EBUSY;\n \tcase TPACPI_LIFE_RUNNING:\n \t\thotkey_poll_setup_safe(false);\n \t\treturn 0;\n+\tcase TPACPI_LIFE_EXITING:\n+\t\treturn -EBUSY;\n \t}\n \n \t/* Should only happen if tpacpi_lifecycle is corrupt */\n@@ -2630,7 +2625,7 @@ static int hotkey_inputdev_open(struct input_dev *dev)\n static void hotkey_inputdev_close(struct input_dev *dev)\n {\n \t/* disable hotkey polling when possible */\n-\tif (tpacpi_lifecycle == TPACPI_LIFE_RUNNING &&\n+\tif (tpacpi_lifecycle != TPACPI_LIFE_EXITING &&\n \t    !(hotkey_source_mask & hotkey_driver_mask))\n \t\thotkey_poll_setup_safe(false);\n }\n@@ -9041,6 +9036,9 @@ static int __init thinkpad_acpi_module_init(void)\n \t\t\treturn ret;\n \t\t}\n \t}\n+\n+\ttpacpi_lifecycle = TPACPI_LIFE_RUNNING;\n+\n \tret = input_register_device(tpacpi_inputdev);\n \tif (ret < 0) {\n \t\tprintk(TPACPI_ERR \"unable to register input device\\n\");\n@@ -9050,7 +9048,6 @@ static int __init thinkpad_acpi_module_init(void)\n \t\ttp_features.input_device_registered = 1;\n \t}\n \n-\ttpacpi_lifecycle = TPACPI_LIFE_RUNNING;\n \treturn 0;\n }\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Platform",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Henrique de Moraes Holschuh",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-01-24 11:14 UTC by Henrique de Moraes Holschuh",
+  "Modified": "2010-10-08 18:23 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.32",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/platform/x86/thinkpad_acpi.c"
+  ],
+  "methods": [
+    "hotkey_inputdev_open",
+    "hotkey_inputdev_close",
+    "thinkpad_acpi_module_init"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "id": "11520",
+  "title": "eeepc_laptop hwmon missing name",
+  "description": "Hardware Environment: EeePC\nProblem Description:\n\nThe hwmon sysfs-interface of the eeepc_laptop module doesn't provide the mandatory attribute \"name\", causing lm-sensors to ignore it.",
+  "patch": [
+    "From: Corentin chary <corentincj@iksaif.net>\nDate: Fri, 3 Oct 2008 15:49:56 +0200\nSubject: [PATCH] eeepc-laptop: Fix hwmon interface\n\nCreates a name file in the sysfs directory, that\nis needed for the libsensors library to work.\nAlso scales correctly the value used with pwm1\n\n\nSigned-off-by: Corentin chary <corentincj@iksaif.net>\n---\n drivers/misc/eeepc-laptop.c |   16 +++++++++++++---\n 1 files changed, 13 insertions(+), 3 deletions(-)\n\ndiff --git a/drivers/misc/eeepc-laptop.c b/drivers/misc/eeepc-laptop.c\nindex facdb98..1ee8501 100644\n--- a/drivers/misc/eeepc-laptop.c\n+++ b/drivers/misc/eeepc-laptop.c\n@@ -450,12 +450,14 @@ static int eeepc_get_fan_pwm(void)\n \tint value = 0;\n \n \tread_acpi_int(NULL, EEEPC_EC_FAN_PWM, &value);\n+\tvalue = value * 255 / 100;\n \treturn (value);\n }\n \n static void eeepc_set_fan_pwm(int value)\n {\n-\tvalue = SENSORS_LIMIT(value, 0, 100);\n+\tvalue = SENSORS_LIMIT(value, 0, 255);\n+\tvalue = value * 100 / 255;\n \tec_write(EEEPC_EC_SC02, value);\n }\n \n@@ -520,15 +522,23 @@ static ssize_t show_sys_hwmon(int (*get)(void), char *buf)\n \tstatic SENSOR_DEVICE_ATTR(_name, _mode, show_##_name, store_##_name, 0);\n \n EEEPC_CREATE_SENSOR_ATTR(fan1_input, S_IRUGO, eeepc_get_fan_rpm, NULL);\n-EEEPC_CREATE_SENSOR_ATTR(fan1_pwm, S_IRUGO | S_IWUSR,\n+EEEPC_CREATE_SENSOR_ATTR(pwm1, S_IRUGO | S_IWUSR,\n \t\t\t eeepc_get_fan_pwm, eeepc_set_fan_pwm);\n EEEPC_CREATE_SENSOR_ATTR(pwm1_enable, S_IRUGO | S_IWUSR,\n \t\t\t eeepc_get_fan_ctrl, eeepc_set_fan_ctrl);\n \n+static ssize_t\n+show_name(struct device *dev, struct device_attribute *attr, char *buf)\n+{\n+\treturn sprintf(buf, \"eeepc\\n\");\n+}\n+static SENSOR_DEVICE_ATTR(name, S_IRUGO, show_name, NULL, 0);\n+\n static struct attribute *hwmon_attributes[] = {\n-\t&sensor_dev_attr_fan1_pwm.dev_attr.attr,\n+\t&sensor_dev_attr_pwm1.dev_attr.attr,\n \t&sensor_dev_attr_fan1_input.dev_attr.attr,\n \t&sensor_dev_attr_pwm1_enable.dev_attr.attr,\n+\t&sensor_dev_attr_name.dev_attr.attr,\n \tNULL\n };\n \n-- \n1.5.4.3\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Hardware Monitoring",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Corentin Chary",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-09-08 04:58 UTC by Florian Heimgaertner",
+  "Modified": "2008-10-10 00:41 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.26",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/misc/eeepc-laptop.c"
+  ],
+  "methods": [
+    "eeepc_get_fan_pwm",
+    "*hwmon_attributes"
+  ]
+}

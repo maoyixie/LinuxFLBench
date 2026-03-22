@@ -1,0 +1,34 @@
+{
+  "id": "9699",
+  "title": "radio-sf16fmr2 probably buggy - system inconsistent after probe",
+  "description": "Most recent kernel where this bug did not occur: not known\n\nDistribution: OpenSuSE 10.3 with suse kernel & vanilla 2.6.24rc6,  grml (live-cd) daily build\n\nHardware Environment: running inside VMware Workstation 6.x on FSC Lifebook e-series, running native on older FSC Lifebook\n\nSoftware Environment: ???\n\nProblem Description:\nloading radio-sf16fmr2 on a system without that hardware leaves the system in an inconsistent state after probe, leading to weird behaviour or even system crash\n\nSteps to reproduce:\n\neither:\nopensuse103:~ # modprobe radio-sf16fmr2\nFATAL: Error inserting radio_sf16fmr2 (/lib/modules/2.6.24-rc6/kernel/drivers/media/radio/radio-sf16fmr2.ko): Device or resource busy\nopensuse103:~ # cat /proc/ioports\nSegmentation fault\n\nor:\nopensuse103:~ # modprobe radio-sf16fmr2\nFATAL: Error inserting radio_sf16fmr2 (/lib/modules/2.6.24-rc6/kernel/drivers/media/radio/radio-sf16fmr2.ko): Device or resource busy\n\nopensuse103:~ # modprobe esp\n<system freeze>\n\n\ndmesg after cat /proc/ioports:\nfmr2: port 0x384 already in use\nBUG: unable to handle kernel paging request at virtual address e09e467a\nprinting eip: c01d6c8e *pde = 1f41b067 *pte = 00000000\nOops: 0000 [#1] SMP\nModules linked in: videodev v4l2_common v4l1_compat compat_ioctl32 edd iptable_filter ip_tables ip6table_filter ip6_tables x_tables ipv6 af_packet microcode firmware_class fuse loop dm_mod ide_cd cdrom pata_acpi ata_piix ahci ata_generic libata container piix pcnet32 thermal generic shpchp mii ac intel_agp parport_pc pci_hotplug processor ide_core i2c_piix4 parport rtc_cmos agpgart power_supply button rtc_core i2c_core rtc_lib sg ext3 jbd mbcache sd_mod ehci_hcd mptspi mptscsih mptbase uhci_hcd scsi_transport_spi scsi_mod usbcore\n\nPid: 2551, comm: cat Not tainted (2.6.24-rc6-vanilla+suseconfig #11)\nEIP: 0060:[<c01d6c8e>] EFLAGS: 00010297 CPU: 0\nEIP is at strnlen+0x6/0x18\nEAX: e09e467a EBX: e09e467a ECX: e09e467a EDX: fffffffe\nESI: dec4f15e EDI: dee89f10 EBP: ffffffff ESP: dee89e88\n DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068\nProcess cat (pid: 2551, ti=dee88000 task=dea14e70 task.ti=dee88000)\nStack: c01d63d6 00000000 00000000 00000010 00000004 ffffffff 00000001 00000eae\n       dec4f152 00000010 dec50000 00000000 ffffffff c03233cb dec4f152 de82ac80\n       de82ac80 00000400 c018a6b2 dee89ef0 dee89ef0 00000000 c0368774 c012ab4c\nCall Trace:\n [<c01d63d6>] vsnprintf+0x29c/0x469\n [<c018a6b2>] seq_printf+0x2e/0x4b\n [<c012ab4c>] r_show+0x7f/0x88\n [<c018ac63>] seq_read+0x1a1/0x27e\n [<c018aac2>] seq_read+0x0/0x27e\n [<c01a1125>] proc_reg_read+0x5e/0x71\n [<c01a10c7>] proc_reg_read+0x0/0x71\n [<c017557a>] vfs_read+0x9f/0x127\n [<c017596f>] sys_read+0x41/0x67\n [<c0104f52>] sysenter_past_esp+0x6b/0xa9\n =======================\nCode: c9 74 0c f2 ae 74 05 bf 01 00 00 00 4f 89 fa 5f 89 d0 c3 85 c9 57 89 c7 89 d0 74 05 f2 ae 75 01 4f 89 f8 5f c3 89 c1 89 c8 eb 06 <80> 38 00 74 07 40 4a 83 fa ff 75 f4 29 c8 c3 90 90 90 57 83 c9\nEIP: [<c01d6c8e>] strnlen+0x6/0x18 SS:ESP 0068:dee89e88\n---[ end trace 598964de8ea8972c ]---",
+  "patch": [
+    "diff -r c0b10134f05b linux/drivers/media/radio/radio-sf16fmr2.c\n--- a/linux/drivers/media/radio/radio-sf16fmr2.c\tSun Jan 06 10:54:17 2008 -0200\n+++ b/linux/drivers/media/radio/radio-sf16fmr2.c\tWed Jan 09 07:35:18 2008 -0200\n@@ -475,7 +475,7 @@ static int __init fmr2_init(void)\n \n \tmutex_init(&lock);\n \n-\tif (request_region(io, 2, \"sf16fmr2\"))\n+\tif (!request_region(io, 2, \"sf16fmr2\"))\n \t{\n \t\tprintk(KERN_ERR \"fmr2: port 0x%x already in use\\n\", io);\n \t\treturn -EBUSY;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "v4l-dvb",
+  "Classification": "Unclassified",
+  "Component": "radio",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Mauro Carvalho Chehab",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-01-05 15:08 UTC by Roland Kletzing",
+  "Modified": "2008-01-12 03:20 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.24",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/media/radio/radio-sf16fmr2.c"
+  ],
+  "methods": [
+    "fmr2_init"
+  ]
+}

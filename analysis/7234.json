@@ -1,0 +1,337 @@
+{
+  "id": "7234",
+  "title": "bttv initialisation hang, may be i2c locking deadlock",
+  "kernel_version": "2.6.18",
+  "product": "Drivers",
+  "component": "I2C",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "device_not_working",
+    "performance",
+    "power/sleep",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/i2c/i2c-core.c"
+    ],
+    "buggy_methods": [
+      "i2c_attach_client"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "worker_thread",
+      "attach_inform",
+      "do_wait",
+      "release_pages",
+      "bttv_I2CRead",
+      "i2c_probe",
+      "request_module",
+      "wait_for_helper",
+      "mutex_lock",
+      "alloc_inode",
+      "mntput_no_expire",
+      "vfs_rename",
+      "error_code",
+      "i2c_add_adapter",
+      "really_probe",
+      "iget_locked",
+      "do_page_fault",
+      "bus_for_each_dev",
+      "msp_attach",
+      "__activate_task",
+      "link_path_walk",
+      "pci_device_probe",
+      "default_wake_function",
+      "dput",
+      "wait_for_completion",
+      "__pollwait",
+      "skb_copy_datagram_iovec",
+      "driver_probe_device",
+      "printk",
+      "i2c_clients_command",
+      "__call_usermodehelper",
+      "i2c_attach_client",
+      "do_select",
+      "proc_lookup",
+      "sys_wait4",
+      "bttv_probe",
+      "__driver_attach",
+      "kernel_thread_helper",
+      "bttv_init_card2",
+      "sysenter_past_esp",
+      "sysfs_create_link",
+      "sys_init_module",
+      "__pagevec_free",
+      "schedule_timeout",
+      "packet_sendmsg",
+      "packet_getname_spkt",
+      "__pci_register_driver",
+      "kernel_thread",
+      "inotify_poll",
+      "driver_create_file",
+      "call_usermodehelper_keys",
+      "msp3410d_thread",
+      "permission",
+      "msp_sleep",
+      "bus_add_driver",
+      "__sched_text_start",
+      "__mutex_lock_slowpath",
+      "core_sys_select",
+      "sys_select",
+      "driver_attach",
+      "do_lookup",
+      "packet_create",
+      "proc_alloc_inode",
+      "kthread",
+      "i2c_register_driver",
+      "__link_path_walk",
+      "i2c_probe_address",
+      "proc_get_inode",
+      "d_instantiate"
+    ],
+    "mentioned_file_paths": [
+      "drivers/usb/core/inode.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 552,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 38473,
+    "description_word_count": 5053
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 13,
+    "lines_removed": 12,
+    "patch_size": 25,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "synchronization"
+    ],
+    "num_hunks": 3,
+    "hunk_functions": [
+      "list_del"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/i2c/i2c-core.c",
+    "filename": "i2c-core.c",
+    "directory": "drivers/i2c",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "i2c",
+    "driver_subsystem": "i2c/i2c-core.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_69_functions",
+      "dmesg_logs_available",
+      "component_known:I2C"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "7234",
+      "version": "2.6.18",
+      "status": "found",
+      "path": "drivers/i2c/i2c-core.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "7234",
+    "version": "2.6.18",
+    "ground_truth_file": "drivers/i2c/i2c-core.c",
+    "trace_functions": [
+      "worker_thread",
+      "default_wake_function",
+      "kthread",
+      "kernel_thread_helper",
+      "schedule_timeout",
+      "mutex_lock",
+      "inotify_poll",
+      "do_select",
+      "__pollwait",
+      "do_page_fault",
+      "error_code",
+      "__pagevec_free",
+      "release_pages",
+      "skb_copy_datagram_iovec",
+      "proc_alloc_inode"
+    ],
+    "total_trace_functions": 69,
+    "function_locations": {
+      "worker_thread": [
+        "kernel/workqueue.c",
+        "drivers/scsi/ipr.c"
+      ],
+      "default_wake_function": [
+        "kernel/sched.c"
+      ],
+      "kthread": [
+        "drivers/usb/atm/ueagle-atm.c",
+        "arch/ia64/sn/kernel/xpc_main.c",
+        "kernel/kthread.c"
+      ],
+      "kernel_thread_helper": [
+        "arch/sh/kernel/process.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "arch/m32r/kernel/process.c",
+        "arch/arm26/kernel/process.c",
+        "arch/i386/kernel/process.c",
+        "arch/mips/kernel/process.c",
+        "arch/arm/kernel/process.c"
+      ],
+      "schedule_timeout": [
+        "kernel/sched.c",
+        "drivers/block/floppy.c",
+        "kernel/timer.c"
+      ],
+      "mutex_lock": [
+        "kernel/mutex.c",
+        "kernel/rtmutex.c",
+        "kernel/rtmutex-debug.c"
+      ],
+      "inotify_poll": [
+        "fs/inotify_user.c"
+      ],
+      "do_select": [
+        "fs/select.c"
+      ],
+      "__pollwait": [
+        "fs/select.c"
+      ],
+      "do_page_fault": [
+        "arch/m68knommu/mm/fault.c",
+        "arch/sh/mm/fault.c",
+        "arch/m32r/mm/fault.c",
+        "arch/sh64/mm/fault.c",
+        "arch/xtensa/mm/fault.c",
+        "arch/m68k/mm/fault.c",
+        "arch/x86_64/mm/fault.c",
+        "arch/ppc/mm/fault.c",
+        "arch/i386/mm/fault.c",
+        "arch/parisc/mm/fault.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "kernel/rtmutex-debug.c",
+      "kernel/kthread.c",
+      "arch/m68knommu/mm/fault.c",
+      "arch/sh/mm/fault.c",
+      "kernel/timer.c",
+      "arch/m32r/mm/fault.c",
+      "arch/i386/kernel/process.c",
+      "arch/mips/kernel/process.c",
+      "arch/sh64/mm/fault.c",
+      "arch/xtensa/mm/fault.c",
+      "arch/m68k/mm/fault.c",
+      "arch/x86_64/mm/fault.c",
+      "arch/ppc/mm/fault.c",
+      "arch/cris/arch-v10/kernel/process.c",
+      "arch/i386/mm/fault.c",
+      "arch/parisc/mm/fault.c",
+      "arch/ia64/sn/kernel/xpc_main.c",
+      "fs/select.c",
+      "arch/arm/kernel/process.c",
+      "kernel/sched.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "7234",
+    "title": "bttv initialisation hang, may be i2c locking deadlock",
+    "ground_truth_file": "drivers/i2c/i2c-core.c",
+    "ground_truth_methods": [
+      "i2c_attach_client"
+    ],
+    "ground_truth_subsystem": "drivers/i2c",
+    "trace_functions_top8": [
+      "worker_thread",
+      "default_wake_function",
+      "kthread",
+      "kernel_thread_helper",
+      "schedule_timeout",
+      "mutex_lock",
+      "inotify_poll",
+      "do_select"
+    ],
+    "trace_function_locations": {
+      "worker_thread": [
+        "kernel/workqueue.c"
+      ],
+      "default_wake_function": [
+        "kernel/sched.c"
+      ],
+      "kthread": [
+        "kernel/kthread.c"
+      ],
+      "kernel_thread_helper": [
+        "arch/m32r/kernel/process.c",
+        "arch/sh/kernel/process.c",
+        "arch/arm/kernel/process.c",
+        "arch/arm26/kernel/process.c",
+        "arch/mips/kernel/process.c"
+      ],
+      "schedule_timeout": [
+        "kernel/timer.c"
+      ],
+      "mutex_lock": [
+        "kernel/mutex.c"
+      ],
+      "inotify_poll": [
+        "fs/inotify_user.c"
+      ],
+      "do_select": [
+        "fs/select.c"
+      ]
+    },
+    "trace_subsystems": [
+      "arch/m32r",
+      "arch/sh",
+      "arch/arm26",
+      "arch/i386",
+      "arch/mips",
+      "fs/inotify_user.c",
+      "kernel/kthread.c",
+      "arch/cris",
+      "arch/arm",
+      "kernel/timer.c",
+      "kernel/workqueue.c",
+      "kernel/sched.c",
+      "kernel/mutex.c",
+      "fs/select.c"
+    ],
+    "mismatch_type": "trace_in_infrastructure",
+    "gt_calls_trace_func": true,
+    "gt_method_in_trace": true,
+    "product": "Drivers",
+    "component": "I2C"
+  },
+  "overall_category": "C_trace_misleads"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "1321",
+  "title": "[8139cp?] 2.6.0-test6 hangs while executing \"make menuconfig\" on a remote computer",
+  "description": "Distribution: Red Hat 9.0 (both local and remote computers)\nHardware Environment:\nLocal: Athlon, ATI+ALi combo, 512 MB RAM, IDE HDD, RTL 8139 C+ (8139cp) Fast\nEthernet card\nRemote: Athlon, ALi, 512 MB RAN, IDE HDD, DEC Tulip Ethernet card\nSoftware Environment:\nLocal: 2.6.0-test6 (vesa driver for XFree86, KDE/Konsole)\nRemote: 2.4.23-pre6\nProblem Description: Kernel hangs while executing \"make menuconfig\" from a\nremote computer.\n\nSteps to reproduce:\n1. Consider 2 computers: laptop (local), desktop (remote)\n2. From laptop computer under KDE's Konsole ssh to desktop\n3. Execute make menuconfig (2.4.23-pre6 source tree in my case) on the remote\ncomputer.\n4. Exit and restart it few times (in my case it hangs within a dozen attempts)\n5. The local computer hangs. Remote computer is fine.\n\nIt doesn't happen if I try the same from Console terminals. And it doesn't\nhappen under 2.4.23-pre6 on the same local computer.\n\nThanks\nSrihari\nharisri@bigpond.com",
+  "patch": [
+    "# This is a BitKeeper generated patch for the following project:\n# Project Name: Linux kernel tree\n# This patch format is intended for GNU patch command version 2.5 or higher.\n# This patch includes the following deltas:\n#\t           ChangeSet\t1.1510  -> 1.1511 \n#\tdrivers/net/8139cp.c\t1.58    -> 1.59   \n#\n# The following is the BitKeeper ChangeSet Log\n# --------------------------------------------\n# 04/01/24\thirofumi@mail.parknet.co.jp\t1.1511\n# [netdrvr 8139cp] fix NAPI race\n# \n# Andreas Happe <andreashappe@gmx.net> writes:\n# > my notebook (hp/compaq nx7000) still crashes when using 8139cp (runs\n# > rock solid with 8139too driver). The computer just locks up, there is no\n# > dmesg output. This has happened since I've got this laptop (around\n# > november '03).\n# \n# It seems 8139cp.c has the race condition of rx_poll and interrupt.\n# \n# NOTE, since I don't have this device, patch is untested. Sorry.\n# --------------------------------------------\n#\ndiff -Nru a/drivers/net/8139cp.c b/drivers/net/8139cp.c\n--- a/drivers/net/8139cp.c\tSat Jan 24 19:48:25 2004\n+++ b/drivers/net/8139cp.c\tSat Jan 24 19:48:25 2004\n@@ -615,8 +615,10 @@\n \t\tif (cpr16(IntrStatus) & cp_rx_intr_mask)\n \t\t\tgoto rx_status_loop;\n \n-\t\tnetif_rx_complete(dev);\n+\t\tlocal_irq_disable();\n \t\tcpw16_f(IntrMask, cp_intr_mask);\n+\t\t__netif_rx_complete(dev);\n+\t\tlocal_irq_enable();\n \n \t\treturn 0;\t/* done */\n \t}\n@@ -643,6 +645,12 @@\n \n \tspin_lock(&cp->lock);\n \n+\t/* close possible race's with dev_close */\n+\tif (unlikely(!netif_running(dev))) {\n+\t\tcpw16(IntrMask, 0);\n+\t\tgoto out;\n+\t}\n+\n \tif (status & (RxOK | RxErr | RxEmpty | RxFIFOOvr)) {\n \t\tif (netif_rx_schedule_prep(dev)) {\n \t\t\tcpw16_f(IntrMask, cp_norx_intr_mask);\n@@ -664,7 +672,7 @@\n \n \t\t/* TODO: reset hardware */\n \t}\n-\n+out:\n \tspin_unlock(&cp->lock);\n \treturn IRQ_HANDLED;\n }\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Network",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 high",
+  "Assignee": "Jeff Garzik",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2003-10-03 22:06 UTC by Srihari Vijayaraghavan",
+  "Modified": "2004-01-25 21:56 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.0",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/8139cp.c"
+  ],
+  "methods": [
+    "cp_rx_poll",
+    "cp_interrupt"
+  ]
+}

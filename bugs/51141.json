@@ -1,0 +1,34 @@
+{
+  "id": "51141",
+  "title": "ACPI display backlight brightness is set to zero at every boot-up - HP Folio 13-2000",
+  "description": "Created attachment 87851 [details]\ndmesg log (kernel 3.6.8)\n\nEvery time I boot-up my notebook's display stays black. Since most of the time I'm using an external display I found out that the backlight brightness in GNOME settings is set to zero – I can temporarily solve the issue by increasing the screen brightness but next time I boot this setting is lost, screen brightness is set back to zero again. Using the kernel boot parameter i915.invert_brightness=1 works fine as workaround.\n\nWhen I looked into /sys/class/backlight/acpi_video0/brightness to confirm that it's set to zero I realized that I have two entries in backlight:\n- 'acpi_video0' (with brightness set to 0, actual_brightness set to 0) and\n- 'intel_backlight' (with brightness set to 4882, actual_brightness set to 0).\n\nWhen I increase screen brightness to 100% in GNOME settings, the values change to:\n- 'acpi_video0' brightness & actual_brightness 10,\n- 'intel_backlight' brightness & actual_brightness 4882.\n\nNext time I boot, ACPI display backlight brightness is set to 0 again.\n\nI'm affected by this bug since kernel v3.6, before that I was affected by Bug #46481. My notebook is a HP Folio 13-200, I'll attach a dmesg-log and the output of acpidump.",
+  "patch": [
+    "From 117af51d695c78bfdf618a183664f0e9f3769b9a Mon Sep 17 00:00:00 2001\nFrom: Zhang Rui <rui.zhang@intel.com>\nDate: Sun, 2 Dec 2012 10:00:41 +0800\nSubject: [PATCH] ACPI video: ignore BIOS initial backlight value for HP Folio\n 13-2000.\n\nOr else the laptop will boot with a dimmed screen.\n\nSigned-off-by: Zhang Rui <rui.zhang@intel.com>\n---\n drivers/acpi/video.c |   14 ++++++++++++++\n 1 file changed, 14 insertions(+)\n\ndiff --git a/drivers/acpi/video.c b/drivers/acpi/video.c\nindex 1e0a9e1..58bddd3 100644\n--- a/drivers/acpi/video.c\n+++ b/drivers/acpi/video.c\n@@ -389,6 +389,12 @@ static int __init video_set_bqc_offset(const struct dmi_system_id *d)\n \treturn 0;\n }\n \n+static int video_ignore_initial_backlight(const struct dmi_system_id *d)\n+{\n+\tuse_bios_initial_backlight = 0;\n+\treturn 0;\n+}\n+\n static struct dmi_system_id video_dmi_table[] __initdata = {\n \t/*\n \t * Broken _BQC workaround http://bugzilla.kernel.org/show_bug.cgi?id=13121\n@@ -433,6 +439,14 @@ static struct dmi_system_id video_dmi_table[] __initdata = {\n \t\tDMI_MATCH(DMI_PRODUCT_NAME, \"Aspire 7720\"),\n \t\t},\n \t},\n+\t{\n+\t .callback = video_ignore_initial_backlight,\n+\t .ident = \"HP Folio 13-2000\",\n+\t .matches = {\n+\t\tDMI_MATCH(DMI_BOARD_VENDOR, \"Hewlett-Packard\"),\n+\t\tDMI_MATCH(DMI_PRODUCT_NAME, \"HP Folio 13 - 2000 Notebook PC\"),\n+\t\t},\n+\t},\n \t{}\n };\n \n-- \n1.7.9.5\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "All Linux",
+  "Importance": "P1 low",
+  "Assignee": "acpi_other",
+  "URL": "http://bugs.debian.org/cgi-bin/bugrep...",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2012-11-30 00:54 UTC by Stefan Nagy",
+  "Modified": "2013-11-18 07:01 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "3.6.8",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/video.c"
+  ],
+  "methods": [
+    "video_dmi_table"
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "id": "13232",
+  "title": "ext3/4 with synchronous writes gets wedged by Postfix",
+  "kernel_version": "2.6.29",
+  "product": "File System",
+  "component": "ext3",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "performance",
+    "wrong_behavior",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "fs/inode.c"
+    ],
+    "buggy_methods": [
+      "insert_inode_locked",
+      "insert_inode_locked4"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "start_this_handle",
+      "do_filp_open",
+      "sys_unlink",
+      "generic_drop_inode",
+      "journal_stop",
+      "vfs_create",
+      "__generic_file_aio_write_nolock",
+      "ext3_unlink",
+      "generic_file_aio_write",
+      "insert_inode_locked",
+      "__ext3_journal_stop",
+      "ext3_delete_inode",
+      "ext3_file_write",
+      "vfs_unlink",
+      "ext3_write_begin",
+      "sysenter_do_call",
+      "ext3_journal_start_sb",
+      "do_sync_write",
+      "kernel_thread_helper",
+      "sys_open",
+      "ext3_new_inode",
+      "do_sys_open",
+      "journal_commit_transaction",
+      "generic_delete_inode",
+      "ext3_create",
+      "__wait_on_freeing_inode",
+      "iput",
+      "kjournald",
+      "vfs_write",
+      "log_wait_commit",
+      "find_inode_fast",
+      "journal_start",
+      "do_unlinkat",
+      "kthread",
+      "sys_write",
+      "generic_file_buffered_write"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 8722,
+    "description_word_count": 783
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 25,
+    "lines_removed": 6,
+    "patch_size": 31,
+    "patch_types": [
+      "logic_change",
+      "init_fix",
+      "synchronization"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "insert_inode_locked4",
+      "insert_inode_locked"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "fs/inode.c",
+    "filename": "inode.c",
+    "directory": "fs",
+    "depth": 2,
+    "top_level": "fs",
+    "second_level": "inode.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_36_functions",
+      "component_known:ext3",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13232",
+      "version": "2.6.29",
+      "status": "found",
+      "path": "fs/inode.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "13232",
+    "version": "2.6.29",
+    "ground_truth_file": "fs/inode.c",
+    "trace_functions": [
+      "trace_hardirqs_on",
+      "journal_commit_transaction",
+      "_spin_unlock_irqrestore",
+      "trace_hardirqs_on_caller",
+      "autoremove_wake_function",
+      "del_timer",
+      "kjournald",
+      "kthread",
+      "kernel_thread_helper",
+      "prepare_to_wait",
+      "log_wait_commit",
+      "journal_stop",
+      "__ext3_journal_stop",
+      "ext3_delete_inode",
+      "generic_delete_inode"
+    ],
+    "total_trace_functions": 50,
+    "function_locations": {
+      "trace_hardirqs_on": [
+        "kernel/lockdep.c",
+        "kernel/trace/trace_irqsoff.c"
+      ],
+      "journal_commit_transaction": [
+        "fs/jbd2/commit.c",
+        "fs/jbd/commit.c"
+      ],
+      "_spin_unlock_irqrestore": [
+        "kernel/spinlock.c"
+      ],
+      "trace_hardirqs_on_caller": [
+        "kernel/lockdep.c",
+        "kernel/trace/trace_irqsoff.c"
+      ],
+      "autoremove_wake_function": [
+        "kernel/wait.c"
+      ],
+      "del_timer": [
+        "net/ax25/ax25_ds_timer.c",
+        "drivers/isdn/mISDN/timerdev.c",
+        "net/bluetooth/hidp/core.c",
+        "net/core/neighbour.c",
+        "sound/drivers/serial-u16550.c",
+        "kernel/timer.c",
+        "drivers/net/atl1e/atl1e_main.c",
+        "net/ipv6/addrconf.c",
+        "drivers/net/atl1c/atl1c_main.c"
+      ],
+      "kjournald": [
+        "fs/jbd/journal.c"
+      ],
+      "kthread": [
+        "fs/ecryptfs/kthread.c",
+        "kernel/kthread.c",
+        "fs/btrfs/disk-io.c",
+        "drivers/hwmon/lis3lv02d.c",
+        "drivers/usb/atm/ueagle-atm.c",
+        "drivers/platform/x86/thinkpad_acpi.c"
+      ],
+      "kernel_thread_helper": [
+        "arch/x86/kernel/process_32.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "arch/sh/kernel/process_32.c",
+        "arch/sh/kernel/process_64.c",
+        "arch/blackfin/kernel/process.c",
+        "arch/m32r/kernel/process.c",
+        "arch/mips/kernel/process.c",
+        "arch/arm/kernel/process.c",
+        "arch/avr32/kernel/process.c"
+      ],
+      "prepare_to_wait": []
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "arch/sh/kernel/process_64.c",
+      "kernel/kthread.c",
+      "net/bluetooth/hidp/core.c",
+      "arch/blackfin/kernel/process.c",
+      "kernel/lockdep.c",
+      "kernel/timer.c",
+      "arch/mips/kernel/process.c",
+      "fs/jbd2/commit.c",
+      "arch/avr32/kernel/process.c",
+      "fs/jbd/commit.c",
+      "kernel/spinlock.c",
+      "arch/x86/kernel/process_32.c",
+      "arch/cris/arch-v10/kernel/process.c",
+      "arch/sh/kernel/process_32.c",
+      "fs/btrfs/disk-io.c",
+      "sound/drivers/serial-u16550.c",
+      "arch/arm/kernel/process.c",
+      "drivers/net/atl1c/atl1c_main.c",
+      "drivers/platform/x86/thinkpad_acpi.c",
+      "drivers/isdn/mISDN/timerdev.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

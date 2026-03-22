@@ -1,0 +1,292 @@
+{
+  "id": "13793",
+  "title": "2.6.31 regression - boot crash in rcu_process_callbacks - DELL XPS M1330",
+  "kernel_version": "2.6.31-rc3",
+  "product": "File System",
+  "component": "VFS",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "fs/jfs/acl.c"
+    ],
+    "buggy_methods": [
+      "*jfs_get_acl"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "common_interrupt",
+      "handle_IRQ_event",
+      "rcu_do_batch",
+      "tick_handle_oneshot_broadcast",
+      "irq_exit",
+      "rcu_process_callbacks",
+      "cpuidle_idle_call",
+      "do_IRQ",
+      "sys_getresuid",
+      "do_softirq",
+      "timer_interrupt",
+      "cpu_idle",
+      "acpi_idle_enter_bm",
+      "__rcu_process_callbacks"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 680,
+    "description_word_count": 67
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 3,
+    "patch_size": 4,
+    "patch_types": [
+      "logic_change",
+      "memory"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "fs/jfs/acl.c",
+    "filename": "acl.c",
+    "directory": "fs/jfs",
+    "depth": 3,
+    "top_level": "fs",
+    "second_level": "jfs",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_14_functions",
+      "component_known:VFS",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13793",
+      "version": "2.6.31-rc3",
+      "status": "found",
+      "path": "fs/jfs/acl.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "13793",
+    "version": "2.6.31-rc3",
+    "ground_truth_file": "fs/jfs/acl.c",
+    "trace_functions": [
+      "rcu_do_batch",
+      "__rcu_process_callbacks",
+      "tick_handle_oneshot_broadcast",
+      "rcu_process_callbacks",
+      "timer_interrupt",
+      "handle_IRQ_event",
+      "do_softirq",
+      "irq_exit",
+      "do_IRQ",
+      "common_interrupt",
+      "sys_getresuid",
+      "acpi_idle_enter_bm",
+      "cpuidle_idle_call",
+      "cpu_idle"
+    ],
+    "total_trace_functions": 14,
+    "function_locations": {
+      "rcu_do_batch": [
+        "kernel/rcuclassic.c",
+        "kernel/rcutree.c"
+      ],
+      "__rcu_process_callbacks": [
+        "kernel/rcuclassic.c"
+      ],
+      "tick_handle_oneshot_broadcast": [
+        "kernel/time/tick-broadcast.c"
+      ],
+      "rcu_process_callbacks": [
+        "kernel/rcuclassic.c",
+        "kernel/rcupreempt.c",
+        "kernel/rcutree.c"
+      ],
+      "timer_interrupt": [
+        "arch/arm/mach-ixp23xx/core.c",
+        "arch/x86/kernel/time_64.c",
+        "arch/sparc/kernel/sun4d_smp.c",
+        "sound/oss/sound_timer.c",
+        "arch/avr32/kernel/time.c",
+        "arch/arm/mach-ixp4xx/common.c",
+        "arch/m32r/kernel/traps.c",
+        "arch/arm/common/time-acorn.c",
+        "drivers/staging/comedi/drivers/das16.c",
+        "arch/arm/mach-footbridge/isa-timer.c"
+      ],
+      "handle_IRQ_event": [
+        "kernel/irq/handle.c"
+      ],
+      "do_softirq": [
+        "kernel/softirq.c",
+        "arch/powerpc/kernel/irq.c",
+        "arch/x86/kernel/irq_32.c",
+        "arch/sh/kernel/irq.c",
+        "arch/x86/kernel/irq_64.c",
+        "arch/sparc/kernel/irq_64.c",
+        "arch/s390/kernel/irq.c"
+      ],
+      "irq_exit": [
+        "kernel/rcupreempt.c",
+        "kernel/softirq.c",
+        "drivers/uio/uio_pdrv_genirq.c",
+        "kernel/rcutree.c"
+      ],
+      "do_IRQ": [
+        "arch/cris/kernel/irq.c",
+        "arch/microblaze/kernel/irq.c",
+        "arch/xtensa/kernel/irq.c",
+        "arch/powerpc/kernel/irq.c",
+        "arch/h8300/kernel/irq.c",
+        "arch/cris/arch-v10/kernel/irq.c",
+        "arch/avr32/mach-at32ap/intc.c",
+        "arch/m68knommu/kernel/irq.c",
+        "arch/sh/kernel/irq.c",
+        "arch/x86/kernel/irq.c"
+      ],
+      "common_interrupt": []
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "arch/cris/kernel/irq.c",
+      "arch/microblaze/kernel/irq.c",
+      "kernel/time/tick-broadcast.c",
+      "arch/arm/mach-ixp23xx/core.c",
+      "arch/x86/kernel/time_64.c",
+      "arch/sparc/kernel/sun4d_smp.c",
+      "sound/oss/sound_timer.c",
+      "arch/xtensa/kernel/irq.c",
+      "kernel/rcuclassic.c",
+      "arch/x86/kernel/irq_32.c",
+      "arch/avr32/kernel/time.c",
+      "arch/arm/mach-ixp4xx/common.c",
+      "kernel/rcutree.c",
+      "arch/m32r/kernel/traps.c",
+      "kernel/softirq.c",
+      "drivers/uio/uio_pdrv_genirq.c",
+      "arch/powerpc/kernel/irq.c",
+      "arch/h8300/kernel/irq.c",
+      "arch/cris/arch-v10/kernel/irq.c",
+      "arch/arm/common/time-acorn.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "13793",
+    "title": "2.6.31 regression - boot crash in rcu_process_callbacks - DELL XPS M1330",
+    "ground_truth_file": "fs/jfs/acl.c",
+    "ground_truth_methods": [
+      "*jfs_get_acl"
+    ],
+    "ground_truth_subsystem": "fs/jfs",
+    "trace_functions_top8": [
+      "rcu_do_batch",
+      "__rcu_process_callbacks",
+      "tick_handle_oneshot_broadcast",
+      "rcu_process_callbacks",
+      "timer_interrupt",
+      "handle_IRQ_event",
+      "do_softirq",
+      "irq_exit"
+    ],
+    "trace_function_locations": {
+      "rcu_do_batch": [
+        "kernel/rcutree.c",
+        "kernel/rcuclassic.c"
+      ],
+      "__rcu_process_callbacks": [
+        "kernel/rcuclassic.c"
+      ],
+      "tick_handle_oneshot_broadcast": [
+        "kernel/time/tick-broadcast.c"
+      ],
+      "rcu_process_callbacks": [
+        "kernel/rcupreempt.c",
+        "kernel/rcutree.c",
+        "kernel/rcuclassic.c"
+      ],
+      "timer_interrupt": [
+        "arch/h8300/kernel/timer/timer8.c",
+        "arch/mn10300/kernel/time.c",
+        "arch/h8300/kernel/timer/timer16.c",
+        "arch/parisc/kernel/irq.c",
+        "arch/alpha/kernel/time.c"
+      ],
+      "handle_IRQ_event": [
+        "kernel/irq/handle.c"
+      ],
+      "do_softirq": [
+        "arch/s390/kernel/irq.c",
+        "arch/sparc/kernel/irq_64.c",
+        "arch/x86/kernel/irq_32.c",
+        "arch/x86/kernel/irq_64.c",
+        "arch/powerpc/kernel/irq.c"
+      ],
+      "irq_exit": [
+        "kernel/softirq.c"
+      ]
+    },
+    "trace_subsystems": [
+      "kernel/time",
+      "arch/powerpc",
+      "arch/h8300",
+      "arch/frv",
+      "arch/mn10300",
+      "arch/m32r",
+      "arch/ia64",
+      "arch/xtensa",
+      "arch/m68k",
+      "arch/x86",
+      "kernel/softirq.c",
+      "arch/sparc",
+      "arch/microblaze",
+      "arch/blackfin",
+      "arch/avr32",
+      "arch/alpha",
+      "arch/mips",
+      "kernel/rcupreempt.c",
+      "arch/s390",
+      "arch/parisc",
+      "kernel/irq",
+      "arch/sh",
+      "kernel/rcuclassic.c",
+      "arch/arm",
+      "kernel/rcutree.c"
+    ],
+    "mismatch_type": "trace_in_infrastructure",
+    "gt_calls_trace_func": false,
+    "gt_method_in_trace": false,
+    "product": "File System",
+    "component": "VFS"
+  },
+  "overall_category": "C_trace_misleads"
+}

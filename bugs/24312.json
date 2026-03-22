@@ -1,0 +1,34 @@
+{
+  "id": "24312",
+  "title": "[i915] null pointer dereference on modprobe in intel_svdo_read_byte.clone.8",
+  "description": "The i915 module in Natty's 2.6.37-rc3-7 (and perhaps others) kernel oopses with a null pointer dereference on boot on my i915GM-based Dell Latitude D610 as seen below,\n\n[ 16.693732] i915 0000:00:02.0: PCI INT A -> GSI 16 (level, low) -> IRQ 16\n[ 16.693741] i915 0000:00:02.0: setting latency timer to 64\n[ 16.753618] BUG: unable to handle kernel NULL pointer dereference at (null)\n[ 16.753753] IP: [<c04ca13e>] i2c_transfer+0x1e/0xc0\n[ 16.753851] *pde = 3f032067\n[ 16.753940] Oops: 0000 [#1] SMP\n[ 16.754060] last sysfs file: /sys/module/ssb/initstate\n[ 16.754124] Modules linked in: i915(+) b43(+) snd_seq_device mac80211 drm_kms_helper drm sunrpc cfg80211 yenta_socket dell_laptop pcmcia_rsrc snd dcdbas psmouse\npcmcia_core i2c_algo_bit video shpchp soundcore serio_raw snd_page_alloc output lp parport tg3 ssb\n[ 16.755116]\n[ 16.755171] Pid: 341, comm: modprobe Not tainted 2.6.37-7-generic #19-Ubuntu 0U8082/Latitude D610\n[ 16.755267] EIP: 0060:[<c04ca13e>] EFLAGS: 00010296 CPU: 0\n[ 16.755331] EIP is at i2c_transfer+0x1e/0xc0\n[ 16.755392] EAX: 00000000 EBX: ffffffa1 ECX: 00000002 EDX: f35b5c4c\n[ 16.755458] ESI: f367b748 EDI: f35b5ccf EBP: f35b5c2c ESP: f35b5c14\n[ 16.755524] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068\n[ 16.755589] Process modprobe (pid: 341, ti=f35b4000 task=f358a5e0 task.ti=f35b4000)\n[ 16.755675] Stack:\n[ 16.755729] f3fd3e60 00000002 f35b5c4c f363d400 00000000 f35b5ccf f35b5c64 f8541ada\n[ 16.756004] f363d40c 00000000 0000000e f3fd3c00 f363d400 00000000 00000038 00000001\n[ 16.756004] f35b5c48 00010038 f8540001 f35b5ccf f35b5cdc f854549d f35b5ccf 00000014\n[ 16.756004] Call Trace:\n[ 16.756004] [<f8541ada>] ? intel_sdvo_read_byte.clone.8+0x4a/0x90 [i915]\n[ 16.756004] [<f8540001>] ? intel_dp_set_m_n+0x201/0x480 [i915]\n[ 16.756004] [<f854549d>] ? intel_sdvo_init+0x19d/0x5c0 [i915]\n[ 16.756004] [<f853acc7>] ? intel_crt_init+0xe7/0x2f0 [i915]\n[ 16.756004] [<f852d2ed>] ? intel_setup_outputs+0x37d/0x730 [i915]\n[ 16.756004] [<f8539705>] ? intel_modeset_init+0x195/0x360 [i915]\n[ 16.756004] [<f85120a1>] ? i915_load_modeset_init+0x131/0x200 [i915]\n[ 16.756004] [<f8511720>] ? i915_vga_set_decode+0x0/0x30 [i915]\n[ 16.756004] [<f851064f>] ? intel_detect_pch+0x2f/0x80 [i915]\n[ 16.756004] [<f8513e84>] ? i915_driver_load+0x334/0x8e0 [i915]\n[ 16.756004] [<f836e5c3>] ? drm_get_pci_dev+0x153/0x300 [drm]\n[ 16.756004] [<c05fb20f>] ? _raw_spin_lock_irqsave+0x2f/0x50\n[ 16.756004] [<f8551d72>] ? i915_pci_probe+0x12/0x14 [i915]\n[ 16.756004] [<c038af37>] ? local_pci_probe+0x47/0xb0\n[ 16.756004] [<c038c418>] ? pci_device_probe+0x68/0x90\n[ 16.756004] [<c042763d>] ? really_probe+0x4d/0x150\n[ 16.756004] [<c042fb9b>] ? pm_runtime_barrier+0x4b/0xb0\n[ 16.756004] [<c04278dc>] ? driver_probe_device+0x3c/0x60\n[ 16.756004] [<c0427981>] ? __driver_attach+0x81/0x90\n[ 16.756004] [<c0427900>] ? __driver_attach+0x0/0x90\n[ 16.756004] [<c0426968>] ? bus_for_each_dev+0x48/0x70\n[ 16.756004] [<c04274ee>] ? driver_attach+0x1e/0x20\n[ 16.756004] [<c0427900>] ? __driver_attach+0x0/0x90\n[ 16.756004] [<c04270a1>] ? bus_add_driver+0xc1/0x2c0\n[ 16.756004] [<c038bdc0>] ? pci_device_remove+0x0/0xf0\n[ 16.756004] [<c0427bc6>] ? driver_register+0x66/0x110\n[ 16.756004] [<c038b4d5>] ? __pci_register_driver+0x45/0xb0\n[ 16.756004] [<f836e8d6>] ? drm_pci_init+0x96/0xc0 [drm]\n[ 16.756004] [<f8366e24>] ? drm_init+0x54/0x70 [drm]\n[ 16.756004] [<f857008f>] ? i915_init+0x8f/0x91 [i915]\n[ 16.756004] [<c0101255>] ? do_one_initcall+0x35/0x170\n[ 16.756004] [<f8570000>] ? i915_init+0x0/0x91 [i915]\n[ 16.756004] [<c0101255>] ? do_one_initcall+0x35/0x170\n[ 16.756004] [<f8570000>] ? i915_init+0x0/0x91 [i915]\n[ 16.756004] [<c018903b>] ? sys_init_module+0x9b/0x1e0\n[ 16.756004] [<c0226612>] ? sys_write+0x42/0x70\n[ 16.756004] [<c05fb494>] ? syscall_call+0x7/0xb\n[ 16.756004] Code: ff ff 5d c3 89 f6 8d bc 27 00 00 00 00 55 89 e5 57 56 53 83 ec 0c 3e 8d 74 26 00 bb a1 ff ff ff 89 c6 8b 40 0c 89 55 f0 89 4d ec <8b> 00 85 c0 74 6f 89 e0 25 00 e0 ff ff f7 40 14 ff ff ff ef 75\n[ 16.756004] EIP: [<c04ca13e>] i2c_transfer+0x1e/0xc0 SS:ESP 0068:f35b5c14\n[ 16.756004] CR2: 0000000000000000\n[ 16.761639] ---[ end trace 53912a785b2ee2cb ]---",
+  "patch": [
+    "From d74e6cebf4c6f4e29c6ed345f868739028c36415 Mon Sep 17 00:00:00 2001\nFrom: Chris Wilson <chris@chris-wilson.co.uk>\nDate: Wed, 8 Dec 2010 16:48:21 +0000\nSubject: [PATCH] drm/i915/sdvo: Only use the SDVO pin if it is in the valid range\n\nBIOSes. Can't live without them (apparently), definitely can't live with\nthem.\n\nReported-by: Ben Gamari <bgamari@gmail.com>\nBugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=24312\nSigned-off-by: Chris Wilson <chris@chris-wilson.co.uk>\n---\n drivers/gpu/drm/i915/intel_sdvo.c |    9 ++++++---\n 1 files changed, 6 insertions(+), 3 deletions(-)\n\ndiff --git a/drivers/gpu/drm/i915/intel_sdvo.c b/drivers/gpu/drm/i915/intel_sdvo.c\nindex d97e6cb..8b436d7 100644\n--- a/drivers/gpu/drm/i915/intel_sdvo.c\n+++ b/drivers/gpu/drm/i915/intel_sdvo.c\n@@ -1908,9 +1908,12 @@ intel_sdvo_select_i2c_bus(struct drm_i915_private *dev_priv,\n \t\tspeed = mapping->i2c_speed;\n \t}\n \n-\tsdvo->i2c = &dev_priv->gmbus[pin].adapter;\n-\tintel_gmbus_set_speed(sdvo->i2c, speed);\n-\tintel_gmbus_force_bit(sdvo->i2c, true);\n+\tif (pin < ARRAY_LENGTH(dev_priv->gmbus)) {\n+\t\tsdvo->i2c = &dev_priv->gmbus[pin].adapter;\n+\t\tintel_gmbus_set_speed(sdvo->i2c, speed);\n+\t\tintel_gmbus_force_bit(sdvo->i2c, true);\n+\t} else\n+\t\tsdvo->i2c = &dev_priv->gmbus[GMBUS_PORT_DPB].adapter;\n }\n \n static bool\n-- \n1.7.2.3\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Video",
+  "Hardware": "All Linux",
+  "Importance": "P1 blocking",
+  "Assignee": "drivers_video-dri-intel@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-12-05 01:55 UTC by Ben Gamari",
+  "Modified": "2012-08-29 14:34 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.37-rc3",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/gpu/drm/i915/intel_sdvo.c"
+  ],
+  "methods": [
+    "intel_sdvo_select_i2c_bus"
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "id": "24312",
+  "title": "[i915] null pointer dereference on modprobe in intel_svdo_read_byte.clone.8",
+  "kernel_version": "2.6.37-rc3",
+  "product": "Drivers",
+  "component": "Video",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpu/drm/i915/intel_sdvo.c"
+    ],
+    "buggy_methods": [
+      "intel_sdvo_select_i2c_bus"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "i2c_transfer",
+      "EFLAGS"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/module/ssb/initstate"
+    ],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 61,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 4124,
+    "description_word_count": 509
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 6,
+    "lines_removed": 3,
+    "patch_size": 9,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "intel_sdvo_select_i2c_bus"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpu/drm/i915/intel_sdvo.c",
+    "filename": "intel_sdvo.c",
+    "directory": "drivers/gpu/drm/i915",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "gpu",
+    "driver_subsystem": "gpu/drm",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_2_functions",
+      "proc_sys_paths_hint_subsystem",
+      "dmesg_logs_available",
+      "component_known:Video"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "24312",
+      "version": "2.6.37-rc3",
+      "status": "found",
+      "path": "drivers/gpu/drm/i915/intel_sdvo.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "24312",
+    "version": "2.6.37-rc3",
+    "ground_truth_file": "drivers/gpu/drm/i915/intel_sdvo.c",
+    "trace_functions": [
+      "i2c_transfer",
+      "8",
+      "intel_dp_set_m_n",
+      "intel_sdvo_init",
+      "intel_crt_init",
+      "intel_setup_outputs",
+      "intel_modeset_init",
+      "i915_load_modeset_init",
+      "i915_vga_set_decode",
+      "intel_detect_pch",
+      "i915_driver_load",
+      "drm_get_pci_dev",
+      "_raw_spin_lock_irqsave",
+      "i915_pci_probe",
+      "local_pci_probe"
+    ],
+    "total_trace_functions": 34,
+    "function_locations": {
+      "i2c_transfer": [
+        "drivers/media/radio/saa7706h.c",
+        "drivers/i2c/i2c-core.c",
+        "drivers/media/common/saa7146_i2c.c",
+        "drivers/media/dvb/dvb-usb/dw2102.c"
+      ],
+      "8": [
+        "drivers/char/serial167.c",
+        "arch/powerpc/lib/sstep.c",
+        "arch/sparc/kernel/btext.c",
+        "drivers/hwmon/vt1211.c",
+        "drivers/media/video/cx88/cx88-dvb.c",
+        "drivers/pci/setup-irq.c",
+        "drivers/scsi/sun_esp.c",
+        "arch/ia64/sn/pci/tioca_provider.c",
+        "drivers/message/fusion/mptbase.c",
+        "arch/x86/kvm/x86.c"
+      ],
+      "intel_dp_set_m_n": [],
+      "intel_sdvo_init": [
+        "drivers/gpu/drm/i915/intel_sdvo.c"
+      ],
+      "intel_crt_init": [
+        "drivers/gpu/drm/i915/intel_crt.c"
+      ],
+      "intel_setup_outputs": [
+        "drivers/gpu/drm/i915/intel_display.c"
+      ],
+      "intel_modeset_init": [
+        "drivers/gpu/drm/i915/intel_display.c"
+      ],
+      "i915_load_modeset_init": [
+        "drivers/gpu/drm/i915/i915_dma.c"
+      ],
+      "i915_vga_set_decode": [
+        "drivers/gpu/drm/i915/i915_dma.c"
+      ],
+      "intel_detect_pch": [
+        "drivers/gpu/drm/i915/i915_drv.c"
+      ]
+    },
+    "gt_found_via_functions": [
+      "intel_sdvo_init"
+    ],
+    "other_candidate_files": [
+      "drivers/char/serial167.c",
+      "arch/powerpc/lib/sstep.c",
+      "arch/sparc/kernel/btext.c",
+      "drivers/media/radio/saa7706h.c",
+      "drivers/media/common/saa7146_i2c.c",
+      "drivers/gpu/drm/i915/i915_dma.c",
+      "drivers/gpu/drm/i915/intel_display.c",
+      "drivers/i2c/i2c-core.c",
+      "drivers/hwmon/vt1211.c",
+      "drivers/media/video/cx88/cx88-dvb.c",
+      "drivers/pci/setup-irq.c",
+      "drivers/scsi/sun_esp.c",
+      "arch/ia64/sn/pci/tioca_provider.c",
+      "drivers/message/fusion/mptbase.c",
+      "drivers/gpu/drm/i915/i915_drv.c",
+      "drivers/media/dvb/dvb-usb/dw2102.c",
+      "arch/x86/kvm/x86.c",
+      "drivers/gpu/drm/i915/intel_crt.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

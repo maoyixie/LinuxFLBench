@@ -1,0 +1,109 @@
+{
+  "id": "15788",
+  "title": "external usb sound card doesn't work after resume",
+  "kernel_version": "2.6.34-rc2",
+  "product": "Drivers",
+  "component": "Sound",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "device_not_working",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/usb/core/driver.c"
+    ],
+    "buggy_methods": [
+      "usb_resume"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 236,
+    "description_word_count": 41
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 0,
+    "patch_size": 2,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "usb_resume"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/usb/core/driver.c",
+    "filename": "driver.c",
+    "directory": "drivers/usb/core",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "usb",
+    "driver_subsystem": "usb/core",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Sound",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "15788",
+      "version": "2.6.34-rc2",
+      "status": "found",
+      "path": "drivers/usb/core/driver.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "15788",
+    "title": "external usb sound card doesn't work after resume",
+    "ground_truth_file": "drivers/usb/core/driver.c",
+    "ground_truth_subsystem": "drivers/usb",
+    "ground_truth_methods": [
+      "usb_resume"
+    ],
+    "product": "Drivers",
+    "component": "Sound",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "Sound",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

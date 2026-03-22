@@ -1,0 +1,34 @@
+{
+  "id": "9779",
+  "title": "Setting cpu_share to 1 freezes system",
+  "description": "Distribution: Ubuntu\nHardware Environment: amd64, x86 kernel\nProblem Description:\n\nThe following command locks up my system:\necho 1 | sudo tee /sys/kernel/uids/`id -u`/cpu_share\n\nWhile I have not reproduced it for this command, it locked up my system twice when trying it with the uid of my system user \"boinc\".\n\nOthers on the IRC channel ##kernel could not confirm it (using virtual machines on 64bit and 32bit), but I think it's grave enough to report it anyway.\n\nI'm using the 2.6.24 kernel from Ubuntu (but someone on ##kernel could not confirm it using the ubuntu-server kernel).\n\nMy CPU is AMD64 3000+.\n\nPlease ask for any details you need to understand the problem.\n\n\nSteps to reproduce:\necho 1 | sudo tee /sys/kernel/uids/`id -u`/cpu_share",
+  "patch": [
+    "Subject: sched: group scheduler, set uid share fix\nFrom: Ingo Molnar <mingo@elte.hu>\n\nsetting cpu share to 1 causes hangs, as reported in:\n\n    http://bugzilla.kernel.org/show_bug.cgi?id=9779\n\nas the default share is 1024, the values of 0 and 1 can indeed\ncause problems. Limit it to 2 or higher values.\n\nThese values can only be set by the root user - but still it\nmakes sense to protect against nonsensical values.\n\nSigned-off-by: Ingo Molnar <mingo@elte.hu>\n---\n kernel/sched.c |    8 ++++++++\n 1 file changed, 8 insertions(+)\n\nIndex: linux/kernel/sched.c\n===================================================================\n--- linux.orig/kernel/sched.c\n+++ linux/kernel/sched.c\n@@ -7153,6 +7153,14 @@ int sched_group_set_shares(struct task_g\n {\n \tint i;\n \n+\t/*\n+\t * A weight of 0 or 1 can cause arithmetics problems.\n+\t * (The default weight is 1024 - so there's no practical\n+\t *  limitation from this.)\n+\t */\n+\tif (shares < 2)\n+\t\tshares = 2;\n+\n \tspin_lock(&tg->lock);\n \tif (tg->shares == shares)\n \t\tgoto done;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Process Management",
+  "Classification": "Unclassified",
+  "Component": "Scheduler",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "Ingo Molnar",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-01-19 16:12 UTC by Daniel Hahler",
+  "Modified": "2008-01-22 20:39 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.24",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "kernel/sched.c"
+  ],
+  "methods": [
+    "sched_group_set_shares"
+  ]
+}

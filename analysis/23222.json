@@ -1,0 +1,120 @@
+{
+  "id": "23222",
+  "title": "2.6.36 radeon KMS: [drm] Cannot find any crtc or sizes",
+  "kernel_version": "2.6.36",
+  "product": "Drivers",
+  "component": "Video",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpu/drm/radeon/radeon_combios.c"
+    ],
+    "buggy_methods": [
+      "combios_setup_i2c_bus"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 2,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": true,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 760,
+    "description_word_count": 122
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 14,
+    "lines_removed": 1,
+    "patch_size": 15,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 3,
+    "hunk_functions": [
+      "combios_setup_i2c_bus",
+      "radeon_combios_i2c_init"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpu/drm/radeon/radeon_combios.c",
+    "filename": "radeon_combios.c",
+    "directory": "drivers/gpu/drm/radeon",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "gpu",
+    "driver_subsystem": "gpu/drm",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "medium",
+    "signals": [
+      "dmesg_logs_available",
+      "component_known:Video",
+      "is_regression"
+    ],
+    "strategies": [
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "23222",
+      "version": "2.6.36",
+      "status": "found",
+      "path": "drivers/gpu/drm/radeon/radeon_combios.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "23222",
+    "title": "2.6.36 radeon KMS: [drm] Cannot find any crtc or sizes",
+    "ground_truth_file": "drivers/gpu/drm/radeon/radeon_combios.c",
+    "ground_truth_subsystem": "drivers/gpu",
+    "ground_truth_methods": [
+      "combios_setup_i2c_bus"
+    ],
+    "product": "Drivers",
+    "component": "Video",
+    "best_strategy": "grep_error_strings",
+    "symptom_categories": [
+      "hang/deadlock",
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "kernel_log_messages",
+      "greppable_kernel_messages",
+      "known_component",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "kernel_msg_count": 2,
+      "greppable_kernel_msgs": [
+        "No connectors reported connected with modes",
+        "[drm] Cannot find any crtc or sizes - going 1024x768"
+      ],
+      "component": "Video",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_grep_error_strings"
+}

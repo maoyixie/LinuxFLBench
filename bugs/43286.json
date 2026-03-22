@@ -1,0 +1,34 @@
+{
+  "id": "43286",
+  "title": "NFS4ERR_SHARE_DENIED errors are translated to EIO",
+  "description": "I noticed while testing against a NetApp filer that the Linux NFSv4 client currently translates NFS4ERR_SHARE_DENIED errors to EIO; it would be nice if this was translated to something more sensible like EACCES.\n\n(This was on an Ubuntu 11.10 client, but AFAICT NFS4ERR_SHARE_DENIED is not\nreferenced in the mainline kernel tree either.)\n\n# uname -a\nLinux kjamieson 3.0.0-19-generic #33-Ubuntu SMP Thu Apr 19 19:05:14 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux\n# strace cat /mnt/file1\nopen(\"/mnt/file1\", O_RDONLY)     = -1 EIO (Input/output error)\n\nNetwork File System\n    [Program Version: 4]\n    [V4 Procedure: COMPOUND (1)]\n    Status: NFS4ERR_SHARE_DENIED (10015)\n    Tag: <EMPTY>\n        length: 0\n        contents: <EMPTY>\n    Operations (count: 3)\n        Opcode: PUTFH (22)\n            Status: NFS4_OK (0)\n        Opcode: SAVEFH (32)\n            Status: NFS4_OK (0)\n        Opcode: OPEN (18)\n            Status: NFS4ERR_SHARE_DENIED (10015)\n\n\nAs a point of comparison, Solaris appears to map NFS4ERR_SHARE_DENIED to EACCES:\n\n# uname -a\nSunOS nas-sol10-vm1 5.10 Generic_139556-08 i86pc i386 i86pc\n# truss cat /mnt/file1\nopen64(\"/mnt/file1\", O_RDONLY)                  Err#13 EACCES",
+  "patch": [
+    "From 6b37f0811928f485322f1f96a1322d999edd21c6 Mon Sep 17 00:00:00 2001\nFrom: Trond Myklebust <Trond.Myklebust@netapp.com>\nDate: Mon, 28 May 2012 11:36:28 -0400\nSubject: [PATCH] NFSv4: Map NFS4ERR_SHARE_DENIED into an EACCES error instead\n of EIO\n\nIf a file OPEN is denied due to a share lock, the resulting\nNFS4ERR_SHARE_DENIED is currently mapped to the default EIO.\nThis patch adds a more appropriate mapping, and brings Linux\ninto line with what Solaris 10 does.\n\nSee https://bugzilla.kernel.org/show_bug.cgi?id=43286\n\nSigned-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>\nCc: stable@vger.kernel.org\n---\n fs/nfs/nfs4proc.c |    2 ++\n 1 files changed, 2 insertions(+), 0 deletions(-)\n\ndiff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c\nindex af2db2c..42d9e9c 100644\n--- a/fs/nfs/nfs4proc.c\n+++ b/fs/nfs/nfs4proc.c\n@@ -103,6 +103,8 @@ static int nfs4_map_errors(int err)\n \tcase -NFS4ERR_BADOWNER:\n \tcase -NFS4ERR_BADNAME:\n \t\treturn -EINVAL;\n+\tcase -NFS4ERR_SHARE_DENIED:\n+\t\treturn -EACCES;\n \tdefault:\n \t\tdprintk(\"%s could not handle NFSv4 error %d\\n\",\n \t\t\t\t__func__, -err);\n-- \n1.7.7.6\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "NFS",
+  "Hardware": "All Linux",
+  "Importance": "P1 low",
+  "Assignee": "Trond Myklebust",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2012-05-23 22:58 UTC by Kevin Jamieson",
+  "Modified": "2012-07-01 09:37 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "3.0",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/nfs/nfs4proc.c"
+  ],
+  "methods": [
+    "nfs4_map_errors"
+  ]
+}

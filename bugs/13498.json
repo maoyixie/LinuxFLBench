@@ -1,0 +1,34 @@
+{
+  "id": "13498",
+  "title": "Kernel panic - not syncing: Attepmted to kill init! (Fedora 10)",
+  "description": "Created attachment 21839 [details]\nPanic screen photo\n\nCannot boot Fedora 10 using this and newer kernel versions. Last kernel version working is 2.6.27.5. I have no idea what should I try to make it work....\n\nThis is transcription of the panic screen (see attached photo of CRT):\n\n[<ffffffff811f57df>] driver_register+0xa8/0x113\n[<ffffffff815c5ada>] ? acpi_pci_root_init+0x0/0x28\n[<ffffffff8159f140>] ? early_idt_handler+0x0/0x71\n[<ffffffff811b6195>] acpi_bus_register_driver+0x3e/0x41\n[<ffffffff815c5af3>] acpi_pci_root_init+0x19/0x28\n[<ffffffff8100a047>] do_one_initcall+0x47/0x12e\n[<ffffffff8159f140>] ? early_idt_handler+0x0/0x71\n[<ffffffff81100000>] ? task_statm+0x4e/0x5b\n[<ffffffff8159f70f>] kernel_init+0x1c0/0x214\n[<ffffffff81333489>] ? trace_hardirqs_on_thunk+0x3a/0x3c\n[<ffffffff81011719>] child_rip+0xa/0x11\n[<ffffffff81010a37>] ? restore_args+0x0/0x30\n[<ffffffff8159f54f>] ? kernel_init+0x0/0x214\n[<ffffffff8101170f>] ? child_rip+0x0/0x11\n\nCode: 49 8d 7e 38 49 8d 46 28 49 89 7e 38 49 89 46 28 49 89 46 30 49 89 7e 48 49\n 8b 45 10 48 83 78 38 00 74 32 48 8b 40 10 48 8b 40 38 <48> 8b 98 80 00 00 00 48\n 85 db 75 0d 4c 89 f7 e8 a7 d2 f3 ff e9\nRIP  [<ffffffff8117d603>] pcie_aspm_init_link_state+0x15e/0x65f\n RSP <ffff8800bf699a10>\nCR2: 0000000000000080\n---[ end trace 4eaa2a86a8e2da22 ]---\nKernel panic - not syncing: Attepmted to kill init!",
+  "patch": [
+    "diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c\nindex b0367f1..777b2c7 100644\n--- a/drivers/pci/pcie/aspm.c\n+++ b/drivers/pci/pcie/aspm.c\n@@ -638,6 +638,10 @@ void pcie_aspm_init_link_state(struct pci_dev *pdev)\n \tif (pdev->pcie_type != PCI_EXP_TYPE_ROOT_PORT &&\n \t\tpdev->pcie_type != PCI_EXP_TYPE_DOWNSTREAM)\n \t\treturn;\n+\t/* VIA has a strange chipset, root port is under a bridge */\n+\tif (pdev->pcie_type == PCI_EXP_TYPE_ROOT_PORT &&\n+\t\tpdev->bus->self)\n+\t\treturn;\n \tdown_read(&pci_bus_sem);\n \tif (list_empty(&pdev->subordinate->devices))\n \t\tgoto out;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "PCI",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_pci@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-06-10 12:05 UTC by Nyyr",
+  "Modified": "2012-06-08 11:47 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.27",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/pci/pcie/aspm.c"
+  ],
+  "methods": [
+    "pcie_aspm_init_link_state"
+  ]
+}

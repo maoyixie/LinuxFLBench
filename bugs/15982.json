@@ -1,0 +1,35 @@
+{
+  "id": "15982",
+  "title": "radeon module update for 2.6.34 breaks ALSA (snd_atiixp and snd_hda_intel)",
+  "": "Show dependency tree",
+  "description": "Playing sound via ATI IXP SB400 card does not work, qmmp player reports buffer underruns with ALSA, other (sox for example) applications just hangs, its possible to hear sound via FMOD , but its noisy and jerky\n\nLast worked: 2.6.33.4 , doesnt work for mainline 2.6.34 (tried with rc6 and rc7-git9)\n\n\nlspci -vv :\n\n00:14.5 Multimedia audio controller: ATI Technologies Inc IXP SB400 AC'97 Audio Controller (rev 02)\n        Subsystem: ASUSTeK Computer Inc. Device 1183\n        Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV+ VGASnoop- ParErr- Stepping- SERR+ FastB2B- DisINTx-\n        Status: Cap+ 66MHz+ UDF- FastB2B- ParErr- DEVSEL=slow >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-\n        Latency: 64 (500ns min), Cache Line Size: 64 bytes\n        Interrupt: pin B routed to IRQ 10\n        Region 0: Memory at febfcc00 (32-bit, non-prefetchable) [size=256]\n        Capabilities: <access denied>\n        Kernel driver in use: ATI IXP AC97 controller\n        Kernel modules: snd-atiixp\n\n\n$ lsmod\nModule                  Size  Used by\naf_packet              14550  2 \nramzswap               11293  1 \nlzo_decompress          1921  1 ramzswap\nlzo_compress            1638  1 ramzswap\nfuse                   46778  5 \nlm85                   13313  0 \nhwmon_vid               1916  1 lm85\nhwmon                   1053  1 lm85\nrfcomm                 28298  0 \nl2cap                  28430  3 rfcomm\nbluetooth              41839  2 rfcomm,l2cap\nsnd_seq_oss            21061  0 \nsnd_seq_midi_event      3924  1 snd_seq_oss\nsnd_seq                34905  4 snd_seq_oss,snd_seq_midi_event\nsnd_seq_device          3849  2 snd_seq_oss,snd_seq\nsnd_pcm_oss            31107  0 \nsnd_mixer_oss          11422  1 snd_pcm_oss\narc4                     946  2 \necb                     1401  2 \ncryptomgr              85846  0 \ncrypto_hash             8171  1 cryptomgr\naead                    3651  1 cryptomgr\npcompress                857  1 cryptomgr\ncrypto_blkcipher        7367  2 ecb,cryptomgr\ncrypto_algapi           9122  7 arc4,ecb,cryptomgr,crypto_hash,aead,pcompress,crypto_blkcipher\nrt2500pci              11701  0 \nrt2x00pci               4101  1 rt2500pci\nrt2x00lib              17608  2 rt2500pci,rt2x00pci\nmac80211              118215  2 rt2x00pci,rt2x00lib\ncfg80211              100901  2 rt2x00lib,mac80211\nrfkill                 10896  2 bluetooth,cfg80211\nsnd_atiixp              9825  1 \neeprom_93cx6             904  1 rt2500pci\nsnd_atiixp_modem        7115  0 \nusbhid                 15253  0 \npcmcia                 24282  0 \nsnd_ac97_codec         82624  2 snd_atiixp,snd_atiixp_modem\nasus_laptop            12148  0 \njoydev                  7320  0 \nac97_bus                 702  1 snd_ac97_codec\nmmc_block               6664  0 \nsdhci_pci               5250  0 \nsdhci                  13041  1 sdhci_pci\nyenta_socket           18247  2 \nsnd_pcm                53401  4 snd_pcm_oss,snd_atiixp,snd_atiixp_modem,snd_ac97_codec\nrtc_cmos                7454  0 \nsnd_timer              14278  2 snd_seq,snd_pcm\nmmc_core               39614  2 mmc_block,sdhci\nehci_hcd               32254  0 \nohci_hcd               19709  0 \nvideo                  14806  0 \nsnd                    35728  12 snd_seq_oss,snd_seq,snd_seq_device,snd_pcm_oss,snd_mixer_oss,snd_atiixp,snd_atiixp_modem,snd_ac97_codec,snd_pcm,snd_timer\nbacklight               2648  2 asus_laptop,video\nrtc_core                9613  1 rtc_cmos\nrsrc_nonstatic          8269  1 yenta_socket\nthermal                 9230  0 \nac                      1528  0 \nprocessor              18341  1 \n8139too                15014  0 \nbattery                 3686  0 \nsoundcore               4303  1 snd\nppdev                   5026  0 \noutput                  1164  1 video\nparport_pc             28009  0 \nparport                23883  2 ppdev,parport_pc\nrtc_lib                 1402  1 rtc_core\nevdev                   6269  13 \nled_class               1789  3 rt2x00lib,asus_laptop,sdhci\nsg                     19333  0 \nbutton                  3494  0 \nusbcore               109287  3 usbhid,ehci_hcd,ohci_hcd\npcmcia_core            22624  3 pcmcia,yenta_socket,rsrc_nonstatic\nsnd_page_alloc          5185  3 snd_atiixp,snd_atiixp_modem,snd_pcm\npsmouse                28785  0 \nsr_mod                  9830  0 \npcspkr                  1299  0 \ni2c_piix4               7680  0 \nmii                     2850  1 8139too\ncdrom                  27927  1 sr_mod\nnls_base                4761  1 usbcore",
+  "patch": [
+    "From 72b193ddedb34aa573bc40b4a80a81501225b5a6 Mon Sep 17 00:00:00 2001\nFrom: Alex Deucher <alexdeucher@gmail.com>\nDate: Thu, 20 May 2010 10:50:46 -0400\nSubject: [PATCH] drm/radeon/kms: don't default display priority to high on rs4xx\n\nSeems to cause issues with the sound hardware.  Fixes kernel\nbug 15982:\nhttps://bugzilla.kernel.org/show_bug.cgi?id=15982\n\nSigned-off-by: Alex Deucher <alexdeucher@gmail.com>\nCc: stable@kernel.org\n---\n drivers/gpu/drm/radeon/radeon_display.c |    5 ++++-\n 1 files changed, 4 insertions(+), 1 deletions(-)\n\ndiff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c\nindex bd44f88..073ec61 100644\n--- a/drivers/gpu/drm/radeon/radeon_display.c\n+++ b/drivers/gpu/drm/radeon/radeon_display.c\n@@ -976,8 +976,11 @@ void radeon_update_display_priority(struct radeon_device *rdev)\n \t\t/* set display priority to high for r3xx, rv515 chips\n \t\t * this avoids flickering due to underflow to the\n \t\t * display controllers during heavy acceleration.\n+\t\t * Don't force high on rs4xx igp chips as it seems to\n+\t\t * affect the sound card.  See kernel bug 15982.\n \t\t */\n-\t\tif (ASIC_IS_R300(rdev) || (rdev->family == CHIP_RV515))\n+\t\tif ((ASIC_IS_R300(rdev) || (rdev->family == CHIP_RV515)) &&\n+\t\t    !(rdev->flags & RADEON_IS_IGP))\n \t\t\trdev->disp_priority = 2;\n \t\telse\n \t\t\trdev->disp_priority = 0;\n-- \n1.5.6.3\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Video",
+  "Hardware": "i386 Linux",
+  "Importance": "P1 high",
+  "Assignee": "Jaroslav Kysela",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "15310",
+  "Reported": "2010-05-16 08:41 UTC by Sylvia",
+  "Modified": "2010-06-13 11:38 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.34",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/gpu/drm/radeon/radeon_display.c"
+  ],
+  "methods": [
+    "radeon_update_display_priority"
+  ]
+}

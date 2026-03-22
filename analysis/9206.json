@@ -1,0 +1,109 @@
+{
+  "id": "9206",
+  "title": "Negative internal write-intent bitmap offset with metadata 1.0 REDUX in raid 6: kernel refuses to start the array",
+  "kernel_version": "2.6.23",
+  "product": "IO/Storage",
+  "component": "MD",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/md/bitmap.c"
+    ],
+    "buggy_methods": [
+      "write_sb_page"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "I am getting is "
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1674,
+    "description_word_count": 262
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "error_handling"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "write_sb_page"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/md/bitmap.c",
+    "filename": "bitmap.c",
+    "directory": "drivers/md",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "md",
+    "driver_subsystem": "md/bitmap.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:MD",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "9206",
+      "version": "2.6.23",
+      "status": "found",
+      "path": "drivers/md/bitmap.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "9206",
+    "title": "Negative internal write-intent bitmap offset with metadata 1.0 REDUX in raid 6: kernel refuses to start the array",
+    "ground_truth_file": "drivers/md/bitmap.c",
+    "ground_truth_subsystem": "drivers/md",
+    "ground_truth_methods": [
+      "write_sb_page"
+    ],
+    "product": "IO/Storage",
+    "component": "MD",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "type_cast_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "MD",
+      "product": "IO/Storage"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

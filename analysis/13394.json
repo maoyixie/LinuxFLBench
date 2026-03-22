@@ -1,0 +1,245 @@
+{
+  "id": "13394",
+  "title": "check_early_ioremap_leak warning",
+  "kernel_version": "2.6.30",
+  "product": "ACPI",
+  "component": "Other",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "performance",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/processor_core.c"
+    ],
+    "buggy_methods": [
+      "acpi_processor_init"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "check_early_ioremap_leak",
+      "warn_slowpath_fmt",
+      "do_one_initcall",
+      "warn_slowpath_common",
+      "kernel_init",
+      "kernel_thread_helper"
+    ],
+    "mentioned_file_paths": [
+      "arch/x86/mm/ioremap.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1027,
+    "description_word_count": 100
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 0,
+    "patch_size": 2,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "memory"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "acpi_processor_init"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/processor_core.c",
+    "filename": "processor_core.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/processor_core.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_6_functions"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13394",
+      "version": "2.6.30",
+      "status": "found",
+      "path": "drivers/acpi/processor_core.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "13394",
+    "version": "2.6.30",
+    "ground_truth_file": "drivers/acpi/processor_core.c",
+    "trace_functions": [
+      "check_early_ioremap_leak",
+      "warn_slowpath_common",
+      "warn_slowpath_fmt",
+      "do_one_initcall",
+      "register_irq_proc",
+      "init_irq_proc",
+      "kernel_init",
+      "kernel_thread_helper"
+    ],
+    "total_trace_functions": 8,
+    "function_locations": {
+      "check_early_ioremap_leak": [
+        "arch/x86/mm/ioremap.c"
+      ],
+      "warn_slowpath_common": [
+        "kernel/panic.c"
+      ],
+      "warn_slowpath_fmt": [
+        "kernel/panic.c"
+      ],
+      "do_one_initcall": [
+        "init/main.c"
+      ],
+      "register_irq_proc": [
+        "kernel/irq/proc.c"
+      ],
+      "init_irq_proc": [
+        "kernel/irq/proc.c",
+        "arch/s390/kernel/irq.c",
+        "arch/sparc/kernel/irq_32.c",
+        "arch/m68k/kernel/ints.c"
+      ],
+      "kernel_init": [
+        "init/main.c"
+      ],
+      "kernel_thread_helper": [
+        "arch/x86/kernel/process_32.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "arch/sh/kernel/process_32.c",
+        "arch/sh/kernel/process_64.c",
+        "arch/blackfin/kernel/process.c",
+        "arch/m32r/kernel/process.c",
+        "arch/mips/kernel/process.c",
+        "arch/arm/kernel/process.c",
+        "arch/microblaze/kernel/process.c",
+        "arch/avr32/kernel/process.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "init/main.c",
+      "arch/x86/mm/ioremap.c",
+      "arch/x86/kernel/process_32.c",
+      "arch/cris/arch-v10/kernel/process.c",
+      "arch/sh/kernel/process_32.c",
+      "arch/m68k/kernel/ints.c",
+      "kernel/panic.c",
+      "arch/sh/kernel/process_64.c",
+      "arch/blackfin/kernel/process.c",
+      "arch/sparc/kernel/irq_32.c",
+      "arch/m32r/kernel/process.c",
+      "arch/microblaze/kernel/process.c",
+      "kernel/irq/proc.c",
+      "arch/mips/kernel/process.c",
+      "arch/arm/kernel/process.c",
+      "arch/s390/kernel/irq.c",
+      "arch/avr32/kernel/process.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "13394",
+    "title": "check_early_ioremap_leak warning",
+    "ground_truth_file": "drivers/acpi/processor_core.c",
+    "ground_truth_methods": [
+      "acpi_processor_init"
+    ],
+    "ground_truth_subsystem": "drivers/acpi",
+    "trace_functions_top8": [
+      "check_early_ioremap_leak",
+      "warn_slowpath_common",
+      "warn_slowpath_fmt",
+      "do_one_initcall",
+      "register_irq_proc",
+      "init_irq_proc",
+      "kernel_init",
+      "kernel_thread_helper"
+    ],
+    "trace_function_locations": {
+      "check_early_ioremap_leak": [
+        "arch/x86/mm/ioremap.c"
+      ],
+      "warn_slowpath_common": [
+        "kernel/panic.c"
+      ],
+      "warn_slowpath_fmt": [
+        "kernel/panic.c"
+      ],
+      "do_one_initcall": [
+        "init/main.c"
+      ],
+      "register_irq_proc": [
+        "kernel/irq/proc.c"
+      ],
+      "init_irq_proc": [
+        "arch/m68k/kernel/ints.c",
+        "arch/s390/kernel/irq.c",
+        "arch/sparc/kernel/irq_32.c",
+        "kernel/irq/proc.c"
+      ],
+      "kernel_init": [
+        "init/main.c"
+      ],
+      "kernel_thread_helper": [
+        "arch/m32r/kernel/process.c",
+        "arch/sh/kernel/process_32.c",
+        "arch/microblaze/kernel/process.c",
+        "arch/blackfin/kernel/process.c",
+        "arch/arm/kernel/process.c"
+      ]
+    },
+    "trace_subsystems": [
+      "kernel/panic.c",
+      "arch/m32r",
+      "arch/s390",
+      "kernel/irq",
+      "init/main.c",
+      "arch/sh",
+      "arch/mips",
+      "arch/m68k",
+      "arch/x86",
+      "arch/arm",
+      "arch/cris",
+      "arch/sparc",
+      "arch/microblaze",
+      "arch/blackfin",
+      "arch/avr32"
+    ],
+    "mismatch_type": "trace_in_infrastructure",
+    "gt_calls_trace_func": false,
+    "gt_method_in_trace": false,
+    "product": "ACPI",
+    "component": "Other"
+  },
+  "overall_category": "C_trace_misleads"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "2200",
+  "title": "uncorrectly enabling GPEs",
+  "description": "Current ACPI implementation will enable a GPE if its corresponding _Lxx or \n_Exx method is found. But some GPEs the methods stand are wakeup GPEs. we \nshouldn't enable it before system enters sleep state.\nIn my P4 box, keyboard is such kind of devices. keyboard can generate 0x15 GPE \nto wakeup system, and DSDT has a method '_L15'. In 2.6.2, after boot, every \nhitting keyboard generates a SCI interrupt. if 0x15 is not enabled, keyboard \ndoesn't create SCI.",
+  "patch": [
+    "--- a/drivers/acpi/events/evgpeblk.c\t2004-02-26 16:43:24.000000000 +0800\n+++ b/drivers/acpi/events/evgpeblk.c\t2004-02-26 17:53:45.000000000 +0800\n@@ -48,7 +48,83 @@\n #define _COMPONENT          ACPI_EVENTS\n \t ACPI_MODULE_NAME    (\"evgpeblk\")\n \n+#define MAX_WAKEUP_GPES 30\n+static u32 wakeup_gpes[MAX_WAKEUP_GPES];\n+static int wakeup_gpes_index = 0;\n \n+static acpi_status\n+acpi_ev_save_wakeup_gpes (\n+\tacpi_handle                     obj_handle,\n+\tu32                             level,\n+\tvoid                            *obj_desc,\n+\tvoid                            **return_value)\n+{\n+\tacpi_status\tstatus;\n+\tstruct acpi_buffer\tbuffer = {ACPI_ALLOCATE_BUFFER, NULL};\n+\tunion acpi_object\t*package = NULL;\n+\tunion acpi_object\t*element = NULL;\n+\n+\tACPI_FUNCTION_TRACE(\"acpi_ev_save_wakeup_gpes\");\n+ \n+\t/* _PRW */\n+\tstatus = acpi_evaluate_object(obj_handle, \"_PRW\", NULL, &buffer);\n+\tif (ACPI_FAILURE(status)) {\n+\t\treturn_ACPI_STATUS (AE_OK);\n+\t}\n+\n+\tpackage = (union acpi_object *) buffer.pointer;\n+\tif (package->package.count < 2) {\t\n+\t\tACPI_DEBUG_PRINT((ACPI_DB_ERROR, \"Bad _PRW package\\n\"));\n+\t\tgoto end;\n+\t}\n+\n+\telement = &(package->package.elements[0]);\n+\tif (element->type != ACPI_TYPE_INTEGER) {\n+\t\t/* TBD: support GPE devices */\t\n+\t\tACPI_DEBUG_PRINT((ACPI_DB_ERROR, \"Bad _PRW package\\n\"));\n+\t\tgoto end;\n+\t}\n+\twakeup_gpes[wakeup_gpes_index++] = element->integer.value;\n+\n+end:\n+\tacpi_os_free(buffer.pointer);\n+\treturn_ACPI_STATUS (AE_OK);\n+}\n+\n+static acpi_status\n+acpi_ev_wakeup_gpes_initialize (void)\n+{\t\n+\tacpi_status\tstatus;\n+\tint\ti = 0;\n+\n+\tACPI_FUNCTION_TRACE(\"acpi_ev_wakeup_gpes_initialize\");\n+printk(\"hahah\\n\");\n+\tstatus = acpi_ns_walk_namespace (ACPI_TYPE_DEVICE, ACPI_ROOT_OBJECT,\n+\t\t\t  ACPI_UINT32_MAX, ACPI_NS_WALK_NO_UNLOCK, acpi_ev_save_wakeup_gpes,\n+\t\t\t  NULL, NULL);\n+\t\n+\tACPI_DEBUG_PRINT((ACPI_DB_INFO, \"Wakeup GPEs: \"));\n+\twhile (i < wakeup_gpes_index) {\n+\t\tACPI_DEBUG_PRINT((ACPI_DB_INFO, \"%8.8x \", wakeup_gpes[i]));\n+\t\ti ++;\n+\t}\n+\tACPI_DEBUG_PRINT((ACPI_DB_INFO, \"\\n\"));\n+\n+\treturn status;\n+}\n+\n+static int acpi_ev_is_wakeup_gpe(u32 gpe_number)\n+{\n+\tint i = 0;\n+\twhile (i < wakeup_gpes_index)\n+\t{\n+\t\tif (wakeup_gpes[i] == gpe_number)\n+\t\t\treturn 1;\n+\t\ti ++;\n+\t}\n+\n+\treturn 0;\n+}\n /*******************************************************************************\n  *\n  * FUNCTION:    acpi_ev_valid_gpe_event\n@@ -225,6 +301,10 @@ acpi_ev_save_method_info (\n \t/* Convert the last two characters of the name to the GPE Number */\n \n \tgpe_number = ACPI_STRTOUL (&name[2], NULL, 16);\n+\t/* Skip wakeup GPEs */\n+\tif (acpi_ev_is_wakeup_gpe(gpe_number))\n+\t\treturn_ACPI_STATUS (AE_OK);\n+\n \tif (gpe_number == ACPI_UINT32_MAX) {\n \t\t/* Conversion failed; invalid method, just ignore it */\n \n@@ -793,7 +873,11 @@ acpi_ev_gpe_initialize (void)\n \tif (ACPI_FAILURE (status)) {\n \t\treturn_ACPI_STATUS (status);\n \t}\n-\n+\t/* Find all wakeup GPEs */\n+\tstatus = acpi_ev_wakeup_gpes_initialize(); \n+\tif (ACPI_FAILURE (status)) {\n+\t\treturn_ACPI_STATUS (status);\n+\t}\n \t/*\n \t * Initialize the GPE Blocks defined in the FADT\n \t *\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "ACPICA-Core",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Robert Moore",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2004-02-26 01:56 UTC by Shaohua",
+  "Modified": "2006-09-28 13:22 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.2",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/events/evgpeblk.c"
+  ],
+  "methods": [
+    "acpi_ev_save_method_info",
+    "acpi_ev_gpe_initialize"
+  ]
+}

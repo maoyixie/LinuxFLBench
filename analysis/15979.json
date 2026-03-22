@@ -1,0 +1,118 @@
+{
+  "id": "15979",
+  "title": "Eeepc 900 reports incorrect battery status",
+  "kernel_version": "2.6.32",
+  "product": "ACPI",
+  "component": "Power-Battery",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "wrong_behavior",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/battery.c"
+    ],
+    "buggy_methods": [
+      "acpi_battery_get_info",
+      "acpi_battery_get_state",
+      "acpi_battery_update"
+    ],
+    "num_methods": 3
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/acpi/battery/BAT0/info",
+      "/proc/acpi/battery/BAT0/state"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1156,
+    "description_word_count": 153
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 37,
+    "lines_removed": 1,
+    "patch_size": 38,
+    "new_functions": [
+      "acpi_battery_quirks2",
+      "acpi_battery_update"
+    ],
+    "patch_types": [
+      "quirk/device_table",
+      "new_function",
+      "logic_change",
+      "memory"
+    ],
+    "num_hunks": 5,
+    "hunk_functions": [
+      "acpi_battery_get_state",
+      "acpi_battery_quirks",
+      "acpi_battery_get_info",
+      "acpi_battery_update"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/battery.c",
+    "filename": "battery.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/battery.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Power-Battery",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "15979",
+      "version": "2.6.32",
+      "status": "found",
+      "path": "drivers/acpi/battery.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "15979",
+    "title": "Eeepc 900 reports incorrect battery status",
+    "product": "ACPI",
+    "component": "Power-Battery",
+    "buggy_file": [
+      "drivers/acpi/battery.c"
+    ],
+    "fix_type": "quirk_function_addition",
+    "table_entry_lines_added": 7,
+    "description_clues": [
+      "hardware_model_mentioned"
+    ],
+    "patch_size": 38,
+    "potential_strategies": [
+      "search_for_model_specific_quirks",
+      "narrow_by_component:Power-Battery"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

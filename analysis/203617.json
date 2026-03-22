@@ -1,0 +1,312 @@
+{
+  "id": "203617",
+  "title": "ACPI Error \"storm\" on LG Gram 17 (\"No handler or method for GPE...\")",
+  "kernel_version": "5.1",
+  "product": "ACPI",
+  "component": "Other",
+  "hardware": "Intel Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "error_log_spam",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/pci/hotplug/acpiphp_glue.c"
+    ],
+    "buggy_methods": [
+      "acpiphp_native_scan_bridge",
+      "enable_slot"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [
+      {
+        "file": "evevent",
+        "line": "257"
+      },
+      {
+        "file": "evevent",
+        "line": "257"
+      },
+      {
+        "file": "evxfevnt",
+        "line": "245"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evgpe",
+        "line": "835"
+      },
+      {
+        "file": "evevent",
+        "line": "257"
+      },
+      {
+        "file": "evevent",
+        "line": "257"
+      },
+      {
+        "file": "psparse",
+        "line": "531"
+      },
+      {
+        "file": "evgpe",
+        "line": "509"
+      }
+    ],
+    "error_messages": [
+      "No installed handler for fixed event - PM_Timer (0), disabling (20190215/evevent",
+      "No installed handler for fixed event - SleepButton (3), disabling (20190215/evev",
+      "Could not disable RealTimeClock events (20190215/evxfevnt-245)",
+      "No handler or method for GPE 08, disabling event (20190215/evgpe-835)",
+      "No handler or method for GPE 09, disabling event (20190215/evgpe-835)"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 46,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": true,
+    "description_length": 6881,
+    "description_word_count": 982
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 9,
+    "lines_removed": 3,
+    "patch_size": 12,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "acpiphp_native_scan_bridge",
+      "enable_slot"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/pci/hotplug/acpiphp_glue.c",
+    "filename": "acpiphp_glue.c",
+    "directory": "drivers/pci/hotplug",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "pci",
+    "driver_subsystem": "pci/hotplug",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "medium",
+    "signals": [
+      "source_file_line_references",
+      "dmesg_logs_available",
+      "is_regression"
+    ],
+    "strategies": [
+      "use_source_references_to_locate_file",
+      "grep_error_messages_in_kernel_source",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "203617",
+      "version": "5.1",
+      "status": "found",
+      "path": "drivers/pci/hotplug/acpiphp_glue.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "203617",
+    "title": "ACPI Error \"storm\" on LG Gram 17 (\"No handler or method for GPE...\")",
+    "ground_truth_file": "drivers/pci/hotplug/acpiphp_glue.c",
+    "ground_truth_subsystem": "drivers/pci",
+    "ground_truth_methods": [
+      "acpiphp_native_scan_bridge",
+      "enable_slot"
+    ],
+    "product": "ACPI",
+    "component": "Other",
+    "best_strategy": "grep_error_strings",
+    "symptom_categories": [
+      "boot_failure"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "kernel_log_messages",
+      "greppable_kernel_messages",
+      "is_regression"
+    ],
+    "clue_details": {
+      "kernel_msg_count": 46,
+      "greppable_kernel_msgs": [
+        "No installed handler for fixed event - PM_Timer (0), disabling (20190215/evevent",
+        "No installed handler for fixed event - SleepButton (3), disabling (20190215/evev",
+        "Could not disable RealTimeClock events (20190215/evxfevnt-245)",
+        "No handler or method for GPE 08, disabling event (20190215/evgpe-835)",
+        "No handler or method for GPE 09, disabling event (20190215/evgpe-835)"
+      ],
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_grep_error_strings"
+}

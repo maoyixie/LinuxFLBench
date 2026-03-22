@@ -1,0 +1,108 @@
+{
+  "id": "9385",
+  "title": "scroll wheel on BTC 8193 doesn't work",
+  "kernel_version": "2.6.23",
+  "product": "Drivers",
+  "component": "Input Devices",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "device_not_working",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/hid/hid-input.c"
+    ],
+    "buggy_methods": [
+      "hidinput_configure_usage",
+      "hidinput_hid_event"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3932,
+    "description_word_count": 365
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 36,
+    "lines_removed": 0,
+    "patch_size": 36,
+    "patch_types": [
+      "quirk/device_table",
+      "logic_change"
+    ],
+    "num_hunks": 4,
+    "hunk_functions": [
+      "hidinput_configure_usage",
+      "hidinput_hid_event"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/hid/hid-input.c",
+    "filename": "hid-input.c",
+    "directory": "drivers/hid",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "hid",
+    "driver_subsystem": "hid/hid-input.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Input Devices",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "9385",
+      "version": "2.6.23",
+      "status": "found",
+      "path": "drivers/hid/hid-input.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "9385",
+    "title": "scroll wheel on BTC 8193 doesn't work",
+    "product": "Drivers",
+    "component": "Input Devices",
+    "buggy_file": [
+      "drivers/hid/hid-input.c"
+    ],
+    "fix_type": "quirk_function_addition",
+    "table_entry_lines_added": 2,
+    "description_clues": [
+      "hardware_model_mentioned",
+      "device_ids_in_description",
+      "lspci_lsusb_output"
+    ],
+    "patch_size": 36,
+    "potential_strategies": [
+      "grep_device_id_in_kernel_source",
+      "map_pci_usb_id_to_driver",
+      "search_for_model_specific_quirks",
+      "narrow_by_component:Input Devices"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

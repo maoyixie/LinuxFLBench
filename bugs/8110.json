@@ -1,0 +1,43 @@
+{
+  "id": "8110",
+  "title": "insanely high temperature on bootup (e.g. 3517 C) - HP/Compaq nx8220, nc6000, nc8000 - 2.6.19 regression",
+  "description": "Most recent kernel where this bug did *NOT* occur: 2.6.18.2\nDistribution: Debian/SID\nHardware Environment: HP/Compaq nx8220 (and nc6000, nc8000)\nSoftware Environment:\nProblem Description:\n\nSince I'm using kernel 2.6.20, on some fresh start-ups ACPI reports insanely\nhigh temperatures of some thousand degrees C for thermal zone TZ3. I don't\nexactly know what this sensor does - TZ1 is CPU temperature, TZ2 graphics chip,\nTZ4 shows speed of CPU fan in % - I guess TZ3 shows some kind of case\ntemperature. Normal values for TZ3 are about 32C.\n\nAnother user on some forum has the same problem using a nc6000, yet another one\nuses a nc8000 and kernel 2.6.19 (which I personally never installed/used). So I\nguess the problem began with 2.6.19.\n\nAs I'm using powersaved, the system immediately shuts down on boot time, when\npowersaved starts. Messages in syslog are sth. like:\n\nACPI: Critical trip point\nCritical temperature reached (3264 C), shutting down.\n\nThe temperature shown is always different, mostly around 3000C. A new startup\nafter this shutdown (booting the same kernel) leads to the same situation, until I:\n- boot with acpi=off - only resolves the issue for that boot up\n- OR boot older kernel 2.6.18.2 - after that you can reboot into 2.6.20 w/o the\nproblem\n- OR remove AC and battery and plug it in again\n\nSteps to reproduce:\nissue happens sporadically on \"fresh\" power-on - no way to reproduce it, yet...",
+  "patch": [
+    "Don't read status register until we get new event\n\nFrom: Alexey Starikovskiy <alexey.y.starikovskiy@intel.com>\n\n\n---\n\n drivers/acpi/ec.c |   40 +++++++++++++++++++++++-----------------\n 1 files changed, 23 insertions(+), 17 deletions(-)\n\ndiff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c\nindex ab68883..1e525dd 100644\n--- a/drivers/acpi/ec.c\n+++ b/drivers/acpi/ec.c\n@@ -100,6 +100,7 @@ static struct acpi_ec {\n \tunsigned long global_lock;\n \tstruct mutex lock;\n \tatomic_t query_pending;\n+\tatomic_t event_count;\n \tatomic_t leaving_burst;\t/* 0 : No, 1 : Yes, 2: abort */\n \twait_queue_head_t wait;\n } *ec_ecdt;\n@@ -131,10 +132,12 @@ static inline void acpi_ec_write_data(struct acpi_ec *ec, u8 data)\n \toutb(data, ec->data_addr);\n }\n \n-static inline int acpi_ec_check_status(struct acpi_ec *ec, enum ec_event event)\n+static inline int acpi_ec_check_status(struct acpi_ec *ec, enum ec_event event,\n+\t\t\t\t       unsigned old_count)\n {\n \tu8 status = acpi_ec_read_status(ec);\n-\n+\tif (old_count == atomic_read(&ec->event_count))\n+\t\treturn 0;\n \tif (event == ACPI_EC_EVENT_OBF_1) {\n \t\tif (status & ACPI_EC_FLAG_OBF)\n \t\t\treturn 1;\n@@ -146,19 +149,19 @@ static inline int acpi_ec_check_status(struct acpi_ec *ec, enum ec_event event)\n \treturn 0;\n }\n \n-static int acpi_ec_wait(struct acpi_ec *ec, enum ec_event event)\n+static int acpi_ec_wait(struct acpi_ec *ec, enum ec_event event, unsigned count)\n {\n \tif (acpi_ec_mode == EC_POLL) {\n \t\tunsigned long delay = jiffies + msecs_to_jiffies(ACPI_EC_DELAY);\n \t\twhile (time_before(jiffies, delay)) {\n-\t\t\tif (acpi_ec_check_status(ec, event))\n+\t\t\tif (acpi_ec_check_status(ec, event, 0))\n \t\t\t\treturn 0;\n \t\t}\n \t} else {\n \t\tif (wait_event_timeout(ec->wait,\n-\t\t\t\t       acpi_ec_check_status(ec, event),\n+\t\t\t\t       acpi_ec_check_status(ec, event, count),\n \t\t\t\t       msecs_to_jiffies(ACPI_EC_DELAY)) ||\n-\t\t    acpi_ec_check_status(ec, event)) {\n+\t\t    acpi_ec_check_status(ec, event, 0)) {\n \t\t\treturn 0;\n \t\t} else {\n \t\t\tprintk(KERN_ERR PREFIX \"acpi_ec_wait timeout,\"\n@@ -225,21 +228,22 @@ static int acpi_ec_transaction_unlocked(struct acpi_ec *ec, u8 command,\n \t\t\t\t\tu8 * rdata, unsigned rdata_len)\n {\n \tint result = 0;\n-\n+\tunsigned count = atomic_read(&ec->event_count);\n \tacpi_ec_write_cmd(ec, command);\n \n \tfor (; wdata_len > 0; --wdata_len) {\n-\t\tresult = acpi_ec_wait(ec, ACPI_EC_EVENT_IBF_0);\n+\t\tresult = acpi_ec_wait(ec, ACPI_EC_EVENT_IBF_0, count);\n \t\tif (result) {\n \t\t\tprintk(KERN_ERR PREFIX\n \t\t\t       \"write_cmd timeout, command = %d\\n\", command);\n \t\t\tgoto end;\n \t\t}\n+\t\tcount = atomic_read(&ec->event_count);\n \t\tacpi_ec_write_data(ec, *(wdata++));\n \t}\n \n \tif (!rdata_len) {\n-\t\tresult = acpi_ec_wait(ec, ACPI_EC_EVENT_IBF_0);\n+\t\tresult = acpi_ec_wait(ec, ACPI_EC_EVENT_IBF_0, count);\n \t\tif (result) {\n \t\t\tprintk(KERN_ERR PREFIX\n \t\t\t       \"finish-write timeout, command = %d\\n\", command);\n@@ -250,13 +254,13 @@ static int acpi_ec_transaction_unlocked(struct acpi_ec *ec, u8 command,\n \t}\n \n \tfor (; rdata_len > 0; --rdata_len) {\n-\t\tresult = acpi_ec_wait(ec, ACPI_EC_EVENT_OBF_1);\n+\t\tresult = acpi_ec_wait(ec, ACPI_EC_EVENT_OBF_1, count);\n \t\tif (result) {\n \t\t\tprintk(KERN_ERR PREFIX \"read timeout, command = %d\\n\",\n \t\t\t       command);\n \t\t\tgoto end;\n \t\t}\n-\n+\t\tcount = atomic_read(&ec->event_count);\n \t\t*(rdata++) = acpi_ec_read_data(ec);\n \t}\n       end:\n@@ -288,7 +292,7 @@ static int acpi_ec_transaction(struct acpi_ec *ec, u8 command,\n \t/* Make sure GPE is enabled before doing transaction */\n \tacpi_enable_gpe(NULL, ec->gpe, ACPI_NOT_ISR);\n \n-\tstatus = acpi_ec_wait(ec, ACPI_EC_EVENT_IBF_0);\n+\tstatus = acpi_ec_wait(ec, ACPI_EC_EVENT_IBF_0, 0);\n \tif (status) {\n \t\tprintk(KERN_DEBUG PREFIX\n \t\t       \"input buffer is not empty, aborting transaction\\n\");\n@@ -369,8 +373,8 @@ int ec_write(u8 addr, u8 val)\n EXPORT_SYMBOL(ec_write);\n \n int ec_transaction(u8 command,\n-\t\t\t  const u8 * wdata, unsigned wdata_len,\n-\t\t\t  u8 * rdata, unsigned rdata_len)\n+\t\t   const u8 * wdata, unsigned wdata_len,\n+\t\t   u8 * rdata, unsigned rdata_len)\n {\n \tstruct acpi_ec *ec;\n \n@@ -435,7 +439,7 @@ static u32 acpi_ec_gpe_handler(void *data)\n \tacpi_status status = AE_OK;\n \tu8 value;\n \tstruct acpi_ec *ec = (struct acpi_ec *)data;\n-\n+\tatomic_inc(&ec->event_count);\n \tif (acpi_ec_mode == EC_INTR) {\n \t\twake_up(&ec->wait);\n \t}\n@@ -633,6 +637,7 @@ static int acpi_ec_add(struct acpi_device *device)\n \tec->uid = -1;\n \tmutex_init(&ec->lock);\n \tatomic_set(&ec->query_pending, 0);\n+\tatomic_set(&ec->event_count, 1);\n \tif (acpi_ec_mode == EC_INTR) {\n \t\tatomic_set(&ec->leaving_burst, 1);\n \t\tinit_waitqueue_head(&ec->wait);\n@@ -807,6 +812,7 @@ acpi_fake_ecdt_callback(acpi_handle handle,\n \tacpi_status status;\n \n \tmutex_init(&ec_ecdt->lock);\n+\tatomic_set(&ec->event_count, 1);\n \tif (acpi_ec_mode == EC_INTR) {\n \t\tinit_waitqueue_head(&ec_ecdt->wait);\n \t}\n@@ -888,6 +894,7 @@ static int __init acpi_ec_get_real_ecdt(void)\n \t\treturn -ENOMEM;\n \n \tmutex_init(&ec_ecdt->lock);\n+\tatomic_set(&ec_ecdt->event_count, 1);\n \tif (acpi_ec_mode == EC_INTR) {\n \t\tinit_waitqueue_head(&ec_ecdt->wait);\n \t}\n@@ -1016,8 +1023,7 @@ static int __init acpi_ec_set_intr_mode(char *str)\n \t\tacpi_ec_mode = EC_POLL;\n \t}\n \tacpi_ec_driver.ops.add = acpi_ec_add;\n-\tprintk(KERN_NOTICE PREFIX \"%s mode.\\n\",\n-\t\t\t  intr ? \"interrupt\" : \"polling\");\n+\tprintk(KERN_NOTICE PREFIX \"%s mode.\\n\", intr ? \"interrupt\" : \"polling\");\n \n \treturn 1;\n }\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "EC",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 high",
+  "Assignee": "Alexey Starikovskiy",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-03-02 04:34 UTC by Martin",
+  "Modified": "2008-10-17 21:40 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.19",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/ec.c"
+  ],
+  "methods": [
+    "acpi_ec_check_status",
+    "acpi_ec_transaction_unlocked",
+    "acpi_ec_transaction",
+    "ec_transaction",
+    "acpi_ec_gpe_handler",
+    "acpi_ec_add",
+    "acpi_fake_ecdt_callback",
+    "acpi_ec_get_real_ecdt",
+    "acpi_ec_set_intr_mode",
+    "acpi_ec"
+  ]
+}

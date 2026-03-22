@@ -1,0 +1,34 @@
+{
+  "id": "195869",
+  "title": "Wireless ioctls fail if struct iwreq is at the end of a memory mapping",
+  "description": "Created attachment 256697 [details]\ncomplete reduced testcase\n\nIf you do, say\n  struct iwreq* req = ...;\n  int ret = ioctl(sockfd, SIOCGIWNAME, req);\nthe ioctl will fail with EFAULT if req points to valid memory that is exactly sizeof(struct iwreq). Full testcase attached.\n\nThe problem is that dev_ioctl() does a copy_from_user(sizeof(struct ifreq)). On x86-64 that's 40 bytes, but sizeof(struct iwreq) is only 32 bytes.\n\nThis isn't a huge deal, but it does mean that user code that stores struct iwreq on the heap can randomly fail once in a blue moon, and that's bad.\n\nAlternatively it could be documented somewhere that user code should actually pass in a struct ifreq and cast it to struct iwreq for all usage, but that's horrible.",
+  "patch": [
+    "From cae58779548126d5c537197bfda068c835a9e0b1 Mon Sep 17 00:00:00 2001\nFrom: Johannes Berg <johannes.berg@intel.com>\nDate: Wed, 14 Jun 2017 09:28:11 +0200\nSubject: [PATCH] dev_ioctl: copy only the smaller struct iwreq for wext\n\nUnfortunately, struct iwreq isn't a proper subset of struct ifreq,\nbut is still handled by the same code path. Robert reported that\nthen applications may (randomly) fault if the struct iwreq they\npass happens to land within 8 bytes of the end of a mapping (the\nstruct is only 32 bytes, vs. struct ifreq's 40 bytes).\n\nTo fix this, pull out the code handling wireless extension ioctls\nand copy only the smaller structure in this case.\n\nThis bug goes back a long time, I tracked that it was introduced\ninto mainline in 2.1.15!\n\nReported-by: Robert O'Callahan <robert@ocallahan.org>\nSigned-off-by: Johannes Berg <johannes.berg@intel.com>\n---\n net/core/dev_ioctl.c | 22 +++++++++++++++++++---\n 1 file changed, 19 insertions(+), 3 deletions(-)\n\ndiff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c\nindex b94b1d293506..f7d0ed39b0d6 100644\n--- a/net/core/dev_ioctl.c\n+++ b/net/core/dev_ioctl.c\n@@ -410,6 +410,25 @@ int dev_ioctl(struct net *net, unsigned int cmd, void __user *arg)\n \tif (cmd == SIOCGIFNAME)\n \t\treturn dev_ifname(net, (struct ifreq __user *)arg);\n \n+\t/*\n+\t * Take care of Wireless Extensions. Unfortunately struct iwreq\n+\t * isn't a proper subset of struct ifreq (it's 8 byte shorter)\n+\t * so we need to treat it specially, otherwise applications may\n+\t * fault if the struct they're passing happens to land at the\n+\t * end of a mapped page.\n+\t */\n+\tif (cmd >= SIOCIWFIRST && cmd <= SIOCIWLAST) {\n+\t\tstruct iwreq iwr;\n+\n+\t\tif (copy_from_user(&iwr, arg, sizeof(iwr)))\n+\t\t\treturn -EFAULT;\n+\n+\t\t/* cast because it expects struct ifreq argument, but\n+\t\t * really only uses struct iwreq!\n+\t\t */\n+\t\treturn wext_handle_ioctl(net, (void *)&iwr, cmd, arg);\n+\t}\n+\n \tif (copy_from_user(&ifr, arg, sizeof(struct ifreq)))\n \t\treturn -EFAULT;\n \n@@ -559,9 +578,6 @@ int dev_ioctl(struct net *net, unsigned int cmd, void __user *arg)\n \t\t\t\tret = -EFAULT;\n \t\t\treturn ret;\n \t\t}\n-\t\t/* Take care of Wireless Extensions */\n-\t\tif (cmd >= SIOCIWFIRST && cmd <= SIOCIWLAST)\n-\t\t\treturn wext_handle_ioctl(net, &ifr, cmd, arg);\n \t\treturn -ENOTTY;\n \t}\n }\n-- \n2.11.0\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Networking",
+  "Classification": "Unclassified",
+  "Component": "Wireless",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Johannes Berg",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2017-05-24 02:21 UTC by Robert O'Callahan",
+  "Modified": "2017-06-14 12:03 UTC",
+  "CC List": "0 users",
+  "See Also": "",
+  "Kernel Version": "4.12-rc1",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "net/core/dev_ioctl.c"
+  ],
+  "methods": [
+    "dev_ioctl"
+  ]
+}

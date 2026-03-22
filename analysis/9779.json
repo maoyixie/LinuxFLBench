@@ -1,0 +1,113 @@
+{
+  "id": "9779",
+  "title": "Setting cpu_share to 1 freezes system",
+  "kernel_version": "2.6.24",
+  "product": "Process Management",
+  "component": "Scheduler",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "kernel/sched.c"
+    ],
+    "buggy_methods": [
+      "sched_group_set_shares"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/kernel/uids/"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 747,
+    "description_word_count": 121
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 8,
+    "lines_removed": 0,
+    "patch_size": 8,
+    "patch_types": [
+      "logic_change",
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "sched_group_set_shares"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "kernel/sched.c",
+    "filename": "sched.c",
+    "directory": "kernel",
+    "depth": 2,
+    "top_level": "kernel",
+    "second_level": "sched.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Scheduler"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "9779",
+      "version": "2.6.24",
+      "status": "found",
+      "path": "kernel/sched.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "9779",
+    "title": "Setting cpu_share to 1 freezes system",
+    "ground_truth_file": "kernel/sched.c",
+    "ground_truth_subsystem": "kernel/sched.c",
+    "ground_truth_methods": [
+      "sched_group_set_shares"
+    ],
+    "product": "Process Management",
+    "component": "Scheduler",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "locking_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/sys/kernel/uids/"
+      ],
+      "component": "Scheduler",
+      "product": "Process Management"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

@@ -1,0 +1,142 @@
+{
+  "id": "16351",
+  "title": "Various issues with imon remote control driver",
+  "kernel_version": "2.6.35-rc4",
+  "product": "Drivers",
+  "component": "Input Devices",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/media/IR/imon.c"
+    ],
+    "buggy_methods": [
+      "imon_mce_timeout",
+      "imon_ir_change_protocol",
+      "imon_mce_key_lookup",
+      "imon_mouse_event",
+      "imon_parse_press_type",
+      "imon_incoming_packet",
+      "imon_disconnect",
+      "*imon_init_intf0",
+      "imon_context"
+    ],
+    "num_methods": 9
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1672,
+    "description_word_count": 280
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 53,
+    "lines_removed": 15,
+    "patch_size": 68,
+    "new_functions": [
+      "imon_input_timeout"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "init_fix",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 18,
+    "hunk_functions": [
+      "imon_mce_key_lookup",
+      "imon_mouse_event",
+      "imon_incoming_packet",
+      "imon_ir_change_protocol",
+      "imon_parse_press_type",
+      "imon_disconnect",
+      "usb_tx_callback"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/media/IR/imon.c",
+    "filename": "imon.c",
+    "directory": "drivers/media/IR",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "media",
+    "driver_subsystem": "media/IR",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Input Devices"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "16351",
+      "version": "2.6.35-rc4",
+      "status": "found",
+      "path": "drivers/media/IR/imon.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "16351",
+    "title": "Various issues with imon remote control driver",
+    "ground_truth_file": "drivers/media/IR/imon.c",
+    "ground_truth_subsystem": "drivers/media",
+    "ground_truth_methods": [
+      "imon_mce_timeout",
+      "imon_ir_change_protocol",
+      "imon_mce_key_lookup",
+      "imon_mouse_event",
+      "imon_parse_press_type",
+      "imon_incoming_packet",
+      "imon_disconnect",
+      "*imon_init_intf0",
+      "imon_context"
+    ],
+    "product": "Drivers",
+    "component": "Input Devices",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "wrong_output"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "locking_fix",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named"
+    ],
+    "clue_details": {
+      "component": "Input Devices",
+      "product": "Drivers",
+      "modules": [
+        "doesn",
+        "should",
+        "maintainer"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

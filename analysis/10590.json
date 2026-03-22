@@ -1,0 +1,126 @@
+{
+  "id": "10590",
+  "title": "rndis_host fails to register HTC P3600 device",
+  "kernel_version": "2.6.25",
+  "product": "Drivers",
+  "component": "Network",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/usb/rndis_host.c"
+    ],
+    "buggy_methods": [
+      "rndis_command"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 28,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 2955,
+    "description_word_count": 374
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 5,
+    "lines_removed": 0,
+    "patch_size": 5,
+    "patch_types": [
+      "memory"
+    ],
+    "num_hunks": 3,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/usb/rndis_host.c",
+    "filename": "rndis_host.c",
+    "directory": "drivers/net/usb",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/usb",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "medium",
+    "signals": [
+      "dmesg_logs_available",
+      "component_known:Network"
+    ],
+    "strategies": [
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "10590",
+      "version": "2.6.25",
+      "status": "found",
+      "path": "drivers/net/usb/rndis_host.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "10590",
+    "title": "rndis_host fails to register HTC P3600 device",
+    "ground_truth_file": "drivers/net/usb/rndis_host.c",
+    "ground_truth_subsystem": "drivers/net",
+    "ground_truth_methods": [
+      "rndis_command"
+    ],
+    "product": "Drivers",
+    "component": "Network",
+    "best_strategy": "grep_error_strings",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "greppable_error_strings",
+      "kernel_log_messages",
+      "greppable_kernel_messages",
+      "known_component",
+      "driver_module_named"
+    ],
+    "clue_details": {
+      "error_strings": [
+        "RNDIS_MSG_QUERY(0x00010202) failed, -47"
+      ],
+      "kernel_msg_count": 28,
+      "greppable_kernel_msgs": [
+        "usb 2-1: new full speed USB device using uhci_hcd and address 7",
+        "usb 2-1: configuration #1 chosen from 1 choice",
+        "usb 2-1: New USB device found, idVendor=0bb4, idProduct=0b05",
+        "usb 2-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3",
+        "usb 2-1: Product: Generic RNDIS"
+      ],
+      "component": "Network",
+      "product": "Drivers",
+      "modules": [
+        "is",
+        "works",
+        "rndis_host",
+        "rndis_wlan",
+        "cdc_ether"
+      ]
+    }
+  },
+  "overall_category": "E_grep_error_strings"
+}

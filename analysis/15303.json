@@ -1,0 +1,106 @@
+{
+  "id": "15303",
+  "title": "WLAN cannot be activated if booted with activated RF kill switch on Sony notebook (iwl3945)",
+  "kernel_version": "2.6.32",
+  "product": "Drivers",
+  "component": "Platform",
+  "hardware": "i386 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/platform/x86/sony-laptop.c"
+    ],
+    "buggy_methods": [
+      "sony_pic_irq",
+      "sonypi_blueev"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1266,
+    "description_word_count": 207
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 11,
+    "lines_removed": 4,
+    "patch_size": 15,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 3,
+    "hunk_functions": [
+      "sony_pic_irq"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/platform/x86/sony-laptop.c",
+    "filename": "sony-laptop.c",
+    "directory": "drivers/platform/x86",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "platform",
+    "driver_subsystem": "platform/x86",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Platform"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "15303",
+      "version": "2.6.32",
+      "status": "found",
+      "path": "drivers/platform/x86/sony-laptop.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "15303",
+    "title": "WLAN cannot be activated if booted with activated RF kill switch on Sony notebook (iwl3945)",
+    "ground_truth_file": "drivers/platform/x86/sony-laptop.c",
+    "ground_truth_subsystem": "drivers/platform",
+    "ground_truth_methods": [
+      "sony_pic_irq",
+      "sonypi_blueev"
+    ],
+    "product": "Drivers",
+    "component": "Platform",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "Platform",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

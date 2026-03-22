@@ -1,0 +1,153 @@
+{
+  "id": "4625",
+  "title": "ub is much slower in writing than usb-storage",
+  "kernel_version": "2.6.13",
+  "product": "Drivers",
+  "component": "Other",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "performance",
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/block/ub.c"
+    ],
+    "buggy_methods": [
+      "ub_diag_show",
+      "ub_bd_rq_fn",
+      "ub_bd_rq_fn_1",
+      "ub_cmd_build_block",
+      "ub_cmd_build_packet",
+      "ub_rw_cmd_done",
+      "ub_scsi_urb_compl",
+      "ub_state_sense",
+      "ub_submit_clear_stall",
+      "ub_sync_read_cap",
+      "ub_probe_lun",
+      "ub_scsi_cmd",
+      "struct ub_dev"
+    ],
+    "num_methods": 13
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 671,
+    "description_word_count": 102
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 147,
+    "lines_removed": 122,
+    "patch_size": 269,
+    "new_functions": [
+      "ub_request_fn_1",
+      "ub_cmd_build_packet",
+      "ub_data_start",
+      "ub_request_fn",
+      "ub_request_fn_1",
+      "ub_cmd_build_packet",
+      "ub_data_start"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "error_handling",
+      "init_fix",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 24,
+    "hunk_functions": [
+      "ub_cmd_build_block",
+      "ub_state_sense",
+      "ub_urb_complete",
+      "ub_scsi_urb_compl",
+      "ub_state_stat_counted",
+      "ub_cmd_build_packet",
+      "ub_rw_cmd_done",
+      "ub_diag_show",
+      "ub_bd_rq_fn_1",
+      "ub_submit_clear_stall",
+      "ub_sync_read_cap",
+      "ub_cmdtr_sense",
+      "ub_probe_lun"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/block/ub.c",
+    "filename": "ub.c",
+    "directory": "drivers/block",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "block",
+    "driver_subsystem": "block/ub.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [],
+    "strategies": []
+  },
+  "source_verification": [
+    {
+      "id": "4625",
+      "version": "2.6.13",
+      "status": "found",
+      "path": "drivers/block/ub.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "4625",
+    "title": "ub is much slower in writing than usb-storage",
+    "ground_truth_file": "drivers/block/ub.c",
+    "ground_truth_subsystem": "drivers/block",
+    "ground_truth_methods": [
+      "ub_diag_show",
+      "ub_bd_rq_fn",
+      "ub_bd_rq_fn_1",
+      "ub_cmd_build_block",
+      "ub_cmd_build_packet",
+      "ub_rw_cmd_done",
+      "ub_scsi_urb_compl",
+      "ub_state_sense",
+      "ub_submit_clear_stall",
+      "ub_sync_read_cap",
+      "ub_probe_lun",
+      "ub_scsi_cmd",
+      "struct ub_dev"
+    ],
+    "product": "Drivers",
+    "component": "Other",
+    "best_strategy": "semantic_understanding_only",
+    "symptom_categories": [
+      "performance"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "init_fix",
+      "boundary_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "minimal_clues"
+    ],
+    "clue_details": {
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_semantic_understanding_only"
+}

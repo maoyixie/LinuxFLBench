@@ -1,0 +1,37 @@
+{
+  "id": "7206",
+  "title": "acpi not recognize residual charge on packard bell easynote S5011",
+  "description": "On start of my notebook, with kde, Klaptop not display my residual charge.\n\nStart with only battery:\n\nconfix@portatile ~ $ cat /proc/acpi/battery/BAT1/info\npresent:                 no\n\nconfix@portatile ~ $ cat /proc/acpi/battery/BAT1/state\npresent:                 no\n\nAfter i insert and disconnect AC Power Supply:\n\nconfix@portatile ~ $ cat /proc/acpi/battery/BAT1/state\npresent:                 yes\ncapacity state:          ok\ncharging state:          discharging\npresent rate:            2240 mA\nremaining capacity:      1731 mAh\npresent voltage:         12321 mV\n\nconfix@portatile ~ $ cat /proc/acpi/battery/BAT1/info\npresent:                 yes\ndesign capacity:         4000 mAh\nlast full capacity:      3089 mAh\nbattery technology:      rechargeable\ndesign voltage:          9600 mV\ndesign capacity warning: 400 mAh\ndesign capacity low:     123 mAh\ncapacity granularity 1:  64 mAh\ncapacity granularity 2:  64 mAh\nmodel number:            PC-VP-WP66/OP-570-76620\nserial number:\nbattery type:            NiMH\nOEM info:                NEC\n\nand klaptop display residual charge.",
+  "patch": [
+    "diff -rup linux-2.6.18-a/drivers/acpi/battery.c linux-2.6.18-b/drivers/acpi/battery.c\n--- linux-2.6.18-a/drivers/acpi/battery.c\t2006-09-27 23:12:16.000000000 +0400\n+++ linux-2.6.18-b/drivers/acpi/battery.c\t2006-09-27 23:12:09.000000000 +0400\n@@ -324,6 +324,13 @@ static int acpi_battery_check(struct acp\n \treturn result;\n }\n \n+static void acpi_battery_check_present(struct acpi_battery *battery)\n+{\n+\tif (!battery->flags.present) {\n+\t\tacpi_battery_check(battery);\n+\t}\n+}\n+\n /* --------------------------------------------------------------------------\n                               FS Interface (/proc)\n    -------------------------------------------------------------------------- */\n@@ -340,6 +347,8 @@ static int acpi_battery_read_info(struct\n \tif (!battery)\n \t\tgoto end;\n \n+\tacpi_battery_check_present(battery);\n+\n \tif (battery->flags.present)\n \t\tseq_printf(seq, \"present:                 yes\\n\");\n \telse {\n@@ -424,6 +433,8 @@ static int acpi_battery_read_state(struc\n \tif (!battery)\n \t\tgoto end;\n \n+\tacpi_battery_check_present(battery);\n+\n \tif (battery->flags.present)\n \t\tseq_printf(seq, \"present:                 yes\\n\");\n \telse {\n@@ -499,6 +510,8 @@ static int acpi_battery_read_alarm(struc\n \tif (!battery)\n \t\tgoto end;\n \n+\tacpi_battery_check_present(battery);\n+\n \tif (!battery->flags.present) {\n \t\tseq_printf(seq, \"present:                 no\\n\");\n \t\tgoto end;\n@@ -536,6 +549,8 @@ acpi_battery_write_alarm(struct file *fi\n \tif (!battery || (count > sizeof(alarm_string) - 1))\n \t\treturn -EINVAL;\n \n+\tacpi_battery_check_present(battery);\n+\n \tif (!battery->flags.present)\n \t\treturn -ENODEV;\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Battery",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Vladimir Lebedev",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-09-26 03:23 UTC by Fanini Enrico",
+  "Modified": "2006-10-13 11:45 UTC",
+  "CC List": "0 users",
+  "See Also": "",
+  "Kernel Version": "2.6.20",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/battery.c"
+  ],
+  "methods": [
+    "acpi_battery_read_info",
+    "acpi_battery_read_state",
+    "acpi_battery_read_alarm",
+    "acpi_battery_write_alarm"
+  ]
+}

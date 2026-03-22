@@ -1,0 +1,109 @@
+{
+  "id": "7385",
+  "title": "nfs4 broken in vanilla-sources 2.6.19",
+  "kernel_version": "2.6.19-rc2",
+  "product": "File System",
+  "component": "NFS",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "hang/lockup",
+    "wrong_behavior",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "fs/nfs/super.c"
+    ],
+    "buggy_methods": [
+      "nfs4_get_sb"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "message can't"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1246,
+    "description_word_count": 166
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "nfs4_get_sb"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "fs/nfs/super.c",
+    "filename": "super.c",
+    "directory": "fs/nfs",
+    "depth": 3,
+    "top_level": "fs",
+    "second_level": "nfs",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:NFS"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "7385",
+      "version": "2.6.19-rc2",
+      "status": "found",
+      "path": "fs/nfs/super.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "7385",
+    "title": "nfs4 broken in vanilla-sources 2.6.19",
+    "ground_truth_file": "fs/nfs/super.c",
+    "ground_truth_subsystem": "fs/nfs",
+    "ground_truth_methods": [
+      "nfs4_get_sb"
+    ],
+    "product": "File System",
+    "component": "NFS",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "hang/deadlock",
+      "suspend/resume",
+      "wrong_output"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "NFS",
+      "product": "File System"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

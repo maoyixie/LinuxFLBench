@@ -1,0 +1,34 @@
+{
+  "id": "15419",
+  "title": "ipw2200: requesting scan causes connection drops",
+  "description": "Created attachment 25292 [details]\nCommented dmesg (ipw2200 debug=255)\n\nOverview:\nSince long time (at least 2.6.24), with some networks the connection gets systematically dropped when a scan is requested (i.e. by NetworkManager).\n\nSteps to reproduce:\nI could always reproduce this issue by stopping NetworkManager and manually configuring a wireless connection to an affected network in /etc/network/interfaces (ifupdown uses wpa_supplicant, like NM does): when the connection is active, a iwlist ethx scan command always causes ap disassociation and subsequent connection drop. If no scans are requested the connection is very reliable and fast and lasts hours (no disassociations happen).\n\nActual results:\nThe card gets disassociated from the ap and the connection drops.\n\nExpected results:\nThe connection shouldn't drop when scanning is requested.\n\nBuild date and platform:\nDebian Sid i386 current (kernel 2.6.32-9) on an Acer TravelMate 435LMi + Intel ProWireless 2915 (ipw2200).\n\nAdditional info:\n- wireless device lspci -vvv:\n02:02.0 Network controller: Intel Corporation PRO/Wireless 2915ABG [Calexico2] Network Connection (rev 05)\n        Subsystem: Intel Corporation Device 1001\n        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR+ FastB2B- DisINTx-\n        Status: Cap+ 66MHz- UDF- FastB2B+ ParErr- DEVSEL=medium >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-\n        Latency: 32 (750ns min, 6000ns max), Cache Line Size: 32 bytes\n        Interrupt: pin A routed to IRQ 18\n        Region 0: Memory at d0200000 (32-bit, non-prefetchable) [size=4K]\n        Capabilities: [dc] Power Management version 2\n                Flags: PMEClk- DSI+ D1- D2- AuxCurrent=0mA PME(D0+,D1-,D2-,D3hot+,D3cold+)\n                Status: D0 NoSoftRst- PME-Enable- DSel=0 DScale=1 PME-\n        Kernel driver in use: ipw2200\n\n- note:\nThe logfile I'm attaching refers to a connection to a Linksys WAG325N: the ap was 3mt far from the laptop, no matter whether the 802.11n features were enabled or not, whether the ESSID was broadcasted or not and regardless of used encryption (RSN or WPA).\nThe ipw2200 module was loaded with no additional parameters.\n\nThanks\n\nMaurizio",
+  "patch": [
+    "diff --git a/drivers/net/wireless/ipw2x00/ipw2200.c b/drivers/net/wireless/ipw2x00/ipw2200.c\nindex 5c7aa1b..d449833 100644\n--- a/drivers/net/wireless/ipw2x00/ipw2200.c\n+++ b/drivers/net/wireless/ipw2x00/ipw2200.c\n@@ -2348,16 +2348,25 @@ static void ipw_bg_adapter_restart(struct work_struct *work)\n \tmutex_unlock(&priv->mutex);\n }\n \n-#define IPW_SCAN_CHECK_WATCHDOG (5 * HZ)\n+static void ipw_abort_scan(struct ipw_priv *priv);\n+\n+#define IPW_SCAN_CHECK_WATCHDOG\t(5 * HZ)\n \n static void ipw_scan_check(void *data)\n {\n \tstruct ipw_priv *priv = data;\n-\tif (priv->status & (STATUS_SCANNING | STATUS_SCAN_ABORTING)) {\n+\n+\tif (priv->status & STATUS_SCAN_ABORTING) {\n \t\tIPW_DEBUG_SCAN(\"Scan completion watchdog resetting \"\n \t\t\t       \"adapter after (%dms).\\n\",\n \t\t\t       jiffies_to_msecs(IPW_SCAN_CHECK_WATCHDOG));\n \t\tqueue_work(priv->workqueue, &priv->adapter_restart);\n+\t} else if (priv->status & STATUS_SCANNING) {\n+\t\tIPW_DEBUG_SCAN(\"Scan completion watchdog aborting scan \"\n+\t\t\t       \"after (%dms).\\n\",\n+\t\t\t       jiffies_to_msecs(IPW_SCAN_CHECK_WATCHDOG));\n+\t\tipw_abort_scan(priv);\n+\t\tqueue_delayed_work(priv->workqueue, &priv->scan_check, HZ);\n \t}\n }\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "network-wireless",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_network-wireless@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-03-01 17:26 UTC by Maurizio Avogadro",
+  "Modified": "2010-08-18 19:21 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.32",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/ipw2x00/ipw2200.c"
+  ],
+  "methods": [
+    "ipw_scan_check"
+  ]
+}

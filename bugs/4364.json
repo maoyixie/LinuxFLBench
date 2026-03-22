@@ -1,0 +1,34 @@
+{
+  "id": "4364",
+  "title": "S1 suspend/resume resets thermal limits -- TP 600X",
+  "description": "Distribution: Debian testing\n\nHardware Environment: Thinkpad 600X 650MHz Pentium III\n\nSoftware Environment: 2.6.11.4 + ACPI subsystem 20050309 + ibm_acpi 0.10f +\nXFree 4.3.0.1\n\nProblem Description: After entering S1 state, the screen goes blank but then\nstarts growing fine, rainbow-colored patterns near the middle of the screen and\na few horizontal lines.  The cruft grows until I hit the Fn key to wake it up. \nIt eventually comes back and the screen is just as it was before the sleep.  But\nvarious drivers are unhappy.  The uhci_hcd driver continuously reports error\nmessages such as \n\nhub 1-0:1.0: debounce: port 1: total 1500ms stable 0ms status 0x31f\nhub 1-0:1.0: connect-debounce failed, port 1 disabled\nuhci_hcd 0000:00:07.2: port 2 portsc ffff,00\nhub 1-0:1.0: over-current change on port 2\nhub 1-0:1.0: port 2, status 031f, change 000b, 1.5 Mb/s\nuhci_hcd 0000:00:07.2: port 2 portsc ffff,00\nuhci_hcd 0000:00:07.2: port 2 portsc ffff,00\nuhci_hcd 0000:00:07.2: port 2 portsc ffff,00\n\nThe messages continue until I modprobe -r the driver and then reload it.  But\nthat produces the following warning:\n\nUSB Universal Host Controller Interface driver v2.2\nPCI: Enabling device 0000:00:07.2 (0000 -> 0001)\nPCI: Found IRQ 11 for device 0000:00:07.2\nuhci_hcd 0000:00:07.2: Intel Corp. 82371AB/EB/MB PIIX4 USB\nuhci_hcd 0000:00:07.2: irq 11, io base 0x4000\nuhci_hcd 0000:00:07.2: new USB bus registered, assigned bus number 1\nuhci_hcd 0000:00:07.2: detected 8 ports\nuhci_hcd 0000:00:07.2: port count misdetected? forcing to 2 ports\nuhci_hcd 0000:00:07.2: USBCMD_HCRESET timed out!\nuhci_hcd 0000:00:07.2: init error -110\nuhci_hcd 0000:00:07.2: remove, state 0\nuhci_hcd 0000:00:07.2: roothub graceful disconnect\nusb_disconnect nodev\nUninitialised timer!\nThis is just a warning.  Your computer is OK\nfunction=0x00000000, data=0x0\n [<c011f351>] check_timer_failed+0x61/0x70\n [<c011f599>] del_timer+0x19/0x60\n [<e498c9c3>] uhci_stop+0x23/0x90 [uhci_hcd]\n [<c0255417>] usb_hcd_pci_remove+0xb7/0x1c0\n [<c02550c6>] usb_hcd_pci_probe+0x316/0x5b0\n [<c01d3282>] pci_device_probe_static+0x52/0x70\n [<c01d32dc>] __pci_device_probe+0x3c/0x50\n [<c01d331c>] pci_device_probe+0x2c/0x50\n [<c022713f>] driver_probe_device+0x2f/0x80\n [<c022728c>] driver_attach+0x5c/0xa0\n [<c02277dd>] bus_add_driver+0x9d/0xd0\n [<c0227dff>] driver_register+0x2f/0x40\n [<c01d35a4>] pci_register_driver+0x64/0x90\n [<e49b109b>] uhci_hcd_init+0x9b/0xf1 [uhci_hcd]\n [<c012e252>] sys_init_module+0x132/0x1c0\n [<c0102f33>] syscall_call+0x7/0xb\nuhci_hcd 0000:00:07.2: USB bus 1 deregistered\nuhci_hcd: probe of 0000:00:07.2 failed with error -110\n\nNot surprisingly the USB-connected cell phone (cdc_acm driver) wouldn't behave\nafter those errors (couldn't talk to the /dev/ttyACM0 device).  Also the modem\nin the xircom ethernet/modem combination card wouldn't work either.  Both worked\nfine before the sleep attempt (and are working fine now after rebooting).\n\nAlso, the thermal-zone settings reset themselves to the default.  I had done\n\n  echo 120:0:40:55:0 > /proc/acpi/thermal_zone/THM2/trip_points\n\nto get the damn loud fan to be less aggressive (which worked fine -- an ACPI\nsuccess for which I am very happy).  By the way, I also had to do \n\n  echo 10 > THM2/polling_frequency\n\nto get the change to take effect.  But now the polling_frequency is back to\n'polling disabled' and the trip_points back to\n\ncritical (S5):           120 C\nactive[0]:               34 C: devices=0xc1574108 \n\nI am using a custom DSDT: The vanilla TP 600X DSDT (from BIOS 1.11) but with a\nfew meager attempts to fix the DSDT recompilation errors and the S3 \"missing\nsleep state object\" error (Bug #3534) -- no good or bad effect from the fixes,\nat least that I could find.  I'll attach the output of acpidmp as well as\nseveral other hopefully useful files.\n\nSteps to reproduce: Boot w/ \"apm=off pci=noacpi acpi_sleep=s3_bios\" then into X,\nthen \"echo 1 > /proc/acpi/sleep\", wait a few seconds, then wake up by tapping\nthe Fn key.",
+  "patch": [
+    "Index: linux-2.6.16/drivers/acpi/thermal.c\n===================================================================\n--- linux-2.6.16.orig/drivers/acpi/thermal.c\n+++ linux-2.6.16/drivers/acpi/thermal.c\n@@ -82,6 +82,7 @@ MODULE_PARM_DESC(tzp, \"Thermal zone poll\n \n static int acpi_thermal_add(struct acpi_device *device);\n static int acpi_thermal_remove(struct acpi_device *device, int type);\n+static int acpi_thermal_resume(struct acpi_device *device, int state);\n static int acpi_thermal_state_open_fs(struct inode *inode, struct file *file);\n static int acpi_thermal_temp_open_fs(struct inode *inode, struct file *file);\n static int acpi_thermal_trip_open_fs(struct inode *inode, struct file *file);\n@@ -103,6 +104,7 @@ static struct acpi_driver acpi_thermal_d\n \t.ops = {\n \t\t.add = acpi_thermal_add,\n \t\t.remove = acpi_thermal_remove,\n+\t\t.resume = acpi_thermal_resume,\n \t\t},\n };\n \n@@ -1416,6 +1418,22 @@ static int acpi_thermal_remove(struct ac\n \treturn_VALUE(0);\n }\n \n+static int acpi_thermal_resume(struct acpi_device *device, int state)\n+{\n+\tstruct acpi_thermal *tz = NULL;\n+\n+\tACPI_FUNCTION_TRACE(\"acpi_thermal_resume\");\n+\n+\tif (!device || !acpi_driver_data(device))\n+\t\treturn_VALUE(-EINVAL);\n+\n+\ttz = (struct acpi_thermal *)acpi_driver_data(device);\n+\n+\tacpi_thermal_check(tz);\n+\n+\treturn_VALUE(AE_OK);\n+}\n+\n static int __init acpi_thermal_init(void)\n {\n \tint result = 0;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Thermal",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Konstantin Karasyov",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2005-03-17 23:05 UTC by Sanjoy Mahajan",
+  "Modified": "2007-02-15 22:18 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.16",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/thermal.c"
+  ],
+  "methods": [
+    "acpi_thermal_driver"
+  ]
+}

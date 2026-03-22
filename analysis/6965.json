@@ -1,0 +1,106 @@
+{
+  "id": "6965",
+  "title": "Kernel doesn't re-sync usb-raid1 after running mdadm --add",
+  "kernel_version": "2.6.18-rc3",
+  "product": "IO/Storage",
+  "component": "MD",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/md/md.c"
+    ],
+    "buggy_methods": [
+      "md_update_sb"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1329,
+    "description_word_count": 195
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 13,
+    "lines_removed": 0,
+    "patch_size": 13,
+    "patch_types": [
+      "logic_change",
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "md_update_sb"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/md/md.c",
+    "filename": "md.c",
+    "directory": "drivers/md",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "md",
+    "driver_subsystem": "md/md.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:MD"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "6965",
+      "version": "2.6.18-rc3",
+      "status": "found",
+      "path": "drivers/md/md.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "6965",
+    "title": "Kernel doesn't re-sync usb-raid1 after running mdadm --add",
+    "ground_truth_file": "drivers/md/md.c",
+    "ground_truth_subsystem": "drivers/md",
+    "ground_truth_methods": [
+      "md_update_sb"
+    ],
+    "product": "IO/Storage",
+    "component": "MD",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "locking_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "MD",
+      "product": "IO/Storage"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

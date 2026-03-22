@@ -1,0 +1,114 @@
+{
+  "id": "10507",
+  "title": "Kernel fails to properly identify SATA drives",
+  "kernel_version": "2.6.24",
+  "product": "IO/Storage",
+  "component": "Serial ATA",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/ata/ahci.c"
+    ],
+    "buggy_methods": [
+      "ahci_port_info"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [
+      {
+        "file": "22",
+        "line": "14"
+      }
+    ],
+    "error_messages": [
+      "looping indefinitely:"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1271,
+    "description_word_count": 184
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/ata/ahci.c",
+    "filename": "ahci.c",
+    "directory": "drivers/ata",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "ata",
+    "driver_subsystem": "ata/ahci.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "source_file_line_references",
+      "component_known:Serial ATA",
+      "is_regression"
+    ],
+    "strategies": [
+      "use_source_references_to_locate_file",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "10507",
+      "version": "2.6.24",
+      "status": "found",
+      "path": "drivers/ata/ahci.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "10507",
+    "title": "Kernel fails to properly identify SATA drives",
+    "ground_truth_file": "drivers/ata/ahci.c",
+    "ground_truth_subsystem": "drivers/ata",
+    "ground_truth_methods": [
+      "ahci_port_info"
+    ],
+    "product": "IO/Storage",
+    "component": "Serial ATA",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "Serial ATA",
+      "product": "IO/Storage"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

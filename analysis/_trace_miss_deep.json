@@ -1,0 +1,956 @@
+{
+  "details": [
+    {
+      "id": "12969",
+      "title": "WARNING: at lib/dma-debug.c:539 check_sync+0xe9/0x341() (Not tainted)",
+      "ground_truth_file": "drivers/net/b44.c",
+      "ground_truth_methods": [
+        "b44_recycle_rx"
+      ],
+      "ground_truth_subsystem": "drivers/net",
+      "trace_functions_top8": [
+        "check_sync",
+        "warn_slowpath",
+        "register_lock_class",
+        "mark_lock",
+        "_raw_spin_unlock",
+        "_spin_unlock_irqrestore",
+        "trace_hardirqs_on",
+        "debug_dma_sync_single_for_device"
+      ],
+      "trace_function_locations": {
+        "check_sync": [],
+        "warn_slowpath": [
+          "kernel/panic.c"
+        ],
+        "register_lock_class": [],
+        "mark_lock": [
+          "kernel/lockdep.c"
+        ],
+        "_raw_spin_unlock": [
+          "lib/spinlock_debug.c"
+        ],
+        "_spin_unlock_irqrestore": [
+          "kernel/spinlock.c"
+        ],
+        "trace_hardirqs_on": [
+          "kernel/trace/trace_irqsoff.c",
+          "kernel/lockdep.c"
+        ],
+        "debug_dma_sync_single_for_device": []
+      },
+      "trace_subsystems": [
+        "kernel/panic.c",
+        "lib/spinlock_debug.c",
+        "kernel/spinlock.c",
+        "kernel/trace",
+        "kernel/lockdep.c"
+      ],
+      "mismatch_type": "trace_in_infrastructure",
+      "gt_calls_trace_func": true,
+      "gt_method_in_trace": true,
+      "product": "Drivers",
+      "component": "Network"
+    },
+    {
+      "id": "12971",
+      "title": "\"tg3 transmit timed out\" when transmitting at high bitrate",
+      "ground_truth_file": "drivers/net/tg3.c",
+      "ground_truth_methods": [
+        "tg3_start_xmit_dma_bug"
+      ],
+      "ground_truth_subsystem": "drivers/net",
+      "trace_functions_top8": [
+        "dev_watchdog",
+        "warn_slowpath",
+        "sd_init_MC",
+        "__enqueue_entity",
+        "cpumask_next_and",
+        "find_busiest_group",
+        "enqueue_task",
+        "strlcpy"
+      ],
+      "trace_function_locations": {
+        "dev_watchdog": [
+          "net/sched/sch_generic.c"
+        ],
+        "warn_slowpath": [
+          "kernel/panic.c"
+        ],
+        "sd_init_MC": [],
+        "__enqueue_entity": [
+          "kernel/sched_fair.c"
+        ],
+        "cpumask_next_and": [
+          "lib/cpumask.c"
+        ],
+        "find_busiest_group": [],
+        "enqueue_task": [
+          "kernel/sched.c"
+        ],
+        "strlcpy": [
+          "arch/s390/lib/string.c",
+          "scripts/unifdef.c",
+          "lib/string.c"
+        ]
+      },
+      "trace_subsystems": [
+        "kernel/panic.c",
+        "kernel/sched_fair.c",
+        "arch/s390",
+        "net/sched",
+        "lib/string.c",
+        "kernel/sched.c",
+        "scripts/unifdef.c",
+        "lib/cpumask.c"
+      ],
+      "mismatch_type": "trace_in_infrastructure",
+      "gt_calls_trace_func": false,
+      "gt_method_in_trace": false,
+      "product": "Drivers",
+      "component": "Network"
+    },
+    {
+      "id": "13394",
+      "title": "check_early_ioremap_leak warning",
+      "ground_truth_file": "drivers/acpi/processor_core.c",
+      "ground_truth_methods": [
+        "acpi_processor_init"
+      ],
+      "ground_truth_subsystem": "drivers/acpi",
+      "trace_functions_top8": [
+        "check_early_ioremap_leak",
+        "warn_slowpath_common",
+        "warn_slowpath_fmt",
+        "do_one_initcall",
+        "register_irq_proc",
+        "init_irq_proc",
+        "kernel_init",
+        "kernel_thread_helper"
+      ],
+      "trace_function_locations": {
+        "check_early_ioremap_leak": [
+          "arch/x86/mm/ioremap.c"
+        ],
+        "warn_slowpath_common": [
+          "kernel/panic.c"
+        ],
+        "warn_slowpath_fmt": [
+          "kernel/panic.c"
+        ],
+        "do_one_initcall": [
+          "init/main.c"
+        ],
+        "register_irq_proc": [
+          "kernel/irq/proc.c"
+        ],
+        "init_irq_proc": [
+          "arch/m68k/kernel/ints.c",
+          "arch/s390/kernel/irq.c",
+          "arch/sparc/kernel/irq_32.c",
+          "kernel/irq/proc.c"
+        ],
+        "kernel_init": [
+          "init/main.c"
+        ],
+        "kernel_thread_helper": [
+          "arch/m32r/kernel/process.c",
+          "arch/sh/kernel/process_32.c",
+          "arch/microblaze/kernel/process.c",
+          "arch/blackfin/kernel/process.c",
+          "arch/arm/kernel/process.c"
+        ]
+      },
+      "trace_subsystems": [
+        "kernel/panic.c",
+        "arch/m32r",
+        "arch/s390",
+        "kernel/irq",
+        "init/main.c",
+        "arch/sh",
+        "arch/mips",
+        "arch/m68k",
+        "arch/x86",
+        "arch/arm",
+        "arch/cris",
+        "arch/sparc",
+        "arch/microblaze",
+        "arch/blackfin",
+        "arch/avr32"
+      ],
+      "mismatch_type": "trace_in_infrastructure",
+      "gt_calls_trace_func": false,
+      "gt_method_in_trace": false,
+      "product": "ACPI",
+      "component": "Other"
+    },
+    {
+      "id": "13498",
+      "title": "Kernel panic - not syncing: Attepmted to kill init! (Fedora 10)",
+      "ground_truth_file": "drivers/pci/pcie/aspm.c",
+      "ground_truth_methods": [
+        "pcie_aspm_init_link_state"
+      ],
+      "ground_truth_subsystem": "drivers/pci",
+      "trace_functions_top8": [
+        "driver_register",
+        "acpi_pci_root_init",
+        "early_idt_handler",
+        "acpi_bus_register_driver",
+        "do_one_initcall",
+        "task_statm",
+        "kernel_init",
+        "trace_hardirqs_on_thunk"
+      ],
+      "trace_function_locations": {
+        "driver_register": [
+          "drivers/base/driver.c"
+        ],
+        "acpi_pci_root_init": [
+          "drivers/acpi/pci_root.c"
+        ],
+        "early_idt_handler": [],
+        "acpi_bus_register_driver": [
+          "drivers/acpi/scan.c"
+        ],
+        "do_one_initcall": [
+          "init/main.c"
+        ],
+        "task_statm": [
+          "fs/proc/task_mmu.c",
+          "fs/proc/task_nommu.c"
+        ],
+        "kernel_init": [
+          "init/main.c"
+        ],
+        "trace_hardirqs_on_thunk": []
+      },
+      "trace_subsystems": [
+        "fs/proc",
+        "drivers/acpi",
+        "init/main.c",
+        "drivers/base"
+      ],
+      "mismatch_type": "cross_subsystem_propagation",
+      "gt_calls_trace_func": false,
+      "gt_method_in_trace": true,
+      "product": "Drivers",
+      "component": "PCI"
+    },
+    {
+      "id": "13793",
+      "title": "2.6.31 regression - boot crash in rcu_process_callbacks - DELL XPS M1330",
+      "ground_truth_file": "fs/jfs/acl.c",
+      "ground_truth_methods": [
+        "*jfs_get_acl"
+      ],
+      "ground_truth_subsystem": "fs/jfs",
+      "trace_functions_top8": [
+        "rcu_do_batch",
+        "__rcu_process_callbacks",
+        "tick_handle_oneshot_broadcast",
+        "rcu_process_callbacks",
+        "timer_interrupt",
+        "handle_IRQ_event",
+        "do_softirq",
+        "irq_exit"
+      ],
+      "trace_function_locations": {
+        "rcu_do_batch": [
+          "kernel/rcutree.c",
+          "kernel/rcuclassic.c"
+        ],
+        "__rcu_process_callbacks": [
+          "kernel/rcuclassic.c"
+        ],
+        "tick_handle_oneshot_broadcast": [
+          "kernel/time/tick-broadcast.c"
+        ],
+        "rcu_process_callbacks": [
+          "kernel/rcupreempt.c",
+          "kernel/rcutree.c",
+          "kernel/rcuclassic.c"
+        ],
+        "timer_interrupt": [
+          "arch/h8300/kernel/timer/timer8.c",
+          "arch/mn10300/kernel/time.c",
+          "arch/h8300/kernel/timer/timer16.c",
+          "arch/parisc/kernel/irq.c",
+          "arch/alpha/kernel/time.c"
+        ],
+        "handle_IRQ_event": [
+          "kernel/irq/handle.c"
+        ],
+        "do_softirq": [
+          "arch/s390/kernel/irq.c",
+          "arch/sparc/kernel/irq_64.c",
+          "arch/x86/kernel/irq_32.c",
+          "arch/x86/kernel/irq_64.c",
+          "arch/powerpc/kernel/irq.c"
+        ],
+        "irq_exit": [
+          "kernel/softirq.c"
+        ]
+      },
+      "trace_subsystems": [
+        "kernel/time",
+        "arch/powerpc",
+        "arch/h8300",
+        "arch/frv",
+        "arch/mn10300",
+        "arch/m32r",
+        "arch/ia64",
+        "arch/xtensa",
+        "arch/m68k",
+        "arch/x86",
+        "kernel/softirq.c",
+        "arch/sparc",
+        "arch/microblaze",
+        "arch/blackfin",
+        "arch/avr32",
+        "arch/alpha",
+        "arch/mips",
+        "kernel/rcupreempt.c",
+        "arch/s390",
+        "arch/parisc",
+        "kernel/irq",
+        "arch/sh",
+        "kernel/rcuclassic.c",
+        "arch/arm",
+        "kernel/rcutree.c"
+      ],
+      "mismatch_type": "trace_in_infrastructure",
+      "gt_calls_trace_func": false,
+      "gt_method_in_trace": false,
+      "product": "File System",
+      "component": "VFS"
+    },
+    {
+      "id": "14143",
+      "title": "OOPS when setting nr_requests for md devices",
+      "ground_truth_file": "block/blk-sysfs.c",
+      "ground_truth_methods": [
+        "queue_requests_store"
+      ],
+      "ground_truth_subsystem": "block/blk-sysfs.c",
+      "trace_functions_top8": [
+        "__wake_up_common",
+        "__wake_up",
+        "queue_requests_store",
+        "queue_attr_store",
+        "sysfs_write_file",
+        "vfs_write",
+        "sys_write",
+        "system_call_fastpath"
+      ],
+      "trace_function_locations": {
+        "__wake_up_common": [
+          "kernel/sched.c"
+        ],
+        "__wake_up": [
+          "kernel/sched.c"
+        ],
+        "queue_requests_store": [],
+        "queue_attr_store": [],
+        "sysfs_write_file": [],
+        "vfs_write": [
+          "fs/read_write.c"
+        ],
+        "sys_write": [],
+        "system_call_fastpath": []
+      },
+      "trace_subsystems": [
+        "fs/read_write.c",
+        "kernel/sched.c"
+      ],
+      "mismatch_type": "trace_in_infrastructure",
+      "gt_calls_trace_func": true,
+      "gt_method_in_trace": true,
+      "product": "IO/Storage",
+      "component": "Block Layer"
+    },
+    {
+      "id": "15366",
+      "title": "sysfs oops when reading current_clocksource if GENERIC_TIME=n",
+      "ground_truth_file": "kernel/time/clocksource.c",
+      "ground_truth_methods": [
+        "clocksource_done_booting"
+      ],
+      "ground_truth_subsystem": "kernel/time",
+      "trace_functions_top8": [
+        "sysfs_show_current_clocksources",
+        "sysdev_show",
+        "sysfs_read_file",
+        "vfs_read",
+        "sys_read",
+        "ret_fast_syscall",
+        "lr",
+        "psr"
+      ],
+      "trace_function_locations": {
+        "sysfs_show_current_clocksources": [],
+        "sysdev_show": [],
+        "sysfs_read_file": [],
+        "vfs_read": [
+          "fs/read_write.c"
+        ],
+        "sys_read": [],
+        "ret_fast_syscall": [],
+        "lr": [],
+        "psr": []
+      },
+      "trace_subsystems": [
+        "fs/read_write.c"
+      ],
+      "mismatch_type": "cross_subsystem_propagation",
+      "gt_calls_trace_func": true,
+      "gt_method_in_trace": false,
+      "product": "Timers",
+      "component": "Other"
+    },
+    {
+      "id": "19462",
+      "title": "Reproducible Kernel panic/oops during boot and startup - Panasonic Toughbooks",
+      "ground_truth_file": "drivers/acpi/acpica/dswexec.c",
+      "ground_truth_methods": [
+        "acpi_ds_exec_begin_op"
+      ],
+      "ground_truth_subsystem": "drivers/acpi",
+      "trace_functions_top8": [
+        "acpi_ut_update_object_reference",
+        "acpi_ds_build_internal_object"
+      ],
+      "trace_function_locations": {
+        "acpi_ut_update_object_reference": [],
+        "acpi_ds_build_internal_object": []
+      },
+      "trace_subsystems": [],
+      "mismatch_type": "unknown",
+      "gt_calls_trace_func": false,
+      "gt_method_in_trace": false,
+      "product": "ACPI",
+      "component": "ACPICA-Core"
+    },
+    {
+      "id": "32032",
+      "title": "Divide error in minstrel_ht_tx_status followed by hang",
+      "ground_truth_file": "drivers/staging/brcm80211/sys/wlc_ampdu.c",
+      "ground_truth_methods": [
+        "wlc_ampdu_dotxstatus_complete"
+      ],
+      "ground_truth_subsystem": "drivers/staging",
+      "trace_functions_top8": [
+        "minstrel_ht_tx_status",
+        "ieee80211_tx_status",
+        "ieee80211_tasklet_handler",
+        "__do_softirq",
+        "tasklet_action",
+        "irq_exit",
+        "do_IRQ",
+        "common_interrupt"
+      ],
+      "trace_function_locations": {
+        "minstrel_ht_tx_status": [],
+        "ieee80211_tx_status": [
+          "net/mac80211/status.c"
+        ],
+        "ieee80211_tasklet_handler": [
+          "net/mac80211/main.c"
+        ],
+        "__do_softirq": [
+          "kernel/softirq.c"
+        ],
+        "tasklet_action": [
+          "kernel/softirq.c"
+        ],
+        "irq_exit": [
+          "kernel/softirq.c"
+        ],
+        "do_IRQ": [
+          "arch/h8300/kernel/irq.c",
+          "arch/sh/kernel/irq.c",
+          "arch/x86/kernel/irq.c",
+          "arch/score/kernel/irq.c",
+          "arch/xtensa/kernel/traps.c"
+        ],
+        "common_interrupt": []
+      },
+      "trace_subsystems": [
+        "arch/mn10300",
+        "arch/m32r",
+        "arch/sh",
+        "arch/xtensa",
+        "net/mac80211",
+        "drivers/s390",
+        "arch/powerpc",
+        "arch/mips",
+        "kernel/softirq.c",
+        "arch/x86",
+        "arch/cris",
+        "arch/um",
+        "arch/frv",
+        "arch/avr32",
+        "arch/microblaze",
+        "arch/score",
+        "arch/h8300",
+        "arch/m68knommu"
+      ],
+      "mismatch_type": "trace_in_infrastructure",
+      "gt_calls_trace_func": true,
+      "gt_method_in_trace": false,
+      "product": "Drivers",
+      "component": "Staging"
+    },
+    {
+      "id": "33232",
+      "title": "WARNING: at /build/buildd/linux-2.6.38/net/wireless/scan.c:591 cfg80211_inform_bss_frame 0x1da/0x1f0 [cfg80211]()",
+      "ground_truth_file": "drivers/net/wireless/zd1211rw/zd_mac.c",
+      "ground_truth_methods": [
+        "zd_mac_tx_status",
+        "zd_mac_rx"
+      ],
+      "ground_truth_subsystem": "drivers/net",
+      "trace_functions_top8": [
+        "cfg80211_inform_bss_frame",
+        "warn_slowpath_common",
+        "warn_slowpath_null",
+        "58",
+        "usb_hcd_link_urb_to_ep",
+        "ieee80211_bss_info_update",
+        "ieee80211_scan_rx",
+        "ieee80211_prepare_and_rx_handle"
+      ],
+      "trace_function_locations": {
+        "cfg80211_inform_bss_frame": [],
+        "warn_slowpath_common": [
+          "kernel/panic.c"
+        ],
+        "warn_slowpath_null": [
+          "kernel/panic.c"
+        ],
+        "58": [],
+        "usb_hcd_link_urb_to_ep": [
+          "drivers/usb/core/hcd.c"
+        ],
+        "ieee80211_bss_info_update": [],
+        "ieee80211_scan_rx": [],
+        "ieee80211_prepare_and_rx_handle": [
+          "net/mac80211/rx.c"
+        ]
+      },
+      "trace_subsystems": [
+        "kernel/panic.c",
+        "net/mac80211",
+        "drivers/usb"
+      ],
+      "mismatch_type": "trace_in_infrastructure",
+      "gt_calls_trace_func": true,
+      "gt_method_in_trace": false,
+      "product": "Networking",
+      "component": "Wireless"
+    },
+    {
+      "id": "7201",
+      "title": "Connecting Nokia E70 via USB - unregistering non-registered device?",
+      "ground_truth_file": "drivers/usb/net/rndis_host.c",
+      "ground_truth_methods": [
+        "rndis_bind"
+      ],
+      "ground_truth_subsystem": "drivers/usb",
+      "trace_functions_top8": [
+        "usbnet_probe",
+        "__driver_attach",
+        "usb_probe_interface",
+        "driver_probe_device",
+        "bus_for_each_dev",
+        "driver_attach",
+        "bus_add_driver",
+        "usb_register_driver"
+      ],
+      "trace_function_locations": {
+        "usbnet_probe": [],
+        "__driver_attach": [
+          "drivers/base/dd.c"
+        ],
+        "usb_probe_interface": [
+          "drivers/usb/core/driver.c"
+        ],
+        "driver_probe_device": [
+          "drivers/base/dd.c"
+        ],
+        "bus_for_each_dev": [
+          "drivers/base/bus.c"
+        ],
+        "driver_attach": [
+          "drivers/base/dd.c"
+        ],
+        "bus_add_driver": [
+          "drivers/base/bus.c"
+        ],
+        "usb_register_driver": [
+          "drivers/usb/core/driver.c"
+        ]
+      },
+      "trace_subsystems": [
+        "drivers/usb",
+        "drivers/base"
+      ],
+      "mismatch_type": "same_subsystem_different_file",
+      "gt_calls_trace_func": true,
+      "gt_method_in_trace": false,
+      "product": "Drivers",
+      "component": "USB"
+    },
+    {
+      "id": "7234",
+      "title": "bttv initialisation hang, may be i2c locking deadlock",
+      "ground_truth_file": "drivers/i2c/i2c-core.c",
+      "ground_truth_methods": [
+        "i2c_attach_client"
+      ],
+      "ground_truth_subsystem": "drivers/i2c",
+      "trace_functions_top8": [
+        "worker_thread",
+        "default_wake_function",
+        "kthread",
+        "kernel_thread_helper",
+        "schedule_timeout",
+        "mutex_lock",
+        "inotify_poll",
+        "do_select"
+      ],
+      "trace_function_locations": {
+        "worker_thread": [
+          "kernel/workqueue.c"
+        ],
+        "default_wake_function": [
+          "kernel/sched.c"
+        ],
+        "kthread": [
+          "kernel/kthread.c"
+        ],
+        "kernel_thread_helper": [
+          "arch/m32r/kernel/process.c",
+          "arch/sh/kernel/process.c",
+          "arch/arm/kernel/process.c",
+          "arch/arm26/kernel/process.c",
+          "arch/mips/kernel/process.c"
+        ],
+        "schedule_timeout": [
+          "kernel/timer.c"
+        ],
+        "mutex_lock": [
+          "kernel/mutex.c"
+        ],
+        "inotify_poll": [
+          "fs/inotify_user.c"
+        ],
+        "do_select": [
+          "fs/select.c"
+        ]
+      },
+      "trace_subsystems": [
+        "arch/m32r",
+        "arch/sh",
+        "arch/arm26",
+        "arch/i386",
+        "arch/mips",
+        "fs/inotify_user.c",
+        "kernel/kthread.c",
+        "arch/cris",
+        "arch/arm",
+        "kernel/timer.c",
+        "kernel/workqueue.c",
+        "kernel/sched.c",
+        "kernel/mutex.c",
+        "fs/select.c"
+      ],
+      "mismatch_type": "trace_in_infrastructure",
+      "gt_calls_trace_func": true,
+      "gt_method_in_trace": true,
+      "product": "Drivers",
+      "component": "I2C"
+    },
+    {
+      "id": "7303",
+      "title": "Dock driver: Scheduling while atomic BUG during docking.",
+      "ground_truth_file": "drivers/acpi/dock.c",
+      "ground_truth_methods": [
+        "dock_add_hotplug_device",
+        "dock_del_hotplug_device",
+        "hotplug_dock_devices",
+        "dock_add",
+        "dock_station"
+      ],
+      "ground_truth_subsystem": "drivers/acpi",
+      "trace_functions_top8": [],
+      "trace_function_locations": {},
+      "trace_subsystems": [],
+      "mismatch_type": "unknown",
+      "gt_calls_trace_func": false,
+      "gt_method_in_trace": false,
+      "product": "ACPI",
+      "component": "Config-Hotplug"
+    },
+    {
+      "id": "7657",
+      "title": "BUG: NULL pointer dereference in ieee80211softmac_get_network_by_bssid_locked",
+      "ground_truth_file": "net/ieee80211/softmac/ieee80211softmac_assoc.c",
+      "ground_truth_methods": [
+        "ieee80211softmac_assoc_notify_scan",
+        "ieee80211softmac_assoc_notify_auth"
+      ],
+      "ground_truth_subsystem": "net/ieee80211",
+      "trace_functions_top8": [
+        "ieee80211softmac_get_network_by_bssid_locked",
+        "ieee80211softmac_get_network_by_bssid",
+        "ieee80211softmac_send_disassoc_req",
+        "ieee80211softmac_assoc_work",
+        "ieee80211softmac_assoc_notify_scan",
+        "ieee80211softmac_notify_callback",
+        "run_workqueue",
+        "worker_thread"
+      ],
+      "trace_function_locations": {
+        "ieee80211softmac_get_network_by_bssid_locked": [],
+        "ieee80211softmac_get_network_by_bssid": [],
+        "ieee80211softmac_send_disassoc_req": [],
+        "ieee80211softmac_assoc_work": [],
+        "ieee80211softmac_assoc_notify_scan": [],
+        "ieee80211softmac_notify_callback": [],
+        "run_workqueue": [
+          "kernel/workqueue.c"
+        ],
+        "worker_thread": [
+          "kernel/workqueue.c"
+        ]
+      },
+      "trace_subsystems": [
+        "kernel/workqueue.c"
+      ],
+      "mismatch_type": "trace_in_infrastructure",
+      "gt_calls_trace_func": true,
+      "gt_method_in_trace": true,
+      "product": "Networking",
+      "component": "Wireless"
+    },
+    {
+      "id": "8450",
+      "title": "ip6sic causes bug during interrupt handling",
+      "ground_truth_file": "include/net/ip6_fib.h",
+      "ground_truth_methods": [
+        "*ip6_dst_idev"
+      ],
+      "ground_truth_subsystem": "include/net",
+      "trace_functions_top8": [
+        "ipv6_hop_jumbo",
+        "show_trace_log_lvl",
+        "show_stack_log_lvl",
+        "show_registers",
+        "die",
+        "do_page_fault",
+        "error_code",
+        "ip6_parse_tlv"
+      ],
+      "trace_function_locations": {
+        "ipv6_hop_jumbo": [
+          "net/ipv6/exthdrs.c"
+        ],
+        "show_trace_log_lvl": [],
+        "show_stack_log_lvl": [
+          "arch/i386/kernel/traps.c"
+        ],
+        "show_registers": [
+          "arch/m32r/kernel/traps.c",
+          "drivers/net/wireless/ipw2100.c",
+          "arch/i386/kernel/nmi.c",
+          "arch/cris/arch-v32/kernel/time.c",
+          "arch/mips/kernel/traps.c"
+        ],
+        "die": [
+          "arch/sh/mm/fault-nommu.c",
+          "arch/i386/boot/compressed/relocs.c",
+          "arch/s390/kernel/traps.c",
+          "arch/i386/boot/tools/build.c",
+          "arch/i386/mm/fault.c"
+        ],
+        "do_page_fault": [
+          "arch/sh/mm/fault-nommu.c",
+          "arch/avr32/mm/fault.c",
+          "arch/xtensa/mm/fault.c",
+          "arch/cris/arch-v10/mm/fault.c",
+          "arch/m68k/mm/fault.c"
+        ],
+        "error_code": [],
+        "ip6_parse_tlv": [
+          "net/ipv6/exthdrs.c"
+        ]
+      },
+      "trace_subsystems": [
+        "arch/powerpc",
+        "arch/cris",
+        "arch/h8300",
+        "arch/frv",
+        "arch/ppc",
+        "arch/m32r",
+        "arch/ia64",
+        "arch/x86_64",
+        "arch/i386",
+        "arch/xtensa",
+        "arch/m68k",
+        "arch/sparc",
+        "net/ipv6",
+        "arch/avr32",
+        "arch/m68knommu",
+        "arch/arm26",
+        "arch/mips",
+        "arch/sh64",
+        "scripts/pnmtologo.c",
+        "arch/s390",
+        "arch/sh",
+        "arch/parisc",
+        "arch/arm",
+        "arch/sparc64",
+        "drivers/net"
+      ],
+      "mismatch_type": "trace_in_infrastructure",
+      "gt_calls_trace_func": false,
+      "gt_method_in_trace": false,
+      "product": "Networking",
+      "component": "IPV6"
+    },
+    {
+      "id": "90521",
+      "title": "Asus t100ta Buttons not working",
+      "ground_truth_file": "drivers/gpio/gpio-crystalcove.c",
+      "ground_truth_methods": [
+        "crystalcove_gpio_irq_handler"
+      ],
+      "ground_truth_subsystem": "drivers/gpio",
+      "trace_functions_top8": [
+        "irq_nested_primary_handler",
+        "dump_stack",
+        "warn_slowpath_common",
+        "warn_slowpath_fmt",
+        "handle_irq_event_percpu",
+        "regmap_format_10_14_write",
+        "_regmap_bus_raw_write",
+        "handle_irq_event"
+      ],
+      "trace_function_locations": {
+        "irq_nested_primary_handler": [
+          "kernel/irq/manage.c"
+        ],
+        "dump_stack": [
+          "tools/perf/util/util.c",
+          "lib/dump_stack.c",
+          "arch/blackfin/kernel/dumpstack.c"
+        ],
+        "warn_slowpath_common": [
+          "kernel/panic.c"
+        ],
+        "warn_slowpath_fmt": [
+          "kernel/panic.c"
+        ],
+        "handle_irq_event_percpu": [],
+        "regmap_format_10_14_write": [
+          "drivers/base/regmap/regmap.c"
+        ],
+        "_regmap_bus_raw_write": [
+          "drivers/base/regmap/regmap.c"
+        ],
+        "handle_irq_event": [
+          "kernel/irq/handle.c"
+        ]
+      },
+      "trace_subsystems": [
+        "kernel/panic.c",
+        "lib/dump_stack.c",
+        "kernel/irq",
+        "drivers/base",
+        "arch/blackfin",
+        "tools/perf"
+      ],
+      "mismatch_type": "trace_in_infrastructure",
+      "gt_calls_trace_func": true,
+      "gt_method_in_trace": true,
+      "product": "ACPI",
+      "component": "Config-Interrupts"
+    },
+    {
+      "id": "9699",
+      "title": "radio-sf16fmr2 probably buggy - system inconsistent after probe",
+      "ground_truth_file": "drivers/media/radio/radio-sf16fmr2.c",
+      "ground_truth_methods": [
+        "fmr2_init"
+      ],
+      "ground_truth_subsystem": "drivers/media",
+      "trace_functions_top8": [
+        "strnlen",
+        "vsnprintf",
+        "seq_printf",
+        "r_show",
+        "seq_read",
+        "proc_reg_read",
+        "vfs_read",
+        "sys_read"
+      ],
+      "trace_function_locations": {
+        "strnlen": [
+          "arch/powerpc/boot/stdio.c",
+          "arch/s390/lib/string.c",
+          "lib/string.c",
+          "arch/x86/lib/string_32.c",
+          "arch/x86/boot/string.c"
+        ],
+        "vsnprintf": [
+          "lib/vsprintf.c"
+        ],
+        "seq_printf": [
+          "arch/sparc/kernel/sun4d_irq.c",
+          "fs/seq_file.c"
+        ],
+        "r_show": [
+          "kernel/resource.c",
+          "fs/reiserfs/procfs.c"
+        ],
+        "seq_read": [
+          "fs/seq_file.c"
+        ],
+        "proc_reg_read": [
+          "fs/proc/inode.c"
+        ],
+        "vfs_read": [
+          "fs/read_write.c"
+        ],
+        "sys_read": [
+          "fs/read_write.c"
+        ]
+      },
+      "trace_subsystems": [
+        "kernel/resource.c",
+        "fs/reiserfs",
+        "fs/read_write.c",
+        "arch/s390",
+        "lib/string.c",
+        "arch/powerpc",
+        "arch/x86",
+        "arch/sparc",
+        "lib/vsprintf.c",
+        "fs/seq_file.c",
+        "fs/proc"
+      ],
+      "mismatch_type": "trace_in_infrastructure",
+      "gt_calls_trace_func": false,
+      "gt_method_in_trace": false,
+      "product": "v4l-dvb",
+      "component": "radio"
+    }
+  ],
+  "mismatch_types": {
+    "trace_in_infrastructure": 12,
+    "cross_subsystem_propagation": 2,
+    "unknown": 2,
+    "same_subsystem_different_file": 1
+  }
+}

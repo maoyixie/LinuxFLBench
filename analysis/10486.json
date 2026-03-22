@@ -1,0 +1,124 @@
+{
+  "id": "10486",
+  "title": "kernel 2.6.24  4G FC arrays don't work properly with qla2xxx driver",
+  "kernel_version": "2.6.24",
+  "product": "SCSI Drivers",
+  "component": "QLOGIC QLA2XXX",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "device_not_working"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/scsi/qla2xxx/qla_os.c"
+    ],
+    "buggy_methods": [
+      "qla2x00_do_dpc"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [
+      {
+        "file": "firmware",
+        "line": "20071207"
+      }
+    ],
+    "error_messages": [
+      "driverbyte=DRIVER_OK,SUGGEST_OK",
+      "driverbyte=DRIVER_OK,SUGGEST_OK",
+      "driverbyte=DRIVER_OK,SUGGEST_OK",
+      "driverbyte=DRIVER_OK,SUGGEST_OK",
+      "driverbyte=DRIVER_OK,SUGGEST_OK"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": true,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 3001,
+    "description_word_count": 397
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 2,
+    "patch_size": 4,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "qla2x00_do_dpc"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/scsi/qla2xxx/qla_os.c",
+    "filename": "qla_os.c",
+    "directory": "drivers/scsi/qla2xxx",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "scsi",
+    "driver_subsystem": "scsi/qla2xxx",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "source_file_line_references",
+      "component_known:QLOGIC QLA2XXX",
+      "is_regression"
+    ],
+    "strategies": [
+      "use_source_references_to_locate_file",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "10486",
+      "version": "2.6.24",
+      "status": "found",
+      "path": "drivers/scsi/qla2xxx/qla_os.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "10486",
+    "title": "kernel 2.6.24  4G FC arrays don't work properly with qla2xxx driver",
+    "ground_truth_file": "drivers/scsi/qla2xxx/qla_os.c",
+    "ground_truth_subsystem": "drivers/scsi",
+    "ground_truth_methods": [
+      "qla2x00_do_dpc"
+    ],
+    "product": "SCSI Drivers",
+    "component": "QLOGIC QLA2XXX",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "null_check_added"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "QLOGIC QLA2XXX",
+      "product": "SCSI Drivers",
+      "modules": [
+        "or"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

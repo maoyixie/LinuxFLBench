@@ -1,0 +1,37 @@
+{
+  "id": "11329",
+  "title": "Incorrect value in /sys/devices/platform/w83627hf.656/cpu0_vid",
+  "": "Show dependency tree",
+  "description": "Latest working kernel version: 2.6.27-rc2-git1\nEarliest failing kernel version: 2.6.27-rc2-git2\nDistribution: Debian Sid\nHardware Environment: Athlon 64 x2 4200+\nSoftware Environment: X86_64\nProblem Description: in git1 and previous, cpu0_vid is reported as 1475 (which is correct). Since git2, it is reported as 725\n\nSteps to reproduce: see in /sys/devices/platform/w83627hf.656/cpu0_vid\n\nAccording to this value, the sensors command reports ccpu0_vid as +0.725V\n\nThis problem occurs in rc2-git2 and was not present in rc2-git1, it is still present in rc3-git1\n\nRegards\n\nJean-Luc",
+  "patch": [
+    "From: Jean Delvare <khali@linux-fr.org>\nSubject: hwmon-vid: Fix AMD K8 VID decoding\n\nNot all AMD K8 have 6 VID pins, contrary to what was assumed in\ncommit 116d0486bdefc11f71e567cadf0c47f788b4dd06. This commit broke\nsupport of older CPU models which have only 5 VID pins:\nhttp://bugzilla.kernel.org/show_bug.cgi?id=11329\n\nWe need two entries in the hwmon-vid table, one for 5-bit VID models\n(K8 revision <= E) and one for 6-bit VID models (K8 revision >= F).\nThis fixes bug #11329.\n\nSigned-off-by: Jean Delvare <khali@linux-fr.org>\nAcked-by: Frank Myhr <fmyhr@fhmtech.com>\nTested-by: Jean-Luc Coulon <jean.luc.coulon@gmail.com>\n---\n drivers/hwmon/hwmon-vid.c |   36 ++++++++++++++++++++++++++++--------\n 1 file changed, 28 insertions(+), 8 deletions(-)\n\n--- linux-2.6.27-rc3.orig/drivers/hwmon/hwmon-vid.c\t2008-08-13 09:50:50.000000000 +0200\n+++ linux-2.6.27-rc3/drivers/hwmon/hwmon-vid.c\t2008-08-15 09:48:17.000000000 +0200\n@@ -37,13 +37,21 @@\n  * For VRD 10.0 and up, \"VRD x.y Design Guide\",\n  * available at http://developer.intel.com/.\n  *\n- * AMD NPT 0Fh (Athlon64 & Opteron), AMD Publication 32559,\n+ * AMD Athlon 64 and AMD Opteron Processors, AMD Publication 26094,\n+ * http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/26094.PDF\n+ * Table 74. VID Code Voltages\n+ * This corresponds to an arbitrary VRM code of 24 in the functions below.\n+ * These CPU models (K8 revision <= E) have 5 VID pins. See also:\n+ * Revision Guide for AMD Athlon 64 and AMD Opteron Processors, AMD Publication 25759,\n+ * http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/25759.pdf\n+ *\n+ * AMD NPT Family 0Fh Processors, AMD Publication 32559,\n  * http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/32559.pdf\n  * Table 71. VID Code Voltages\n- * AMD Opteron processors don't follow the Intel specifications.\n- * I'm going to \"make up\" 2.4 as the spec number for the Opterons.\n- * No good reason just a mnemonic for the 24x Opteron processor\n- * series.\n+ * This corresponds to an arbitrary VRM code of 25 in the functions below.\n+ * These CPU models (K8 revision >= F) have 6 VID pins. See also:\n+ * Revision Guide for AMD NPT Family 0Fh Processors, AMD Publication 33610,\n+ * http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/33610.pdf\n  *\n  * The 17 specification is in fact Intel Mobile Voltage Positioning -\n  * (IMVP-II). You can find more information in the datasheet of Max1718\n@@ -95,7 +103,12 @@ int vid_from_reg(int val, u8 vrm)\n \t\t\treturn 0;\n \t\treturn((1600000 - (val - 2) * 6250 + 500) / 1000);\n \n-\tcase 24:\t\t/* AMD NPT 0Fh (Athlon64 & Opteron) */\n+\tcase 24:\t\t/* Athlon64 & Opteron */\n+\t\tval &= 0x1f;\n+\t\tif (val == 0x1f)\n+\t\t\treturn 0;\n+\t\t\t\t/* fall through */\n+\tcase 25:\t\t/* AMD NPT 0Fh */\n \t\tval &= 0x3f;\n \t\treturn (val < 32) ? 1550 - 25 * val\n \t\t\t: 775 - (25 * (val - 31)) / 2;\n@@ -157,11 +170,16 @@ struct vrm_model {\n \n #ifdef CONFIG_X86\n \n-/* the stepping parameter is highest acceptable stepping for current line */\n+/*\n+ * The stepping parameter is highest acceptable stepping for current line.\n+ * The model match must be exact for 4-bit values. For model values 0x10\n+ * and above (extended model), all models below the parameter will match.\n+ */\n \n static struct vrm_model vrm_models[] = {\n \t{X86_VENDOR_AMD, 0x6, ANY, ANY, 90},\t\t/* Athlon Duron etc */\n-\t{X86_VENDOR_AMD, 0xF, ANY, ANY, 24},\t\t/* Athlon 64, Opteron and above VRM 24 */\n+\t{X86_VENDOR_AMD, 0xF, 0x3F, ANY, 24},\t\t/* Athlon 64, Opteron */\n+\t{X86_VENDOR_AMD, 0xF, ANY, ANY, 25},\t\t/* NPT family 0Fh */\n \t{X86_VENDOR_INTEL, 0x6, 0x9, ANY, 13},\t\t/* Pentium M (130 nm) */\n \t{X86_VENDOR_INTEL, 0x6, 0xB, ANY, 85},\t\t/* Tualatin */\n \t{X86_VENDOR_INTEL, 0x6, 0xD, ANY, 13},\t\t/* Pentium M (90 nm) */\n@@ -189,6 +207,8 @@ static u8 find_vrm(u8 eff_family, u8 eff\n \t\tif (vrm_models[i].vendor==vendor)\n \t\t\tif ((vrm_models[i].eff_family==eff_family)\n \t\t\t && ((vrm_models[i].eff_model==eff_model) ||\n+\t\t\t     (vrm_models[i].eff_model >= 0x10 &&\n+\t\t\t      eff_model <= vrm_models[i].eff_model) ||\n \t\t\t     (vrm_models[i].eff_model==ANY)) &&\n \t\t\t     (eff_stepping <= vrm_models[i].eff_stepping))\n \t\t\t\treturn vrm_models[i].vrm_type;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Hardware Monitoring",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Jean Delvare",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "Regressions-2.6.26",
+  "Reported": "2008-08-14 02:58 UTC by Jean-Luc Coulon",
+  "Modified": "2008-08-15 12:16 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.27-rc3",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/hwmon/hwmon-vid.c"
+  ],
+  "methods": [
+    "vid_from_reg",
+    "find_vrm",
+    "vrm_model"
+  ]
+}

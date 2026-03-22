@@ -1,0 +1,34 @@
+{
+  "id": "5105",
+  "title": "lost ticks - hang check - after loading the CPU",
+  "description": "Distribution: Slamd64\nHardware Environment:\n\nAMD Athlon64 X2 4800+\nGigabyte GA-K8NXP-SLI motherboard\neVGA NVIDIA 6600GT PCI express\n\nSoftware Environment:\nx86_64 kernel target compiled from vanilla 2.6.12.5 kernel source\nx.org, nv driver (open source NVIDIA 2D accelerator driver)\n\nProblem Description:\nThe clock begins to run fast as soon as the CPU is loaded with a mathematical\ncalculation.  Kernel dmesg gives different messages depending on if in X windows\nor just at the console.  At the console the message is:\n\nLosing some ticks... checking if CPU frequency changed.\n\nIn X-Windows an additional message is\n\nwarning: many lost ticks.\nYour time source seems to be instable or some driver is hogging interupts\nrip default_idle+0x20/0x30\n\nIt might be possible to get that second message while only in console\neventually, but I haven't been able to do it.\n\nAlso, if hangcheck is turned on then I get a huge number of Hangcheck messages.\n\nAt first glance this might just sound like an annoying problem where the system\nclock is wrong.  However, it is more than just wrong system time.  After running\nfor a while the clock is running very fast.  The keyboard repeat delay depends\non the system clock being accurate, so once it is running fast then it is almost\nimpossible to type in X-windows.  Typing in the console does not seem to be\naffected.  A workaround I have come up with for the typing problem in X is to\nincrease the key repeat delay to the max:\n\nxset r rate 1000 30\n\nEven this workaround eventually fails as the clock continues to speed up.\n\nSteps to reproduce:\n\nRun anything that uses a lot of CPU.  Wait a while.  May take 30 minutes to an\nhour to start to get bad.",
+  "patch": [
+    "diff --git a/arch/x86_64/kernel/time.c b/arch/x86_64/kernel/time.c\n--- a/arch/x86_64/kernel/time.c\n+++ b/arch/x86_64/kernel/time.c\n@@ -959,9 +959,6 @@ static __init int unsynchronized_tsc(voi\n  \t   are handled in the OEM check above. */\n  \tif (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)\n  \t\treturn 0;\n- \t/* All in a single socket - should be synchronized */\n- \tif (cpus_weight(cpu_core_map[0]) == num_online_cpus())\n- \t\treturn 0;\n #endif\n  \t/* Assume multi socket systems are not synchronized */\n  \treturn num_online_cpus() > 1;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Timers",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "john stultz",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2005-08-21 12:47 UTC by Nathan Becker",
+  "Modified": "2010-01-05 00:58 UTC",
+  "CC List": "10 users",
+  "See Also": "",
+  "Kernel Version": "2.6.12",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/x86_64/kernel/time.c"
+  ],
+  "methods": [
+    "unsynchronized_tsc"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "95061",
+  "title": "Laptop will not shutdown after suspend to disk (regression)",
+  "description": "Created attachment 171081 [details]\ndmesg output\n\nHi,\n\nSince kernel 3.19 (including 3.19.1) the system (Laptop FSC S7110) will not correctly shut down when suspending to disk (echo disk > /sys/power/state). The power-LED is still on and the fan keeps whirling. However, the hibernation image is created successfully. After pulling the plug and powering the system on, it will boot into the hibernated image without problems. I didn't ran into this problem with a former kernel as far as I can remember but 4.0-rc4 has the same issue. Suspend to RAM, shutdown and reboot all work as expected.\n\ncat /sys/power/disk\n[platform] shutdown reboot suspend\n\nRegards,\nDirk",
+  "patch": [
+    "--- a/drivers/gpu/drm/i915/i915_drv.c\t2015-05-06 22:04:23.000000000 +0200\n+++ b/drivers/gpu/drm/i915/i915_drv.c\t2015-05-12 07:17:49.920570733 +0200\n@@ -622,6 +622,22 @@\n \treturn 0;\n }\n \n+bool i915_hibernate_needs_quirk(struct drm_device *dev)\n+{\n+\tswitch (dev->pdev->subsystem_vendor) {\n+\t\tcase 0x10cf:\n+\t\t\t/* Fujitsu Limited.*/\n+\t\t\treturn (IS_GEN3(dev));\n+\t\tcase PCI_VENDOR_ID_AI:\n+\t\t\treturn (IS_GEN5(dev));\n+\t\tcase PCI_VENDOR_ID_LENOVO:\n+\t\tcase PCI_SUBVENDOR_ID_IBM:\n+\t\t\treturn (INTEL_INFO(dev)->gen < 7);\n+\t}\n+\n+\treturn false;\n+}\n+\n static int i915_drm_suspend_late(struct drm_device *drm_dev, bool hibernation)\n {\n \tstruct drm_i915_private *dev_priv = drm_dev->dev_private;\n@@ -637,15 +653,15 @@\n \n \tpci_disable_device(drm_dev->pdev);\n \t/*\n-\t * During hibernation on some GEN4 platforms the BIOS may try to access\n+\t * During hibernation on some platforms the BIOS may try to access\n \t * the device even though it's already in D3 and hang the machine. So\n \t * leave the device in D0 on those platforms and hope the BIOS will\n \t * power down the device properly. Platforms where this was seen:\n-\t * Lenovo Thinkpad X301, X61s\n+\t * Lenovo Thinkpad X301, X61s, X41, T520\n+\t * FSC Lifebook S7110\n+\t * Acer Aspire 1830T\n \t */\n-\tif (!(hibernation &&\n-\t      drm_dev->pdev->subsystem_vendor == PCI_VENDOR_ID_LENOVO &&\n-\t      INTEL_INFO(dev_priv)->gen == 4))\n+\tif (!(hibernation && i915_hibernate_needs_quirk(drm_dev)))\n \t\tpci_set_power_state(drm_dev->pdev, PCI_D3hot);\n \n \treturn 0;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Video",
+  "Hardware": "Intel Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Imre Deak",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (1)": "99941",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2015-03-18 12:12 UTC by Dirk Griesbach",
+  "Modified": "2015-12-21 19:25 UTC",
+  "CC List": "7 users",
+  "See Also": "",
+  "Kernel Version": "3.19",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/gpu/drm/i915/i915_drv.c"
+  ],
+  "methods": [
+    "i915_drm_suspend_late",
+    "i915_hibernate_needs_quirk"
+  ]
+}

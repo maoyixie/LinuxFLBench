@@ -1,0 +1,34 @@
+{
+  "id": "14753",
+  "title": "ACPI Errors: Index beyond end of object, parse/execution failed, _BCM failed - Asus Notebook X5DIJ-SX101L",
+  "description": "Created attachment 24058 [details]\ndmesg 2.6.32\n\nMost recent kernel where this bug did not occur: 2.6.31.6 stock from Arch Linux\nDistribution: Arch Linux\nHardware Environment: Asus Notebook X5DIJ-SX101L\nSoftware Environment: n/a\n\nProblem Description: \nSince installing the new kernel there a many ACPI Errors in dmesg:\n \nACPI Exception: AE_AML_BUFFER_LIMIT, Index (000000064) is beyond end of object (20090903/exoparg2-445)\nACPI Error (psparse-0537): Method parse/execution failed [\\_SB_.PCI0.SBRG.EC0_.STBR] (Node ffff88007d81d120), AE_AML_BUFFER_LIMIT\nACPI Error (psparse-0537): Method parse/execution failed [\\_SB_.PCI0.VGA_.LCDD._BCM] (Node ffff88007d8373a0), AE_AML_BUFFER_LIMIT\nACPI Error: Evaluating _BCM failed (20090903/video-528)\n\nI didn't notice any problems yet, maybe graphics in X are a bit slower but the biggest problem for me is the spam in dmesg. I found a bugreport (#9558) with ACPI errors that looks similar to mine except the part in square brackets. I have read about using a custom DSDT but the final solution in the other bugreport was a patch for Sizeof operator.\n\nThanks for your support.\n\nSteps to reproduce: Install Arch Linux and kernel 2.6.32, type dmesg in a terminal.",
+  "patch": [
+    "---\n drivers/acpi/blacklist.c |   14 ++++++++++++++\n 1 file changed, 14 insertions(+)\n\nIndex: linux-2.6/drivers/acpi/blacklist.c\n===================================================================\n--- linux-2.6.orig/drivers/acpi/blacklist.c\n+++ linux-2.6/drivers/acpi/blacklist.c\n@@ -185,6 +185,12 @@ static int __init dmi_disable_osi_vista(\n \tacpi_osi_setup(\"!Windows 2006\");\n \treturn 0;\n }\n+static int __init dmi_disable_osi_win7(const struct dmi_system_id *d)\n+{\n+\tprintk(KERN_NOTICE PREFIX \"DMI detected: %s\\n\", d->ident);\n+\tacpi_osi_setup(\"!Windows 2009\");\n+\treturn 0;\n+}\n \n static struct dmi_system_id acpi_osi_dmi_table[] __initdata = {\n \t{\n@@ -211,6 +217,14 @@ static struct dmi_system_id acpi_osi_dmi\n \t\t     DMI_MATCH(DMI_PRODUCT_NAME, \"Sony VGN-SR290J\"),\n \t\t},\n \t},\n+\t{\n+\t.callback = dmi_disable_osi_win7,\n+\t.ident = \"ASUS K50IJ\",\n+\t.matches = {\n+\t\t     DMI_MATCH(DMI_SYS_VENDOR, \"ASUSTeK Computer Inc.\"),\n+\t\t     DMI_MATCH(DMI_PRODUCT_NAME, \"K50IJ\"),\n+\t\t},\n+\t},\n \n \t/*\n \t * BIOS invocation of _OSI(Linux) is almost always a BIOS bug.\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Video",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Zhang Rui",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-12-06 18:32 UTC by Alexander Haeussler",
+  "Modified": "2010-02-06 16:52 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.32",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/blacklist.c"
+  ],
+  "methods": [
+    "acpi_osi_dmi_table"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "id": "7385",
+  "title": "nfs4 broken in vanilla-sources 2.6.19",
+  "description": "Most recent kernel where this bug did not occur: 2.6.18\nDistribution: gentoo (vanilla_sources)\nHardware Environment: \nSoftware Environment: nfs-utils 1.0.10, vanilla-sources 2.6.19\nProblem Description:\nIt is not possible to mount a nfs4 export. It fails with the error message can't\nread superblock.\nSteps to reproduce:\ninstall gentoo with vanilla-sources 2.6.19_rc1 or rc2 and nfs-utils 1.0.10 and\nunmask the necessary dependencies\n\nentries in /etc/export\n/export *(rw,fsid=0,insecure,no_subtree_check,sync)\n/export/bla *(rw,nohide,root_squash,insecure,no_subtree_check,async)\n/export/user *(rw,nohide,root_squash,insecure,no_subtree_check,async\n\n/export and /export/bla have group and owner root and chmod 0777\n\ncommands:\nmodprobe nfs\n/etc/init.d/nfs start\n/etc/init.d/nfsmount start\nmount -t nfs4 127.0.0.1:/bla /bla\n\nWatch the computer hanging and then responding with an error in\n/var/log/messages that the server wouldn't respond and mount responding with\n\"... can't read superblock\".\n\nThe problem I had why I tested the kernel was that it is possible to read and\nwrite files on an nfs4 mount as a normal user having none permissions (chmod\n0000) but owning the file. But I can't test it on kernel 2.6.19 because I can't\nmount nfs4 exports.",
+  "patch": [
+    "From: Trond Myklebust <Trond.Myklebust@netapp.com>\nDate: 1158352316 -0400\nSubject: NFSv4: Fix thinko in fs/nfs/super.c\n\nDuh. addr.sin_port should be in network byte order.\n\nSigned-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>\n---\n\n fs/nfs/super.c |    2 +-\n 1 files changed, 1 insertions(+), 1 deletions(-)\n\ndiff --git a/fs/nfs/super.c b/fs/nfs/super.c\nindex 28659a9..28108c8 100644\n--- a/fs/nfs/super.c\n+++ b/fs/nfs/super.c\n@@ -834,7 +834,7 @@ static int nfs4_get_sb(struct file_syste\n \t}\n \t/* RFC3530: The default port for NFS is 2049 */\n \tif (addr.sin_port == 0)\n-\t\taddr.sin_port = NFS_PORT;\n+\t\taddr.sin_port = htons(NFS_PORT);\n \n \t/* Grab the authentication type */\n \tauthflavour = RPC_AUTH_UNIX;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "NFS",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Trond Myklebust",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-10-19 06:31 UTC by Huemi",
+  "Modified": "2006-10-19 08:23 UTC",
+  "CC List": "0 users",
+  "See Also": "",
+  "Kernel Version": "2.6.19-rc2",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/nfs/super.c"
+  ],
+  "methods": [
+    "nfs4_get_sb"
+  ]
+}

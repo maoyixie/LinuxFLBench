@@ -1,0 +1,34 @@
+{
+  "id": "3024",
+  "title": "Tyan Thunder K7 hangs on shutdown / reboot",
+  "description": "Distribution: Debian Sid (unstable)\nHardware Environment: Tyan Thunder K7 (s2462 with latest 2.14 Bios), Dual Athlon\nMP 1200 MHz, Ati Radeon 9600, Sounblaster PCI 128 (ens1371)\n\nlspci\n\n0000:00:00.0 Host bridge: Advanced Micro Devices [AMD] AMD-760 MP [IGD4-2P]\nSystem Controller (rev 11)\n0000:00:01.0 PCI bridge: Advanced Micro Devices [AMD] AMD-760 MP [IGD4-2P] AGP\nBridge\n0000:00:07.0 ISA bridge: Advanced Micro Devices [AMD] AMD-766 [ViperPlus] ISA\n(rev 02)\n0000:00:07.1 IDE interface: Advanced Micro Devices [AMD] AMD-766 [ViperPlus] IDE\n(rev 01)\n0000:00:07.3 Bridge: Advanced Micro Devices [AMD] AMD-766 [ViperPlus] ACPI (rev 01)\n0000:00:07.4 USB Controller: Advanced Micro Devices [AMD] AMD-766 [ViperPlus]\nUSB (rev 07)\n0000:00:0b.0 Multimedia audio controller: Ensoniq ES1371 [AudioPCI-97] (rev 06)\n0000:00:0d.0 SCSI storage controller: Adaptec AIC-7899P U160/m (rev 01)\n0000:00:0d.1 SCSI storage controller: Adaptec AIC-7899P U160/m (rev 01)\n0000:00:0f.0 Ethernet controller: 3Com Corporation 3c980-TX Fast Etherlink XL\nServer Adapter [Cyclone] (rev 78)\n0000:00:10.0 Ethernet controller: 3Com Corporation 3c980-TX Fast Etherlink XL\nServer Adapter [Cyclone] (rev 78)\n0000:01:05.0 VGA compatible controller: ATI Technologies Inc RV350 AP [Radeon 9600]\n0000:01:05.1 Display controller: ATI Technologies Inc RV350 AP [Radeon 9600]\n(Secondary)\n\n\nSoftware Environment: ?\nProblem Description:\n\nEvery time I shut down the system (having ACPI enabled) it hangs. The monitor\ngoes to power saving mode, but the fans, etc. of the computer keep running.\nUsing the power / reset buttons does not help. The system remains in this state\nuntil I pull the power plug.\n\nExactly the same thing happens with rebooting the system. This did not happen\nwith kernel 2.6.0. It seems to me somewhat ACPI related. Without any apci\nmodules loaded there is no problem.\n\nInterestingly I can shut down the system from Windows 2000, but I cannot reboot\nit (same symptoms).\n\nSteps to reproduce:\n\nBoot system with ACPI modules loaded.\n\nshutdown -h now\nor shutdown -r now\n\n=> System hangs.",
+  "patch": [
+    "diff -u -r -N linux-2.6.8.1/drivers/acpi/hardware/hwsleep.c linux-2.6.8.1-acpifix/drivers/acpi/hardware/hwsleep.c\n--- linux-2.6.8.1/drivers/acpi/hardware/hwsleep.c\t2004-08-16 09:53:05.000000000 +0200\n+++ linux-2.6.8.1-acpifix/drivers/acpi/hardware/hwsleep.c\t2004-08-16 10:00:41.257905209 +0200\n@@ -284,6 +284,11 @@\n \t\tif (ACPI_FAILURE (status)) {\n \t\t\treturn_ACPI_STATUS (status);\n \t\t}\n+\t} else {\n+\t\tstatus = acpi_hw_clear_acpi_status (ACPI_MTX_DO_NOT_LOCK);\n+\t\tif (ACPI_FAILURE (status)) {\n+\t\treturn_ACPI_STATUS (status);\n+\t\t}\n \t}\n \n \t/*\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Off",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "acpi_power-off",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2004-07-06 09:23 UTC by Marcel Weber",
+  "Modified": "2004-08-29 10:01 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.7",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/hardware/hwsleep.c"
+  ],
+  "methods": [
+    "acpi_enter_sleep_state_prep"
+  ]
+}

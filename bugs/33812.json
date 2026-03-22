@@ -1,0 +1,36 @@
+{
+  "id": "33812",
+  "title": "radeon with modeset option causes oops as secondary adapter (vgaswitcheroo)",
+  "": "Show dependency tree",
+  "description": "Created attachment 54942 [details]\nkernel log\n\nSystem: Lenovo ThinkPad T500\n00:02.0 VGA compatible controller: Intel Corporation Mobile 4 Series Chipset Integrated Graphics Controller (rev 07)\n01:00.0 VGA compatible controller: ATI Technologies Inc Mobility Radeon HD 3650\nusing vgaswitcheroo\n\nTrying to load radeon (as a module or in kernel) with modeset not explicitly disabled causes a kernel NULL pointer dereference if i915 has initialised the fb console already. \nThat behaviour did not occur in 2.6.38, only after upgrading to 2.6.38.3 (haven't had the time to bisect yet).\n\nIf I disable switching in the BIOS and move to the radeon card as exclusive adapter, everything works fine. with dual graphics stack",
+  "patch": [
+    "From 498ba6b7d0530e4829e3d3f4065eb34f877d9b14 Mon Sep 17 00:00:00 2001\nFrom: Dave Airlie <airlied@redhat.com>\nDate: Sun, 1 May 2011 19:30:13 +1000\nSubject: [PATCH] drm/radeon: fix regression on atom cards with hardcoded EDID record.\n\nSince fafcf94e2b5732d1e13b440291c53115d2b172e9 introduced an edid size, it seems to have broken this path.\n\nThis manifest as oops on T500 Lenovo laptops with dual graphics primarily.\n\nShould fix: https://bugzilla.kernel.org/show_bug.cgi?id=33812\n\nSigned-off-by: Dave Airlie <airlied@redhat.com>\ncc: stable@kernel.org\n---\n drivers/gpu/drm/radeon/radeon_atombios.c |    5 +++--\n 1 files changed, 3 insertions(+), 2 deletions(-)\n\ndiff --git a/drivers/gpu/drm/radeon/radeon_atombios.c b/drivers/gpu/drm/radeon/radeon_atombios.c\nindex f5d12fb..f116516 100644\n--- a/drivers/gpu/drm/radeon/radeon_atombios.c\n+++ b/drivers/gpu/drm/radeon/radeon_atombios.c\n@@ -1599,9 +1599,10 @@ struct radeon_encoder_atom_dig *radeon_atombios_get_lvds_info(struct\n \t\t\t\t\t\t\tmemcpy((u8 *)edid, (u8 *)&fake_edid_record->ucFakeEDIDString[0],\n \t\t\t\t\t\t\t       fake_edid_record->ucFakeEDIDLength);\n \n-\t\t\t\t\t\t\tif (drm_edid_is_valid(edid))\n+\t\t\t\t\t\t\tif (drm_edid_is_valid(edid)) {\n \t\t\t\t\t\t\t\trdev->mode_info.bios_hardcoded_edid = edid;\n-\t\t\t\t\t\t\telse\n+\t\t\t\t\t\t\t\trdev->mode_info.bios_hardcoded_edid_size = edid_size;\n+\t\t\t\t\t\t\t} else\n \t\t\t\t\t\t\t\tkfree(edid);\n \t\t\t\t\t\t}\n \t\t\t\t\t}\n-- \n1.7.4.2\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Video",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "Dave Airlie",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (2)": "33422 34022",
+  "Depends on": "",
+  "Blocks": "32012",
+  "Reported": "2011-04-21 23:14 UTC by Johannes Engel",
+  "Modified": "2011-05-04 16:33 UTC",
+  "CC List": "7 users",
+  "See Also": "",
+  "Kernel Version": "2.6.38",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/gpu/drm/radeon/radeon_atombios.c"
+  ],
+  "methods": [
+    "*radeon_atombios_get_lvds_info"
+  ]
+}

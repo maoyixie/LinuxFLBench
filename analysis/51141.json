@@ -1,0 +1,106 @@
+{
+  "id": "51141",
+  "title": "ACPI display backlight brightness is set to zero at every boot-up - HP Folio 13-2000",
+  "kernel_version": "3.6.8",
+  "product": "ACPI",
+  "component": "Other",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/video.c"
+    ],
+    "buggy_methods": [
+      "video_dmi_table"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/class/backlight/acpi_video0/brightness"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1224,
+    "description_word_count": 195
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 14,
+    "lines_removed": 0,
+    "patch_size": 14,
+    "new_functions": [
+      "video_ignore_initial_backlight"
+    ],
+    "patch_types": [
+      "quirk/device_table",
+      "new_function",
+      "init_fix"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "video_set_bqc_offset"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/video.c",
+    "filename": "video.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/video.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "51141",
+      "version": "3.6.8",
+      "status": "found",
+      "path": "drivers/acpi/video.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "51141",
+    "title": "ACPI display backlight brightness is set to zero at every boot-up - HP Folio 13-2000",
+    "product": "ACPI",
+    "component": "Other",
+    "buggy_file": [
+      "drivers/acpi/video.c"
+    ],
+    "fix_type": "dmi_quirk_addition",
+    "table_entry_lines_added": 4,
+    "description_clues": [
+      "hardware_model_mentioned"
+    ],
+    "patch_size": 14,
+    "potential_strategies": [
+      "search_for_model_specific_quirks"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

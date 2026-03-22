@@ -1,0 +1,233 @@
+{
+  "id": "50491",
+  "title": "rmmod/modprobe i7core_edac leads to kernel oops",
+  "kernel_version": "3.0.39",
+  "product": "Drivers",
+  "component": "EDAC",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "error_log_spam",
+    "device_not_working",
+    "performance",
+    "power/sleep",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/edac/i7core_edac.c"
+    ],
+    "buggy_methods": [
+      "i7core_get_onedevice"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "driver_register",
+      "do_one_initcall",
+      "system_call_fastpath",
+      "bus_for_each_dev",
+      "really_probe",
+      "klist_put",
+      "warn_slowpath_null",
+      "i7core_init",
+      "pci_device_probe",
+      "klist_iter_exit",
+      "__driver_attach",
+      "local_pci_probe",
+      "klist_next",
+      "pci_get_dev_by_id",
+      "pci_get_device",
+      "sys_init_module",
+      "i7core_get_onedevice",
+      "__pci_register_driver",
+      "i7core_probe",
+      "bus_add_driver",
+      "pci_get_subsys",
+      "warn_slowpath_common",
+      "driver_attach",
+      "next_device",
+      "__pci_device_probe",
+      "driver_probe_device",
+      "bus_find_device"
+    ],
+    "mentioned_file_paths": [
+      "include/linux/kref.h"
+    ],
+    "source_references": [],
+    "error_messages": [
+      "messages in the kernel logs. First I get 3 correct cycles:",
+      "lspci: Cannot open /sys/bus/pci/devices/0000:ff:00.0/resource: No such file or d"
+    ],
+    "proc_sys_paths": [
+      "/sys/bus/pci/devices/0000"
+    ],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 1,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 8032,
+    "description_word_count": 746
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 7,
+    "lines_removed": 2,
+    "patch_size": 9,
+    "patch_types": [
+      "quirk/device_table",
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "i7core_get_onedevice"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/edac/i7core_edac.c",
+    "filename": "i7core_edac.c",
+    "directory": "drivers/edac",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "edac",
+    "driver_subsystem": "edac/i7core_edac.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_27_functions",
+      "proc_sys_paths_hint_subsystem",
+      "dmesg_logs_available",
+      "component_known:EDAC",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "50491",
+      "version": "3.0.39",
+      "status": "found",
+      "path": "drivers/edac/i7core_edac.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "50491",
+    "version": "3.0.39",
+    "ground_truth_file": "drivers/edac/i7core_edac.c",
+    "trace_functions": [
+      "klist_next",
+      "warn_slowpath_common",
+      "warn_slowpath_null",
+      "pci_do_find_bus",
+      "next_device",
+      "bus_find_device",
+      "pci_get_dev_by_id",
+      "pci_get_subsys",
+      "pci_get_device",
+      "i7core_get_onedevice",
+      "i7core_probe",
+      "local_pci_probe",
+      "__pci_device_probe",
+      "pci_device_probe",
+      "really_probe"
+    ],
+    "total_trace_functions": 28,
+    "function_locations": {
+      "klist_next": [
+        "lib/klist.c"
+      ],
+      "warn_slowpath_common": [
+        "kernel/panic.c"
+      ],
+      "warn_slowpath_null": [
+        "kernel/panic.c"
+      ],
+      "pci_do_find_bus": [
+        "drivers/pci/search.c"
+      ],
+      "next_device": [
+        "drivers/base/bus.c",
+        "drivers/base/driver.c",
+        "drivers/video/omap2/dss/display.c",
+        "sound/core/timer.c",
+        "drivers/mtd/mtdcore.c",
+        "drivers/base/core.c"
+      ],
+      "bus_find_device": [
+        "drivers/base/bus.c",
+        "drivers/nubus/nubus.c"
+      ],
+      "pci_get_dev_by_id": [
+        "drivers/pci/search.c"
+      ],
+      "pci_get_subsys": [
+        "drivers/pci/search.c"
+      ],
+      "pci_get_device": [],
+      "i7core_get_onedevice": [
+        "drivers/edac/i7core_edac.c"
+      ]
+    },
+    "gt_found_via_functions": [
+      "i7core_get_onedevice"
+    ],
+    "other_candidate_files": [
+      "drivers/pci/search.c",
+      "drivers/base/bus.c",
+      "drivers/base/driver.c",
+      "kernel/panic.c",
+      "lib/klist.c",
+      "drivers/nubus/nubus.c",
+      "drivers/video/omap2/dss/display.c",
+      "sound/core/timer.c",
+      "drivers/mtd/mtdcore.c",
+      "drivers/base/core.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "quirk_analysis": {
+    "id": "50491",
+    "title": "rmmod/modprobe i7core_edac leads to kernel oops",
+    "product": "Drivers",
+    "component": "EDAC",
+    "buggy_file": [
+      "drivers/edac/i7core_edac.c"
+    ],
+    "fix_type": "pci_usb_id_addition",
+    "table_entry_lines_added": 2,
+    "description_clues": [
+      "hardware_model_mentioned",
+      "device_ids_in_description",
+      "dmi_info_in_description",
+      "lspci_lsusb_output"
+    ],
+    "patch_size": 9,
+    "potential_strategies": [
+      "grep_device_id_in_kernel_source",
+      "search_dmi_tables_in_drivers",
+      "map_pci_usb_id_to_driver",
+      "search_for_model_specific_quirks",
+      "narrow_by_component:EDAC"
+    ]
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

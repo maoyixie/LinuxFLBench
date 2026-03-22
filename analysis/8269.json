@@ -1,0 +1,108 @@
+{
+  "id": "8269",
+  "title": "pnp: Failed to activate device 00:0a - Samsung P35 XVM 1600 III",
+  "kernel_version": "2.6.20",
+  "product": "ACPI",
+  "component": "Power-Sleep-Wake",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "device_not_working",
+    "wrong_behavior",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/pnp/pnpacpi/core.c"
+    ],
+    "buggy_methods": [
+      "pnpacpi_add_device"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 944,
+    "description_word_count": 157
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "pnpacpi_add_device"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/pnp/pnpacpi/core.c",
+    "filename": "core.c",
+    "directory": "drivers/pnp/pnpacpi",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "pnp",
+    "driver_subsystem": "pnp/pnpacpi",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Power-Sleep-Wake"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "8269",
+      "version": "2.6.20",
+      "status": "found",
+      "path": "drivers/pnp/pnpacpi/core.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "8269",
+    "title": "pnp: Failed to activate device 00:0a - Samsung P35 XVM 1600 III",
+    "ground_truth_file": "drivers/pnp/pnpacpi/core.c",
+    "ground_truth_subsystem": "drivers/pnp",
+    "ground_truth_methods": [
+      "pnpacpi_add_device"
+    ],
+    "product": "ACPI",
+    "component": "Power-Sleep-Wake",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "suspend/resume",
+      "wrong_output"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "component": "Power-Sleep-Wake",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

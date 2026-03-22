@@ -1,0 +1,157 @@
+{
+  "id": "3108",
+  "title": "/proc/bus/usb/devices stall",
+  "kernel_version": "2.6.7",
+  "product": "Drivers",
+  "component": "USB",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/usb/core/devio.c"
+    ],
+    "buggy_methods": [
+      "proc_control",
+      "proc_bulk",
+      "proc_resetep",
+      "proc_clearhalt",
+      "proc_getdriver",
+      "proc_connectinfo",
+      "proc_resetdevice",
+      "proc_setintf",
+      "proc_setconfig",
+      "proc_unlinkurb",
+      "proc_reapurbnonblock",
+      "proc_disconnectsignal",
+      "proc_claiminterface",
+      "proc_ioctl"
+    ],
+    "num_methods": 14
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/bus/usb/devices"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 591,
+    "description_word_count": 101
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 390,
+    "lines_removed": 182,
+    "patch_size": 572,
+    "new_functions": [
+      "wakeup_completion",
+      "timeout_kill",
+      "start_wait_urb",
+      "proc_control"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "error_handling",
+      "init_fix",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 16,
+    "hunk_functions": [
+      "for",
+      "dev_info",
+      "if",
+      "dev_dbg",
+      "proc_unlinkurb"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/usb/core/devio.c",
+    "filename": "devio.c",
+    "directory": "drivers/usb/core",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "usb",
+    "driver_subsystem": "usb/core",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:USB"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "3108",
+      "version": "2.6.7",
+      "status": "found",
+      "path": "drivers/usb/core/devio.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "3108",
+    "title": "/proc/bus/usb/devices stall",
+    "ground_truth_file": "drivers/usb/core/devio.c",
+    "ground_truth_subsystem": "drivers/usb",
+    "ground_truth_methods": [
+      "proc_control",
+      "proc_bulk",
+      "proc_resetep",
+      "proc_clearhalt",
+      "proc_getdriver",
+      "proc_connectinfo",
+      "proc_resetdevice",
+      "proc_setintf",
+      "proc_setconfig",
+      "proc_unlinkurb",
+      "proc_reapurbnonblock",
+      "proc_disconnectsignal",
+      "proc_claiminterface",
+      "proc_ioctl"
+    ],
+    "product": "Drivers",
+    "component": "USB",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "error_return_fix",
+      "init_fix",
+      "boundary_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/proc/bus/usb/devices"
+      ],
+      "component": "USB",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

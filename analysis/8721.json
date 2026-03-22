@@ -1,0 +1,207 @@
+{
+  "id": "8721",
+  "title": "trace dump: \"kobject_add failed for audio with -EEXIST, ...\"",
+  "kernel_version": "2.6.21",
+  "product": "Drivers",
+  "component": "Sound",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "performance",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "sound/sound_core.c"
+    ],
+    "buggy_methods": [
+      "sound_insert_unit"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "get_inode_number",
+      "snd_pcm_oss_register_minor",
+      "device_add",
+      "alsa_pcm_oss_init",
+      "register_oss_dsp",
+      "snd_pcm_notify",
+      "sound_insert_unit",
+      "idr_get_new",
+      "sys_init_module",
+      "kobject_shadow_add",
+      "create_proc_entry",
+      "register_sound_special_device",
+      "syscall_call",
+      "idr_get_new_above_int",
+      "__mutex_lock_slowpath",
+      "snd_info_register",
+      "device_create",
+      "load_module",
+      "snd_register_oss_device",
+      "snd_pcm_oss_proc_init"
+    ],
+    "mentioned_file_paths": [
+      "drivers/usb/input/usbkbd.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3580,
+    "description_word_count": 406
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 2,
+    "patch_size": 4,
+    "patch_types": [
+      "error_handling"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "if"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "sound/sound_core.c",
+    "filename": "sound_core.c",
+    "directory": "sound",
+    "depth": 2,
+    "top_level": "sound",
+    "second_level": "sound_core.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_20_functions",
+      "component_known:Sound"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "8721",
+      "version": "2.6.21",
+      "status": "found",
+      "path": "sound/sound_core.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "8721",
+    "version": "2.6.21",
+    "ground_truth_file": "sound/sound_core.c",
+    "trace_functions": [
+      "kobject_shadow_add",
+      "device_add",
+      "device_create",
+      "sound_insert_unit",
+      "register_sound_special_device",
+      "snd_register_oss_device",
+      "register_oss_dsp",
+      "idr_get_new_above_int",
+      "idr_get_new",
+      "get_inode_number",
+      "create_proc_entry",
+      "snd_info_register",
+      "snd_pcm_oss_proc_init",
+      "snd_pcm_oss_register_minor",
+      "load_module"
+    ],
+    "total_trace_functions": 20,
+    "function_locations": {
+      "kobject_shadow_add": [
+        "lib/kobject.c"
+      ],
+      "device_add": [
+        "drivers/pci/probe.c",
+        "drivers/base/platform.c",
+        "drivers/message/i2o/device.c",
+        "drivers/base/class.c",
+        "drivers/hwmon/f71805f.c",
+        "drivers/acpi/ibm_acpi.c",
+        "drivers/hwmon/vt1211.c",
+        "drivers/message/i2o/i2o_proc.c",
+        "drivers/acpi/container.c",
+        "drivers/acpi/processor_core.c"
+      ],
+      "device_create": [
+        "arch/sparc64/kernel/of_device.c",
+        "arch/powerpc/kernel/of_platform.c",
+        "sound/i2c/i2c.c",
+        "drivers/base/class.c",
+        "drivers/net/phy/phy_device.c",
+        "arch/sparc/kernel/of_device.c",
+        "arch/i386/kernel/msr.c",
+        "arch/i386/kernel/cpuid.c",
+        "drivers/base/core.c"
+      ],
+      "sound_insert_unit": [
+        "sound/sound_core.c"
+      ],
+      "register_sound_special_device": [
+        "sound/sound_core.c"
+      ],
+      "snd_register_oss_device": [
+        "sound/core/sound_oss.c"
+      ],
+      "register_oss_dsp": [
+        "sound/core/oss/pcm_oss.c"
+      ],
+      "idr_get_new_above_int": [
+        "lib/idr.c"
+      ],
+      "idr_get_new": [
+        "lib/idr.c"
+      ],
+      "get_inode_number": [
+        "fs/proc/generic.c"
+      ]
+    },
+    "gt_found_via_functions": [
+      "sound_insert_unit",
+      "register_sound_special_device"
+    ],
+    "other_candidate_files": [
+      "drivers/pci/probe.c",
+      "arch/sparc64/kernel/of_device.c",
+      "sound/core/oss/pcm_oss.c",
+      "drivers/hwmon/vt1211.c",
+      "drivers/acpi/container.c",
+      "sound/core/sound_oss.c",
+      "drivers/message/i2o/device.c",
+      "arch/powerpc/kernel/of_platform.c",
+      "lib/kobject.c",
+      "drivers/hwmon/f71805f.c",
+      "arch/i386/kernel/cpuid.c",
+      "drivers/base/platform.c",
+      "sound/i2c/i2c.c",
+      "lib/idr.c",
+      "drivers/acpi/ibm_acpi.c",
+      "drivers/message/i2o/i2o_proc.c",
+      "drivers/net/phy/phy_device.c",
+      "drivers/base/class.c",
+      "arch/sparc/kernel/of_device.c",
+      "drivers/acpi/processor_core.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

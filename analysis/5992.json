@@ -1,0 +1,144 @@
+{
+  "id": "5992",
+  "title": "r8169 driver - no network connection, hang at shutdown",
+  "kernel_version": "2.6.15",
+  "product": "Drivers",
+  "component": "Network",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "hang/lockup",
+    "device_not_working",
+    "wrong_behavior",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/r8169.c"
+    ],
+    "buggy_methods": [
+      "rtl8169_get_mac_version",
+      "rtl8169_hw_phy_config",
+      "rtl8169_phy_timer",
+      "rtl8169_delete_timer",
+      "rtl8169_request_timer",
+      "rtl8169_init_one",
+      "rtl8169_init_phy",
+      "rtl8169_set_rx_tx_config_registers",
+      "rtl8169_hw_start",
+      "rtl8169_rx_interrupt",
+      "rtl_chip_info",
+      "mac_version",
+      "RTL8169_registers",
+      "RTL8169_register_content"
+    ],
+    "num_methods": 14
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3938,
+    "description_word_count": 614
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 124,
+    "lines_removed": 39,
+    "patch_size": 163,
+    "new_functions": [
+      "rtl8169_rar_set",
+      "rtl8169_set_mac_address",
+      "rtl8169_ioctl",
+      "rtl8169_set_magic_reg",
+      "rtl8169_plain_old_8169",
+      "rtl8169_hw_start"
+    ],
+    "patch_types": [
+      "quirk/device_table",
+      "new_function",
+      "logic_change",
+      "error_handling",
+      "init_fix",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 23,
+    "hunk_functions": [
+      "rtl8169_hw_start",
+      "rtl8169_init_one",
+      "rtl8169_set_rx_tx_config_registers",
+      "rtl8169_get_mac_version",
+      "rtl8169_request_timer",
+      "rtl8169_hw_phy_config",
+      "rtl8169_rx_interrupt",
+      "rtl8169_init_phy",
+      "rtl8169_phy_timer",
+      "rtl8169_delete_timer"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/r8169.c",
+    "filename": "r8169.c",
+    "directory": "drivers/net",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/r8169.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Network",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "5992",
+      "version": "2.6.15",
+      "status": "found",
+      "path": "drivers/net/r8169.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "5992",
+    "title": "r8169 driver - no network connection, hang at shutdown",
+    "product": "Drivers",
+    "component": "Network",
+    "buggy_file": [
+      "drivers/net/r8169.c"
+    ],
+    "fix_type": "pci_usb_id_addition",
+    "table_entry_lines_added": 0,
+    "description_clues": [
+      "device_ids_in_description",
+      "dmi_info_in_description",
+      "lspci_lsusb_output",
+      "driver_name_mentioned"
+    ],
+    "patch_size": 163,
+    "potential_strategies": [
+      "grep_device_id_in_kernel_source",
+      "search_dmi_tables_in_drivers",
+      "map_pci_usb_id_to_driver",
+      "narrow_by_component:Network"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

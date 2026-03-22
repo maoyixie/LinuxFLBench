@@ -1,0 +1,36 @@
+{
+  "id": "6706",
+  "title": "modprobe -r ohci1394 hangs or panics",
+  "description": "Most recent kernel where this bug did not occur: unknown\nDistribution: Mandrake 10.1\nHardware Environment: x86 K7 uniprocessor\ntwo FireWire host adapters (0: TI based, 1394b, 1: VIA based, 1394a)\nSoftware Environment: gcc 3.4.1, kernel.org's kernel\nProblem Description:\n\nWhen \"modprobe ohci1394\" is followed shortly by \"modprobe -r ohci1394\" (e.g. 1\nsecond after the previous modprobe finished), one of the following may happen:\n\n - kernel panic due to exception in interrupt\n   (happened on 2.6.15.x preempt uniprocessor)\n\n   or\n\n - modprobe -r hangs in D state, as does knodemgrd_0\n   (happened on 2.6.16.x preempt SMP on a uniprocessor machine,\n   with original drivers as well as with 1394 drivers equivalent\n   to 2.6.17-rc6-mm2 --- i.e. 2.6.17 will also be affected).\n\n   The knodemgrd_1 slept interruptibly (S state) while the other\n   slept uninterruptibly (D state) right after modprobe -r was\n   issued. This happens with or without other nodes attached to\n   the FireWire ports, with or without eth1394 loaded.\n\nThere is no problem if a longer pause is put between modprobe and modprobe -r,\nfor example 4 seconds.",
+  "patch": [
+    "Date: Tue, 21 Nov 2006 22:50:02 +0100 (CET)\nFrom: Stefan Richter <stefanr@s5r6.in-berlin.de>\nSubject: ieee1394: nodemgr: fix deadlock in shutdown\n\nIf \"modprobe ohci1394\" was quickly followed by \"modprobe -r ohci1394\",\nsay with 1 second pause in between, the modprobe -r got stuck in\nuninterruptible sleep in kthread_stop.  At the same time the knodemgrd\nslept uninterruptibly in bus_rescan_devices_helper.  That's because\ndriver_detach took the semaphore of the PCI device and\nbus_rescan_devices_helper wanted to take the semaphore of the FireWire\nhost device's parent, which is the same semaphore. This was a regression\nsince Linux 2.6.16, commit bf74ad5bc41727d5f2f1c6bedb2c1fac394de731,\n\"Hold the device's parent's lock during probe and remove\".\n\nThe fix (or workaround) adds a dummy driver to the hpsb_host device. Now\nbus_rescan_devices_helper won't scan the host device anymore.  This\ndoesn't hurt since we have no drivers which will bind to these devices\nand it is unlikely that there will ever be such a driver.  The dummy\ndriver is befittingly presented as a representation of ieee1394 itself.\n\nFixes: http://bugzilla.kernel.org/show_bug.cgi?id=6706\n\nSigned-off-by: Stefan Richter <stefanr@s5r6.in-berlin.de>\n---\n drivers/ieee1394/nodemgr.c |   21 ++++++++++++++++++---\n 1 files changed, 18 insertions(+), 3 deletions(-)\n\nIndex: linux/drivers/ieee1394/nodemgr.c\n===================================================================\n--- linux.orig/drivers/ieee1394/nodemgr.c\t2006-11-21 00:09:25.000000000 +0100\n+++ linux/drivers/ieee1394/nodemgr.c\t2006-11-21 22:32:09.000000000 +0100\n@@ -14,6 +14,7 @@\n #include <linux/slab.h>\n #include <linux/delay.h>\n #include <linux/kthread.h>\n+#include <linux/module.h>\n #include <linux/moduleparam.h>\n #include <asm/atomic.h>\n \n@@ -259,9 +260,20 @@ static struct device nodemgr_dev_templat\n \t.release\t= nodemgr_release_ne,\n };\n \n+/* This dummy driver prevents the host devices from being scanned. We have no\n+ * useful drivers for them yet, and there would be a deadlock possible if the\n+ * driver core scans the host device while the host's low-level driver (i.e.\n+ * the host's parent device) is being removed. */\n+static struct device_driver nodemgr_mid_layer_driver = {\n+\t.bus\t\t= &ieee1394_bus_type,\n+\t.name\t\t= \"ieee1394\",\n+\t.owner\t\t= THIS_MODULE,\n+};\n+\n struct device nodemgr_dev_template_host = {\n \t.bus\t\t= &ieee1394_bus_type,\n \t.release\t= nodemgr_release_host,\n+\t.driver\t\t= &nodemgr_mid_layer_driver,\n };\n \n \n@@ -704,11 +716,14 @@ static int nodemgr_bus_match(struct devi\n \t\treturn 0;\n \n \tud = container_of(dev, struct unit_directory, device);\n-\tdriver = container_of(drv, struct hpsb_protocol_driver, driver);\n-\n \tif (ud->ne->in_limbo || ud->ignore_driver)\n \t\treturn 0;\n \n+\t/* We only match drivers of type hpsb_protocol_driver */\n+\tif (drv == &nodemgr_mid_layer_driver)\n+\t\treturn 0;\n+\n+\tdriver = container_of(drv, struct hpsb_protocol_driver, driver);\n         for (id = driver->id_table; id->match_flags != 0; id++) {\n                 if ((id->match_flags & IEEE1394_MATCH_VENDOR_ID) &&\n                     id->vendor_id != ud->vendor_id)\n@@ -1899,7 +1914,7 @@ int init_ieee1394_nodemgr(void)\n \t\tclass_unregister(&nodemgr_ne_class);\n \t\treturn error;\n \t}\n-\n+\terror = driver_register(&nodemgr_mid_layer_driver);\n \thpsb_register_highlevel(&nodemgr_highlevel);\n \treturn 0;\n }\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "IEEE1394",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Stefan Richter",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-06-18 03:40 UTC by Stefan Richter",
+  "Modified": "2006-12-10 08:32 UTC",
+  "CC List": "0 users",
+  "See Also": "",
+  "Kernel Version": "2.6.15",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/ieee1394/nodemgr.c"
+  ],
+  "methods": [
+    "nodemgr_bus_match",
+    "init_ieee1394_nodemgr",
+    "nodemgr_dev_template_host"
+  ]
+}

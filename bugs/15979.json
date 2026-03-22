@@ -1,0 +1,36 @@
+{
+  "id": "15979",
+  "title": "Eeepc 900 reports incorrect battery status",
+  "description": "On eeepc 900 (and possibly other variants) the battery status is incorrectly reported, possibly do to a mixup of units.\n\nWith power plugged in and battery fully charged:\n$ cat /proc/acpi/battery/BAT0/info \npresent:                 yes\ndesign capacity:         5200 mAh\nlast full capacity:      100 mAh\nbattery technology:      rechargeable\ndesign voltage:          8400 mV\ndesign capacity warning: 20 mAh\ndesign capacity low:     10 mAh\ncapacity granularity 1:  52 mAh\ncapacity granularity 2:  52 mAh\nmodel number:            900\nserial number:            \nbattery type:            LION\nOEM info:                ASUS\n\n$ cat /proc/acpi/battery/BAT0/state \npresent:                 yes\ncapacity state:          ok\ncharging state:          charged\npresent rate:            unknown\nremaining capacity:      100 mAh\npresent voltage:         8326 mV\n\n\nlast full capacity remaining capacity are reported by asus in %\nthere may be a similar problem with granularity\n\nAs a result of the above ubuntu reports a broken battery on each login and remaining battery time is incorrectly estimated.\n\nAdditional info might be obtained from asus linux kernel sources?\n\nFerry",
+  "patch": [
+    "\nAccording to the ACPI spec, some kinds of primary battery can\nreport percentage battery ramaining capacity directly to OS.\n\nIn this case, it reports the LastFullChargedCapacity == 100,\nBatteryPresentRate = 0xFFFFFFFF, and BatteryRemaingCapacity a\npercentage value, which actually means RemainingBatteryPercentage.\n\nNow we found some battery follows this rule even if it's a rechargable.\nhttps://bugzilla.kernel.org/show_bug.cgi?id=15979\n\nHandle these batteries correctly in ACPI battery driver\nso that they won't break userspace.\n\nSigned-off-by: Zhang Rui <rui.zhang@intel.com>\n---\n drivers/acpi/battery.c |   38 +++++++++++++++++++++++++++++++++++++-\n 1 file changed, 37 insertions(+), 1 deletion(-)\n\nIndex: linux-2.6/drivers/acpi/battery.c\n===================================================================\n--- linux-2.6.orig/drivers/acpi/battery.c\n+++ linux-2.6/drivers/acpi/battery.c\n@@ -98,6 +98,7 @@ enum {\n \t * due to bad math.\n \t */\n \tACPI_BATTERY_QUIRK_SIGNED16_CURRENT,\n+\tACPI_BATTERY_QUIRK_PERCENTAGE_CAPACITY,\n };\n \n struct acpi_battery {\n@@ -412,6 +413,8 @@ static int acpi_battery_get_info(struct \n \t\tresult = extract_package(battery, buffer.pointer,\n \t\t\t\tinfo_offsets, ARRAY_SIZE(info_offsets));\n \tkfree(buffer.pointer);\n+\tif (test_bit(ACPI_BATTERY_QUIRK_PERCENTAGE_CAPACITY, &battery->flags))\n+\t\tbattery->full_charge_capacity = battery->design_capacity;\n \treturn result;\n }\n \n@@ -448,6 +451,10 @@ static int acpi_battery_get_state(struct\n \t    battery->rate_now != -1)\n \t\tbattery->rate_now = abs((s16)battery->rate_now);\n \n+\tif (test_bit(ACPI_BATTERY_QUIRK_PERCENTAGE_CAPACITY, &battery->flags)\n+\t    && battery->capacity_now >= 0 && battery->capacity_now <= 100)\n+\t\tbattery->capacity_now = (battery->capacity_now *\n+\t\t\t\tbattery->full_charge_capacity) / 100;\n \treturn result;\n }\n \n@@ -561,6 +568,33 @@ static void acpi_battery_quirks(struct a\n \t}\n }\n \n+/*\n+ * According to the ACPI spec, some kinds of primary battery can\n+ * report percentage battery ramaining capacity directly to OS.\n+ * In this case, it reports the Last Full Charged Capacity == 100\n+ * and BatteryPresentRate = 0xFFFFFFFF.\n+ *\n+ * Now we found some battery reports percentage remaining capacity\n+ * even if it's a rechargable.\n+ * https://bugzilla.kernel.org/show_bug.cgi?id=15979\n+ *\n+ * Handle this correctly so that they won't break userspace.\n+ */\n+static void acpi_battery_quirks2(struct acpi_battery *battery)\n+{\n+\tif (test_bit(ACPI_BATTERY_QUIRK_PERCENTAGE_CAPACITY, &battery->flags))\n+\t\treturn ;\n+\n+        if (battery->full_charge_capacity == 100 &&\n+            battery->rate_now == ACPI_BATTERY_VALUE_UNKNOWN &&\n+            battery->capacity_now >=0 && battery->capacity_now <= 100) {\n+\t\tset_bit(ACPI_BATTERY_QUIRK_PERCENTAGE_CAPACITY, &battery->flags);\n+\t\tbattery->full_charge_capacity = battery->design_capacity;\n+\t\tbattery->capacity_now = (battery->capacity_now *\n+\t\t\t\tbattery->full_charge_capacity) / 100;\n+\t}\n+}\n+\n static int acpi_battery_update(struct acpi_battery *battery)\n {\n \tint result, old_present = acpi_battery_present(battery);\n@@ -586,7 +620,9 @@ static int acpi_battery_update(struct ac\n \tif (!battery->bat.dev)\n \t\tsysfs_add_battery(battery);\n #endif\n-\treturn acpi_battery_get_state(battery);\n+\tresult = acpi_battery_get_state(battery);\n+\tacpi_battery_quirks2(battery);\n+\treturn result;\n }\n \n /* --------------------------------------------------------------------------\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Battery",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Zhang Rui",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-05-15 19:30 UTC by Ferry Toth",
+  "Modified": "2010-11-02 02:55 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.32",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/battery.c"
+  ],
+  "methods": [
+    "acpi_battery_get_info",
+    "acpi_battery_get_state",
+    "acpi_battery_update"
+  ]
+}

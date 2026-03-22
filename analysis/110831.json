@@ -1,0 +1,107 @@
+{
+  "id": "110831",
+  "title": "iwlwifi: mvm: scheduled scan doesn't report results when no matches are passed - MWG100254662",
+  "kernel_version": "4.1.13",
+  "product": "Drivers",
+  "component": "network-wireless",
+  "hardware": "Intel Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/wireless/iwlwifi/mvm/mac80211.c"
+    ],
+    "buggy_methods": [
+      "iwl_mvm_mac_sched_scan_start"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 719,
+    "description_word_count": 100
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 4,
+    "lines_removed": 0,
+    "patch_size": 4,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "iwl_mvm_mac_sched_scan_start"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/wireless/iwlwifi/mvm/mac80211.c",
+    "filename": "mac80211.c",
+    "directory": "drivers/net/wireless/iwlwifi/mvm",
+    "depth": 6,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/wireless",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:network-wireless"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "110831",
+      "version": "4.1.13",
+      "status": "found",
+      "path": "drivers/net/wireless/iwlwifi/mvm/mac80211.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "110831",
+    "title": "iwlwifi: mvm: scheduled scan doesn't report results when no matches are passed - MWG100254662",
+    "ground_truth_file": "drivers/net/wireless/iwlwifi/mvm/mac80211.c",
+    "ground_truth_subsystem": "drivers/net",
+    "ground_truth_methods": [
+      "iwl_mvm_mac_sched_scan_start"
+    ],
+    "product": "Drivers",
+    "component": "network-wireless",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "error_return_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "network-wireless",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "10976",
+  "title": "Soft lockup on (intentionally) corrupted filesystem",
+  "description": "Distribution: Debian sid (unstable)\nHardware Environment: qemu x86\nSoftware Environment: Minimal Debian sid\nProblem Description:\n\nMounting one of the attached intentionally corrupted ext3 filesystems and accessing it causes a soft lockup. I believe they probably are the same bug (both happen in __log_wait_for_space()), but the backtraces vary quite a bit so I attach two test cases.\n\nMy kernel is 2.6.25.8 + three patches posted by Duane Griffin for #10882, namely (I hope I understand the git terminology right, at least you can grep lkml archives for these):\n  - 6ae4ecf..8019bf2\n  - 7712682..bc030f4\n  - 0b8cf80..ea0236b\n\n\n\nSteps to reproduce:\n\n1. bunzip2 one of the filesystem images\n2. mount fs.img /mnt\n3. ls /mnt",
+  "patch": [
+    "Subject: [PATCH] jbd: abort instead of waiting for nonexistent transactions\n\nThe __log_wait_for_space function sits in a loop checkpointing transactions\nuntil there is sufficient space free in the journal. However, if there are\nno transactions to be processed (e.g. because the free space calculation is\nwrong due to a corrupted filesystem) it will never progress.\n\nCheck for space being required when no transactions are outstanding and\nabort the journal instead of endlessly looping.\n\nThis patch fixes the bug reported by Sami Liedes at:\nhttp://bugzilla.kernel.org/show_bug.cgi?id=10976\n\nSigned-off-by: Duane Griffin <duaneg@dghda.com>\n---\ndiff --git a/fs/jbd/checkpoint.c b/fs/jbd/checkpoint.c\nindex a5432bb..9fac177 100644\n--- a/fs/jbd/checkpoint.c\n+++ b/fs/jbd/checkpoint.c\n@@ -126,14 +126,29 @@ void __log_wait_for_space(journal_t *journal)\n \n \t\t/*\n \t\t * Test again, another process may have checkpointed while we\n-\t\t * were waiting for the checkpoint lock\n+\t\t * were waiting for the checkpoint lock. If there are no\n+\t\t * outstanding transactions there is nothing to checkpoint and\n+\t\t * we can't make progress. Abort the journal in this case.\n \t\t */\n \t\tspin_lock(&journal->j_state_lock);\n+\t\tspin_lock(&journal->j_list_lock);\n \t\tnblocks = jbd_space_needed(journal);\n \t\tif (__log_space_left(journal) < nblocks) {\n+\t\t\tint chkpt = journal->j_checkpoint_transactions != NULL;\n+\n+\t\t\tspin_unlock(&journal->j_list_lock);\n \t\t\tspin_unlock(&journal->j_state_lock);\n-\t\t\tlog_do_checkpoint(journal);\n+\t\t\tif (chkpt) {\n+\t\t\t\tlog_do_checkpoint(journal);\n+\t\t\t} else {\n+\t\t\t\tprintk(KERN_ERR \"%s: no transactions\\n\",\n+\t\t\t\t       __func__);\n+\t\t\t\tjournal_abort(journal, 0);\n+\t\t\t}\n+\n \t\t\tspin_lock(&journal->j_state_lock);\n+\t\t} else {\n+\t\t\tspin_unlock(&journal->j_list_lock);\n \t\t}\n \t\tmutex_unlock(&journal->j_checkpoint_mutex);\n \t}\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "ext3",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Andrew Morton",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-06-24 12:42 UTC by Sami Liedes",
+  "Modified": "2008-09-26 06:43 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.25",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/jbd/checkpoint.c"
+  ],
+  "methods": [
+    "__log_wait_for_space"
+  ]
+}

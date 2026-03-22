@@ -1,0 +1,35 @@
+{
+  "id": "8995",
+  "title": "/proc/acpi/alarm worked; update to 2.6.22.2 and /sys/class/rtc/rtc0/wakealarm don't",
+  "": "Show dependency tree",
+  "description": "Most recent kernel where this bug did not occur:2.6.20\nDistribution: FC6\nHardware Environment: ASUS A8N-SLI mobo, Athlon 64 3200+, PATA Disk\nSoftware Environment: FC6, MythTV 0.20.2-164\nProblem Description:\nChange in kernel code from support for /proc/acpi/alarm to /sys/class/rtc/rtc0/wakealarm and supporting code borked working system.  Will no longer wake at set time.\nTime set <> time reported by cat /sys.../wakealarm.  Return value off by large constant.  Note: Mobo doesn't support month, day, or year in alarm setting.\n\nSteps to reproduce:\nBefore upgrade from 2.6.20 to 2.6.22.2, suspend-to-disk with powerdown to standby would wake at time echoed into /proc/acpi/alarm.  Change of wakeup time setting code to echo 0 to /sys/class/rtc/rtc0/wakealarm followed by echo of seconds since epoch of desired wakeup time under 2.6.22.2 does not work.  System will not wake up at specified time.  Will wake by keyboard keystroke, such as Ctrl+Esc.  Tried enabling APM (BIOS) alarm setting and all entries under /proc/acpi/wakeup (all on at once), but no improvement.\nTest sequence:\n# echo 0 > /sys/class/rtc/rtc0/wakealarm\n# t=`date +%s`; w=`expr $t + 60`; echo $w > /sys/class/rtc/rtc0/wakealarm\n# echo $w\n1189268800\n# cat /sys/class/rtc/rtc0/wakealarm\n2076101696\n# expr 2076101696 - 1189268800\n886832896\n<invoke your favorite code to suspend to disk and power down system leaving standby power on>\n<wait>\n<wait some more>\n<hit power on button>",
+  "patch": [
+    "---\n kernel/power/disk.c |    9 ++++++---\n 1 file changed, 6 insertions(+), 3 deletions(-)\n\nIndex: linux-2.6/kernel/power/disk.c\n===================================================================\n--- linux-2.6.orig/kernel/power/disk.c\n+++ linux-2.6/kernel/power/disk.c\n@@ -378,9 +378,12 @@ int hibernation_platform_enter(void)\n \t\treturn error;\n \n \tsuspend_console();\n-\terror = device_suspend(PMSG_SUSPEND);\n-\tif (error)\n-\t\tgoto Resume_console;\n+\t/*\n+\t * FIXME: device_suspend(PMSG_SUSPEND) should be called here, but\n+\t * some EHCI controllers make boxes reboot instead of going into the\n+\t * S4 sleep state in that case.\n+\t */\n+\tdevice_shutdown();\n \n \terror = hibernation_ops->prepare();\n \tif (error)\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Power Management",
+  "Classification": "Unclassified",
+  "Component": "Hibernation/Suspend",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Rafael J. Wysocki",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "7216",
+  "Reported": "2007-09-08 09:29 UTC by Craig Huff",
+  "Modified": "2008-01-24 15:48 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.22",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "kernel/power/disk.c"
+  ],
+  "methods": [
+    "hibernation_platform_enter"
+  ]
+}

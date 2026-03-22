@@ -1,0 +1,34 @@
+{
+  "id": "8569",
+  "title": "no touchpad since kernel 2.6.18",
+  "description": "Most recent kernel where this bug did *NOT* occur: 2.6.18\nDistribution: gentoo\nHardware Environment: amd64\nProblem Description: \ni can't find a touchpad in /proc/bus/input/devices since kernel 2.6.18 anymore.\ni've tried kernel 2.6.19 to 2.6.22-rc3 (suspend2, gentoo & vanilla).\nevdev and psmouse modules are loaded. i don't think it's a configuration issue,\nsince recent livecd distros work neither. a clue?\n\noutput of /proc/bus/input/devices on kernel 2.6.18:\nI: Bus=0011 Vendor=0001 Product=0001 Version=ab41\nN: Name=\"AT Translated Set 2 keyboard\"\nP: Phys=isa0060/serio0/input0\nS: Sysfs=/class/input/input0\nH: Handlers=kbd\nB: EV=120013\nB: KEY=402000000 3802078f840d001 feffffdfffefffff fffffffffffffffe\nB: MSC=10\nB: LED=7\n\nI: Bus=0011 Vendor=0002 Product=0007 Version=0000\nN: Name=\"SynPS/2 Synaptics TouchPad\"\nP: Phys=isa0060/serio1/input0\nS: Sysfs=/class/input/input1\nH: Handlers=mouse0\nB: EV=b\nB: KEY=6420 70000 0 0 0 0\nB: ABS=11000003\n\n\noutput of /proc/bus/input/devices on kernel 2.6.21:\nI: Bus=0011 Vendor=0001 Product=0001 Version=ab41\nN: Name=\"AT Translated Set 2 keyboard\"\nP: Phys=isa0060/serio0/input0\nS: Sysfs=/class/input/input0\nH: Handlers=kbd event0\nB: EV=120013\nB: KEY=402000000 3802078f840d001 feffffdfffefffff fffffffffffffffe\nB: MSC=10\nB: LED=7\n\nI: Bus=0019 Vendor=0000 Product=0002 Version=0000\nN: Name=\"Power Button (FF)\"\nP: Phys=button_power/button/input0\nS: Sysfs=/class/input/input1\nH: Handlers=kbd event1\nB: EV=3\nB: KEY=10000000000000 0\n\nI: Bus=0019 Vendor=0000 Product=0003 Version=0000\nN: Name=\"Sleep Button (CM)\"\nP: Phys=PNP0C0E/button/input0\nS: Sysfs=/class/input/input2\nH: Handlers=kbd event2\nB: EV=3\nB: KEY=4000 0 0\n\nI: Bus=0019 Vendor=0000 Product=0005 Version=0000\nN: Name=\"Lid Switch\"\nP: Phys=PNP0C0D/button/input0\nS: Sysfs=/class/input/input3\nH: Handlers=event3\nB: EV=21\nB: SW=1\n\n\noutput lspci:\n00:00.0 Host bridge: ATI Technologies Inc RS480 Host Bridge (rev 10)\n00:01.0 PCI bridge: ATI Technologies Inc RS480 PCI Bridge\n00:10.0 CardBus bridge: Texas Instruments PCIxx21/x515 Cardbus Controller\n00:10.2 FireWire (IEEE 1394): Texas Instruments OHCI Compliant IEEE 1394 Host\nController\n00:10.3 Mass storage controller: Texas Instruments PCIxx21 Integrated FlashMedia\nController\n00:10.4 Class 0805: Texas Instruments PCI6411, PCI6421, PCI6611, PCI6621,\nPCI7411, PCI7421, PCI7611, PCI7621 Secure Digital (SD) Controller\n00:11.0 Network controller: RaLink RT2500 802.11g Cardbus/mini-PCI (rev 01)\n00:12.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL-8169 Gigabit\nEthernet (rev 10)\n00:18.0 Host bridge: Advanced Micro Devices [AMD] K8 [Athlon64/Opteron]\nHyperTransport Technology Configuration\n00:18.1 Host bridge: Advanced Micro Devices [AMD] K8 [Athlon64/Opteron] Address Map\n00:18.2 Host bridge: Advanced Micro Devices [AMD] K8 [Athlon64/Opteron] DRAM\nController\n00:18.3 Host bridge: Advanced Micro Devices [AMD] K8 [Athlon64/Opteron]\nMiscellaneous Control\n00:19.0 PCI bridge: ALi Corporation M5249 HTT to PCI Bridge\n00:1c.0 USB Controller: ALi Corporation USB 1.1 Controller (rev 03)\n00:1c.1 USB Controller: ALi Corporation USB 1.1 Controller (rev 03)\n00:1c.2 USB Controller: ALi Corporation USB 1.1 Controller (rev 03)\n00:1c.3 USB Controller: ALi Corporation USB 2.0 Controller (rev 01)\n00:1d.0 Audio device: ALi Corporation High Definition Audio/AC'97 Host Controller\n00:1e.0 ISA bridge: ALi Corporation PCI to LPC Controller (rev 31)\n00:1e.1 Bridge: ALi Corporation M7101 Power Management Controller [PMU]\n00:1f.0 IDE interface: ALi Corporation M5229 IDE (rev c7)\n01:05.0 VGA compatible controller: ATI Technologies Inc ATI Radeon XPRESS 200M\n5955 (PCIE)\n\ni tried the recent 2.6.22-rc3 kernel today - no success. i thought it's time to\nfile a bug now. thanks. best regards robert",
+  "patch": [
+    "Input: i8042 - add ULI EV4873 to noloop list\n\nThe box does not implement AUX LOOP command properly and so we\ncan't test for AUX IRQ delivery so blacklist it via DMI and\nassume that AUX port is present.\n\nSigned-off-by: Dmitry Torokhov <dtor@mail.ru>\n---\n drivers/input/serio/i8042-x86ia64io.h |    8 ++++++++\n 1 file changed, 8 insertions(+)\n\nIndex: linux/drivers/input/serio/i8042-x86ia64io.h\n===================================================================\n--- linux.orig/drivers/input/serio/i8042-x86ia64io.h\n+++ linux/drivers/input/serio/i8042-x86ia64io.h\n@@ -92,6 +92,14 @@ static struct dmi_system_id __initdata i\n \t\t\tDMI_MATCH(DMI_PRODUCT_VERSION, \"00\"),\n \t\t},\n \t},\n+\t\t/* AUX LOOP does not work properly */\n+\t\t.ident = \"ULI EV4873\",\n+\t\t.matches = {\n+\t\t\tDMI_MATCH(DMI_SYS_VENDOR, \"ULI\"),\n+\t\t\tDMI_MATCH(DMI_PRODUCT_NAME, \"EV4873\"),\n+\t\t\tDMI_MATCH(DMI_PRODUCT_VERSION, \"5a\"),\n+\t\t},\n+\t},\n \t{ }\n };\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Input Devices",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Dmitry Torokhov",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-06-02 12:44 UTC by robert",
+  "Modified": "2007-09-21 06:24 UTC",
+  "CC List": "0 users",
+  "See Also": "",
+  "Kernel Version": "2.6.19",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/input/serio/i8042-x86ia64io.h"
+  ],
+  "methods": [
+    "i8042_dmi_noloop_table"
+  ]
+}

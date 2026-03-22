@@ -1,0 +1,37 @@
+{
+  "id": "7601",
+  "title": "irq 18: nobody cared - Intel STL2 SCI INT_SRC_OVR",
+  "description": "Most recent kernel where this bug did *NOT* occur:\n2.6.18.3\n\nDistribution:\nFedora Core 6\n\nHardware Environment:\n00:00.0 Host bridge: Intel Corporation 82815 815 Chipset Host Bridge and Memory\nController Hub (rev 02)\n00:01.0 PCI bridge: Intel Corporation 82815 815 Chipset AGP Bridge (rev 02)\n00:1e.0 PCI bridge: Intel Corporation 82801 PCI Bridge (rev 05)\n00:1f.0 ISA bridge: Intel Corporation 82801BA ISA Bridge (LPC) (rev 05)\n00:1f.1 IDE interface: Intel Corporation 82801BA IDE U100 (rev 05)\n00:1f.2 USB Controller: Intel Corporation 82801BA/BAM USB (Hub #1) (rev 05)\n00:1f.3 SMBus: Intel Corporation 82801BA/BAM SMBus (rev 05)\n00:1f.4 USB Controller: Intel Corporation 82801BA/BAM USB (Hub #2) (rev 05)\n01:00.0 VGA compatible controller: nVidia Corporation NV34 [GeForce FX 5200]\n(rev a1)\n02:09.0 FireWire (IEEE 1394): Texas Instruments TSB12LV23 IEEE-1394 Controller\n02:0a.0 Multimedia video controller: Brooktree Corporation Bt848 Video Capture\n(rev 12)\n02:0b.0 USB Controller: NEC Corporation USB (rev 43)\n02:0b.1 USB Controller: NEC Corporation USB (rev 43)\n02:0b.2 USB Controller: NEC Corporation USB 2.0 (rev 04)\n02:0c.0 Multimedia audio controller: Ensoniq ES1370 [AudioPCI] (rev 01)\n02:0e.0 Ethernet controller: Intel Corporation 82557/8/9 [Ethernet Pro 100] (rev 08)\n\nSoftware Environment:\nMainline kernel, gcc 4.1.1, glibc 2.5\n\nProblem Description:\nSince kernel 2.6.19 (today), the message \"irq 18: nobody cared ...\" appeared.\nI do not know how serious this could be, but it does not look good, expecially\nconsidering that kernel 2.6.18.3 was fine.\n\nSteps to reproduce:\nReboot the box with 2.6.19... :-)\n\nI tried with PNP OS (in BIOS) yes/no with same result.\nI also create dmesg and /proc/interrupts output with 2.6.18.3, 2.6.19 and 2.6.19\nwith \"irqpoll\". The last one seems to work properly, i.e. the irq 18 is assigned\nproperly. Performace wise, I don't know.\nIf I found the way :-) all attach the files here.",
+  "patch": [
+    "commit 281ea49b0c294649a6de47a6f8fbe5611137726b\nAuthor: Kimball Murray <kimball.murray@gmail.com>\nDate:   Tue Oct 10 14:20:33 2006 -0700\n\n    ACPI: SCI interrupt source override\n    \n    The Linux group at Stratus Technologies has come across an issue with SCI\n    routing under ACPI.  We were bitten by this when we made an x86_64 platform\n    whose BIOS provides an Interrupt Source Override for the SCI itself.\n    Apparently the override has no effect for the System Control Interrupt, and\n    this appears to be because of the way the SCI is setup in the ACPI code.\n    It does not handle the case where busirq != gsi.\n    \n    The code that sets up the SCI routing assumes that bus irq == global irq.\n    So there is simply no provision for telling it otherwise.  The attached\n    patch provides this mechanism.\n    \n    This patch provided by David Bulkow, was tested on an i386 platform, which\n    does not use the SCI override, and also on an x86_64 platform which does\n    use an override.\n    \n    Signed-off-by: David Bulkow <david.bulkow@stratus.com>\n    Cc: Andi Kleen <ak@muc.de>\n    Signed-off-by: Andrew Morton <akpm@osdl.org>\n    Signed-off-by: Len Brown <len.brown@intel.com>\n\ndiff --git a/arch/i386/kernel/acpi/boot.c b/arch/i386/kernel/acpi/boot.c\nindex 92f79cd..ab974ff 100644\n--- a/arch/i386/kernel/acpi/boot.c\n+++ b/arch/i386/kernel/acpi/boot.c\n@@ -332,7 +332,7 @@ acpi_parse_ioapic(acpi_table_entry_header * header, const unsigned long end)\n /*\n  * Parse Interrupt Source Override for the ACPI SCI\n  */\n-static void acpi_sci_ioapic_setup(u32 gsi, u16 polarity, u16 trigger)\n+static void acpi_sci_ioapic_setup(u32 bus_irq, u32 gsi, u16 polarity, u16 trigger)\n {\n \tif (trigger == 0)\t/* compatible SCI trigger is level */\n \t\ttrigger = 3;\n@@ -352,13 +352,13 @@ static void acpi_sci_ioapic_setup(u32 gsi, u16 polarity, u16 trigger)\n \t * If GSI is < 16, this will update its flags,\n \t * else it will create a new mp_irqs[] entry.\n \t */\n-\tmp_override_legacy_irq(gsi, polarity, trigger, gsi);\n+\tmp_override_legacy_irq(bus_irq, polarity, trigger, gsi);\n \n \t/*\n \t * stash over-ride to indicate we've been here\n \t * and for later update of acpi_fadt\n \t */\n-\tacpi_sci_override_gsi = gsi;\n+\tacpi_sci_override_gsi = bus_irq;\n \treturn;\n }\n \n@@ -376,7 +376,7 @@ acpi_parse_int_src_ovr(acpi_table_entry_header * header,\n \tacpi_table_print_madt_entry(header);\n \n \tif (intsrc->bus_irq == acpi_fadt.sci_int) {\n-\t\tacpi_sci_ioapic_setup(intsrc->global_irq,\n+\t\tacpi_sci_ioapic_setup(intsrc->bus_irq, intsrc->global_irq,\n \t\t\t\t      intsrc->flags.polarity,\n \t\t\t\t      intsrc->flags.trigger);\n \t\treturn 0;\n@@ -879,7 +879,7 @@ static int __init acpi_parse_madt_ioapic_entries(void)\n \t * pretend we got one so we can set the SCI flags.\n \t */\n \tif (!acpi_sci_override_gsi)\n-\t\tacpi_sci_ioapic_setup(acpi_fadt.sci_int, 0, 0);\n+\t\tacpi_sci_ioapic_setup(acpi_fadt.sci_int, acpi_fadt.sci_int, 0, 0);\n \n \t/* Fill in identity legacy mapings where no override */\n \tmp_config_acpi_legacy_irqs();\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Config-Interrupts",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Len Brown",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (1)": "7628",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-11-30 12:50 UTC by piergiorgio.sartor",
+  "Modified": "2007-02-15 23:33 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.19",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/i386/kernel/acpi/boot.c"
+  ],
+  "methods": [
+    "acpi_sci_ioapic_setup",
+    "acpi_parse_int_src_ovr",
+    "acpi_parse_madt_ioapic_entries"
+  ]
+}

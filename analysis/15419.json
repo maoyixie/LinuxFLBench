@@ -1,0 +1,122 @@
+{
+  "id": "15419",
+  "title": "ipw2200: requesting scan causes connection drops",
+  "kernel_version": "2.6.32",
+  "product": "Drivers",
+  "component": "network-wireless",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/wireless/ipw2x00/ipw2200.c"
+    ],
+    "buggy_methods": [
+      "ipw_scan_check"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [
+      {
+        "file": "32",
+        "line": "9"
+      }
+    ],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 2193,
+    "description_word_count": 298
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 11,
+    "lines_removed": 2,
+    "patch_size": 13,
+    "new_functions": [
+      "ipw_abort_scan"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "ipw_bg_adapter_restart"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/wireless/ipw2x00/ipw2200.c",
+    "filename": "ipw2200.c",
+    "directory": "drivers/net/wireless/ipw2x00",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/wireless",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "source_file_line_references",
+      "component_known:network-wireless"
+    ],
+    "strategies": [
+      "use_source_references_to_locate_file",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "15419",
+      "version": "2.6.32",
+      "status": "found",
+      "path": "drivers/net/wireless/ipw2x00/ipw2200.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "15419",
+    "title": "ipw2200: requesting scan causes connection drops",
+    "ground_truth_file": "drivers/net/wireless/ipw2x00/ipw2200.c",
+    "ground_truth_subsystem": "drivers/net",
+    "ground_truth_methods": [
+      "ipw_scan_check"
+    ],
+    "product": "Drivers",
+    "component": "network-wireless",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "performance"
+    ],
+    "fix_types": [
+      "locking_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "component": "network-wireless",
+      "product": "Drivers",
+      "modules": [
+        "in"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

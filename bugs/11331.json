@@ -1,0 +1,35 @@
+{
+  "id": "11331",
+  "title": "Fan speed setting reset after suspend to disk/ram on Thinkpad X31",
+  "": "Show dependency tree",
+  "description": "Distribution: Debian unstable\nHardware Environment: Thinkpad X31\nSoftware Environment: Debian unstable\nProblem Description:\nAfter waking the system from suspend to disk/ram, the fan speed is reset to the default value. As I understand things, the value should be cached and re-set to what I last set it to.\n\nSteps to reproduce:\n\n# echo \"options thinkpad_acpi fan_control=1\" >> /etc/modprobe.d/options\n# shutdown -r now\n\n# echo level 7 >! /proc/acpi/ibm/fan #fan will spin on fastest level, you will hear this\n# cat /proc/acpi/ibm/fan\nstatus:         enabled\nspeed:          4107\nlevel:          7\ncommands:       level <level> (<level> is 0-7, auto, disengaged, full-speed)\ncommands:       enable, disable\ncommands:       watchdog <timeout> (<timeout> is 0 (off), 1-120 (seconds))\ncommands:       speed <speed> (<speed> is 0-65535)\n# s2ram || s2disk\npress Fn-F4 or power button to wake system\n\n# cat /proc/acpi/ibm/fan\nstatus:         enabled\nspeed:          0\nlevel:          auto\ncommands:       level <level> (<level> is 0-7, auto, disengaged, full-speed)\ncommands:       enable, disable\ncommands:       watchdog <timeout> (<timeout> is 0 (off), 1-120 (seconds))\ncommands:       speed <speed> (<speed> is 0-65535)",
+  "patch": [
+    "commit 6649b589e2ea44abc426da8c542c1156f73cb9d5\nAuthor: Henrique de Moraes Holschuh <hmh@hmh.eng.br>\nDate:   Sun Oct 5 18:52:14 2008 -0300\n\n    ACPI: thinkpad-acpi: attempt to preserve fan state on resume\n    \n    Attempt to preserve fan state across sleep and hibernation if the fan\n    control mode is enabled.\n    \n    For safety reasons, only the PWM OFF (fan at 100%) or maximum\n    closed-loop level (level 7) are preserved.  If the fan state was set\n    to anything else, it will not be restored.\n    \n    Also, should the fan be at PWM OFF mode at resume, it will be left at\n    that state (but this is extremely unlikely, no ThinkPad firmware was\n    ever reported to do this).\n    \n    For reference, the known states used for fan control upon resume by\n    the firmware  are either \"auto\" or \"level 7\" depending on whether the\n    laptop wakes due to normal conditions or a thermal emergency.\n    \n    Fixes: http://bugzilla.kernel.org/show_bug.cgi?id=11331\n    \n    Signed-off-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>\n    Cc: Richard Hartmann <richih.mailinglist@gmail.com>\n\ndiff --git a/drivers/misc/thinkpad_acpi.c b/drivers/misc/thinkpad_acpi.c\nindex 6b93007..1dcf066 100644\n--- a/drivers/misc/thinkpad_acpi.c\n+++ b/drivers/misc/thinkpad_acpi.c\n@@ -5983,6 +5983,52 @@ static void fan_exit(void)\n \tflush_workqueue(tpacpi_wq);\n }\n \n+static void fan_suspend(pm_message_t state)\n+{\n+\tif (!fan_control_allowed)\n+\t\treturn;\n+\n+\t/* Store fan status in cache */\n+\tfan_get_status_safe(NULL);\n+\tif (tp_features.fan_ctrl_status_undef)\n+\t\tfan_control_desired_level = TP_EC_FAN_AUTO;\n+}\n+\n+static void fan_resume(void)\n+{\n+\tu8 saved_fan_level;\n+\tu8 current_level = 7;\n+\tbool do_set = false;\n+\n+\t/* DSDT *always* updates status on resume */\n+\ttp_features.fan_ctrl_status_undef = 0;\n+\n+\tsaved_fan_level = fan_control_desired_level;\n+\tif (!fan_control_allowed ||\n+\t    (fan_get_status_safe(&current_level) < 0))\n+\t\treturn;\n+\n+\tswitch (fan_control_access_mode) {\n+\tcase TPACPI_FAN_WR_ACPI_SFAN:\n+\t\tdo_set = (saved_fan_level > current_level);\n+\t\tbreak;\n+\tcase TPACPI_FAN_WR_ACPI_FANS:\n+\tcase TPACPI_FAN_WR_TPEC:\n+\t\tdo_set = ((saved_fan_level & TP_EC_FAN_FULLSPEED) ||\n+\t\t\t  (saved_fan_level == 7 &&\n+\t\t\t   !(current_level & TP_EC_FAN_FULLSPEED)));\n+\t\tbreak;\n+\tdefault:\n+\t\treturn;\n+\t}\n+\tif (do_set) {\n+\t\tprintk(TPACPI_NOTICE\n+\t\t\t\"restoring fan level to 0x%02x\\n\",\n+\t\t\tsaved_fan_level);\n+\t\tfan_set_level_safe(saved_fan_level);\n+\t}\n+}\n+\n static int fan_read(char *p)\n {\n \tint len = 0;\n@@ -6174,6 +6220,8 @@ static struct ibm_struct fan_driver_data = {\n \t.read = fan_read,\n \t.write = fan_write,\n \t.exit = fan_exit,\n+\t.suspend = fan_suspend,\n+\t.resume = fan_resume,\n };\n \n /****************************************************************************\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Platform",
+  "Hardware": "All Linux",
+  "Importance": "P1 enhancement",
+  "Assignee": "Henrique de Moraes Holschuh",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "7216 56331",
+  "Reported": "2008-08-14 06:45 UTC by Richard Hartmann",
+  "Modified": "2013-04-09 06:23 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.26",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/misc/thinkpad_acpi.c"
+  ],
+  "methods": [
+    "fan_driver_data"
+  ]
+}

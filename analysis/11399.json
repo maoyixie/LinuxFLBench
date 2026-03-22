@@ -1,0 +1,105 @@
+{
+  "id": "11399",
+  "title": "(patch queued)possible buffer underflow in ib700wdt.c",
+  "kernel_version": "2.6.26",
+  "product": "Drivers",
+  "component": "Watchdog",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/watchdog/ib700wdt.c"
+    ],
+    "buggy_methods": [
+      "ibwdt_set_heartbeat"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 2091,
+    "description_word_count": 358
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "ibwdt_set_heartbeat"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/watchdog/ib700wdt.c",
+    "filename": "ib700wdt.c",
+    "directory": "drivers/watchdog",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "watchdog",
+    "driver_subsystem": "watchdog/ib700wdt.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Watchdog"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "11399",
+      "version": "2.6.26",
+      "status": "found",
+      "path": "drivers/watchdog/ib700wdt.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "11399",
+    "title": "(patch queued)possible buffer underflow in ib700wdt.c",
+    "ground_truth_file": "drivers/watchdog/ib700wdt.c",
+    "ground_truth_subsystem": "drivers/watchdog",
+    "ground_truth_methods": [
+      "ibwdt_set_heartbeat"
+    ],
+    "product": "Drivers",
+    "component": "Watchdog",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "Watchdog",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

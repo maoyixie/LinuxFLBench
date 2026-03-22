@@ -1,0 +1,115 @@
+{
+  "id": "15982",
+  "title": "radeon module update for 2.6.34 breaks ALSA (snd_atiixp and snd_hda_intel)",
+  "kernel_version": "2.6.34",
+  "product": "Drivers",
+  "component": "Video",
+  "hardware": "i386 Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup",
+    "device_not_working",
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpu/drm/radeon/radeon_display.c"
+    ],
+    "buggy_methods": [
+      "radeon_update_display_priority"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 4448,
+    "description_word_count": 425
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 4,
+    "lines_removed": 1,
+    "patch_size": 5,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "radeon_update_display_priority"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpu/drm/radeon/radeon_display.c",
+    "filename": "radeon_display.c",
+    "directory": "drivers/gpu/drm/radeon",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "gpu",
+    "driver_subsystem": "gpu/drm",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Video",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "15982",
+      "version": "2.6.34",
+      "status": "found",
+      "path": "drivers/gpu/drm/radeon/radeon_display.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "15982",
+    "title": "radeon module update for 2.6.34 breaks ALSA (snd_atiixp and snd_hda_intel)",
+    "ground_truth_file": "drivers/gpu/drm/radeon/radeon_display.c",
+    "ground_truth_subsystem": "drivers/gpu",
+    "ground_truth_methods": [
+      "radeon_update_display_priority"
+    ],
+    "product": "Drivers",
+    "component": "Video",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "hang/deadlock",
+      "performance"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "Video",
+      "product": "Drivers",
+      "modules": [
+        "in"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

@@ -1,0 +1,113 @@
+{
+  "id": "11865",
+  "title": "WOL for E100 Doesn't Work Anymore",
+  "kernel_version": "2.6.27",
+  "product": "Drivers",
+  "component": "Network",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "device_not_working",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/e100.c"
+    ],
+    "buggy_methods": [
+      "e100_set_wol",
+      "e100_probe"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 783,
+    "description_word_count": 119
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 7,
+    "lines_removed": 2,
+    "patch_size": 9,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 3,
+    "hunk_functions": [
+      "e100_probe",
+      "e100_set_wol"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/e100.c",
+    "filename": "e100.c",
+    "directory": "drivers/net",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/e100.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Network",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "11865",
+      "version": "2.6.27",
+      "status": "found",
+      "path": "drivers/net/e100.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "11865",
+    "title": "WOL for E100 Doesn't Work Anymore",
+    "ground_truth_file": "drivers/net/e100.c",
+    "ground_truth_subsystem": "drivers/net",
+    "ground_truth_methods": [
+      "e100_set_wol",
+      "e100_probe"
+    ],
+    "product": "Drivers",
+    "component": "Network",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "Network",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

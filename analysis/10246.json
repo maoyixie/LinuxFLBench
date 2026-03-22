@@ -1,0 +1,105 @@
+{
+  "id": "10246",
+  "title": "\"in\" after successful ioperm() results in SEGV after kvm use",
+  "kernel_version": "2.6.25-rc5",
+  "product": "Virtualization",
+  "component": "kvm",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/x86/kvm/vmx.c"
+    ],
+    "buggy_methods": [
+      "reload_tss"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1171,
+    "description_word_count": 177
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 0,
+    "lines_removed": 3,
+    "patch_size": 3,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "reload_tss",
+      "update_exception_bitmap"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "arch/x86/kvm/vmx.c",
+    "filename": "vmx.c",
+    "directory": "arch/x86/kvm",
+    "depth": 4,
+    "top_level": "arch",
+    "second_level": "x86",
+    "arch": "x86",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:kvm"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "10246",
+      "version": "2.6.25-rc5",
+      "status": "found",
+      "path": "arch/x86/kvm/vmx.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "10246",
+    "title": "\"in\" after successful ioperm() results in SEGV after kvm use",
+    "ground_truth_file": "arch/x86/kvm/vmx.c",
+    "ground_truth_subsystem": "arch/x86",
+    "ground_truth_methods": [
+      "reload_tss"
+    ],
+    "product": "Virtualization",
+    "component": "kvm",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "kvm",
+      "product": "Virtualization"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

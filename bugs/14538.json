@@ -1,0 +1,35 @@
+{
+  "id": "14538",
+  "title": "Unable to associate with AP after resume since 2.6.32-rc6",
+  "": "Show dependency tree",
+  "description": "Kernel version: 2.6.32-rc6\nLast working kernel: 2.6.32-rc5\nAthlon 64 3000 single core\n64 bits version, Bluewhite64\n\nAfter a suspend to ram/resume, the wireless interface is dead and cannot reassociate anymore. Trying to restart wpa/dhcpd gives the following errors:\n\nroot@athor:/home/christian# /etc/rc.d/rc.inet1 stop\nroot@athor:/home/christian# /etc/rc.d/rc.inet1 start\nSIOCSIFFLAGS: Erreur inconnue 132\n/etc/rc.d/rc.inet1:  eth1 information: 'Any ESSID'\nError for wireless request \"Set Nickname\" (8B1C) :\n    SET failed on device eth1 ; Operation not supported.\nSIOCSIFFLAGS: Unknown error 132\nCould not set interface 'eth1' UP\nSIOCSIFFLAGS: Erreur inconnue 132\nPolling for DHCP server on interface eth1:\nerr, eth1: ioctl SIOCSIFFLAGS: Unknown error 132\n\nThe \"Set Nickame\" always occurs and is not the problem. However, the Unknown error 132 is completly new.\n\nMoreover, iwconfig says the eth1 interface is not associated anymore.",
+  "patch": [
+    "Index: wireless-testing/drivers/net/wireless/b43/rfkill.c\n===================================================================\n--- wireless-testing.orig/drivers/net/wireless/b43/rfkill.c\n+++ wireless-testing/drivers/net/wireless/b43/rfkill.c\n@@ -33,9 +33,16 @@ bool b43_is_hw_radio_enabled(struct b43_\n \t\t      & B43_MMIO_RADIO_HWENABLED_HI_MASK))\n \t\t\treturn 1;\n \t} else {\n-\t\tif (b43_status(dev) >= B43_STAT_STARTED &&\n-\t\t    b43_read16(dev, B43_MMIO_RADIO_HWENABLED_LO)\n-\t\t    & B43_MMIO_RADIO_HWENABLED_LO_MASK)\n+\t\t/* To prevent CPU fault on PPC, do not read a register\n+\t\t * unless the interface is started; however, on resume\n+\t\t * for hibernation, this routine is entered early. When\n+\t\t * that happens, unconditionally return TRUE.\n+\t\t */\n+\t\tif (b43_status(dev) >= B43_STAT_STARTED) {\n+\t\t\tif (b43_read16(dev, B43_MMIO_RADIO_HWENABLED_LO)\n+\t\t\t    & B43_MMIO_RADIO_HWENABLED_LO_MASK)\n+\t\t\t\treturn 1;\n+\t\t} else\n \t\t\treturn 1;\n \t}\n \treturn 0;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Networking",
+  "Classification": "Unclassified",
+  "Component": "Wireless",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Larry Finger",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "7216 14230",
+  "Reported": "2009-11-03 22:07 UTC by Christian Casteyde",
+  "Modified": "2009-12-29 21:04 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.32-rc6",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/b43/rfkill.c"
+  ],
+  "methods": [
+    "b43_is_hw_radio_enabled"
+  ]
+}

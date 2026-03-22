@@ -1,0 +1,260 @@
+{
+  "id": "32032",
+  "title": "Divide error in minstrel_ht_tx_status followed by hang",
+  "kernel_version": "2.6.38",
+  "product": "Drivers",
+  "component": "Staging",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/staging/brcm80211/sys/wlc_ampdu.c"
+    ],
+    "buggy_methods": [
+      "wlc_ampdu_dotxstatus_complete"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "minstrel_ht_tx_status",
+      "EFLAGS"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "0000 [#1] SMP"
+    ],
+    "proc_sys_paths": [
+      "/sys/module/aes_generic/initstate"
+    ],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 31,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 4654,
+    "description_word_count": 617
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 10,
+    "patch_size": 12,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "wlc_ampdu_dotxstatus_complete"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/staging/brcm80211/sys/wlc_ampdu.c",
+    "filename": "wlc_ampdu.c",
+    "directory": "drivers/staging/brcm80211/sys",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "staging",
+    "driver_subsystem": "staging/brcm80211",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_2_functions",
+      "proc_sys_paths_hint_subsystem",
+      "dmesg_logs_available",
+      "component_known:Staging",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "32032",
+      "version": "2.6.38",
+      "status": "found",
+      "path": "drivers/staging/brcm80211/sys/wlc_ampdu.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "32032",
+    "version": "2.6.38",
+    "ground_truth_file": "drivers/staging/brcm80211/sys/wlc_ampdu.c",
+    "trace_functions": [
+      "minstrel_ht_tx_status",
+      "ieee80211_tx_status",
+      "ieee80211_tasklet_handler",
+      "__do_softirq",
+      "tasklet_action",
+      "irq_exit",
+      "do_IRQ",
+      "common_interrupt",
+      "acpi_idle_enter_bm",
+      "cpuidle_idle_call",
+      "cpu_idle",
+      "start_secondary",
+      "EFLAGS"
+    ],
+    "total_trace_functions": 13,
+    "function_locations": {
+      "minstrel_ht_tx_status": [],
+      "ieee80211_tx_status": [
+        "net/mac80211/status.c"
+      ],
+      "ieee80211_tasklet_handler": [
+        "net/mac80211/main.c"
+      ],
+      "__do_softirq": [
+        "kernel/softirq.c"
+      ],
+      "tasklet_action": [
+        "drivers/tty/serial/serial_core.c",
+        "drivers/misc/lkdtm.c",
+        "kernel/softirq.c"
+      ],
+      "irq_exit": [
+        "drivers/staging/vme/bridges/vme_ca91cx42.c",
+        "kernel/softirq.c",
+        "drivers/uio/uio_pdrv_genirq.c",
+        "drivers/mfd/wm831x-irq.c",
+        "drivers/mfd/max8998-irq.c",
+        "kernel/rcutree.c",
+        "drivers/mfd/wm8350-irq.c",
+        "drivers/staging/vme/bridges/vme_tsi148.c",
+        "drivers/mfd/wm8994-irq.c",
+        "drivers/mfd/88pm860x-core.c"
+      ],
+      "do_IRQ": [
+        "arch/cris/kernel/irq.c",
+        "arch/microblaze/kernel/irq.c",
+        "arch/xtensa/kernel/irq.c",
+        "arch/powerpc/kernel/irq.c",
+        "arch/h8300/kernel/irq.c",
+        "arch/cris/arch-v10/kernel/irq.c",
+        "arch/score/kernel/irq.c",
+        "arch/avr32/mach-at32ap/intc.c",
+        "arch/m68knommu/kernel/irq.c",
+        "arch/sh/kernel/irq.c"
+      ],
+      "common_interrupt": [],
+      "acpi_idle_enter_bm": [
+        "drivers/acpi/processor_idle.c"
+      ],
+      "cpuidle_idle_call": [
+        "drivers/cpuidle/cpuidle.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "drivers/tty/serial/serial_core.c",
+      "arch/cris/kernel/irq.c",
+      "arch/microblaze/kernel/irq.c",
+      "drivers/mfd/wm8350-irq.c",
+      "arch/xtensa/kernel/irq.c",
+      "drivers/staging/vme/bridges/vme_tsi148.c",
+      "kernel/rcutree.c",
+      "drivers/staging/vme/bridges/vme_ca91cx42.c",
+      "kernel/softirq.c",
+      "drivers/uio/uio_pdrv_genirq.c",
+      "arch/powerpc/kernel/irq.c",
+      "arch/h8300/kernel/irq.c",
+      "net/mac80211/main.c",
+      "arch/cris/arch-v10/kernel/irq.c",
+      "arch/score/kernel/irq.c",
+      "arch/avr32/mach-at32ap/intc.c",
+      "arch/m68knommu/kernel/irq.c",
+      "drivers/cpuidle/cpuidle.c",
+      "arch/sh/kernel/irq.c",
+      "drivers/mfd/wm8994-irq.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "32032",
+    "title": "Divide error in minstrel_ht_tx_status followed by hang",
+    "ground_truth_file": "drivers/staging/brcm80211/sys/wlc_ampdu.c",
+    "ground_truth_methods": [
+      "wlc_ampdu_dotxstatus_complete"
+    ],
+    "ground_truth_subsystem": "drivers/staging",
+    "trace_functions_top8": [
+      "minstrel_ht_tx_status",
+      "ieee80211_tx_status",
+      "ieee80211_tasklet_handler",
+      "__do_softirq",
+      "tasklet_action",
+      "irq_exit",
+      "do_IRQ",
+      "common_interrupt"
+    ],
+    "trace_function_locations": {
+      "minstrel_ht_tx_status": [],
+      "ieee80211_tx_status": [
+        "net/mac80211/status.c"
+      ],
+      "ieee80211_tasklet_handler": [
+        "net/mac80211/main.c"
+      ],
+      "__do_softirq": [
+        "kernel/softirq.c"
+      ],
+      "tasklet_action": [
+        "kernel/softirq.c"
+      ],
+      "irq_exit": [
+        "kernel/softirq.c"
+      ],
+      "do_IRQ": [
+        "arch/h8300/kernel/irq.c",
+        "arch/sh/kernel/irq.c",
+        "arch/x86/kernel/irq.c",
+        "arch/score/kernel/irq.c",
+        "arch/xtensa/kernel/traps.c"
+      ],
+      "common_interrupt": []
+    },
+    "trace_subsystems": [
+      "arch/mn10300",
+      "arch/m32r",
+      "arch/sh",
+      "arch/xtensa",
+      "net/mac80211",
+      "drivers/s390",
+      "arch/powerpc",
+      "arch/mips",
+      "kernel/softirq.c",
+      "arch/x86",
+      "arch/cris",
+      "arch/um",
+      "arch/frv",
+      "arch/avr32",
+      "arch/microblaze",
+      "arch/score",
+      "arch/h8300",
+      "arch/m68knommu"
+    ],
+    "mismatch_type": "trace_in_infrastructure",
+    "gt_calls_trace_func": true,
+    "gt_method_in_trace": false,
+    "product": "Drivers",
+    "component": "Staging"
+  },
+  "overall_category": "C_trace_misleads"
+}

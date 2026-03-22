@@ -1,0 +1,104 @@
+{
+  "id": "13449",
+  "title": "Battery disappears after suspend/resume on HP laptop.",
+  "kernel_version": "2.6.30",
+  "product": "ACPI",
+  "component": "Power-Sleep-Wake",
+  "hardware": "x86-64 Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/sleep.c"
+    ],
+    "buggy_methods": [
+      "acpisleep_dmi_table"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/acpi/battery/BAT0/state"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 523,
+    "description_word_count": 77
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 8,
+    "lines_removed": 0,
+    "patch_size": 8,
+    "patch_types": [
+      "quirk/device_table"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/sleep.c",
+    "filename": "sleep.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/sleep.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Power-Sleep-Wake",
+      "is_regression",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13449",
+      "version": "2.6.30",
+      "status": "found",
+      "path": "drivers/acpi/sleep.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "13449",
+    "title": "Battery disappears after suspend/resume on HP laptop.",
+    "product": "ACPI",
+    "component": "Power-Sleep-Wake",
+    "buggy_file": [
+      "drivers/acpi/sleep.c"
+    ],
+    "fix_type": "dmi_quirk_addition",
+    "table_entry_lines_added": 2,
+    "description_clues": [
+      "hardware_model_mentioned"
+    ],
+    "patch_size": 8,
+    "potential_strategies": [
+      "search_for_model_specific_quirks",
+      "narrow_by_component:Power-Sleep-Wake"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

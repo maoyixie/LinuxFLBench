@@ -1,0 +1,35 @@
+{
+  "id": "10860",
+  "title": "total system freeze at boot with 2.6.26-rc",
+  "": "Show dependency tree",
+  "description": "Latest working kernel version:2.6.25.4\nEarliest failing kernel version:2.6.24-rc4\nalso fails with -rc5 I was wating for, previous rcs not tested\nDistribution: Bluewhite64 (64 bits slackware)\nHardware Environment: Athlon64 X2 / Ali 1689 north 1563 south\n+ bt848 v4l + PATA and SATA disk (SATA on sata_uli)\nSeems to be related to sata disk detection (see below).\n\nSoftware Environment:\nnone\n\nProblem Description:\nthe computer freeze totally at boot after SATA disk detection.\nI append 2.6.25.4 dmesg, lspci and lsusb.\nThe CPU is not 100% (otherwise I could hear the fan going crazy), the keayboard is dead (unable to scroll the console up or down). Nothings happen.\n\nThe console shows somethings similar to the 2.6.25.4 logs, but hangs after those lines:\nhda: cache flushes not supported\n hda: hda1 hda2\nhdd: ATAPI 40X DVD-ROM DVD-R-RAM CD-R/RW drive, 2048kB Cache\nUniform CD-ROM driver Revision: 3.20\nDriver 'sd' needs updating - please use bus_type methods\nsata_uli 0000:00:0e.1: version 1.3\nACPI: PCI Interrupt 0000:00:0e.1[A] -> GSI 19 (level, low) -> IRQ 19\nscsi0 : sata_uli\nscsi1 : sata_uli\nata1: SATA max UDMA/133 cmd 0xf80 ctl 0xf00 bmdma 0xd880 irq 19\nata2: SATA max UDMA/133 cmd 0xe80 ctl 0xe00 bmdma 0xd888 irq 19\nata1: SATA link up 1.5 Gbps (SStatus 113 SControl 300)\n\n<-- here, 2.6.24 hangs -->\n\nnormal way for 2.6.25 :\n\nata1.00: ATA-7: ST3200826AS, 3.06, max UDMA/133\nata1.00: 390721968 sectors, multi 16: LBA48 NCQ (depth 0/32)\nata1.00: configured for UDMA/133\nata2: SATA link down (SStatus 0 SControl 300)\nscsi 0:0:0:0: Direct-Access     ATA      ST3200826AS      3.06 PQ: 0 ANSI: 5\nsd 0:0:0:0: [sda] 390721968 512-byte hardware sectors (200050 MB)\nsd 0:0:0:0: [sda] Write Protect is off\nsd 0:0:0:0: [sda] Mode Sense: 00 3a 00 00\n\nSteps to reproduce:\nBoot my PC :-)\nI guess any sata_uli device may hang the same way?",
+  "patch": [
+    "diff --git a/drivers/ata/sata_uli.c b/drivers/ata/sata_uli.c\nindex f277cea..db529b8 100644\n--- a/drivers/ata/sata_uli.c\n+++ b/drivers/ata/sata_uli.c\n@@ -83,6 +83,7 @@ static struct ata_port_operations uli_ops = {\n \t.inherits\t\t= &ata_bmdma_port_ops,\n \t.scr_read\t\t= uli_scr_read,\n \t.scr_write\t\t= uli_scr_write,\n+\t.hardreset\t\t= ATA_OP_NULL,\n };\n \n static const struct ata_port_info uli_port_info = {\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "IO/Storage",
+  "Classification": "Unclassified",
+  "Component": "Serial ATA",
+  "Hardware": "All Linux",
+  "Importance": "P1 blocking",
+  "Assignee": "Jeff Garzik",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "10492",
+  "Reported": "2008-06-05 12:38 UTC by Christian Casteyde",
+  "Modified": "2008-07-06 08:55 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.26-rc2",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/ata/sata_uli.c"
+  ],
+  "methods": [
+    "uli_ops"
+  ]
+}

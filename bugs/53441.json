@@ -1,0 +1,34 @@
+{
+  "id": "53441",
+  "title": "hda_intel: sound stops working after suspend to ram",
+  "description": "Created attachment 92591 [details]\ndmesg showing error messages\n\nOn a fresh boot the sound card works fine.\nAfter a few suspends to ram (it doesn't necessarily happen after just one) the sound card stops working well. The sound comes out chopppy, as a series of clicks separated by 2 second or so silences.\n\nI see these messages in the kernel log right after resume:\nhda-intel: azx_get_response timeout, switching to polling mode: last cmd=0x00170503\nhda-intel: No response from codec, disabling MSI: last cmd=0x00170503\nhda_intel: azx_get_response timeout, switching to single_cmd mode: last cmd=0x00170503\n\nThe only way to fix the sound seems to be a reboot.\nI don't have this problem with v3.6.11, it appeared with kernel v3.7.1 (I have not tested v3.7). Right now I'm running 3.7.6 and the problem is still there.\n\n$ lspci  | grep -i audio\n00:1b.0 Audio device: Intel Corporation 5 Series/3400 Series Chipset High Definition Audio (rev 05)\n01:00.1 Audio device: NVIDIA Corporation High Definition Audio Controller (rev a1)\n\n$ lsmod | grep snd\nsnd_hda_codec_hdmi     24993  4 \nsnd_hda_codec_idt      54740  1 \nsnd_hda_intel          24840  6 \nsnd_hda_codec          71155  3 snd_hda_codec_hdmi,snd_hda_codec_idt,snd_hda_intel\nsnd_pcm                74322  3 snd_hda_codec_hdmi,snd_hda_codec,snd_hda_intel\nsnd_page_alloc          7333  2 snd_pcm,snd_hda_intel\nsnd_timer              17563  1 snd_pcm",
+  "patch": [
+    "From 2c1350fdeaefefe1a149d3b083383409f43f0daa Mon Sep 17 00:00:00 2001\nFrom: Takashi Iwai <tiwai@suse.de>\nDate: Thu, 14 Feb 2013 09:44:55 +0100\nSubject: [PATCH] ALSA: hda - Disable runtime PM for Intel 5 Series/3400\n\nWe've got a regression report wrt the IRQ issue related with the\npower-save on a Dell machine, and disabling runtime PM works around.\n\nBugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=53441\n\nCc: <stable@vger.kernel.org> [v3.7+]\nSigned-off-by: Takashi Iwai <tiwai@suse.de>\n---\n sound/pci/hda/hda_intel.c | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n\ndiff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c\nindex bb9179e..4cea6bb6 100644\n--- a/sound/pci/hda/hda_intel.c\n+++ b/sound/pci/hda/hda_intel.c\n@@ -3756,7 +3756,7 @@ static DEFINE_PCI_DEVICE_TABLE(azx_ids) = {\n \t  .driver_data = AZX_DRIVER_SCH | AZX_DCAPS_INTEL_PCH },\n \t/* 5 Series/3400 */\n \t{ PCI_DEVICE(0x8086, 0x3b56),\n-\t  .driver_data = AZX_DRIVER_SCH | AZX_DCAPS_INTEL_PCH },\n+\t  .driver_data = AZX_DRIVER_SCH | AZX_DCAPS_INTEL_PCH_NOPM },\n \t/* Poulsbo */\n \t{ PCI_DEVICE(0x8086, 0x811b),\n \t  .driver_data = AZX_DRIVER_SCH | AZX_DCAPS_INTEL_PCH_NOPM },\n-- \n1.8.1.2\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Sound",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Jaroslav Kysela",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2013-02-05 21:40 UTC by Jose Marino",
+  "Modified": "2013-11-12 15:16 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "3.7.6",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "sound/pci/hda/hda_intel.c"
+  ],
+  "methods": [
+    "DEFINE_PCI_DEVICE_TABLE"
+  ]
+}

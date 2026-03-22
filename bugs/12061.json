@@ -1,0 +1,37 @@
+{
+  "id": "12061",
+  "title": "snd_hda_intel: power_save: sound cracks on powerdown",
+  "": "Show dependency tree",
+  "description": "Latest working kernel version: 2.6.27.6\nEarliest failing kernel version: 2.6.28-rc? (I'm thinking that it works sometime ago with 2.6.28)\nDistribution: Gentoo\nHardware Environment: Dell Latitude D830\nProblem Description:\nIf power_save is greater 0 the speakers make a cracking noise on powerdown after the specified timeout\n\nSteps to reproduce:\nload snd_hda_intel with power_save=5\nPlay a sound and wait 5 secs.\n\n\n---------------------------\n# cat /proc/asound/cards\n 0 [Intel          ]: HDA-Intel - HDA Intel\n                      HDA Intel at 0xf6adc000 irq 21\n\n# cat /proc/asound/pcm\n00-00: STAC92xx Analog : STAC92xx Analog : playback 1 : capture 2",
+  "patch": [
+    "diff --git a/sound/pci/hda/patch_sigmatel.c b/sound/pci/hda/patch_sigmatel.c\nindex 7cd395a..5653ff9 100644\n--- a/sound/pci/hda/patch_sigmatel.c\n+++ b/sound/pci/hda/patch_sigmatel.c\n@@ -4203,7 +4203,7 @@ static int stac92xx_resume(struct hda_codec *codec)\n static int stac92xx_suspend(struct hda_codec *codec, pm_message_t state)\n {\n \tstruct sigmatel_spec *spec = codec->spec;\n-\tif (spec->eapd_mask)\n+\tif (0 && spec->eapd_mask)\n \t\tstac_gpio_set(codec, spec->gpio_mask,\n \t\t\t\tspec->gpio_dir, spec->gpio_data &\n \t\t\t\t~spec->eapd_mask);\n",
+    "diff --git a/sound/pci/hda/patch_sigmatel.c b/sound/pci/hda/patch_sigmatel.c\nindex 9563b5b..c313fd7 100644\n--- a/sound/pci/hda/patch_sigmatel.c\n+++ b/sound/pci/hda/patch_sigmatel.c\n@@ -2305,7 +2305,7 @@ static int stac92xx_capture_pcm_prepare(struct hda_pcm_stream *hinfo,\n \n \tif (spec->powerdown_adcs) {\n \t\tmsleep(40);\n-\t\tsnd_hda_codec_write_cache(codec, nid, 0,\n+\t\tsnd_hda_codec_write(codec, nid, 0,\n \t\t\tAC_VERB_SET_POWER_STATE, AC_PWRST_D0);\n \t}\n \tsnd_hda_codec_setup_stream(codec, nid, stream_tag, 0, format);\n@@ -2321,7 +2321,7 @@ static int stac92xx_capture_pcm_cleanup(struct hda_pcm_stream *hinfo,\n \n \tsnd_hda_codec_cleanup_stream(codec, nid);\n \tif (spec->powerdown_adcs)\n-\t\tsnd_hda_codec_write_cache(codec, nid, 0,\n+\t\tsnd_hda_codec_write(codec, nid, 0,\n \t\t\tAC_VERB_SET_POWER_STATE, AC_PWRST_D3);\n \treturn 0;\n }\n@@ -3679,7 +3679,7 @@ static void stac92xx_power_down(struct hda_codec *codec)\n \tfor (dac = spec->dac_list; *dac; dac++)\n \t\tif (!is_in_dac_nids(spec, *dac) &&\n \t\t\tspec->multiout.hp_nid != *dac)\n-\t\t\tsnd_hda_codec_write_cache(codec, *dac, 0,\n+\t\t\tsnd_hda_codec_write(codec, *dac, 0,\n \t\t\t\t\tAC_VERB_SET_POWER_STATE, AC_PWRST_D3);\n }\n \n@@ -3694,7 +3694,7 @@ static int stac92xx_init(struct hda_codec *codec)\n \t/* power down adcs initially */\n \tif (spec->powerdown_adcs)\n \t\tfor (i = 0; i < spec->num_adcs; i++)\n-\t\t\tsnd_hda_codec_write_cache(codec,\n+\t\t\tsnd_hda_codec_write(codec,\n \t\t\t\tspec->adc_nids[i], 0,\n \t\t\t\tAC_VERB_SET_POWER_STATE, AC_PWRST_D3);\n \t/* set up pins */\n@@ -4395,48 +4395,6 @@ again:\n \treturn 0;\n }\n \n-#ifdef SND_HDA_NEEDS_RESUME\n-static void stac92hd71xx_set_power_state(struct hda_codec *codec, int pwr)\n-{\n-\tstruct sigmatel_spec *spec = codec->spec;\n-\tint i;\n-\tsnd_hda_codec_write_cache(codec, codec->afg, 0,\n-\t\tAC_VERB_SET_POWER_STATE, pwr);\n-\n-\tmsleep(1);\n-\tfor (i = 0; i < spec->num_adcs; i++) {\n-\t\tsnd_hda_codec_write_cache(codec,\n-\t\t\tspec->adc_nids[i], 0,\n-\t\t\tAC_VERB_SET_POWER_STATE, pwr);\n-\t}\n-};\n-\n-static int stac92hd71xx_resume(struct hda_codec *codec)\n-{\n-\tstac92hd71xx_set_power_state(codec, AC_PWRST_D0);\n-\treturn stac92xx_resume(codec);\n-}\n-\n-static int stac92hd71xx_suspend(struct hda_codec *codec, pm_message_t state)\n-{\n-\tstac92hd71xx_set_power_state(codec, AC_PWRST_D3);\n-\treturn 0;\n-};\n-\n-#endif\n-\n-static struct hda_codec_ops stac92hd71bxx_patch_ops = {\n-\t.build_controls = stac92xx_build_controls,\n-\t.build_pcms = stac92xx_build_pcms,\n-\t.init = stac92xx_init,\n-\t.free = stac92xx_free,\n-\t.unsol_event = stac92xx_unsol_event,\n-#ifdef SND_HDA_NEEDS_RESUME\n-\t.resume = stac92hd71xx_resume,\n-\t.suspend = stac92hd71xx_suspend,\n-#endif\n-};\n-\n static struct hda_input_mux stac92hd71bxx_dmux = {\n \t.num_items = 4,\n \t.items = {\n@@ -4511,12 +4469,8 @@ again:\n \t\t\tbreak;\n \t\t}\n \t\tif ((codec->revision_id & 0xf) == 0 ||\n-\t\t\t\t(codec->revision_id & 0xf) == 1) {\n-#ifdef SND_HDA_NEEDS_RESUME\n-\t\t\tcodec->patch_ops = stac92hd71bxx_patch_ops;\n-#endif\n+\t\t\t\t(codec->revision_id & 0xf) == 1)\n \t\t\tspec->stream_delay = 40; /* 40 milliseconds */\n-\t\t}\n \n \t\t/* no output amps */\n \t\tspec->num_pwrs = 0;\n@@ -4528,12 +4482,8 @@ again:\n \t\tstac92xx_set_config_reg(codec, 0xf, 0x40f000f0);\n \t\tbreak;\n \tcase 0x111d7603: /* 6 Port with Analog Mixer */\n-\t\tif ((codec->revision_id & 0xf) == 1) {\n-#ifdef SND_HDA_NEEDS_RESUME\n-\t\t\tcodec->patch_ops = stac92hd71bxx_patch_ops;\n-#endif\n+\t\tif ((codec->revision_id & 0xf) == 1)\n \t\t\tspec->stream_delay = 40; /* 40 milliseconds */\n-\t\t}\n \n \t\t/* no output amps */\n \t\tspec->num_pwrs = 0;\n",
+    "diff --git a/sound/pci/hda/patch_sigmatel.c b/sound/pci/hda/patch_sigmatel.c\nindex 4c851fd..7746d39 100644\n--- a/sound/pci/hda/patch_sigmatel.c\n+++ b/sound/pci/hda/patch_sigmatel.c\n@@ -4344,6 +4344,10 @@ static int stac92xx_suspend(struct hda_codec *codec, pm_message_t state)\n \t\tstac_gpio_set(codec, spec->gpio_mask,\n \t\t\t\tspec->gpio_dir, spec->gpio_data &\n \t\t\t\t~spec->eapd_mask);\n+\t/* analog pins power down */\n+\tif (spec->pwr_nids)\n+\t\tsnd_hda_codec_write(codec, codec->afg, 0, 0x7ec, 0);\n+\n \treturn 0;\n }\n #endif\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Sound",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Takashi Iwai",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "11808",
+  "Reported": "2008-11-18 12:07 UTC by Jens Weibler",
+  "Modified": "2009-11-24 00:39 UTC",
+  "CC List": "7 users",
+  "See Also": "",
+  "Kernel Version": "2.6.28-rc5",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "sound/pci/hda/patch_sigmatel.c"
+  ],
+  "methods": [
+    "stac92xx_suspend"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "id": "11323",
+  "title": "/proc/diskstats does not contain all disk devices",
+  "": "Show dependency tree",
+  "description": "Latest working kernel version: 2.6.26\nEarliest failing kernel version: 2.6.27-rc1\nDistribution: Debian\nHardware Environment: Dell\nSoftware Environment:\nProblem Description: /proc/diskstats does not contain all the block devices it should. /sys/block has all the devices, but /proc/diskstats does not.\n\nSteps to reproduce: boot a system with >9 (10?) disk devices (24 block devices?)",
+  "patch": [
+    "From: Kay Sievers <kay.sievers@vrfy.org>\nSubject: block: fix partial read() of proc files\n\n/proc/partitions gets truncated if it does not fit into the\nread buffer. We need to move the index from the callback of\nclass_find_device() to the caller of class_find_device().\n\nSigned-off-by: Kay Sievers <kay.sievers@vrfy.org>\n---\n genhd.c |   11 ++++++-----\n 1 file changed, 6 insertions(+), 5 deletions(-)\n\ndiff --git a/block/genhd.c b/block/genhd.c\nindex c13cc77..06b2de0 100644\n--- a/block/genhd.c\n+++ b/block/genhd.c\n@@ -293,25 +293,26 @@ void __init printk_all_partitions(void)\n /* iterator */\n static int find_start(struct device *dev, void *data)\n {\n-\tloff_t k = *(loff_t *)data;\n+\tloff_t *k = data;\n \n \tif (dev->type != &disk_type)\n \t\treturn 0;\n-\tif (!k--)\n+\tif (!*k)\n \t\treturn 1;\n+\t(*k)--;\n \treturn 0;\n }\n \n static void *part_start(struct seq_file *part, loff_t *pos)\n {\n \tstruct device *dev;\n-\tloff_t n = *pos;\n+\tloff_t k = *pos;\n \n-\tif (!n)\n+\tif (!k)\n \t\tseq_puts(part, \"major minor  #blocks  name\\n\\n\");\n \n \tmutex_lock(&block_class_lock);\n-\tdev = class_find_device(&block_class, NULL, (void *)pos, find_start);\n+\tdev = class_find_device(&block_class, NULL, &k, find_start);\n \tif (dev)\n \t\treturn dev_to_disk(dev);\n \treturn NULL;\n",
+    "From: Kay Sievers <kay.sievers@vrfy.org>\nSubject: block: fix partial read() of /proc/{partitions,diskstats}\n\nThe proc files get truncated if they do not fit into the buffer with\na single read(). We need to move the seq_file index from the callback\nof class_find_device() to the caller of class_find_device(), to keep\nits value across multiple invocations of the callback.\n\nSigned-off-by: Kay Sievers <kay.sievers@vrfy.org>\n---\n\n genhd.c |   14 ++++++++------\n 1 file changed, 8 insertions(+), 6 deletions(-)\n\ndiff --git a/block/genhd.c b/block/genhd.c\nindex c13cc77..f34befc 100644\n--- a/block/genhd.c\n+++ b/block/genhd.c\n@@ -293,25 +293,26 @@ void __init printk_all_partitions(void)\n /* iterator */\n static int find_start(struct device *dev, void *data)\n {\n-\tloff_t k = *(loff_t *)data;\n+\tloff_t *k = data;\n \n \tif (dev->type != &disk_type)\n \t\treturn 0;\n-\tif (!k--)\n+\tif (!*k)\n \t\treturn 1;\n+\t(*k)--;\n \treturn 0;\n }\n \n static void *part_start(struct seq_file *part, loff_t *pos)\n {\n \tstruct device *dev;\n-\tloff_t n = *pos;\n+\tloff_t k = *pos;\n \n-\tif (!n)\n+\tif (!k)\n \t\tseq_puts(part, \"major minor  #blocks  name\\n\\n\");\n \n \tmutex_lock(&block_class_lock);\n-\tdev = class_find_device(&block_class, NULL, (void *)pos, find_start);\n+\tdev = class_find_device(&block_class, NULL, &k, find_start);\n \tif (dev)\n \t\treturn dev_to_disk(dev);\n \treturn NULL;\n@@ -568,9 +569,10 @@ static struct device_type disk_type = {\n static void *diskstats_start(struct seq_file *part, loff_t *pos)\n {\n \tstruct device *dev;\n+\tloff_t k = *pos;\n \n \tmutex_lock(&block_class_lock);\n-\tdev = class_find_device(&block_class, NULL, (void *)pos, find_start);\n+\tdev = class_find_device(&block_class, NULL, &k, find_start);\n \tif (dev)\n \t\treturn dev_to_disk(dev);\n \treturn NULL;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "File System",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "fs_other",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "Regressions-2.6.26",
+  "Reported": "2008-08-13 12:12 UTC by Andy Ryan",
+  "Modified": "2008-08-23 12:23 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.27-rc1",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "block/genhd.c"
+  ],
+  "methods": [
+    "find_start",
+    "*part_start"
+  ]
+}

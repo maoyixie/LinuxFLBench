@@ -1,0 +1,124 @@
+{
+  "id": "15537",
+  "title": "2.6.34-rc1 hangs for 30 seconds when trying to access the disk",
+  "kernel_version": "2.6.34-rc1",
+  "product": "IO/Storage",
+  "component": "Serial ATA",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup",
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/ata/libata-sff.c"
+    ],
+    "buggy_methods": [
+      "ata_sff_host_intr",
+      "ata_sff_interrupt"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": true,
+    "description_length": 4787,
+    "description_word_count": 708
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 35,
+    "lines_removed": 8,
+    "patch_size": 43,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "init_fix",
+      "synchronization"
+    ],
+    "num_hunks": 7,
+    "hunk_functions": [
+      "EXPORT_SYMBOL_GPL",
+      "ata_sff_interrupt",
+      "ata_sff_host_intr"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/ata/libata-sff.c",
+    "filename": "libata-sff.c",
+    "directory": "drivers/ata",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "ata",
+    "driver_subsystem": "ata/libata-sff.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Serial ATA",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "15537",
+      "version": "2.6.34-rc1",
+      "status": "found",
+      "path": "drivers/ata/libata-sff.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "15537",
+    "title": "2.6.34-rc1 hangs for 30 seconds when trying to access the disk",
+    "ground_truth_file": "drivers/ata/libata-sff.c",
+    "ground_truth_subsystem": "drivers/ata",
+    "ground_truth_methods": [
+      "ata_sff_host_intr",
+      "ata_sff_interrupt"
+    ],
+    "product": "IO/Storage",
+    "component": "Serial ATA",
+    "best_strategy": "search_config_related_code",
+    "symptom_categories": [
+      "hang/deadlock",
+      "wrong_output"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "locking_fix",
+      "init_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "config_options",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "Serial ATA",
+      "product": "IO/Storage",
+      "configs": [
+        "CONFIG_PATA_SCH",
+        "CONFIG_PATA_MPIIX"
+      ]
+    }
+  },
+  "overall_category": "E_search_config_related_code"
+}

@@ -1,0 +1,121 @@
+{
+  "id": "35472",
+  "title": "[bisected] [r600] radeondrmfb rendering is broken and running X makes GPU lock-up on RV770 CE (Radeon HD 4730)",
+  "kernel_version": "2.6.38",
+  "product": "Drivers",
+  "component": "Video",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "wrong_behavior",
+    "power/sleep",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpu/drm/radeon/rv770.c"
+    ],
+    "buggy_methods": [
+      "rv770_program_channel_remap"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "drm_ioctl",
+      "radeon_fence_wait"
+    ],
+    "mentioned_file_paths": [
+      "drivers/gpu/drm/radeon/radeon_fence.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 76,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 4805,
+    "description_word_count": 615
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 6,
+    "lines_removed": 0,
+    "patch_size": 6,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "rv770_program_channel_remap"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpu/drm/radeon/rv770.c",
+    "filename": "rv770.c",
+    "directory": "drivers/gpu/drm/radeon",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "gpu",
+    "driver_subsystem": "gpu/drm",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_2_functions",
+      "dmesg_logs_available",
+      "component_known:Video",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "35472",
+      "version": "2.6.38",
+      "status": "found",
+      "path": "drivers/gpu/drm/radeon/rv770.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "35472",
+    "version": "2.6.38",
+    "ground_truth_file": "drivers/gpu/drm/radeon/rv770.c",
+    "trace_functions": [
+      "radeon_fence_wait",
+      "drm_ioctl"
+    ],
+    "total_trace_functions": 2,
+    "function_locations": {
+      "radeon_fence_wait": [
+        "drivers/gpu/drm/radeon/radeon_fence.c"
+      ],
+      "drm_ioctl": [
+        "drivers/gpu/drm/drm_drv.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "drivers/gpu/drm/drm_drv.c",
+      "drivers/gpu/drm/radeon/radeon_fence.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

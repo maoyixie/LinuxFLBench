@@ -1,0 +1,194 @@
+{
+  "id": "7657",
+  "title": "BUG: NULL pointer dereference in ieee80211softmac_get_network_by_bssid_locked",
+  "kernel_version": "2.6.19",
+  "product": "Networking",
+  "component": "Wireless",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "net/ieee80211/softmac/ieee80211softmac_assoc.c"
+    ],
+    "buggy_methods": [
+      "ieee80211softmac_assoc_notify_scan",
+      "ieee80211softmac_assoc_notify_auth"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "default_wake_function",
+      "worker_thread",
+      "ieee80211softmac_assoc_notify_scan",
+      "ieee80211softmac_notify_callback",
+      "ieee80211softmac_get_network_by_bssid_locked",
+      "ieee80211softmac_get_network_by_bssid",
+      "ieee80211softmac_assoc_work",
+      "ieee80211softmac_send_disassoc_req",
+      "run_workqueue",
+      "kthread",
+      "kernel_thread_helper"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 36,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 7934,
+    "description_word_count": 941
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 2,
+    "patch_size": 4,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "switch",
+      "ieee80211softmac_assoc_notify_scan"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "net/ieee80211/softmac/ieee80211softmac_assoc.c",
+    "filename": "ieee80211softmac_assoc.c",
+    "directory": "net/ieee80211/softmac",
+    "depth": 4,
+    "top_level": "net",
+    "second_level": "ieee80211",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_11_functions",
+      "dmesg_logs_available",
+      "component_known:Wireless"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "7657",
+      "version": "2.6.19",
+      "status": "found",
+      "path": "net/ieee80211/softmac/ieee80211softmac_assoc.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "7657",
+    "version": "2.6.19",
+    "ground_truth_file": "net/ieee80211/softmac/ieee80211softmac_assoc.c",
+    "trace_functions": [
+      "ieee80211softmac_get_network_by_bssid_locked",
+      "ieee80211softmac_get_network_by_bssid",
+      "ieee80211softmac_send_disassoc_req",
+      "ieee80211softmac_assoc_work",
+      "ieee80211softmac_assoc_notify_scan",
+      "ieee80211softmac_notify_callback",
+      "run_workqueue",
+      "worker_thread",
+      "default_wake_function",
+      "kthread",
+      "kernel_thread_helper"
+    ],
+    "total_trace_functions": 11,
+    "function_locations": {
+      "ieee80211softmac_get_network_by_bssid_locked": [],
+      "ieee80211softmac_get_network_by_bssid": [],
+      "ieee80211softmac_send_disassoc_req": [],
+      "ieee80211softmac_assoc_work": [],
+      "ieee80211softmac_assoc_notify_scan": [],
+      "ieee80211softmac_notify_callback": [],
+      "run_workqueue": [
+        "kernel/workqueue.c"
+      ],
+      "worker_thread": [
+        "kernel/workqueue.c",
+        "drivers/scsi/ipr.c"
+      ],
+      "default_wake_function": [
+        "kernel/sched.c"
+      ],
+      "kthread": [
+        "drivers/usb/atm/ueagle-atm.c",
+        "arch/ia64/sn/kernel/xpc_main.c",
+        "kernel/kthread.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "kernel/sched.c",
+      "kernel/kthread.c",
+      "arch/ia64/sn/kernel/xpc_main.c",
+      "kernel/workqueue.c",
+      "drivers/usb/atm/ueagle-atm.c",
+      "drivers/scsi/ipr.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "7657",
+    "title": "BUG: NULL pointer dereference in ieee80211softmac_get_network_by_bssid_locked",
+    "ground_truth_file": "net/ieee80211/softmac/ieee80211softmac_assoc.c",
+    "ground_truth_methods": [
+      "ieee80211softmac_assoc_notify_scan",
+      "ieee80211softmac_assoc_notify_auth"
+    ],
+    "ground_truth_subsystem": "net/ieee80211",
+    "trace_functions_top8": [
+      "ieee80211softmac_get_network_by_bssid_locked",
+      "ieee80211softmac_get_network_by_bssid",
+      "ieee80211softmac_send_disassoc_req",
+      "ieee80211softmac_assoc_work",
+      "ieee80211softmac_assoc_notify_scan",
+      "ieee80211softmac_notify_callback",
+      "run_workqueue",
+      "worker_thread"
+    ],
+    "trace_function_locations": {
+      "ieee80211softmac_get_network_by_bssid_locked": [],
+      "ieee80211softmac_get_network_by_bssid": [],
+      "ieee80211softmac_send_disassoc_req": [],
+      "ieee80211softmac_assoc_work": [],
+      "ieee80211softmac_assoc_notify_scan": [],
+      "ieee80211softmac_notify_callback": [],
+      "run_workqueue": [
+        "kernel/workqueue.c"
+      ],
+      "worker_thread": [
+        "kernel/workqueue.c"
+      ]
+    },
+    "trace_subsystems": [
+      "kernel/workqueue.c"
+    ],
+    "mismatch_type": "trace_in_infrastructure",
+    "gt_calls_trace_func": true,
+    "gt_method_in_trace": true,
+    "product": "Networking",
+    "component": "Wireless"
+  },
+  "overall_category": "C_trace_misleads"
+}

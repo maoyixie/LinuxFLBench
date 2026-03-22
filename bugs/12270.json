@@ -1,0 +1,35 @@
+{
+  "id": "12270",
+  "title": "Almost all my devices are not recongnized by  kernel-2.6.27, 2.6-28",
+  "description": "Latest working kernel version:kernel 2.6.24\n\nEarliest failing kernel version: kernel 2.6.27\n\nDistribution: Mandriva\nHardware Environment: Atlon AMD 1800+,\n\nSoftware Environment: KDE\n\nProblem Description: As said in the summary, with kernel 2-6-27 and 2-6-28 (thos ones are availables in mandriva repositories), all my devices are not recognized by the kernel. So, I have no printers, no internet, no webcam.....\nWith kernel 2-6-24, everything is fine. The bug is not due to patched  mandriva kernel since I used a pure linux version kernel.\n\nSteps to reproduce:Just boot the kernel",
+  "patch": [
+    "From: Zhang Rui <rui.zhang@intel.com>\nSubject: revert 2f894e\n\ncommit 2f894ef9 and commit d0e184ab are for the same issue.\nrevert 2f894ef9 to keep compatibility with ACPICA.\n\nSigned-off-by: Zhang Rui <rui.zhang@intel.com>\n---\n drivers/acpi/resources/rscreate.c |   27 ++-------------------------\n 1 file changed, 2 insertions(+), 25 deletions(-)\n\nIndex: linux-2.6/drivers/acpi/resources/rscreate.c\n===================================================================\n--- linux-2.6.orig/drivers/acpi/resources/rscreate.c\n+++ linux-2.6/drivers/acpi/resources/rscreate.c\n@@ -190,8 +190,6 @@ acpi_rs_create_pci_routing_table(union a\n \tuser_prt = ACPI_CAST_PTR(struct acpi_pci_routing_table, buffer);\n \n \tfor (index = 0; index < number_of_elements; index++) {\n-\t\tint source_name_index = 2;\n-\t\tint source_index_index = 3;\n \n \t\t/*\n \t\t * Point user_prt past this current structure\n@@ -260,27 +258,6 @@ acpi_rs_create_pci_routing_table(union a\n \t\t\treturn_ACPI_STATUS(AE_BAD_DATA);\n \t\t}\n \n-\t\t/*\n-\t\t * If BIOS erroneously reversed the _PRT source_name and source_index,\n-\t\t * then reverse them back.\n-\t\t */\n-\t\tif (ACPI_GET_OBJECT_TYPE(sub_object_list[3]) !=\n-\t\t    ACPI_TYPE_INTEGER) {\n-\t\t\tif (acpi_gbl_enable_interpreter_slack) {\n-\t\t\t\tsource_name_index = 3;\n-\t\t\t\tsource_index_index = 2;\n-\t\t\t\tprintk(KERN_WARNING\n-\t\t\t\t       \"ACPI: Handling Garbled _PRT entry\\n\");\n-\t\t\t} else {\n-\t\t\t\tACPI_ERROR((AE_INFO,\n-\t\t\t\t\t    \"(PRT[%X].source_index) Need Integer, found %s\",\n-\t\t\t\t\t    index,\n-\t\t\t\t\t    acpi_ut_get_object_type_name\n-\t\t\t\t\t    (sub_object_list[3])));\n-\t\t\t\treturn_ACPI_STATUS(AE_BAD_DATA);\n-\t\t\t}\n-\t\t}\n-\n \t\tuser_prt->pin = (u32) obj_desc->integer.value;\n \n \t\t/*\n@@ -304,7 +281,7 @@ acpi_rs_create_pci_routing_table(union a\n \t\t * 3) Third subobject: Dereference the PRT.source_name\n \t\t * The name may be unresolved (slack mode), so allow a null object\n \t\t */\n-\t\tobj_desc = sub_object_list[source_name_index];\n+\t\tobj_desc = sub_object_list[2];\n \t\tif (obj_desc) {\n \t\t\tswitch (ACPI_GET_OBJECT_TYPE(obj_desc)) {\n \t\t\tcase ACPI_TYPE_LOCAL_REFERENCE:\n@@ -378,7 +355,7 @@ acpi_rs_create_pci_routing_table(union a\n \n \t\t/* 4) Fourth subobject: Dereference the PRT.source_index */\n \n-\t\tobj_desc = sub_object_list[source_index_index];\n+\t\tobj_desc = sub_object_list[3];\n \t\tif (ACPI_GET_OBJECT_TYPE(obj_desc) != ACPI_TYPE_INTEGER) {\n \t\t\tACPI_ERROR((AE_INFO,\n \t\t\t\t    \"(PRT[%X].SourceIndex) Need Integer, found %s\",\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "ACPICA-Core",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "Zhang Rui",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (1)": "12976",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-12-22 01:20 UTC by paul",
+  "Modified": "2009-06-23 01:40 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.27",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/resources/rscreate.c"
+  ],
+  "methods": [
+    "acpi_rs_create_pci_routing_table"
+  ]
+}

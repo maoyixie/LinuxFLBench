@@ -1,0 +1,185 @@
+{
+  "id": "14143",
+  "title": "OOPS when setting nr_requests for md devices",
+  "kernel_version": "2.6.31",
+  "product": "IO/Storage",
+  "component": "Block Layer",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "block/blk-sysfs.c"
+    ],
+    "buggy_methods": [
+      "queue_requests_store"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "__wake_up_common"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/block/mdX/queue/nr_requests",
+      "/sys/devices/virtual/block/md3/queue/nr_requests"
+    ],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 39,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 4260,
+    "description_word_count": 415
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 6,
+    "lines_removed": 1,
+    "patch_size": 7,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "queue_requests_store"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "block/blk-sysfs.c",
+    "filename": "blk-sysfs.c",
+    "directory": "block",
+    "depth": 2,
+    "top_level": "block",
+    "second_level": "blk-sysfs.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_1_functions",
+      "proc_sys_paths_hint_subsystem",
+      "dmesg_logs_available",
+      "component_known:Block Layer",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "14143",
+      "version": "2.6.31",
+      "status": "found",
+      "path": "block/blk-sysfs.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "14143",
+    "version": "2.6.31",
+    "ground_truth_file": "block/blk-sysfs.c",
+    "trace_functions": [
+      "__wake_up_common",
+      "__wake_up",
+      "queue_requests_store",
+      "queue_attr_store",
+      "sysfs_write_file",
+      "vfs_write",
+      "sys_write",
+      "system_call_fastpath"
+    ],
+    "total_trace_functions": 8,
+    "function_locations": {
+      "__wake_up_common": [
+        "kernel/sched.c"
+      ],
+      "__wake_up": [
+        "kernel/sched.c"
+      ],
+      "queue_requests_store": [],
+      "queue_attr_store": [],
+      "sysfs_write_file": [],
+      "vfs_write": [
+        "fs/nfsd/vfs.c",
+        "fs/read_write.c"
+      ],
+      "sys_write": [
+        "fs/proc/proc_sysctl.c",
+        "drivers/video/fb_sys_fops.c"
+      ],
+      "system_call_fastpath": []
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "fs/nfsd/vfs.c",
+      "kernel/sched.c",
+      "fs/proc/proc_sysctl.c",
+      "drivers/video/fb_sys_fops.c",
+      "fs/read_write.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "14143",
+    "title": "OOPS when setting nr_requests for md devices",
+    "ground_truth_file": "block/blk-sysfs.c",
+    "ground_truth_methods": [
+      "queue_requests_store"
+    ],
+    "ground_truth_subsystem": "block/blk-sysfs.c",
+    "trace_functions_top8": [
+      "__wake_up_common",
+      "__wake_up",
+      "queue_requests_store",
+      "queue_attr_store",
+      "sysfs_write_file",
+      "vfs_write",
+      "sys_write",
+      "system_call_fastpath"
+    ],
+    "trace_function_locations": {
+      "__wake_up_common": [
+        "kernel/sched.c"
+      ],
+      "__wake_up": [
+        "kernel/sched.c"
+      ],
+      "queue_requests_store": [],
+      "queue_attr_store": [],
+      "sysfs_write_file": [],
+      "vfs_write": [
+        "fs/read_write.c"
+      ],
+      "sys_write": [],
+      "system_call_fastpath": []
+    },
+    "trace_subsystems": [
+      "fs/read_write.c",
+      "kernel/sched.c"
+    ],
+    "mismatch_type": "trace_in_infrastructure",
+    "gt_calls_trace_func": true,
+    "gt_method_in_trace": true,
+    "product": "IO/Storage",
+    "component": "Block Layer"
+  },
+  "overall_category": "C_trace_misleads"
+}

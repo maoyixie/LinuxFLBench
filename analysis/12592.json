@@ -1,0 +1,110 @@
+{
+  "id": "12592",
+  "title": "fw_card_add adds card to the list even on enable failure",
+  "kernel_version": "2.6.29-rc3",
+  "product": "Drivers",
+  "component": "IEEE1394",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "performance",
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/firewire/fw-card.c"
+    ],
+    "buggy_methods": [
+      "fw_card_add"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1157,
+    "description_word_count": 171
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 8,
+    "lines_removed": 1,
+    "patch_size": 9,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "synchronization"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "fw_card_add"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/firewire/fw-card.c",
+    "filename": "fw-card.c",
+    "directory": "drivers/firewire",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "firewire",
+    "driver_subsystem": "firewire/fw-card.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:IEEE1394"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "12592",
+      "version": "2.6.29-rc3",
+      "status": "found",
+      "path": "drivers/firewire/fw-card.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "12592",
+    "title": "fw_card_add adds card to the list even on enable failure",
+    "ground_truth_file": "drivers/firewire/fw-card.c",
+    "ground_truth_subsystem": "drivers/firewire",
+    "ground_truth_methods": [
+      "fw_card_add"
+    ],
+    "product": "Drivers",
+    "component": "IEEE1394",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "wrong_output",
+      "performance",
+      "data_corruption"
+    ],
+    "fix_types": [
+      "locking_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "IEEE1394",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

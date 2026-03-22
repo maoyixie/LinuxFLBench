@@ -1,0 +1,123 @@
+{
+  "id": "12914",
+  "title": "pmac_zilog fails to find IRQ for internal serial modem",
+  "kernel_version": "2.6.28",
+  "product": "Platform Specific/Hardware",
+  "component": "PPC-32",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/serial/pmac_zilog.c"
+    ],
+    "buggy_methods": [
+      "pmz_init_port"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "in the system log:"
+    ],
+    "proc_sys_paths": [
+      "/proc/tty/driver/ttyPZ"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 2338,
+    "description_word_count": 349
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 5,
+    "lines_removed": 0,
+    "patch_size": 5,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/serial/pmac_zilog.c",
+    "filename": "pmac_zilog.c",
+    "directory": "drivers/serial",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "serial",
+    "driver_subsystem": "serial/pmac_zilog.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:PPC-32",
+      "is_regression"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "12914",
+      "version": "2.6.28",
+      "status": "found",
+      "path": "drivers/serial/pmac_zilog.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "12914",
+    "title": "pmac_zilog fails to find IRQ for internal serial modem",
+    "ground_truth_file": "drivers/serial/pmac_zilog.c",
+    "ground_truth_subsystem": "drivers/serial",
+    "ground_truth_methods": [
+      "pmz_init_port"
+    ],
+    "product": "Platform Specific/Hardware",
+    "component": "PPC-32",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "error_return_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "driver_module_named",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/proc/tty/driver/ttyPZ"
+      ],
+      "component": "PPC-32",
+      "product": "Platform Specific/Hardware",
+      "modules": [
+        "v2",
+        "revision"
+      ]
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

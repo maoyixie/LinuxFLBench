@@ -1,0 +1,152 @@
+{
+  "id": "9327",
+  "title": "2.6.24-rc2 (esthetic?) regression: auto select interrupt bouncing",
+  "kernel_version": "2.6.24-rc2",
+  "product": "ACPI",
+  "component": "EC",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup",
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/ec.c"
+    ],
+    "buggy_methods": [
+      "acpi_ec_read_status",
+      "acpi_ec_read_data",
+      "acpi_ec_write_cmd",
+      "acpi_ec_write_data",
+      "acpi_ec_wait",
+      "acpi_ec_transaction_unlocked",
+      "acpi_ec_transaction",
+      "acpi_ec_gpe_handler",
+      "ec_remove_handlers",
+      "acpi_ec_add",
+      "acpi_ec_ecdt_probe"
+    ],
+    "num_methods": 11
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 6,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 872,
+    "description_word_count": 122
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 58,
+    "lines_removed": 28,
+    "patch_size": 86,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "init_fix",
+      "synchronization"
+    ],
+    "num_hunks": 17,
+    "hunk_functions": [
+      "acpi_ec_check_status",
+      "acpi_ec_ecdt_probe",
+      "acpi_ec_gpe_handler",
+      "ec_remove_handlers",
+      "acpi_ec_wait",
+      "acpi_ec_transaction_unlocked",
+      "acpi_ec_transaction",
+      "acpi_ec_add"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/ec.c",
+    "filename": "ec.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/ec.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "medium",
+    "signals": [
+      "dmesg_logs_available",
+      "component_known:EC",
+      "is_regression"
+    ],
+    "strategies": [
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "9327",
+      "version": "2.6.24-rc2",
+      "status": "found",
+      "path": "drivers/acpi/ec.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "9327",
+    "title": "2.6.24-rc2 (esthetic?) regression: auto select interrupt bouncing",
+    "ground_truth_file": "drivers/acpi/ec.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "acpi_ec_read_status",
+      "acpi_ec_read_data",
+      "acpi_ec_write_cmd",
+      "acpi_ec_write_data",
+      "acpi_ec_wait",
+      "acpi_ec_transaction_unlocked",
+      "acpi_ec_transaction",
+      "acpi_ec_gpe_handler",
+      "ec_remove_handlers",
+      "acpi_ec_add",
+      "acpi_ec_ecdt_probe"
+    ],
+    "product": "ACPI",
+    "component": "EC",
+    "best_strategy": "grep_error_strings",
+    "symptom_categories": [
+      "hang/deadlock",
+      "performance"
+    ],
+    "fix_types": [
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "kernel_log_messages",
+      "greppable_kernel_messages",
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "kernel_msg_count": 6,
+      "greppable_kernel_msgs": [
+        "EC: missing IBF_1 confirmations,switch off interrupt mode.",
+        "EC: non-query interrupt received, switching to interrupt mode",
+        "EC: missing IBF_1 confirmations,switch off interrupt mode.",
+        "EC: non-query interrupt received, switching to interrupt mode",
+        "EC: missing IBF_1 confirmations,switch off interrupt mode."
+      ],
+      "component": "EC",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_grep_error_strings"
+}

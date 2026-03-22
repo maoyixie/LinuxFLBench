@@ -1,0 +1,121 @@
+{
+  "id": "11735",
+  "title": "delkin_cb fails after resume",
+  "kernel_version": "2.6.27",
+  "product": "IO/Storage",
+  "component": "IDE",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "performance",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/ide/pci/delkin_cb.c"
+    ],
+    "buggy_methods": [
+      "delkin_cb_probe",
+      "delkin_cb_port_info",
+      "driver"
+    ],
+    "num_methods": 3
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/power/state"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 821,
+    "description_word_count": 142
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 56,
+    "lines_removed": 7,
+    "patch_size": 63,
+    "new_functions": [
+      "delkin_cb_suspend",
+      "delkin_cb_resume"
+    ],
+    "patch_types": [
+      "quirk/device_table",
+      "new_function",
+      "logic_change",
+      "error_handling",
+      "config/ifdef",
+      "init_fix",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 5,
+    "hunk_functions": [
+      "delkin_cb_remove",
+      "delkin_cb_probe"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/ide/pci/delkin_cb.c",
+    "filename": "delkin_cb.c",
+    "directory": "drivers/ide/pci",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "ide",
+    "driver_subsystem": "ide/pci",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:IDE",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "11735",
+      "version": "2.6.27",
+      "status": "found",
+      "path": "drivers/ide/pci/delkin_cb.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "11735",
+    "title": "delkin_cb fails after resume",
+    "product": "IO/Storage",
+    "component": "IDE",
+    "buggy_file": [
+      "drivers/ide/pci/delkin_cb.c"
+    ],
+    "fix_type": "pci_usb_id_addition",
+    "table_entry_lines_added": 1,
+    "description_clues": [
+      "hardware_model_mentioned",
+      "device_ids_in_description"
+    ],
+    "patch_size": 63,
+    "potential_strategies": [
+      "grep_device_id_in_kernel_source",
+      "search_for_model_specific_quirks",
+      "narrow_by_component:IDE"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

@@ -1,0 +1,216 @@
+{
+  "id": "13498",
+  "title": "Kernel panic - not syncing: Attepmted to kill init! (Fedora 10)",
+  "kernel_version": "2.6.27",
+  "product": "Drivers",
+  "component": "PCI",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/pci/pcie/aspm.c"
+    ],
+    "buggy_methods": [
+      "pcie_aspm_init_link_state"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "driver_register",
+      "do_one_initcall",
+      "acpi_pci_root_init",
+      "kernel_init",
+      "acpi_bus_register_driver",
+      "child_rip",
+      "pcie_aspm_init_link_state"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1354,
+    "description_word_count": 169
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 4,
+    "lines_removed": 0,
+    "patch_size": 4,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "pcie_aspm_init_link_state"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/pci/pcie/aspm.c",
+    "filename": "aspm.c",
+    "directory": "drivers/pci/pcie",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "pci",
+    "driver_subsystem": "pci/pcie",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_7_functions",
+      "component_known:PCI"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13498",
+      "version": "2.6.27",
+      "status": "found",
+      "path": "drivers/pci/pcie/aspm.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "13498",
+    "version": "2.6.27",
+    "ground_truth_file": "drivers/pci/pcie/aspm.c",
+    "trace_functions": [
+      "driver_register",
+      "acpi_pci_root_init",
+      "early_idt_handler",
+      "acpi_bus_register_driver",
+      "do_one_initcall",
+      "task_statm",
+      "kernel_init",
+      "trace_hardirqs_on_thunk",
+      "child_rip",
+      "restore_args",
+      "pcie_aspm_init_link_state"
+    ],
+    "total_trace_functions": 11,
+    "function_locations": {
+      "driver_register": [
+        "drivers/base/driver.c",
+        "drivers/usb/host/ohci-ps3.c",
+        "drivers/ssb/main.c",
+        "arch/arm/mach-integrator/lm.c",
+        "drivers/message/fusion/mptbase.c",
+        "drivers/s390/crypto/ap_bus.c",
+        "drivers/s390/cio/ccwgroup.c",
+        "drivers/ps3/ps3-vuart.c",
+        "arch/ia64/sn/kernel/tiocx.c",
+        "drivers/message/i2o/driver.c"
+      ],
+      "acpi_pci_root_init": [
+        "drivers/acpi/pci_root.c"
+      ],
+      "early_idt_handler": [],
+      "acpi_bus_register_driver": [
+        "drivers/acpi/scan.c"
+      ],
+      "do_one_initcall": [
+        "init/main.c"
+      ],
+      "task_statm": [
+        "fs/proc/task_nommu.c",
+        "fs/proc/task_mmu.c"
+      ],
+      "kernel_init": [
+        "init/main.c"
+      ],
+      "trace_hardirqs_on_thunk": [],
+      "child_rip": [],
+      "restore_args": []
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "init/main.c",
+      "drivers/s390/crypto/ap_bus.c",
+      "drivers/s390/cio/ccwgroup.c",
+      "drivers/base/driver.c",
+      "drivers/ps3/ps3-vuart.c",
+      "drivers/usb/host/ohci-ps3.c",
+      "drivers/ssb/main.c",
+      "fs/proc/task_nommu.c",
+      "fs/proc/task_mmu.c",
+      "arch/arm/mach-integrator/lm.c",
+      "arch/ia64/sn/kernel/tiocx.c",
+      "drivers/message/fusion/mptbase.c",
+      "drivers/acpi/pci_root.c",
+      "drivers/message/i2o/driver.c",
+      "drivers/acpi/scan.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "13498",
+    "title": "Kernel panic - not syncing: Attepmted to kill init! (Fedora 10)",
+    "ground_truth_file": "drivers/pci/pcie/aspm.c",
+    "ground_truth_methods": [
+      "pcie_aspm_init_link_state"
+    ],
+    "ground_truth_subsystem": "drivers/pci",
+    "trace_functions_top8": [
+      "driver_register",
+      "acpi_pci_root_init",
+      "early_idt_handler",
+      "acpi_bus_register_driver",
+      "do_one_initcall",
+      "task_statm",
+      "kernel_init",
+      "trace_hardirqs_on_thunk"
+    ],
+    "trace_function_locations": {
+      "driver_register": [
+        "drivers/base/driver.c"
+      ],
+      "acpi_pci_root_init": [
+        "drivers/acpi/pci_root.c"
+      ],
+      "early_idt_handler": [],
+      "acpi_bus_register_driver": [
+        "drivers/acpi/scan.c"
+      ],
+      "do_one_initcall": [
+        "init/main.c"
+      ],
+      "task_statm": [
+        "fs/proc/task_mmu.c",
+        "fs/proc/task_nommu.c"
+      ],
+      "kernel_init": [
+        "init/main.c"
+      ],
+      "trace_hardirqs_on_thunk": []
+    },
+    "trace_subsystems": [
+      "fs/proc",
+      "drivers/acpi",
+      "init/main.c",
+      "drivers/base"
+    ],
+    "mismatch_type": "cross_subsystem_propagation",
+    "gt_calls_trace_func": false,
+    "gt_method_in_trace": true,
+    "product": "Drivers",
+    "component": "PCI"
+  },
+  "overall_category": "C_trace_misleads"
+}

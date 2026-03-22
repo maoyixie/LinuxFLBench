@@ -1,0 +1,38 @@
+{
+  "id": "12961",
+  "title": "Kernel panics in early boot: IO-APIC + timer doesn't work",
+  "": "Show dependency tree",
+  "description": "Created attachment 20718 [details]\ndmesg with acpi=debug\n\nLast working kernel version: 2.6.29-rc8-gitsomething\n\nHardware:\n\nTyan K8W Motherboard with 2 1.8GHz Dual Core Opterons with 2GB Ram for each node. The Motherboard uses the AMD 8xxx chipsets for AGP, PCI-X and Southbridge.\n\nSoftware: Debian unstable, 64bit.\n\nThe kernel crashes with the following message (and a backtrace afterwards):\n\n[    0.008000] ENABLING IO-APIC IRQs\n[    0.008000] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=0 pin2=0\n[    0.008000] ..MP-BIOS bug: 8254 timer not connected to IO-APIC\n[    0.008000] ...trying to set up timer (IRQ0) through the 8259A ...\n[    0.008000] ..... (found apic 0 pin 0) ...\n[    0.008000] ....... failed.\n[    0.008000] ...trying to set up timer as Virtual Wire IRQ...\n[    0.008000] ..... failed.\n[    0.008000] ...trying to set up timer as ExtINT IRQ...\n[    0.008000] ..... failed :(.\n[    0.008000] Kernel panic - not syncing: IO-APIC + timer doesn't work!  Boot with apic=debug and send a r.\n\nAttached is the complete dmesg as capture via serial-console (and with acpi=debug).",
+  "patch": [
+    "From 103a4585691d69c02627aa2a18446823989f413a Mon Sep 17 00:00:00 2001\nFrom: Andreas Herrmann <andreas.herrmann3@amd.com>\nDate: Tue, 21 Apr 2009 19:50:27 +0200\nSubject: [PATCH] x86: hpet: fix periodic mode programming on AMD 81xx\n\nImpact: fix boot time hang on machines with AMD 81xx chipset\n\n(See http://bugzilla.kernel.org/show_bug.cgi?id=12961)\n\nIt partially reverts commit c23e253e67c9d8a91a0ffa33c1f571a17f0a2403\n(x86: hpet: stop HPET_COUNTER when programming periodic mode)\n\nHPET on AMD 81xx chipset needs a second write (with HPET_TN_SETVAL\ncleared) to T0_CMP register to set the period in periodic mode.\n\nWith this patch HPET_COUNTER is still stopped but not reset when HPET\nis programmed in periodic mode. This should help to avoid races when\nHPET is programmed in periodic mode and fixes a boot time hang that\nI've observed on a machine when using 1000HZ.\n\nSigned-off-by: Andreas Herrmann <andreas.herrmann3@amd.com>\n---\n arch/x86/kernel/hpet.c |   18 +++++++++++++++++-\n 1 files changed, 17 insertions(+), 1 deletions(-)\n\ndiff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c\nindex 648b3a2..b30f79c 100644\n--- a/arch/x86/kernel/hpet.c\n+++ b/arch/x86/kernel/hpet.c\n@@ -236,6 +236,10 @@ static void hpet_stop_counter(void)\n \tunsigned long cfg = hpet_readl(HPET_CFG);\n \tcfg &= ~HPET_CFG_ENABLE;\n \thpet_writel(cfg, HPET_CFG);\n+}\n+\n+static void hpet_reset_counter(void)\n+{\n \thpet_writel(0, HPET_COUNTER);\n \thpet_writel(0, HPET_COUNTER + 4);\n }\n@@ -250,6 +254,7 @@ static void hpet_start_counter(void)\n static void hpet_restart_counter(void)\n {\n \thpet_stop_counter();\n+\thpet_reset_counter();\n \thpet_start_counter();\n }\n \n@@ -309,7 +314,7 @@ static int hpet_setup_msi_irq(unsigned int irq);\n static void hpet_set_mode(enum clock_event_mode mode,\n \t\t\t  struct clock_event_device *evt, int timer)\n {\n-\tunsigned long cfg;\n+\tunsigned long cfg, cmp, now;\n \tuint64_t delta;\n \n \tswitch (mode) {\n@@ -317,12 +322,23 @@ static void hpet_set_mode(enum clock_event_mode mode,\n \t\thpet_stop_counter();\n \t\tdelta = ((uint64_t)(NSEC_PER_SEC/HZ)) * evt->mult;\n \t\tdelta >>= evt->shift;\n+\t\tnow = hpet_readl(HPET_COUNTER);\n+\t\tcmp = now + (unsigned long) delta;\n \t\tcfg = hpet_readl(HPET_Tn_CFG(timer));\n \t\t/* Make sure we use edge triggered interrupts */\n \t\tcfg &= ~HPET_TN_LEVEL;\n \t\tcfg |= HPET_TN_ENABLE | HPET_TN_PERIODIC |\n \t\t       HPET_TN_SETVAL | HPET_TN_32BIT;\n \t\thpet_writel(cfg, HPET_Tn_CFG(timer));\n+\t\thpet_writel(cmp, HPET_Tn_CMP(timer));\n+\t\tudelay(1);\n+\t\t/*\n+\t\t * HPET on AMD 81xx needs a second write (with HPET_TN_SETVAL\n+\t\t * cleared) to T0_CMP to set the period. The HPET_TN_SETVAL\n+\t\t * bit is automatically cleared after the first write.\n+\t\t * (See AMD-8111 HyperTransport I/O Hub Data Sheet,\n+\t\t * Publication # 24674)\n+\t\t */\n \t\thpet_writel((unsigned long) delta, HPET_Tn_CMP(timer));\n \t\thpet_start_counter();\n \t\thpet_print_config();\n-- \n1.6.2\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Platform Specific/Hardware",
+  "Classification": "Unclassified",
+  "Component": "x86-64",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "platform_x86_64@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "12398",
+  "Reported": "2009-03-28 19:00 UTC by Daniel Vetter",
+  "Modified": "2009-04-27 20:17 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.29",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/x86/kernel/hpet.c"
+  ],
+  "methods": [
+    "hpet_stop_counter",
+    "hpet_restart_counter",
+    "hpet_set_mode",
+    "hpet_set_mode"
+  ]
+}

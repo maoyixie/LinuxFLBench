@@ -1,0 +1,37 @@
+{
+  "id": "1865",
+  "title": "uhci-hcd or hid modules stops working blocking usb mouse and module unloading",
+  "description": "Distribution: Gentoo Linux\nHardware Environment: AMD Athlon XP 2200+ on Via KT400 based board, 1GB Memory\nSoftware Environment: Gentoo Linux 1.4, Kernel 2.6 (and 2.6.1)\nProblem Description: \n\nThe driver responsible for my Logitech USB Mouse (uhci/ehci-hcd or hid) crashes\nand prevents the mouse from working any more. While the mouse's internal LED\nstays lit, it's impossible to unload and reload any module any more, so only a\nreboot solves the problem.\n\nReboot itself does not complete because it freezes when unloading other modules,\nlike Alsa. Any attempt to rmmod hid even with \"the force\" results in another\nuseless shell. Force module unload is enabled in Kernel.\n\nThe problem occured with both Kernel 2.6.0 and 2.6.1. I have not yet figured\nout, what really provokes the crash, but it will occur sometime after system\nstart. Shortest period was 30 minutes, longest 90 minutes.\n\nSteps to reproduce:\n- Start system\n- Wait.\n\nThis are example outputs of /var/log/messages at module crash time:\n\nJan 14 15:00:01 king kernel: drivers/usb/core/usb.c: deregistering driver hid\nJan 14 15:00:01 king input.agent[5388]: ... no modules for INPUT product\n3/46d/c00e/1100\nJan 14 15:00:01 king kernel: input: USB HID v1.10 Mouse [Logitech USB-PS/2\nOptical Mouse] on usb-0000:00:10.0-2.2\nJan 14 15:00:01 king kernel: drivers/usb/core/usb.c: registered new driver hid\nJan 14 15:00:01 king kernel: drivers/usb/input/hid-core.c: v2.0:USB HID core driver\nJan 14 15:41:16 king kernel: [f78d82d0] link (378d81e2) element (378d9200)\nJan 14 15:41:16 king kernel:  Element != First TD\nJan 14 15:41:16 king kernel:   0: [f78d9180] link (378d91c0) e3 Length=7\nMaxLen=7 DT0 EndPt=0 Dev=3, PID=2d(SETUP) (buf=37439ae0)\nJan 14 15:41:16 king kernel:   1: [f78d91c0] link (378d9200) e3 Length=7\nMaxLen=7 DT1 EndPt=0 Dev=3, PID=69(IN) (buf=3743a6c0)\nJan 14 15:41:16 king kernel:   2: [f78d9200] link (378d9240) e3 Stalled Babble\nLength=7ff MaxLen=3 DT0 EndPt=0 Dev=3, PID=69(IN) (buf=3743a6c8)\nJan 14 15:41:16 king kernel:   3: [f78d9240] link (00000001) e3 IOC Active\nLength=0 MaxLen=7ff DT1 EndPt=0 Dev=3, PID=e1(OUT) (buf=00000000)\nJan 14 15:41:16 king kernel:\nJan 14 15:41:21 king kernel: usb 2-2: control timeout on ep0in\nJan 14 15:41:41 king kernel: drivers/usb/core/usb.c: deregistering driver hid\nJan 14 15:41:46 king kernel: usb 2-2.2: control timeout on ep0out\n\nJan 14 14:38:42 king kernel: [f78db2d0] link (378db1e2) element (378e1200)\nJan 14 14:38:42 king kernel:  Element != First TD\nJan 14 14:38:42 king kernel:   0: [f78e1180] link (378e11c0) e3 Length=7\nMaxLen=7 DT0 EndPt=0 Dev=3, PID=2d(SETUP) (buf=322c47e0)\nJan 14 14:38:42 king kernel:   1: [f78e11c0] link (378e1200) e3 Length=7\nMaxLen=7 DT1 EndPt=0 Dev=3, PID=69(IN) (buf=36018780)\nJan 14 14:38:42 king kernel:   2: [f78e1200] link (378e1240) e3 Stalled Babble\nLength=7ff MaxLen=3 DT0 EndPt=0 Dev=3, PID=69(IN) (buf=36018788)\nJan 14 14:38:42 king kernel:   3: [f78e1240] link (00000001) e3 IOC Active\nLength=0 MaxLen=7ff DT1 EndPt=0 Dev=3, PID=e1(OUT) (buf=00000000)\nJan 14 14:38:42 king kernel:\nJan 14 14:38:47 king kernel: usb 2-2: control timeout on ep0in\nJan 14 14:49:43 king kernel: drivers/usb/core/usb.c: deregistering driver hid\nJan 14 14:49:48 king kernel: usb 2-2.2: control timeout on ep0out",
+  "patch": [
+    "===== uhci-hcd.c 1.78 vs edited =====\n--- 1.78/drivers/usb/host/uhci-hcd.c\tThu Feb  5 05:59:31 2004\n+++ edited/drivers/usb/host/uhci-hcd.c\tMon Feb  9 11:02:33 2004\n@@ -1516,6 +1516,7 @@\n \t}\n \n \tspin_unlock_irqrestore(&uhci->urb_list_lock, flags);\n+\tprintk(KERN_DEBUG \"%lx: queue urb %p\\n\", uhci->io_addr, urb);\n \n \treturn 0;\n }\n@@ -1667,6 +1668,7 @@\n \t  return 0;\n \t}\n \n+\tprintk(KERN_DEBUG \"%lx: dequeue urb %p\\n\", uhci->io_addr, urb);\n \tspin_lock_irqsave(&uhci->urb_list_lock, flags);\n \n \tlist_del_init(&urbp->urb_list);\n@@ -1857,6 +1859,7 @@\n \t\turb->status = status;\n \tspin_unlock_irqrestore(&urb->lock, flags);\n \n+\tprintk(KERN_DEBUG \"%lx: giveback urb %p\\n\", uhci->io_addr, urb);\n \tusb_hcd_giveback_urb(hcd, urb, regs);\n }\n \n@@ -1923,6 +1926,7 @@\n \tif (!status)\t/* shared interrupt, not mine */\n \t\treturn IRQ_NONE;\n \toutw(status, io_addr + USBSTS);\t\t/* Clear it */\n+\tprintk(KERN_DEBUG \"%x: irq status 0x%x\\n\", io_addr, status);\n \n \tif (status & ~(USBSTS_USBINT | USBSTS_ERROR | USBSTS_RD)) {\n \t\tif (status & USBSTS_HSE)\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "USB",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 high",
+  "Assignee": "Alan Stern",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2004-01-14 07:19 UTC by Christoph Dahlen",
+  "Modified": "2004-05-11 13:56 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.1",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/usb/host/uhci-hcd.c"
+  ],
+  "methods": [
+    "uhci_urb_enqueue",
+    "uhci_urb_dequeue",
+    "uhci_finish_urb",
+    "uhci_irq"
+  ]
+}

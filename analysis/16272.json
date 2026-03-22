@@ -1,0 +1,115 @@
+{
+  "id": "16272",
+  "title": "switching to 2.6.34 broke audio on toshiba satellite x205-s9800 using snd_hda_intel module",
+  "kernel_version": "2.6.34",
+  "product": "Drivers",
+  "component": "Sound",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup",
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "sound/pci/hda/patch_realtek.c"
+    ],
+    "buggy_methods": [
+      "alc_build_controls"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "No such file or directory"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 784,
+    "description_word_count": 128
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 12,
+    "lines_removed": 10,
+    "patch_size": 22,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "init_fix"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "alc_build_controls"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "sound/pci/hda/patch_realtek.c",
+    "filename": "patch_realtek.c",
+    "directory": "sound/pci/hda",
+    "depth": 4,
+    "top_level": "sound",
+    "second_level": "pci",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Sound",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "16272",
+      "version": "2.6.34",
+      "status": "found",
+      "path": "sound/pci/hda/patch_realtek.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "16272",
+    "title": "switching to 2.6.34 broke audio on toshiba satellite x205-s9800 using snd_hda_intel module",
+    "ground_truth_file": "sound/pci/hda/patch_realtek.c",
+    "ground_truth_subsystem": "sound/pci",
+    "ground_truth_methods": [
+      "alc_build_controls"
+    ],
+    "product": "Drivers",
+    "component": "Sound",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "hang/deadlock",
+      "wrong_output"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "init_fix",
+      "boundary_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "Sound",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

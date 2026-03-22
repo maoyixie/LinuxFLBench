@@ -1,0 +1,184 @@
+{
+  "id": "9272",
+  "title": "kernel BUG at drivers/md/raid5.c:143",
+  "kernel_version": "2.6.24-rc1",
+  "product": "IO/Storage",
+  "component": "MD",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "wrong_behavior",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/md/raid5.c"
+    ],
+    "buggy_methods": [
+      "handle_stripe5",
+      "handle_stripe6"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "schedule_timeout",
+      "md_thread",
+      "release_stripe",
+      "autoremove_wake_function",
+      "EFLAGS",
+      "kthread",
+      "__release_stripe",
+      "kernel_thread_helper",
+      "raid5d"
+    ],
+    "mentioned_file_paths": [
+      "drivers/md/raid5.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 2523,
+    "description_word_count": 353
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 7,
+    "lines_removed": 7,
+    "patch_size": 14,
+    "patch_types": [
+      "logic_change",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "handle_stripe5",
+      "handle_stripe6"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/md/raid5.c",
+    "filename": "raid5.c",
+    "directory": "drivers/md",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "md",
+    "driver_subsystem": "md/raid5.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_9_functions",
+      "component_known:MD"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "9272",
+      "version": "2.6.24-rc1",
+      "status": "found",
+      "path": "drivers/md/raid5.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "9272",
+    "version": "2.6.24-rc1",
+    "ground_truth_file": "drivers/md/raid5.c",
+    "trace_functions": [
+      "__release_stripe",
+      "release_stripe",
+      "raid5d",
+      "schedule_timeout",
+      "md_thread",
+      "autoremove_wake_function",
+      "kthread",
+      "kernel_thread_helper",
+      "EFLAGS"
+    ],
+    "total_trace_functions": 9,
+    "function_locations": {
+      "__release_stripe": [
+        "drivers/md/raid5.c"
+      ],
+      "release_stripe": [
+        "drivers/md/raid5.c"
+      ],
+      "raid5d": [
+        "drivers/md/raid5.c"
+      ],
+      "schedule_timeout": [
+        "kernel/sched.c",
+        "drivers/block/floppy.c",
+        "kernel/timer.c"
+      ],
+      "md_thread": [
+        "drivers/md/md.c"
+      ],
+      "autoremove_wake_function": [
+        "kernel/wait.c"
+      ],
+      "kthread": [
+        "drivers/usb/atm/ueagle-atm.c",
+        "arch/ia64/sn/kernel/xpc_main.c",
+        "kernel/kthread.c"
+      ],
+      "kernel_thread_helper": [
+        "arch/x86/kernel/process_32.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "arch/sh/kernel/process.c",
+        "arch/blackfin/kernel/process.c",
+        "arch/m32r/kernel/process.c",
+        "arch/sh64/kernel/process.c",
+        "arch/mips/kernel/process.c",
+        "arch/arm/kernel/process.c",
+        "arch/avr32/kernel/process.c"
+      ],
+      "EFLAGS": []
+    },
+    "gt_found_via_functions": [
+      "__release_stripe",
+      "release_stripe",
+      "raid5d"
+    ],
+    "other_candidate_files": [
+      "kernel/sched.c",
+      "arch/x86/kernel/process_32.c",
+      "arch/cris/arch-v10/kernel/process.c",
+      "arch/sh/kernel/process.c",
+      "kernel/kthread.c",
+      "arch/arm/kernel/process.c",
+      "arch/blackfin/kernel/process.c",
+      "arch/ia64/sn/kernel/xpc_main.c",
+      "kernel/timer.c",
+      "kernel/wait.c",
+      "arch/m32r/kernel/process.c",
+      "arch/sh64/kernel/process.c",
+      "drivers/md/md.c",
+      "arch/mips/kernel/process.c",
+      "drivers/usb/atm/ueagle-atm.c",
+      "drivers/block/floppy.c",
+      "arch/avr32/kernel/process.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

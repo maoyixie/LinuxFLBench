@@ -1,0 +1,34 @@
+{
+  "id": "13776",
+  "title": "KMS with Intel Graphic fails",
+  "description": "i am trying kms with a intel chipset, linux-2.6.31-rc3, recent mesa-master and libdrm-master from 13.07.2009 and i am become follow error when i am inserting i915.ko:\n\n[    2.105376] i915 0000:00:02.0: power state changed by ACPI to D0\n[    2.105489] i915 0000:00:02.0: PCI INT A -> GSI 16 (level, low) -> IRQ 16\n[    2.105598] i915 0000:00:02.0: setting latency timer to 64\n[    2.108792] BUG: unable to handle kernel NULL pointer dereference at (null)\n[    2.109046] IP: [<(null)>] (null)\n[    2.109224] *pde = 00000000\n[    2.109397] Oops: 0000 [#1] PREEMPT SMP\n[    2.109716] last sysfs file: /sys/devices/pci0000:00/0000:00:1f.2/host0/target0:0:0/0:0:0:0/type\n[    2.109856] Modules linked in: led_class ieee1394 snd_hda_intel(+) snd_hda_codec snd_pcm snd_timer snd soundcore snd_page_alloc i2c_i801 i915(+) drm ehci_hcd(+) uhci_hcd(+) i2c_algo_bit video backlight output e1000e usbcore\n[    2.111508]\n[    2.111612] Pid: 1018, comm: modprobe Not tainted (2.6.31-rc3 #1) 7667V4E\n[    2.111723] EIP: 0060:[<00000000>] EFLAGS: 00010246 CPU: 1\n[    2.111833] EIP is at 0x0\n[    2.111935] EAX: 00000000 EBX: c1fa3ba0 ECX: c1fed76c EDX: c1fa3ba0\n[    2.112042] ESI: f6b1c110 EDI: 00000000 EBP: f69dfd60 ESP: f69dfd48\n[    2.112042]  DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068\n[    2.112042] Process modprobe (pid: 1018, ti=f69de000 task=f64283f0 task.ti=f69de000)\n[    2.112042] Stack:\n[    2.112042]  c0156da4 f6b5c000 00000000 f6836b00 f69c8660 00000000 f69dfd70 c0156e2c\n[    2.112572] <0> 00000000 f6836b00 f69dfd90 f830600f 00000000 f6b1c110 00000020 f6836b00\n[    2.112572] <0> f69c8660 f6b5c000 f69dfdc4 f83064c9 000080d0 f6b5cca0 f6b5ccdc f6b5ccd4\n[    2.112572] Call Trace:\n[    2.112572]  [<c0156da4>] ? read_cache_page_async+0x72/0xee\n[    2.112572]  [<c0156e2c>] ? read_cache_page+0xc/0x3c\n[    2.112572]  [<f830600f>] ? i915_gem_object_get_pages+0x8c/0xd7 [i915]\n[    2.112572]  [<f83064c9>] ? i915_gem_object_bind_to_gtt+0x167/0x20f [i915]\n[    2.112572]  [<f830658d>] ? i915_gem_object_pin+0x1c/0x149 [i915]\n[    2.112572]  [<f82ad853>] ? drm_gem_object_alloc+0x69/0xaa [drm]\n[    2.112572]  [<f8306853>] ? i915_gem_init_ringbuffer+0x199/0x3de [i915]\n[    2.112572]  [<f82ffa59>] ? i915_driver_load+0x907/0x9da [i915]\n[    2.112572]  [<f82afa14>] ? drm_get_dev+0x2b8/0x395 [drm]\n[    2.112572]  [<f83181fc>] ? i915_pci_probe+0xd/0x8a [i915]\n[    2.112572]  [<c0257c52>] ? local_pci_probe+0xe/0x10\n[    2.112572]  [<c0257dfc>] ? pci_device_probe+0x43/0x66\n[    2.112572]  [<c02aeed2>] ? driver_probe_device+0x79/0xed\n[    2.112572]  [<c02aef89>] ? __driver_attach+0x43/0x5f\n[    2.112572]  [<c02ae766>] ? bus_for_each_dev+0x3d/0x67\n[    2.112572]  [<c02aedab>] ? driver_attach+0x14/0x16\n[    2.112572]  [<c02aef46>] ? __driver_attach+0x0/0x5f\n[    2.112572]  [<c02aeb0b>] ? bus_add_driver+0x8f/0x1bc\n[    2.112572]  [<c02af1b7>] ? driver_register+0x79/0xe0\n[    2.112572]  [<c011eaaf>] ? finish_task_switch+0x56/0x95\n[    2.112572]  [<c02580fe>] ? __pci_register_driver+0x38/0x96\n[    2.112572]  [<f82ac508>] ? drm_init+0x5d/0xb5 [drm]\n[    2.112572]  [<f832a046>] ? i915_init+0x46/0x48 [i915]\n[    2.112572]  [<c010104f>] ? do_one_initcall+0x4a/0x10c\n[    2.112572]  [<f832a000>] ? i915_init+0x0/0x48 [i915]\n[    2.112572]  [<c011f3e1>] ? try_to_wake_up+0x196/0x1a0\n[    2.112572]  [<c011b304>] ? need_resched+0x14/0x1e\n[    2.112572]  [<c0372de9>] ? preempt_schedule+0x3d/0x43\n[    2.112572]  [<c01439db>] ? sys_init_module+0xa7/0x1b8\n[    2.112572]  [<c0102931>] ? syscall_call+0x7/0xb\n[    2.112572] Code:  Bad EIP value.\n[    2.112572] EIP: [<00000000>] 0x0 SS:ESP 0068:f69dfd48\n[    2.112572] CR2: 0000000000000000\n[    2.135981] ---[ end trace f30cb2ef8529a6f3 ]---",
+  "patch": [
+    "commit 54cd2622a50c26fdd0b1ff024263766b1f77ba4f\nAuthor: Daniel Walker <dwalker@fifo99.com>\nDate:   Wed Jul 15 08:52:42 2009 -0700\n\n    gpu: drm: drm_gem: Add a NULL check from kzalloc in drm_gem_object_alloc\n    \n    kzalloc can output NULL, so I've added a check to make sure it's not NULL\n    before we dereference it.\n    \n    Signed-off-by: Daniel Walker <dwalker@fifo99.com>\n\ndiff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c\nindex 8104eca..c911d6b 100644\n--- a/drivers/gpu/drm/drm_gem.c\n+++ b/drivers/gpu/drm/drm_gem.c\n@@ -134,6 +134,8 @@ drm_gem_object_alloc(struct drm_device *dev, size_t size)\n \tBUG_ON((size & (PAGE_SIZE - 1)) != 0);\n \n \tobj = kzalloc(sizeof(*obj), GFP_KERNEL);\n+\tif (!obj)\n+\t\treturn NULL;\n \n \tobj->dev = dev;\n \tobj->filp = shmem_file_setup(\"drm mm object\", size, VM_NORESERVE);\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Video",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Eric Anholt",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-07-15 08:05 UTC by mailinglists",
+  "Modified": "2010-09-03 06:22 UTC",
+  "CC List": "9 users",
+  "See Also": "",
+  "Kernel Version": "2.6.31-rc3",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/gpu/drm/drm_gem.c"
+  ],
+  "methods": [
+    "drm_gem_object_alloc"
+  ]
+}

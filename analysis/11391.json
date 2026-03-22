@@ -1,0 +1,182 @@
+{
+  "id": "11391",
+  "title": "Kernel NULL pointer dereference in do_notify_parent()",
+  "kernel_version": "2.6.26",
+  "product": "Process Management",
+  "component": "Other",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "kernel/nsproxy.c"
+    ],
+    "buggy_methods": [
+      "switch_task_namespaces"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "do_group_exit",
+      "dput",
+      "do_exit",
+      "do_notify_resume",
+      "autoremove_wake_function",
+      "mntput_no_expire",
+      "int_signal",
+      "autit_syscall_exit",
+      "current_fd_time",
+      "tty_ldisc_deref",
+      "do_notify_parent",
+      "filp_close",
+      "get_signal_to_deliver",
+      "reparent_thread"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3975,
+    "description_word_count": 475
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 1,
+    "patch_size": 3,
+    "patch_types": [
+      "logic_change",
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "switch_task_namespaces"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "kernel/nsproxy.c",
+    "filename": "nsproxy.c",
+    "directory": "kernel",
+    "depth": 2,
+    "top_level": "kernel",
+    "second_level": "nsproxy.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_14_functions",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "11391",
+      "version": "2.6.26",
+      "status": "found",
+      "path": "kernel/nsproxy.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "11391",
+    "version": "2.6.26",
+    "ground_truth_file": "kernel/nsproxy.c",
+    "trace_functions": [
+      "do_notify_parent",
+      "dput",
+      "mntput_no_expire",
+      "filp_close",
+      "reparent_thread",
+      "do_exit",
+      "do_group_exit",
+      "get_signal_to_deliver",
+      "do_notify_resume",
+      "autoremove_wake_function",
+      "current_fd_time",
+      "tty_ldisc_deref",
+      "autit_syscall_exit",
+      "int_signal"
+    ],
+    "total_trace_functions": 14,
+    "function_locations": {
+      "do_notify_parent": [
+        "kernel/signal.c"
+      ],
+      "dput": [
+        "fs/block_dev.c",
+        "fs/dcache.c"
+      ],
+      "mntput_no_expire": [
+        "fs/namespace.c"
+      ],
+      "filp_close": [
+        "fs/open.c"
+      ],
+      "reparent_thread": [],
+      "do_exit": [
+        "drivers/misc/sgi-xp/xpc_main.c",
+        "kernel/exit.c"
+      ],
+      "do_group_exit": [],
+      "get_signal_to_deliver": [
+        "kernel/signal.c"
+      ],
+      "do_notify_resume": [
+        "arch/mn10300/kernel/signal.c",
+        "arch/h8300/kernel/signal.c",
+        "arch/m32r/kernel/signal.c",
+        "arch/avr32/kernel/signal.c",
+        "arch/parisc/kernel/signal.c",
+        "arch/mips/kernel/signal.c",
+        "arch/sh/kernel/signal_32.c",
+        "arch/x86/kernel/signal_64.c",
+        "arch/frv/kernel/signal.c",
+        "arch/sparc64/kernel/signal.c"
+      ],
+      "autoremove_wake_function": [
+        "kernel/wait.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "arch/mn10300/kernel/signal.c",
+      "arch/h8300/kernel/signal.c",
+      "arch/m32r/kernel/signal.c",
+      "kernel/exit.c",
+      "drivers/misc/sgi-xp/xpc_main.c",
+      "fs/namespace.c",
+      "kernel/signal.c",
+      "fs/block_dev.c",
+      "arch/avr32/kernel/signal.c",
+      "fs/dcache.c",
+      "arch/parisc/kernel/signal.c",
+      "arch/mips/kernel/signal.c",
+      "arch/sh/kernel/signal_32.c",
+      "kernel/wait.c",
+      "arch/x86/kernel/signal_64.c",
+      "arch/frv/kernel/signal.c",
+      "fs/open.c",
+      "arch/sparc64/kernel/signal.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

@@ -1,0 +1,216 @@
+{
+  "id": "11141",
+  "title": "no battery or DC status - Dell i1501",
+  "kernel_version": "2.6.26",
+  "product": "ACPI",
+  "component": "Power-Battery",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "performance",
+    "wrong_behavior",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/ec.c"
+    ],
+    "buggy_methods": [
+      "acpi_ec_wait"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [
+      {
+        "file": "exresop",
+        "line": "0103"
+      },
+      {
+        "file": "dswexec",
+        "line": "0441"
+      },
+      {
+        "file": "psparse",
+        "line": "0530"
+      },
+      {
+        "file": "10",
+        "line": "18"
+      },
+      {
+        "file": "evregion",
+        "line": "0419"
+      },
+      {
+        "file": "psparse",
+        "line": "0530"
+      },
+      {
+        "file": "evregion",
+        "line": "0419"
+      },
+      {
+        "file": "psparse",
+        "line": "0530"
+      },
+      {
+        "file": "evregion",
+        "line": "0419"
+      },
+      {
+        "file": "psparse",
+        "line": "0530"
+      },
+      {
+        "file": "evregion",
+        "line": "0419"
+      },
+      {
+        "file": "psparse",
+        "line": "0530"
+      },
+      {
+        "file": "evregion",
+        "line": "0419"
+      },
+      {
+        "file": "psparse",
+        "line": "0530"
+      }
+    ],
+    "error_messages": [
+      "(exresop-0103): Needed type [Reference], found [Device] f780ff90 [20080609]",
+      "(psparse-0530): Method parse/execution failed [\\_SB_.PCI0._OSC] (Node f7816dc8),",
+      "(psparse-0530): Method parse/execution failed [\\_SB_.LID_._LID] (Node f7816870),",
+      "(psparse-0530): Method parse/execution failed [\\_SB_.LID_._LID] (Node f7816870),",
+      "(psparse-0530): Method parse/execution failed [\\_SB_.LID_._LID] (Node f7816870),"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 560,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 36767,
+    "description_word_count": 5139
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 53,
+    "lines_removed": 3,
+    "patch_size": 56,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "init_fix"
+    ],
+    "num_hunks": 6,
+    "hunk_functions": [
+      "acpi_ec_wait",
+      "acpi_ec_space_handler",
+      "acpi_ec_transaction"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/ec.c",
+    "filename": "ec.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/ec.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "medium",
+    "signals": [
+      "call_trace_available",
+      "source_file_line_references",
+      "dmesg_logs_available",
+      "component_known:Power-Battery",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "use_source_references_to_locate_file",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "11141",
+      "version": "2.6.26",
+      "status": "found",
+      "path": "drivers/acpi/ec.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "11141",
+    "title": "no battery or DC status - Dell i1501",
+    "ground_truth_file": "drivers/acpi/ec.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "acpi_ec_wait"
+    ],
+    "product": "ACPI",
+    "component": "Power-Battery",
+    "best_strategy": "grep_error_strings",
+    "symptom_categories": [
+      "hang/deadlock",
+      "suspend/resume",
+      "wrong_output",
+      "performance"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "kernel_log_messages",
+      "greppable_kernel_messages",
+      "known_component",
+      "driver_module_named",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "kernel_msg_count": 560,
+      "greppable_kernel_msgs": [
+        "Linux version 2.6.26-g6-+-05253-g14b395e (grissiom@grissiom_slackware) (gcc vers",
+        "BIOS-provided physical RAM map:",
+        "BIOS-e820: 0000000000000000 - 000000000009dc00 (usable)",
+        "BIOS-e820: 000000000009dc00 - 00000000000a0000 (reserved)",
+        "BIOS-e820: 00000000000ce000 - 0000000000100000 (reserved)"
+      ],
+      "component": "Power-Battery",
+      "product": "ACPI",
+      "modules": [
+        "usbfs",
+        "hub",
+        "version",
+        "for",
+        "0000",
+        "initialized",
+        "usbhid",
+        "Version",
+        "10",
+        "started",
+        "Revision",
+        "hiddev",
+        "usb"
+      ]
+    }
+  },
+  "overall_category": "E_grep_error_strings"
+}

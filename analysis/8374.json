@@ -1,0 +1,110 @@
+{
+  "id": "8374",
+  "title": "ACPI: Unable to turn cooling device [c146aec8] 'on'",
+  "kernel_version": "2.6.21",
+  "product": "ACPI",
+  "component": "Power-Fan",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/thermal.c"
+    ],
+    "buggy_methods": [
+      "acpi_thermal_active",
+      "acpi_thermal_trip_seq_show"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 970,
+    "description_word_count": 169
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 17,
+    "lines_removed": 16,
+    "patch_size": 33,
+    "patch_types": [
+      "error_handling",
+      "init_fix"
+    ],
+    "num_hunks": 6,
+    "hunk_functions": [
+      "acpi_thermal_active",
+      "acpi_thermal_trip_seq_show"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/thermal.c",
+    "filename": "thermal.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/thermal.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Power-Fan"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "8374",
+      "version": "2.6.21",
+      "status": "found",
+      "path": "drivers/acpi/thermal.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "8374",
+    "title": "ACPI: Unable to turn cooling device [c146aec8] 'on'",
+    "ground_truth_file": "drivers/acpi/thermal.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "acpi_thermal_active",
+      "acpi_thermal_trip_seq_show"
+    ],
+    "product": "ACPI",
+    "component": "Power-Fan",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "wrong_output"
+    ],
+    "fix_types": [
+      "init_fix",
+      "boundary_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "Power-Fan",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

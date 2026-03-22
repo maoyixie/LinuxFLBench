@@ -1,0 +1,34 @@
+{
+  "id": "42981",
+  "title": "Processor Aggregator Device is not stable causing FW-OS communication to stop",
+  "description": "Processors' Idling, as defined in \"Processor Aggregator Device\" chapter of ACPI 4.0a spec, isn't stable, it doesn't handle big changes of the active cores well. Slow changes (e.g. 2 cores idled or activated every second) are OK, but drastic changes of the number of active cores cause whole FW-OS communication to stop (communication using ACPI defined interface). It happens especially when bigger number of cores (8 or more) is reactivated.\n\nVersion-Release number of selected component (if applicable):\nI've tested it using kernel 2.6.32 and newer, e.g. 3.1.4 with the same results.\n\nReproducible: Always\n\nSteps to Reproduce:\n1. Request OS to idle 8 or more cores as described in \"Processor Aggregator\nDevice\" chapter of ACPI 4.0a spec.\n2. Request OS to make all cores active.\n3. Repeat steps with bigger number of cores to idle if necessary.\nActual Results:  \nCores are active again but communication with the firmware using ASL code is\nstopped, no _OST response from OS. power_saving processes are hanging.\n\n\nExpected Results:  \nCores are active again.",
+  "patch": [
+    "From 4f078f244f6d7adb0d7e4cdbc42f729a4238f979 Mon Sep 17 00:00:00 2001\nFrom: Stuart Hayes <Stuart_Hayes@Dell.com>\nDate: Wed, 13 Jun 2012 16:10:45 -0500\nSubject: [PATCH] acpi_pad: fix power_saving thread deadlock\nReply-To: Len Brown <lenb@kernel.org>\nOrganization: Intel Open Source Technology Center\n\nThe acpi_pad driver can get stuck in destroy_power_saving_task()\nwaiting for kthread_stop() to stop a power_saving thread.  The problem\nis that the isolated_cpus_lock mutex is owned when\ndestroy_power_saving_task() calls kthread_stop(), which waits for a\npower_saving thread to end, and the power_saving thread tries to\nacquire the isolated_cpus_lock when it calls round_robin_cpu().  This\npatch fixes the issue by making round_robin_cpu() use its own mutex.\n\nhttps://bugzilla.kernel.org/show_bug.cgi?id=42981\n\nCc: stable@vger.kernel.org\nSigned-off-by: Stuart Hayes <Stuart_Hayes@Dell.com>\nSigned-off-by: Len Brown <len.brown@intel.com>\n---\n drivers/acpi/acpi_pad.c | 7 ++++---\n 1 file changed, 4 insertions(+), 3 deletions(-)\n\ndiff --git a/drivers/acpi/acpi_pad.c b/drivers/acpi/acpi_pad.c\nindex f3e959f..af4aad6 100644\n--- a/drivers/acpi/acpi_pad.c\n+++ b/drivers/acpi/acpi_pad.c\n@@ -36,6 +36,7 @@\n #define ACPI_PROCESSOR_AGGREGATOR_DEVICE_NAME \"Processor Aggregator\"\n #define ACPI_PROCESSOR_AGGREGATOR_NOTIFY 0x80\n static DEFINE_MUTEX(isolated_cpus_lock);\n+static DEFINE_MUTEX(round_robin_lock);\n \n static unsigned long power_saving_mwait_eax;\n \n@@ -107,7 +108,7 @@ static void round_robin_cpu(unsigned int tsk_index)\n \tif (!alloc_cpumask_var(&tmp, GFP_KERNEL))\n \t\treturn;\n \n-\tmutex_lock(&isolated_cpus_lock);\n+\tmutex_lock(&round_robin_lock);\n \tcpumask_clear(tmp);\n \tfor_each_cpu(cpu, pad_busy_cpus)\n \t\tcpumask_or(tmp, tmp, topology_thread_cpumask(cpu));\n@@ -116,7 +117,7 @@ static void round_robin_cpu(unsigned int tsk_index)\n \tif (cpumask_empty(tmp))\n \t\tcpumask_andnot(tmp, cpu_online_mask, pad_busy_cpus);\n \tif (cpumask_empty(tmp)) {\n-\t\tmutex_unlock(&isolated_cpus_lock);\n+\t\tmutex_unlock(&round_robin_lock);\n \t\treturn;\n \t}\n \tfor_each_cpu(cpu, tmp) {\n@@ -131,7 +132,7 @@ static void round_robin_cpu(unsigned int tsk_index)\n \ttsk_in_cpu[tsk_index] = preferred_cpu;\n \tcpumask_set_cpu(preferred_cpu, pad_busy_cpus);\n \tcpu_weight[preferred_cpu]++;\n-\tmutex_unlock(&isolated_cpus_lock);\n+\tmutex_unlock(&round_robin_lock);\n \n \tset_cpus_allowed_ptr(current, cpumask_of(preferred_cpu));\n }\n-- \n1.7.11.rc2.2.g02101c9\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Processor",
+  "Hardware": "x86-64 Linux",
+  "Importance": "P1 high",
+  "Assignee": "Len Brown",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2012-03-23 17:01 UTC by Sebastian Jarosz",
+  "Modified": "2012-07-14 14:50 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.32",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/acpi_pad.c"
+  ],
+  "methods": [
+    "round_robin_cpu"
+  ]
+}

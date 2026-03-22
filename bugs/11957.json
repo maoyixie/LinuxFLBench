@@ -1,0 +1,34 @@
+{
+  "id": "11957",
+  "title": "oops on reading /proc/capi/controller after removing b1isa",
+  "description": "Latest working kernel version: unknown\nEarliest failing kernel version: unknown\nDistribution: debian, kernel self-built\nHardware Environment: x86 system with B1 ISA ISDN controller\nSoftware Environment: debian unstable\nProblem Description: oops on reading /proc/capi/controller after rmmod b1isa\n\nSteps to reproduce:\n- verify a B1 ISA is shown in /proc/capi/controller\n- rmmod b1isa\n- cat /proc/capi/controller",
+  "patch": [
+    "Reading /proc/capi/controller after removing b1isa oopses because\ncapi_ctrl->procinfo is called for the wrongly not unregistered\ncontroller, which points to b1isa_procinfo(), which was removed on\nmodule unload.\n\nb1isa_exit() did not call b1isa_remove() for its controllers because\nio[0] == 0 on module unload.\n\nBesides, just removing the controllers that where added on module\nload time and not those that were added later via b1isa_add_card() is\nwrong too - the place where all added cards are found is isa_dev[].\n\nSigned-off-by: Wilfried Klaebe <linux-kernel@lebenslange-mailadresse.de>\n\ndiff -pru linux-2.6.27.4.ori/drivers/isdn/hardware/avm/b1isa.c linux-2.6.27.4/drivers/isdn/hardware/avm/b1isa.c\n--- linux-2.6.27.4.ori/drivers/isdn/hardware/avm/b1isa.c\t2008-10-10 00:13:53.000000000 +0200\n+++ linux-2.6.27.4.fixed/drivers/isdn/hardware/avm/b1isa.c\t2008-10-30 15:55:03.000000000 +0100\n@@ -233,10 +233,8 @@ static void __exit b1isa_exit(void)\n \tint i;\n \n \tfor (i = 0; i < MAX_CARDS; i++) {\n-\t\tif (!io[i])\n-\t\t\tbreak;\n-\n-\t\tb1isa_remove(&isa_dev[i]);\n+\t\tif (isa_dev[i].resource[0].start)\n+\t\t\tb1isa_remove(&isa_dev[i]);\n \t}\n \tunregister_capi_driver(&capi_driver_b1isa);\n }\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "ISDN",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_isdn",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-11-05 04:51 UTC by Wilfried Klaebe",
+  "Modified": "2008-12-22 12:39 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.27",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/isdn/hardware/avm/b1isa.c"
+  ],
+  "methods": [
+    "b1isa_exit"
+  ]
+}

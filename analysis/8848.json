@@ -1,0 +1,106 @@
+{
+  "id": "8848",
+  "title": "(pata HPT370) UDMA100 mode isn't available since LibATA has been incorporated to the kernel",
+  "kernel_version": "2.6.22",
+  "product": "IO/Storage",
+  "component": "Serial ATA",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/ata/pata_hpt37x.c"
+    ],
+    "buggy_methods": [
+      "hpt370a_filter",
+      "hpt374_pre_reset",
+      " hpt37x_init_one",
+      "info_hpt370_33"
+    ],
+    "num_methods": 4
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 569,
+    "description_word_count": 88
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 31,
+    "lines_removed": 13,
+    "patch_size": 44,
+    "patch_types": [
+      "quirk/device_table",
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 6,
+    "hunk_functions": [
+      "outb",
+      "hpt370a_filter"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/ata/pata_hpt37x.c",
+    "filename": "pata_hpt37x.c",
+    "directory": "drivers/ata",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "ata",
+    "driver_subsystem": "ata/pata_hpt37x.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Serial ATA",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "8848",
+      "version": "2.6.22",
+      "status": "found",
+      "path": "drivers/ata/pata_hpt37x.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "8848",
+    "title": "(pata HPT370) UDMA100 mode isn't available since LibATA has been incorporated to the kernel",
+    "product": "IO/Storage",
+    "component": "Serial ATA",
+    "buggy_file": [
+      "drivers/ata/pata_hpt37x.c"
+    ],
+    "fix_type": "device_blacklist_addition",
+    "table_entry_lines_added": 0,
+    "description_clues": [
+      "dmi_info_in_description"
+    ],
+    "patch_size": 44,
+    "potential_strategies": [
+      "search_dmi_tables_in_drivers",
+      "narrow_by_component:Serial ATA"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

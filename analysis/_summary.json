@@ -1,0 +1,153 @@
+{
+  "symptom_distribution": {
+    "power/sleep": 82,
+    "crash/panic/oops": 74,
+    "hang/lockup": 70,
+    "wrong_behavior": 48,
+    "performance": 46,
+    "other": 38,
+    "device_not_working": 37,
+    "compile_error": 26,
+    "error_log_spam": 2
+  },
+  "difficulty_distribution": {
+    "hard": 179,
+    "easy": 28,
+    "easy-medium": 28,
+    "medium": 15
+  },
+  "clue_stats": {
+    "has_call_trace": 57,
+    "has_file_paths_mentioned": 28,
+    "has_dmesg_logs": 37,
+    "has_proc_sys_paths": 73,
+    "has_trace_functions": 52,
+    "has_error_messages": 42,
+    "has_workaround": 52,
+    "has_repro_steps": 114,
+    "mentions_regression": 14,
+    "mentions_hardware_model": 141,
+    "mentions_kernel_config": 14
+  },
+  "patch_type_distribution": {
+    "logic_change": 153,
+    "error_handling": 97,
+    "synchronization": 82,
+    "memory": 53,
+    "init_fix": 46,
+    "new_function": 42,
+    "quirk/device_table": 34,
+    "other": 32,
+    "config/ifdef": 7
+  },
+  "patch_size_stats": {
+    "min": 1,
+    "max": 572,
+    "mean": 25.6,
+    "median": 10
+  },
+  "top_level_directory": {
+    "drivers": 182,
+    "arch": 20,
+    "fs": 16,
+    "net": 10,
+    "sound": 10,
+    "kernel": 5,
+    "mm": 3,
+    "block": 2,
+    "include": 1,
+    "init": 1
+  },
+  "product_distribution": {
+    "Drivers": 106,
+    "ACPI": 61,
+    "File System": 21,
+    "IO/Storage": 18,
+    "Power Management": 12,
+    "Networking": 10,
+    "Platform Specific/Hardware": 6,
+    "Timers": 4,
+    "SCSI Drivers": 4,
+    "Process Management": 2,
+    "Tools": 1,
+    "Memory Management": 1,
+    "Other": 1,
+    "Virtualization": 1,
+    "v4l-dvb": 1,
+    "Alternate Trees": 1
+  },
+  "component_distribution": {
+    "Other": 25,
+    "network-wireless": 16,
+    "Video": 15,
+    "Network": 13,
+    "Power-Battery": 12,
+    "Sound": 11,
+    "NFS": 9,
+    "Serial ATA": 8,
+    "Power-Video": 8,
+    "Input Devices": 7,
+    "cpufreq": 7,
+    "USB": 7,
+    "ACPICA-Core": 6,
+    "Wireless": 5,
+    "EC": 5,
+    "Power-Sleep-Wake": 5,
+    "Platform": 5,
+    "Hardware Monitoring": 4,
+    "Hibernation/Suspend": 4,
+    "IEEE1394": 4
+  },
+  "regression_distribution": {
+    "---": 90,
+    "Yes": 89,
+    "No": 71
+  },
+  "methods_per_bug": {
+    "min": 1,
+    "max": 21,
+    "mean": 2.0,
+    "1_method": 173,
+    "2_methods": 38,
+    "3+_methods": 39
+  },
+  "description_word_count_stats": {
+    "min": 23,
+    "max": 5139,
+    "mean": 283.1,
+    "median": 167
+  },
+  "applicable_strategies": {
+    "narrow_search_by_component": 225,
+    "bisect_or_check_recent_commits": 89,
+    "map_proc_sys_path_to_driver_or_subsystem": 73,
+    "parse_call_trace_to_identify_functions_and_files": 57,
+    "match_trace_functions_to_source_files": 52,
+    "grep_error_messages_in_kernel_source": 37,
+    "search_for_quirk_tables_in_related_drivers": 34,
+    "direct_file_path_matching": 28,
+    "use_source_references_to_locate_file": 16
+  },
+  "difficulty_vs_call_trace": {
+    "easy": {
+      "count": 28,
+      "with_call_trace": 22,
+      "with_dmesg": 7
+    },
+    "easy-medium": {
+      "count": 28,
+      "with_call_trace": 28,
+      "with_dmesg": 15
+    },
+    "medium": {
+      "count": 15,
+      "with_call_trace": 6,
+      "with_dmesg": 11
+    },
+    "hard": {
+      "count": 179,
+      "with_call_trace": 1,
+      "with_dmesg": 4
+    }
+  }
+}

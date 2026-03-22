@@ -1,0 +1,151 @@
+{
+  "id": "13776",
+  "title": "KMS with Intel Graphic fails",
+  "kernel_version": "2.6.31-rc3",
+  "product": "Drivers",
+  "component": "Video",
+  "hardware": "i386 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpu/drm/drm_gem.c"
+    ],
+    "buggy_methods": [
+      "drm_gem_object_alloc"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "0x0",
+      "EFLAGS"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "when i am inserting i915.ko:"
+    ],
+    "proc_sys_paths": [
+      "/sys/devices/pci0000"
+    ],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 55,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3688,
+    "description_word_count": 413
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 0,
+    "patch_size": 2,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "memory"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "drm_gem_object_alloc"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpu/drm/drm_gem.c",
+    "filename": "drm_gem.c",
+    "directory": "drivers/gpu/drm",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "gpu",
+    "driver_subsystem": "gpu/drm",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_2_functions",
+      "proc_sys_paths_hint_subsystem",
+      "dmesg_logs_available",
+      "component_known:Video"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13776",
+      "version": "2.6.31-rc3",
+      "status": "found",
+      "path": "drivers/gpu/drm/drm_gem.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "13776",
+    "version": "2.6.31-rc3",
+    "ground_truth_file": "drivers/gpu/drm/drm_gem.c",
+    "trace_functions": [
+      "read_cache_page_async",
+      "read_cache_page",
+      "i915_gem_object_get_pages",
+      "i915_gem_object_bind_to_gtt",
+      "i915_gem_object_pin",
+      "drm_gem_object_alloc",
+      "i915_gem_init_ringbuffer",
+      "i915_driver_load",
+      "drm_get_dev",
+      "i915_pci_probe",
+      "local_pci_probe",
+      "pci_device_probe",
+      "driver_probe_device",
+      "__driver_attach",
+      "bus_for_each_dev"
+    ],
+    "total_trace_functions": 29,
+    "function_locations": {
+      "read_cache_page_async": [
+        "mm/filemap.c"
+      ],
+      "read_cache_page": [
+        "mm/filemap.c"
+      ],
+      "i915_gem_object_get_pages": [],
+      "i915_gem_object_bind_to_gtt": [
+        "drivers/gpu/drm/i915/i915_gem.c"
+      ],
+      "i915_gem_object_pin": [],
+      "drm_gem_object_alloc": [],
+      "i915_gem_init_ringbuffer": [],
+      "i915_driver_load": [
+        "drivers/gpu/drm/i915/i915_dma.c"
+      ],
+      "drm_get_dev": [
+        "drivers/gpu/drm/drm_stub.c"
+      ],
+      "i915_pci_probe": []
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "drivers/gpu/drm/i915/i915_dma.c",
+      "drivers/gpu/drm/drm_stub.c",
+      "drivers/gpu/drm/i915/i915_gem.c",
+      "mm/filemap.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

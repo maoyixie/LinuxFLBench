@@ -1,0 +1,105 @@
+{
+  "id": "195869",
+  "title": "Wireless ioctls fail if struct iwreq is at the end of a memory mapping",
+  "kernel_version": "4.12-rc1",
+  "product": "Networking",
+  "component": "Wireless",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "net/core/dev_ioctl.c"
+    ],
+    "buggy_methods": [
+      "dev_ioctl"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 736,
+    "description_word_count": 121
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 19,
+    "lines_removed": 3,
+    "patch_size": 22,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "dev_ioctl"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "net/core/dev_ioctl.c",
+    "filename": "dev_ioctl.c",
+    "directory": "net/core",
+    "depth": 3,
+    "top_level": "net",
+    "second_level": "core",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Wireless"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "195869",
+      "version": "4.12-rc1",
+      "status": "found",
+      "path": "net/core/dev_ioctl.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "195869",
+    "title": "Wireless ioctls fail if struct iwreq is at the end of a memory mapping",
+    "ground_truth_file": "net/core/dev_ioctl.c",
+    "ground_truth_subsystem": "net/core",
+    "ground_truth_methods": [
+      "dev_ioctl"
+    ],
+    "product": "Networking",
+    "component": "Wireless",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "error_return_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "Wireless",
+      "product": "Networking"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

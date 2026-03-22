@@ -1,0 +1,34 @@
+{
+  "id": "32052",
+  "title": "Unloading wmi module causes a kernel oops.",
+  "description": "Created attachment 52302 [details]\nlspci -vvv\n\nHello.\n\nI have Acer Aspire TimelineX 1830T so I'm using acer_wmi module. Since 2.6.37 there is a regression which is causing a NULL pointer dereference and kernel oops.\n\nSteps to reproduce:\n1. Boot any kernel newer than 2.6.37 (tested on 2.6.37.1, .3, .4, .5 and 2.6.38.1) with acer_wmi built as module\n2. Run \"modprobe -r acer_wmi\"\n3. Kernel oops!\n\nOn 2.6.36, .1, .2, .4 works flawlessly.\nRunning ArchLinux x86_64.\n\nlspci -vvv and appropriate part of everything.log attached. \nCan provide any other info if needed.",
+  "patch": [
+    "WMI: properly cleanup devices\n\nFrom: Dmitry Torokhov <dmitry.torokhov@gmail.com>\n\nSigned-off-by: Dmitry Torokhov <dtor@mail.ru>\n---\n\n drivers/platform/x86/wmi.c |    6 +++++-\n 1 files changed, 5 insertions(+), 1 deletions(-)\n\n\ndiff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c\nindex f23d5a8..9b88be4 100644\n--- a/drivers/platform/x86/wmi.c\n+++ b/drivers/platform/x86/wmi.c\n@@ -754,9 +754,13 @@ static void wmi_free_devices(void)\n \tstruct wmi_block *wblock, *next;\n \n \t/* Delete devices for all the GUIDs */\n-\tlist_for_each_entry_safe(wblock, next, &wmi_block_list, list)\n+\tlist_for_each_entry_safe(wblock, next, &wmi_block_list, list) {\n+\t\tlist_del(&wblock->list);\n \t\tif (wblock->dev.class)\n \t\t\tdevice_unregister(&wblock->dev);\n+\t\telse\n+\t\t\tkfree(wblock);\n+\t}\n }\n \n static bool guid_already_parsed(const char *guid_string)\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Platform Specific/Hardware",
+  "Classification": "Unclassified",
+  "Component": "x86-64",
+  "Hardware": "x86-64 Linux",
+  "Importance": "P1 normal",
+  "Assignee": "other_modules",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2011-03-28 12:15 UTC by Coacher",
+  "Modified": "2012-01-15 17:23 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.37",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/platform/x86/wmi.c"
+  ],
+  "methods": [
+    "wmi_free_devices"
+  ]
+}

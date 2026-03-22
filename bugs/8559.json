@@ -1,0 +1,37 @@
+{
+  "id": "8559",
+  "title": "no smartbattery status on Laptop",
+  "description": "Most recent kernel where this bug did *NOT* occur: none\nDistribution: Fedora 6\nHardware Environment: Kontron Revolution Weatherproof Laptop\nSoftware Environment: Stock standard environment.  All modules are Fedora\ndistribution. Updated to latest.\nProblem Description: No samrtbattery entry in /proc/acpi/battery\n\nHave a specialised weatherproof laptop with a smartbattery running FC6\nlatest kernel. I cannot get battey monitoring going. Have loaded\nmodules i2c_ec and sbs with out any errors.\n\nlog/messages indicate that the EC driver loads with\nACPI: EC HC smbus [SMB1]\n\nThere is nothing from the sbs module though it is loaded and\nthe /proc/acpi/battery directory is empty.\n\nThe smartbattery can be recognized. If I run the following command ...\n\n   smartbattery 1             (1 is to specify the i2c dev,\n                            needs i2c-dev module loaded)\n\nthen I get battery status, which behaves properly (changes if I unplug\nAC etc). It shows Battery name, status , charge or discharge current,\ntime to full/left, temperature etc.  The smartbattery command came\nwith the initial code exploring the ec-smbus interface a couple of\nyears ago by Bruno Ducrot.\n \nHowever nothing shows up in the proc/acpi/battery directory under the\nsbs module, and therefore the gui battery indicators do not work\n\nAny suggestions?\n\nLove to get this working in the gui.\n\nPosted this to acpi group, and Alexey Starikovskiy asked me to post here with\noutput from acpidump will be attached next\n\nJohn",
+  "patch": [
+    "Connect SBS to SMBus host controller.\n\nFrom: Alexey Starikovskiy <aystarik@gmail.com>\n\n\n---\n\n drivers/acpi/sbs.c |   33 +++++++--------------------------\n 1 files changed, 7 insertions(+), 26 deletions(-)\n\ndiff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c\nindex c1bae10..974d00c 100644\n--- a/drivers/acpi/sbs.c\n+++ b/drivers/acpi/sbs.c\n@@ -127,7 +127,7 @@ static int acpi_sbs_resume(struct acpi_device *device);\n static struct acpi_driver acpi_sbs_driver = {\n \t.name = \"sbs\",\n \t.class = ACPI_SBS_CLASS,\n-\t.ids = ACPI_SBS_HID,\n+\t.ids = \"ACPI0001,ACPI0005\",\n \t.ops = {\n \t\t.add = acpi_sbs_add,\n \t\t.remove = acpi_sbs_remove,\n@@ -176,10 +176,8 @@ struct acpi_battery {\n };\n \n struct acpi_sbs {\n-\tacpi_handle handle;\n \tint base;\n \tstruct acpi_device *device;\n-\tstruct acpi_ec_smbus *smbus;\n \tstruct mutex mutex;\n \tint sbsm_present;\n \tint sbsm_batteries_supported;\n@@ -511,7 +509,7 @@ static int acpi_sbsm_get_info(struct acpi_sbs *sbs)\n \t\t\t\t\"acpi_sbs_read_word() failed\"));\n \t\tgoto end;\n \t}\n-\n+\tsbs->sbsm_present = 1;\n \tsbs->sbsm_batteries_supported = battery_system_info & 0x000f;\n \n       end:\n@@ -1630,13 +1628,12 @@ static int acpi_sbs_add(struct acpi_device *device)\n {\n \tstruct acpi_sbs *sbs = NULL;\n \tint result = 0, remove_result = 0;\n-\tunsigned long sbs_obj;\n \tint id;\n \tacpi_status status = AE_OK;\n \tunsigned long val;\n \n \tstatus =\n-\t    acpi_evaluate_integer(device->parent->handle, \"_EC\", NULL, &val);\n+\t    acpi_evaluate_integer(device->handle, \"_EC\", NULL, &val);\n \tif (ACPI_FAILURE(status)) {\n \t\tACPI_EXCEPTION((AE_INFO, AE_ERROR, \"Error obtaining _EC\"));\n \t\treturn -EIO;\n@@ -1653,7 +1650,7 @@ static int acpi_sbs_add(struct acpi_device *device)\n \n \tsbs_mutex_lock(sbs);\n \n-\tsbs->base = (val & 0xff00ull) >> 8;\n+\tsbs->base = 0xff & (val >> 8);\n \tsbs->device = device;\n \n \tstrcpy(acpi_device_name(device), ACPI_SBS_DEVICE_NAME);\n@@ -1665,24 +1662,10 @@ static int acpi_sbs_add(struct acpi_device *device)\n \t\tACPI_EXCEPTION((AE_INFO, AE_ERROR, \"acpi_ac_add() failed\"));\n \t\tgoto end;\n \t}\n-\tstatus = acpi_evaluate_integer(device->handle, \"_SBS\", NULL, &sbs_obj);\n-\tif (status) {\n-\t\tACPI_EXCEPTION((AE_INFO, status,\n-\t\t\t\t\"acpi_evaluate_integer() failed\"));\n-\t\tresult = -EIO;\n-\t\tgoto end;\n-\t}\n-\tif (sbs_obj > 0) {\n-\t\tresult = acpi_sbsm_get_info(sbs);\n-\t\tif (result) {\n-\t\t\tACPI_EXCEPTION((AE_INFO, AE_ERROR,\n-\t\t\t\t\t\"acpi_sbsm_get_info() failed\"));\n-\t\t\tgoto end;\n-\t\t}\n-\t\tsbs->sbsm_present = 1;\n-\t}\n \n-\tif (sbs->sbsm_present == 0) {\n+\tacpi_sbsm_get_info(sbs);\n+\n+\tif (!sbs->sbsm_present) {\n \t\tresult = acpi_battery_add(sbs, 0);\n \t\tif (result) {\n \t\t\tACPI_EXCEPTION((AE_INFO, AE_ERROR,\n@@ -1702,8 +1685,6 @@ static int acpi_sbs_add(struct acpi_device *device)\n \t\t}\n \t}\n \n-\tsbs->handle = device->handle;\n-\n \tinit_timer(&sbs->update_timer);\n \tresult = acpi_check_update_proc(sbs);\n \tif (result)\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Battery",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "acpi_power-battery",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-05-31 15:43 UTC by John Floyd",
+  "Modified": "2007-07-25 23:01 UTC",
+  "CC List": "0 users",
+  "See Also": "",
+  "Kernel Version": "2.6.20",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/sbs.c"
+  ],
+  "methods": [
+    "acpi_sbsm_get_info",
+    "acpi_sbs_add",
+    "acpi_sbs",
+    "acpi_sbs_driver"
+  ]
+}

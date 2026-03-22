@@ -1,0 +1,105 @@
+{
+  "id": "13134",
+  "title": "ALPS Touchpad not getting recognized anymore",
+  "kernel_version": "2.6.29",
+  "product": "Drivers",
+  "component": "Input Devices",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/input/mouse/alps.c"
+    ],
+    "buggy_methods": [
+      "alps_model_data"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "(at least in my case) because touchpad works"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 647,
+    "description_word_count": 102
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 0,
+    "patch_size": 1,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/input/mouse/alps.c",
+    "filename": "alps.c",
+    "directory": "drivers/input/mouse",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "input",
+    "driver_subsystem": "input/mouse",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Input Devices"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13134",
+      "version": "2.6.29",
+      "status": "found",
+      "path": "drivers/input/mouse/alps.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "13134",
+    "title": "ALPS Touchpad not getting recognized anymore",
+    "ground_truth_file": "drivers/input/mouse/alps.c",
+    "ground_truth_subsystem": "drivers/input",
+    "ground_truth_methods": [
+      "alps_model_data"
+    ],
+    "product": "Drivers",
+    "component": "Input Devices",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "component": "Input Devices",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

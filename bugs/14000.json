@@ -1,0 +1,34 @@
+{
+  "id": "14000",
+  "title": "prism 2.5 broke in 2.6.30.x",
+  "description": "Prism 2.5 wireless card fails as an AP after a kernel upgrade to 2.6.30.1 and later (up to 2.6.30.5).\n\nNot tried with 2.6.30.\nNot tried as STA.\nThe card works well up to kernel 2.6.29.6\n\nTo reproduce:\n# iwconfig wlan0 mode master\n# iwconfig wlan0 chan 4\n# iwconfig wlan0 essid ea0\n# ifconfig wlan0 192.168.220.254\n>now the STA associates>\n# tcpdump -i wlan0 -n\n<now the STA pings>\ntcpdump: verbose output suppressed, use -v or -vv for full protocol decode\nlistening on wlan0, link-type EN10MB (Ethernet), capture size 96 bytes\n23:59:36.177209 ARP, Request who-has 192.168.220.254 tell 192.168.220.88, length 28\n23:59:36.177287 ARP, Request who-has 192.168.220.254 tell 192.168.220.88, length 28\n23:59:36.177306 ARP, Reply 192.168.220.254 is-at 00:e0:00:8d:bd:8e, length 28\n23:59:41.610114 ARP, Request who-has 192.168.220.254 tell 192.168.220.88, length 28\n23:59:41.610192 ARP, Request who-has 192.168.220.254 tell 192.168.220.88, length 28\n23:59:41.610199 ARP, Reply 192.168.220.254 is-at 00:e0:00:8d:bd:8e, length 28\n<packets (ARP, at least) flow from STA to AP, but not the other way round>\n\nRelated dmesg lines:\n\n[    5.928208] hostap_pci 0000:02:01.0: PCI INT A -> GSI 21 (level, low) -> IRQ 21                                            \n[    5.928781] hostap_pci: Registered netdevice wifi0\n[    5.928854] wifi0: Original COR value: 0x2\n[    6.128188] prism2_hw_init: initialized in 196 ms\n[    6.129008] wifi0: NIC: id=0x8013 v1.0.0\n[    6.129225] wifi0: PRI: id=0x15 v1.1.1\n[    6.129437] wifi0: STA: id=0x1f v1.8.2\n[    6.133506] wifi0: Intersil Prism2.5 PCI: mem=0xec000000, irq=21\n[    6.134100] wifi0: registered netdevice wlan0\n..... (unrelated) .....\n[  575.222877] wifi0: deauthentication: 00:0b:6b:35:80:9a len=2, reason_code=3\n[  579.638087] wifi0: 00:0b:6b:35:80:9a auth_cb - alg=0 trans#=2 status=0 - STA authenticated\n[  579.639151] wifi0: assoc from 00:0b:6b:35:80:9a with extra data (11 bytes) [<dd><09><00><03><7f><01><01><00><00><00><00>]\n[  579.740704] wifi0: 00:0b:6b:35:80:9a assoc_cb - STA associated\n[  583.017732] Virtual device wifi0 asks to queue packet!\n[  588.025832] Virtual device wifi0 asks to queue packet!\n[  596.028100] Virtual device wifi0 asks to queue packet!\n[  814.920383] Virtual device wifi0 asks to queue packet!\n... and so on\n\nOS:\nDebian Testing, GCC-4.3.3",
+  "patch": [
+    "From: Martin Decky <martin@decky.cz>\n\nAs the hostap driver was converted to use net_device_ops, a mistake was\nmade in hostap_main.c (commit 5ae4efbcd2611562a8b93596be034e63495706a5).\nOriginally, the tx_queue_len was set to 0 for every other interface than\nHOSTAP_INTERFACE_MASTER, but the new fragment of code sets tx_queue_len to\n0 only for HOSTAP_INTERFACE_MASTER. The opposite of the previous\nbehavior makes the driver to drop all packets in AP mode.\n\nChange the way 0 is assigned to tx_queue_len according to the original\nlogic.\n\nSigned-off-by: Martin Decky <martin@decky.cz>\n----\ndiff -Naurp linux-2.6.30.orig/drivers/net/wireless/hostap/hostap_main.c linux-2.6.30/drivers/net/wireless/hostap/hostap_main.c\n--- linux-2.6.30.orig/drivers/net/wireless/hostap/hostap_main.c\t2009-06-10 05:05:27.000000000 +0200\n+++ linux-2.6.30/drivers/net/wireless/hostap/hostap_main.c\t2009-09-08 11:11:23.892816045 +0200\n@@ -875,15 +875,16 @@ void hostap_setup_dev(struct net_device \n \n \tswitch(type) {\n \tcase HOSTAP_INTERFACE_AP:\n+\t\tdev->tx_queue_len = 0;\t/* use main radio device queue */\n \t\tdev->netdev_ops = &hostap_mgmt_netdev_ops;\n \t\tdev->type = ARPHRD_IEEE80211;\n \t\tdev->header_ops = &hostap_80211_ops;\n \t\tbreak;\n \tcase HOSTAP_INTERFACE_MASTER:\n-\t\tdev->tx_queue_len = 0;\t/* use main radio device queue */\n \t\tdev->netdev_ops = &hostap_master_ops;\n \t\tbreak;\n \tdefault:\n+\t\tdev->tx_queue_len = 0;\t/* use main radio device queue */\n \t\tdev->netdev_ops = &hostap_netdev_ops;\n \t}\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "network-wireless",
+  "Hardware": "i386 Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_network-wireless@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-08-17 21:10 UTC by Yasen Balev",
+  "Modified": "2009-12-18 15:46 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.30",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/hostap/hostap_main.c"
+  ],
+  "methods": [
+    "hostap_setup_dev"
+  ]
+}

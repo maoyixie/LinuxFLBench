@@ -1,0 +1,116 @@
+{
+  "id": "60519",
+  "title": "Wrong battery information reported on Samsung NP540U3C",
+  "kernel_version": "2.6.34",
+  "product": "ACPI",
+  "component": "Power-Battery",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/battery.c"
+    ],
+    "buggy_methods": [
+      "acpi_battery",
+      "info_offsets"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/class/power_supply/BAT1/uevent"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1279,
+    "description_word_count": 83
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 0,
+    "patch_size": 2,
+    "patch_types": [
+      "synchronization"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/battery.c",
+    "filename": "battery.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/battery.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Power-Battery",
+      "is_regression"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "60519",
+      "version": "2.6.34",
+      "status": "found",
+      "path": "drivers/acpi/battery.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "60519",
+    "title": "Wrong battery information reported on Samsung NP540U3C",
+    "ground_truth_file": "drivers/acpi/battery.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "acpi_battery",
+      "info_offsets"
+    ],
+    "product": "ACPI",
+    "component": "Power-Battery",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "wrong_output"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/sys/class/power_supply/BAT1/uevent"
+      ],
+      "component": "Power-Battery",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

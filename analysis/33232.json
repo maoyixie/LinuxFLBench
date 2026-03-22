@@ -1,0 +1,251 @@
+{
+  "id": "33232",
+  "title": "WARNING: at /build/buildd/linux-2.6.38/net/wireless/scan.c:591 cfg80211_inform_bss_frame 0x1da/0x1f0 [cfg80211]()",
+  "kernel_version": "2.6.38",
+  "product": "Networking",
+  "component": "Wireless",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "performance",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/wireless/zd1211rw/zd_mac.c"
+    ],
+    "buggy_methods": [
+      "zd_mac_tx_status",
+      "zd_mac_rx"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "ieee80211_rx",
+      "irq_exit",
+      "tasklet_action",
+      "ehci_irq",
+      "ieee80211_tasklet_handler",
+      "do_IRQ",
+      "warn_slowpath_null",
+      "call_softirq",
+      "58",
+      "ieee80211_prepare_and_rx_handle",
+      "ieee80211_scan_rx",
+      "__ieee80211_rx_handle_packet",
+      "ret_from_intr",
+      "start_secondary",
+      "usb_hcd_link_urb_to_ep",
+      "__do_softirq",
+      "do_softirq",
+      "ack_apic_level",
+      "default_idle",
+      "native_safe_halt",
+      "ieee80211_bss_info_update",
+      "warn_slowpath_common",
+      "cfg80211_inform_bss_frame",
+      "rcu_needs_cpu",
+      "cpu_idle"
+    ],
+    "mentioned_file_paths": [
+      "net/wireless/scan.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 31,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3174,
+    "description_word_count": 297
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 11,
+    "lines_removed": 2,
+    "patch_size": 13,
+    "new_functions": [
+      "zd_mac_preinit_hw"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change"
+    ],
+    "num_hunks": 3,
+    "hunk_functions": [
+      "zd_reg2alpha2",
+      "zd_mac_rx",
+      "zd_mac_tx_status"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/wireless/zd1211rw/zd_mac.c",
+    "filename": "zd_mac.c",
+    "directory": "drivers/net/wireless/zd1211rw",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/wireless",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_25_functions",
+      "dmesg_logs_available",
+      "component_known:Wireless",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "33232",
+      "version": "2.6.38",
+      "status": "found",
+      "path": "drivers/net/wireless/zd1211rw/zd_mac.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "33232",
+    "version": "2.6.38",
+    "ground_truth_file": "drivers/net/wireless/zd1211rw/zd_mac.c",
+    "trace_functions": [
+      "cfg80211_inform_bss_frame",
+      "warn_slowpath_common",
+      "warn_slowpath_null",
+      "58",
+      "usb_hcd_link_urb_to_ep",
+      "ieee80211_bss_info_update",
+      "ieee80211_scan_rx",
+      "ieee80211_prepare_and_rx_handle",
+      "__ieee80211_rx_handle_packet",
+      "ieee80211_rx",
+      "ehci_irq",
+      "ieee80211_tasklet_handler",
+      "tasklet_action",
+      "__do_softirq",
+      "ack_apic_level"
+    ],
+    "total_trace_functions": 25,
+    "function_locations": {
+      "cfg80211_inform_bss_frame": [],
+      "warn_slowpath_common": [
+        "kernel/panic.c"
+      ],
+      "warn_slowpath_null": [
+        "kernel/panic.c"
+      ],
+      "58": [
+        "drivers/ssb/pci.c",
+        "sound/pci/ac97/ac97_patch.c",
+        "sound/isa/cmi8330.c",
+        "sound/pci/oxygen/oxygen_mixer.c",
+        "sound/pci/fm801.c",
+        "sound/i2c/cs8427.c",
+        "sound/pci/cs46xx/cs46xx_lib.c",
+        "sound/i2c/other/ak4114.c",
+        "sound/pci/ca0106/ca0106_proc.c",
+        "sound/i2c/other/ak4117.c"
+      ],
+      "usb_hcd_link_urb_to_ep": [
+        "drivers/usb/core/hcd.c"
+      ],
+      "ieee80211_bss_info_update": [],
+      "ieee80211_scan_rx": [],
+      "ieee80211_prepare_and_rx_handle": [
+        "net/mac80211/rx.c"
+      ],
+      "__ieee80211_rx_handle_packet": [
+        "net/mac80211/rx.c"
+      ],
+      "ieee80211_rx": [
+        "net/mac80211/rx.c",
+        "drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "drivers/ssb/pci.c",
+      "kernel/panic.c",
+      "sound/isa/cmi8330.c",
+      "sound/pci/ac97/ac97_patch.c",
+      "sound/pci/oxygen/oxygen_mixer.c",
+      "sound/pci/fm801.c",
+      "sound/i2c/cs8427.c",
+      "drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c",
+      "sound/pci/cs46xx/cs46xx_lib.c",
+      "sound/i2c/other/ak4114.c",
+      "net/mac80211/rx.c",
+      "sound/pci/ca0106/ca0106_proc.c",
+      "sound/i2c/other/ak4117.c",
+      "drivers/usb/core/hcd.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "33232",
+    "title": "WARNING: at /build/buildd/linux-2.6.38/net/wireless/scan.c:591 cfg80211_inform_bss_frame 0x1da/0x1f0 [cfg80211]()",
+    "ground_truth_file": "drivers/net/wireless/zd1211rw/zd_mac.c",
+    "ground_truth_methods": [
+      "zd_mac_tx_status",
+      "zd_mac_rx"
+    ],
+    "ground_truth_subsystem": "drivers/net",
+    "trace_functions_top8": [
+      "cfg80211_inform_bss_frame",
+      "warn_slowpath_common",
+      "warn_slowpath_null",
+      "58",
+      "usb_hcd_link_urb_to_ep",
+      "ieee80211_bss_info_update",
+      "ieee80211_scan_rx",
+      "ieee80211_prepare_and_rx_handle"
+    ],
+    "trace_function_locations": {
+      "cfg80211_inform_bss_frame": [],
+      "warn_slowpath_common": [
+        "kernel/panic.c"
+      ],
+      "warn_slowpath_null": [
+        "kernel/panic.c"
+      ],
+      "58": [],
+      "usb_hcd_link_urb_to_ep": [
+        "drivers/usb/core/hcd.c"
+      ],
+      "ieee80211_bss_info_update": [],
+      "ieee80211_scan_rx": [],
+      "ieee80211_prepare_and_rx_handle": [
+        "net/mac80211/rx.c"
+      ]
+    },
+    "trace_subsystems": [
+      "kernel/panic.c",
+      "net/mac80211",
+      "drivers/usb"
+    ],
+    "mismatch_type": "trace_in_infrastructure",
+    "gt_calls_trace_func": true,
+    "gt_method_in_trace": false,
+    "product": "Networking",
+    "component": "Wireless"
+  },
+  "overall_category": "C_trace_misleads"
+}

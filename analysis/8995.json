@@ -1,0 +1,122 @@
+{
+  "id": "8995",
+  "title": "/proc/acpi/alarm worked; update to 2.6.22.2 and /sys/class/rtc/rtc0/wakealarm don't",
+  "kernel_version": "2.6.22",
+  "product": "Power Management",
+  "component": "Hibernation/Suspend",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup",
+    "device_not_working",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "kernel/power/disk.c"
+    ],
+    "buggy_methods": [
+      "hibernation_platform_enter"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/class/rtc/rtc0/wakealarm",
+      "/proc/acpi/alarm",
+      "/proc/acpi/wakeup"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1445,
+    "description_word_count": 214
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 6,
+    "lines_removed": 3,
+    "patch_size": 9,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "hibernation_platform_enter"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "kernel/power/disk.c",
+    "filename": "disk.c",
+    "directory": "kernel/power",
+    "depth": 3,
+    "top_level": "kernel",
+    "second_level": "power",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Hibernation/Suspend",
+      "is_regression"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "8995",
+      "version": "2.6.22",
+      "status": "found",
+      "path": "kernel/power/disk.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "8995",
+    "title": "/proc/acpi/alarm worked; update to 2.6.22.2 and /sys/class/rtc/rtc0/wakealarm don't",
+    "ground_truth_file": "kernel/power/disk.c",
+    "ground_truth_subsystem": "kernel/power",
+    "ground_truth_methods": [
+      "hibernation_platform_enter"
+    ],
+    "product": "Power Management",
+    "component": "Hibernation/Suspend",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "hang/deadlock",
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/proc/acpi/wakeup",
+        "/sys/class/rtc/rtc0/wakealarm",
+        "/proc/acpi/alarm"
+      ],
+      "component": "Hibernation/Suspend",
+      "product": "Power Management"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

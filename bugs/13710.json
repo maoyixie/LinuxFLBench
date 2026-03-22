@@ -1,0 +1,34 @@
+{
+  "id": "13710",
+  "title": "Corrupted low memory after resume",
+  "description": "Created attachment 22215 [details]\ndmesg\n\nIt was tested with latest linux-2.6 git and drm-linux. To make clean test i used test_suspend=mem with acpi_sleep options (s3_bios and/or s3_mode) and without acpi_sleep. Any acpi_sleep option will make my PC freeze. Without acpi_sleep it will resume but with black screen and i can access it with ssh. Disabling kms will resume with black console but Xorg will enable video. \n\nAfter resume dmesg has two traces, memory corruption and warn_slowpath_common:\n\n\n\n[   60.816159] Corrupted low memory at ffff880000004200 (4200 phys) = 00420301\n[   60.816163] ------------[ cut here ]------------\n[   60.816169] WARNING: at arch/x86/kernel/check.c:134 check_for_bios_corruption+0xe4/0xf0()\n[   60.816171] Hardware name:         \n[   60.816172] Memory corruption detected in low memory\n[   60.816173] Modules linked in: binfmt_misc kvm_intel kvm snd_hda_codec_intelhdmi snd_hda_codec_idt snd_hda_intel snd_hda_codec snd_pcm_oss snd_mixer_oss snd_pcm snd_seq_dummy snd_seq_oss snd_seq_midi snd_rawmidi snd_seq_midi_event snd_seq snd_timer snd_seq_device psmouse snd iTCO_wdt iTCO_vendor_support serio_raw soundcore snd_page_alloc e1000e\n[   60.816190] Pid: 9, comm: events/0 Tainted: G        W  2.6.31-rc1-25446-g1ae8c0a #1\n[   60.816192] Call Trace:\n[   60.816196]  [<ffffffff8104a8e8>] warn_slowpath_common+0x78/0xb0\n[   60.816198]  [<ffffffff8104a97c>] warn_slowpath_fmt+0x3c/0x40\n[   60.816200]  [<ffffffff8102aff4>] check_for_bios_corruption+0xe4/0xf0\n[   60.816202]  [<ffffffff8102b000>] ? check_corruption+0x0/0x30\n[   60.816204]  [<ffffffff8102b009>] check_corruption+0x9/0x30\n[   60.816206]  [<ffffffff8105e4d4>] worker_thread+0x144/0x260\n[   60.816209]  [<ffffffff810635c0>] ? autoremove_wake_function+0x0/0x40\n[   60.816211]  [<ffffffff8105e390>] ? worker_thread+0x0/0x260\n[   60.816213]  [<ffffffff810631e6>] kthread+0x96/0xa0\n[   60.816215]  [<ffffffff8100c69a>] child_rip+0xa/0x20\n[   60.816217]  [<ffffffff81063150>] ? kthread+0x0/0xa0\n[   60.816219]  [<ffffffff8100c690>] ? child_rip+0x0/0x20\n[   60.816220] ---[ end trace e934ad520ce5f9cf ]---\n\n\n[   11.621573] PM: resume devices took 5.784 seconds\n[   11.621574] ------------[ cut here ]------------\n[   11.621579] WARNING: at kernel/power/suspend_test.c:52 suspend_test_finish+0x7c/0x80()\n[   11.621580] Hardware name:         \n[   11.621580] Component: resume devices\n[   11.621581] Modules linked in:\n[   11.621583] Pid: 1, comm: swapper Not tainted 2.6.31-rc1-25446-g1ae8c0a #1\n[   11.621585] Call Trace:\n[   11.621589]  [<ffffffff8104a8e8>] warn_slowpath_common+0x78/0xb0\n[   11.621590]  [<ffffffff8104a97c>] warn_slowpath_fmt+0x3c/0x40\n[   11.621592]  [<ffffffff8107ce7c>] suspend_test_finish+0x7c/0x80\n[   11.621594]  [<ffffffff8107cac1>] suspend_devices_and_enter+0xb1/0x210\n[   11.621595]  [<ffffffff8107cd4a>] enter_state+0x12a/0x150\n[   11.621598]  [<ffffffff81377843>] ? rtc_time_to_tm+0xe3/0x1a0\n[   11.621600]  [<ffffffff8107cd8d>] pm_suspend+0x1d/0x30\n[   11.621603]  [<ffffffff81748f83>] test_suspend+0x140/0x1a7\n[   11.621605]  [<ffffffff81748e43>] ? test_suspend+0x0/0x1a7\n[   11.621608]  [<ffffffff8100905b>] do_one_initcall+0x4b/0x190\n[   11.621610]  [<ffffffff8109d802>] ? register_irq_proc+0xe2/0x110\n[   11.621613]  [<ffffffff81140000>] ? load_elf_binary+0x1b0/0x1fe0\n[   11.621616]  [<ffffffff817346ef>] kernel_init+0x169/0x1bf\n[   11.621618]  [<ffffffff8100c69a>] child_rip+0xa/0x20\n[   11.621619]  [<ffffffff81734586>] ? kernel_init+0x0/0x1bf\n[   11.621621]  [<ffffffff8100c690>] ? child_rip+0x0/0x20\n[   11.621622] ---[ end trace e934ad520ce5f9ce ]---",
+  "patch": [
+    "diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c\nindex de2cab1..89d00e2 100644\n--- a/arch/x86/kernel/setup.c\n+++ b/arch/x86/kernel/setup.c\n@@ -672,6 +672,13 @@ static struct dmi_system_id __initdata bad_bios_dmi_table[] = {\n \t\t\tDMI_MATCH(DMI_BIOS_VENDOR, \"Phoenix Technologies\"),\n \t\t},\n \t},\n+        {\n+                .callback = dmi_low_memory_corruption,\n+                .ident = \"Intel BIOS\",\n+                .matches = {\n+                        DMI_MATCH(DMI_BIOS_VENDOR, \"Intel Corp.\"),\n+                },\n+        },\n #endif\n \t{}\n };\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Sleep-Wake",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Zhang Rui",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2009-07-05 05:37 UTC by Oleksij Rempel",
+  "Modified": "2009-08-30 02:34 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.31-rc1",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/x86/kernel/setup.c"
+  ],
+  "methods": [
+    "bad_bios_dmi_table"
+  ]
+}

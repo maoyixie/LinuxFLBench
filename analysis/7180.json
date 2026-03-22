@@ -1,0 +1,111 @@
+{
+  "id": "7180",
+  "title": "aic94xx driver locks up on IBM x366 with Calgary IOMMU enabled",
+  "kernel_version": "2.6.18",
+  "product": "SCSI Drivers",
+  "component": "AIC94XX",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/x86_64/kernel/pci-calgary.c"
+    ],
+    "buggy_methods": [
+      "calgary_enable_translation"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": true,
+    "description_length": 879,
+    "description_word_count": 136
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 69,
+    "lines_removed": 1,
+    "patch_size": 70,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 6,
+    "hunk_functions": [
+      "writel",
+      "calgary_watchdog"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "arch/x86_64/kernel/pci-calgary.c",
+    "filename": "pci-calgary.c",
+    "directory": "arch/x86_64/kernel",
+    "depth": 4,
+    "top_level": "arch",
+    "second_level": "x86_64",
+    "arch": "x86_64",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:AIC94XX"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "7180",
+      "version": "2.6.18",
+      "status": "found",
+      "path": "arch/x86_64/kernel/pci-calgary.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "7180",
+    "title": "aic94xx driver locks up on IBM x366 with Calgary IOMMU enabled",
+    "ground_truth_file": "arch/x86_64/kernel/pci-calgary.c",
+    "ground_truth_subsystem": "arch/x86_64",
+    "ground_truth_methods": [
+      "calgary_enable_translation"
+    ],
+    "product": "SCSI Drivers",
+    "component": "AIC94XX",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named"
+    ],
+    "clue_details": {
+      "component": "AIC94XX",
+      "product": "SCSI Drivers",
+      "modules": [
+        "NMIs",
+        "causes"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

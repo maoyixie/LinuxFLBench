@@ -1,0 +1,102 @@
+{
+  "id": "24562",
+  "title": "k8-powernow does not see all cores",
+  "kernel_version": "2.6.36",
+  "product": "Power Management",
+  "component": "cpufreq",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/x86/kernel/cpu/cpufreq/powernow-k8.c"
+    ],
+    "buggy_methods": [
+      "print_basics"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1513,
+    "description_word_count": 232
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 3,
+    "patch_size": 5,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "arch/x86/kernel/cpu/cpufreq/powernow-k8.c",
+    "filename": "powernow-k8.c",
+    "directory": "arch/x86/kernel/cpu/cpufreq",
+    "depth": 6,
+    "top_level": "arch",
+    "second_level": "x86",
+    "arch": "x86",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:cpufreq"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "24562",
+      "version": "2.6.36",
+      "status": "found",
+      "path": "arch/x86/kernel/cpu/cpufreq/powernow-k8.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "24562",
+    "title": "k8-powernow does not see all cores",
+    "ground_truth_file": "arch/x86/kernel/cpu/cpufreq/powernow-k8.c",
+    "ground_truth_subsystem": "arch/x86",
+    "ground_truth_methods": [
+      "print_basics"
+    ],
+    "product": "Power Management",
+    "component": "cpufreq",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "performance"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "cpufreq",
+      "product": "Power Management"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

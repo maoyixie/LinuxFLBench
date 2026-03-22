@@ -1,0 +1,112 @@
+{
+  "id": "13250",
+  "title": "Side channel of Intel HDA chip doesn't work anymore, did work with 2.6.29",
+  "kernel_version": "2.6.30-rc3",
+  "product": "Drivers",
+  "component": "Sound",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "device_not_working",
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "sound/pci/hda/patch_sigmatel.c"
+    ],
+    "buggy_methods": [
+      "*stac927x_brd_tbl",
+      "*stac927x_models"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 540,
+    "description_word_count": 84
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 10,
+    "lines_removed": 0,
+    "patch_size": 10,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 4,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "sound/pci/hda/patch_sigmatel.c",
+    "filename": "patch_sigmatel.c",
+    "directory": "sound/pci/hda",
+    "depth": 4,
+    "top_level": "sound",
+    "second_level": "pci",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Sound",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13250",
+      "version": "2.6.30-rc3",
+      "status": "found",
+      "path": "sound/pci/hda/patch_sigmatel.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "13250",
+    "title": "Side channel of Intel HDA chip doesn't work anymore, did work with 2.6.29",
+    "ground_truth_file": "sound/pci/hda/patch_sigmatel.c",
+    "ground_truth_subsystem": "sound/pci",
+    "ground_truth_methods": [
+      "*stac927x_brd_tbl",
+      "*stac927x_models"
+    ],
+    "product": "Drivers",
+    "component": "Sound",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "performance"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "Sound",
+      "product": "Drivers",
+      "modules": [
+        "in"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

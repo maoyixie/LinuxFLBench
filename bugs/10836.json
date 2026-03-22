@@ -1,0 +1,35 @@
+{
+  "id": "10836",
+  "title": "ELO serial touchscreen driver unload issue",
+  "description": "Latest working kernel version: n/a\nEarliest failing kernel version:  2.6.26-rc4-git2\nDistribution: opensuse 10.1\nHardware Environment: x86 / p4 /gigabyte mobo\nSoftware Environment:\nProblem Description:\n\nelo driver seems to have issues when unloading - at least on system without elo touchscreen attached\n\n[  119.319962] BUG: unable to handle kernel paging request at f8cabfcc\n[  119.319962] IP: [<c0269171>] driver_attach+0x3/0x16\n[  119.319962] *pde = 37e08067 *pte = 00000000\n[  119.319962] Oops: 0000 [#1] SMP\n[  119.319962] Modules linked in: psmouse vboxdrv ipv6 button battery ac loop dm _mod md_mod mousedev evdev rtc_cmos rtc_core rtc_lib 8250_pnp e100 mii ehci_hcd uhci_hcd intel_agp usbcore agpgart i2c_i801 rng_core i2c_core iTCO_wdt iTCO_vend or_support parport_pc lp parport 8250 serial_core edd fan thermal processor ther mal_sys hwmon sg megaraid_mbox sr_mod cdrom megaraid_mm ata_piix libata dock sd_ mod scsi_mod [last unloaded: elo]\n[  119.319962]\n[  119.319962] Pid: 121, comm: kseriod Not tainted (2.6.26-rc4-git2 #1)\n[  119.319962] EIP: 0060:[<c0269171>] EFLAGS: 00010246 CPU: 0\n[  119.319962] EIP is at driver_attach+0x3/0x16\n[  119.319962] EAX: f8cabfc8 EBX: f56adec0 ECX: f8cabfc8 EDX: 00000246\n[  119.319962] ESI: f78ec560 EDI: f8cabfa0 EBP: f7877fd0 ESP: f7877f84\n[  119.319962]  DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068\n[  119.319962] Process kseriod (pid: 121, ti=f7877000 task=f786be80 task.ti=f787 7000)\n[  119.319962] Stack: f7877fd0 c026d651 00000246 00000000 00000000 00000000 0000 0000 00000000\n[  119.319962]        00000001 f7819f28 f7819f2c 00000000 f786be80 c013262d f787 7fbc f7877fbc\n[  119.319962]        00000000 c026d4f5 00000000 f7877fe0 c0132559 c013251e 0000 0000 00000000\n[  119.319962] Call Trace:\n[  119.319962]  [<c026d651>] ? serio_thread+0x15c/0x2f3\n[  119.319962]  [<c013262d>] ? autoremove_wake_function+0x0/0x33\n[  119.319962]  [<c026d4f5>] ? serio_thread+0x0/0x2f3\n[  119.319962]  [<c0132559>] ? kthread+0x3b/0x62\n[  119.319962]  [<c013251e>] ? kthread+0x0/0x62\n[  119.319962]  [<c0104443>] ? kernel_thread_helper+0x7/0x10\n[  119.319962]  =======================\n[  119.319962] Code: 5d c3 55 89 e5 56 8d b0 b8 00 00 00 53 89 c3 89 f0 e8 b1 c9  ec ff 89 d8 e8 6d ff ff ff 89 f0 e8 39 c9 ec ff 5b 5e 5d c3 55 89 c1 <8b> 40 04  89 e5 31 d2 68 70 93 26 c0 e8 23 fa ff ff c9 c3 55 89\n[  119.319962] EIP: [<c0269171>] driver_attach+0x3/0x16 SS:ESP 0068:f7877f84\n[  119.319962] ---[ end trace 9f13a3e20519fbdd ]---\n\n\nSteps to reproduce:\n\nwhile true;do modprobe elo; echo -n load;modprobe -r elo;echo -n unload;done",
+  "patch": [
+    "Signed-off-by: Dmitry Torokhov <dtor@mail.ru>\n---\n drivers/input/serio/serio.c |    9 ++++++---\n 1 file changed, 6 insertions(+), 3 deletions(-)\n\nIndex: linux/drivers/input/serio/serio.c\n===================================================================\n--- linux.orig/drivers/input/serio/serio.c\n+++ linux/drivers/input/serio/serio.c\n@@ -331,9 +331,10 @@ static void serio_handle_event(void)\n }\n \n /*\n- * Remove all events that have been submitted for a given serio port.\n+ * Remove all events that have been submitted for a given\n+ * object, be it serio port or driver.\n  */\n-static void serio_remove_pending_events(struct serio *serio)\n+static void serio_remove_pending_events(void *object)\n {\n \tstruct list_head *node, *next;\n \tstruct serio_event *event;\n@@ -343,7 +344,7 @@ static void serio_remove_pending_events(\n \n \tlist_for_each_safe(node, next, &serio_event_list) {\n \t\tevent = list_entry(node, struct serio_event, node);\n-\t\tif (event->object == serio) {\n+\t\tif (event->object == object) {\n \t\t\tlist_del_init(node);\n \t\t\tserio_free_event(event);\n \t\t}\n@@ -837,7 +838,9 @@ void serio_unregister_driver(struct seri\n \tstruct serio *serio;\n \n \tmutex_lock(&serio_mutex);\n+\n \tdrv->manual_bind = 1;\t/* so serio_find_driver ignores it */\n+\tserio_remove_pending_events(drv);\n \n start_over:\n \tlist_for_each_entry(serio, &serio_list, node) {\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Serial",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Dmitry Torokhov",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-05-30 01:26 UTC by Roland Kletzing",
+  "Modified": "2008-07-22 12:46 UTC",
+  "CC List": "0 users",
+  "See Also": "",
+  "Kernel Version": "2.6.26",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/input/serio/serio.c"
+  ],
+  "methods": [
+    "serio_remove_pending_events",
+    "serio_unregister_driver"
+  ]
+}

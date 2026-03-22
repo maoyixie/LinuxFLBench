@@ -1,0 +1,36 @@
+{
+  "id": "84111",
+  "title": "HP Pavilion dv6-3182 shows at least one additional backlight interface",
+  "description": "My HP Pavilion dv6-3182 laptop shows three interfaces in /sys/class/backlight: acpi_video0, acpi_video1 and radeon_bl0.\n\nradeon_bl0 only appears when the radeon driver is used (i.e. not if fglrx is used).\n\nBoth acpi_video0 and radeon_bl0 control the brightness of the screen, but acpi_video0 has 11 brightness levels whilst radeon_bl0 has 256.\n\nAs far as I know, acpi_video1 has no purpose. Writing to its brightness file doesn't do anything, but it causes problems to desktop environments that choose it over the other options.",
+  "patch": [
+    "diff --git a/drivers/acpi/video.c b/drivers/acpi/video.c\nindex fcbda105616e..c3897fe53cb4 100644\n--- a/drivers/acpi/video.c\n+++ b/drivers/acpi/video.c\n@@ -1407,10 +1407,30 @@ acpi_video_device_bind(struct acpi_video_bus *video,\n \t\tif (device->device_id == (ids->value.int_val & 0xffff)) {\n \t\t\tids->bind_info = device;\n \t\t\tACPI_DEBUG_PRINT((ACPI_DB_INFO, \"device_bind %d\\n\", i));\n+\t\t\tdev_info(&device->dev->dev, \"bound video output device _ADR: 0x%x\\n\", device->device_id);\n \t\t}\n \t}\n }\n \n+static bool acpi_video_device_in_dod(struct acpi_video_device *device)\n+{\n+\tstruct acpi_video_bus *video = device->video;\n+\tint i;\n+\n+\t/* If we have a broken _DOD, no need to test */\n+\tif (!video->attached_count) {\n+\t\tdev_info(&video->device->dev, \"broken _DOD\\n\");\n+\t\treturn true;\n+\t}\n+\n+\tfor (i = 0; i < video->attached_count; i++) {\n+\t\tif (video->attached_array[i].bind_info == device)\n+\t\t\treturn true;\n+\t}\n+\n+\treturn false;\n+}\n+\n /*\n  *  Arg:\n  *\tvideo\t: video bus device\n@@ -1468,8 +1488,8 @@ static int acpi_video_device_enumerate(struct acpi_video_bus *video)\n \n \t\tactive_list[count].value.int_val = obj->integer.value;\n \t\tactive_list[count].bind_info = NULL;\n-\t\tACPI_DEBUG_PRINT((ACPI_DB_INFO, \"dod element[%d] = %d\\n\", i,\n-\t\t\t\t  (int)obj->integer.value));\n+\t\tdev_info(&video->device->dev, \"dod element[%d] = 0x%x\\n\", i,\n+\t\t\t\t  (int)obj->integer.value);\n \t\tcount++;\n \t}\n \n@@ -1850,6 +1870,15 @@ static void acpi_video_dev_register_backlight(struct acpi_video_device *device)\n \tstatic int count;\n \tchar *name;\n \n+\t/*\n+\t * Do not create backlight device for video output\n+\t * device that is not in the enumerated list.\n+\t */\n+\tif (!acpi_video_device_in_dod(device)) {\n+\t\tdev_info(&device->dev->dev, \"not in _DOD list, ignore\\n\");\n+\t\treturn;\n+\t}\n+\n \tresult = acpi_video_init_brightness(device);\n \tif (result)\n \t\treturn;\n@@ -1878,6 +1907,8 @@ static void acpi_video_dev_register_backlight(struct acpi_video_device *device)\n \tif (IS_ERR(device->backlight))\n \t\treturn;\n \n+\tdev_info(&device->dev->dev, \"created backlight device\\n\");\n+\n \t/*\n \t * Save current brightness level in case we have to restore it\n \t * before acpi_video_device_lcd_set_level() is called next time.\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Video",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Aaron Lu",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2014-09-08 18:37 UTC by Alicia Boya García",
+  "Modified": "2014-12-08 01:44 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "3.13",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/video.c"
+  ],
+  "methods": [
+    "acpi_video_device_bind",
+    "acpi_video_device_enumerate",
+    "acpi_video_dev_register_backlight"
+  ]
+}

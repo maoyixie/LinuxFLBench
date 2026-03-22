@@ -1,0 +1,119 @@
+{
+  "id": "3518",
+  "title": "disable event LID blocks SLPB and vice versa on wakeup from S3",
+  "kernel_version": "2.6.9",
+  "product": "ACPI",
+  "component": "Power-Sleep-Wake",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/sleep/proc.c"
+    ],
+    "buggy_methods": [
+      "acpi_system_write_wakeup_device"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/acpi/wakeup",
+      "/sys/power/state"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 734,
+    "description_word_count": 112
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 17,
+    "lines_removed": 0,
+    "patch_size": 17,
+    "patch_types": [
+      "logic_change",
+      "init_fix",
+      "synchronization"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "acpi_system_write_wakeup_device"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/sleep/proc.c",
+    "filename": "proc.c",
+    "directory": "drivers/acpi/sleep",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/sleep",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Power-Sleep-Wake"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "3518",
+      "version": "2.6.9",
+      "status": "found",
+      "path": "drivers/acpi/sleep/proc.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "3518",
+    "title": "disable event LID blocks SLPB and vice versa on wakeup from S3",
+    "ground_truth_file": "drivers/acpi/sleep/proc.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "acpi_system_write_wakeup_device"
+    ],
+    "product": "ACPI",
+    "component": "Power-Sleep-Wake",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "locking_fix",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/sys/power/state",
+        "/proc/acpi/wakeup"
+      ],
+      "component": "Power-Sleep-Wake",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

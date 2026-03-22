@@ -1,0 +1,34 @@
+{
+  "id": "7153",
+  "title": "oops on ipmi_msghandler removal for non ipmi systems",
+  "description": "On a system *without* ipmi:\n- modprobe ipmi_si (it'll load also ipmi_msghandler)\n- the ipmi_si module returns of course -ENODEV\n- rmmod ipmi_msghandler\n- watch the kernel oopsing\n\nThe cause of this bug is a forgotten step in the error path. The ipmi_si module\nnever calls driver_unregister in his error path. \nA fix will be provided in the next comment :)",
+  "patch": [
+    "IPMI: Fix oops on ipmi_msghandler removal for non ipmi systems\n\nWhen the ipmi_si module is loaded on a system without any ipmi device, it fails\nwith nodev. It would be fine if all resources were freed. A call to \ndevice_unregister() is missing, resulting to a oops when you remove the \nipmi_msghandler.\n\n\nSigned-Off-by: Arnaud Patard <apatard@mandriva.com>\n\n---\n\nIndex: linux-2.6.17/drivers/char/ipmi/ipmi_si_intf.c\n===================================================================\n--- linux-2.6.17.orig/drivers/char/ipmi/ipmi_si_intf.c\n+++ linux-2.6.17/drivers/char/ipmi/ipmi_si_intf.c\n@@ -2549,6 +2549,7 @@ static __devinit int init_ipmi_si(void)\n #ifdef CONFIG_PCI\n \t\tpci_unregister_driver(&ipmi_pci_driver);\n #endif\n+\t\tdriver_unregister(&ipmi_driver);\n \t\tprintk(\"ipmi_si: Unable to find any System Interface(s)\\n\");\n \t\treturn -ENODEV;\n \t} else {\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "drivers_other",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-09-13 04:39 UTC by Arnaud Patard",
+  "Modified": "2006-10-05 05:24 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.17",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/char/ipmi/ipmi_si_intf.c"
+  ],
+  "methods": [
+    "init_ipmi_si"
+  ]
+}

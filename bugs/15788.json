@@ -1,0 +1,35 @@
+{
+  "id": "15788",
+  "title": "external usb sound card doesn't work after resume",
+  "": "Show dependency tree",
+  "description": "My external usb sound card doesn't work after resume. What is strange is that it appears in lsusb output but not in aplay -l. I am using tuxonice but the problem also occurs with the suspend-to-disk functionality of the mainline kernel.",
+  "patch": [
+    "Index: usb-2.6/drivers/usb/core/driver.c\n===================================================================\n--- usb-2.6.orig/drivers/usb/core/driver.c\n+++ usb-2.6/drivers/usb/core/driver.c\n@@ -1321,6 +1321,7 @@ int usb_resume(struct device *dev, pm_me\n \n \t/* For all other calls, take the device back to full power and\n \t * tell the PM core in case it was autosuspended previously.\n+\t * Unbind the interfaces that will need rebinding later.\n \t */\n \t} else {\n \t\tstatus = usb_resume_both(udev, msg);\n@@ -1329,6 +1330,7 @@ int usb_resume(struct device *dev, pm_me\n \t\t\tpm_runtime_set_active(dev);\n \t\t\tpm_runtime_enable(dev);\n \t\t\tudev->last_busy = jiffies;\n+\t\t\tdo_unbind_rebind(udev, DO_REBIND);\n \t\t}\n \t}\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Sound",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Jaroslav Kysela",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "7216 15310",
+  "Reported": "2010-04-15 10:16 UTC by François Valenduc",
+  "Modified": "2010-06-13 12:14 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.34-rc2",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/usb/core/driver.c"
+  ],
+  "methods": [
+    "usb_resume"
+  ]
+}

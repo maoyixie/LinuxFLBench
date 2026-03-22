@@ -1,0 +1,107 @@
+{
+  "id": "7306",
+  "title": "Yenta-socket causes oops on insertion of any PCMCIA card",
+  "kernel_version": "2.6.26",
+  "product": "Drivers",
+  "component": "PCMCIA",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/powerpc/kernel/pci-common.c"
+    ],
+    "buggy_methods": [
+      "pci_process_bridge_OF_ranges"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 590,
+    "description_word_count": 86
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 12,
+    "lines_removed": 5,
+    "patch_size": 17,
+    "patch_types": [
+      "logic_change",
+      "init_fix"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "arch/powerpc/kernel/pci-common.c",
+    "filename": "pci-common.c",
+    "directory": "arch/powerpc/kernel",
+    "depth": 4,
+    "top_level": "arch",
+    "second_level": "powerpc",
+    "arch": "powerpc",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "medium",
+    "signals": [
+      "call_trace_available",
+      "component_known:PCMCIA"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "7306",
+      "version": "2.6.26",
+      "status": "found",
+      "path": "arch/powerpc/kernel/pci-common.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "7306",
+    "title": "Yenta-socket causes oops on insertion of any PCMCIA card",
+    "ground_truth_file": "arch/powerpc/kernel/pci-common.c",
+    "ground_truth_subsystem": "arch/powerpc",
+    "ground_truth_methods": [
+      "pci_process_bridge_OF_ranges"
+    ],
+    "product": "Drivers",
+    "component": "PCMCIA",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "PCMCIA",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

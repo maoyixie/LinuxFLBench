@@ -1,0 +1,191 @@
+{
+  "id": "7942",
+  "title": "ohci1394 module broken and cannot be removed",
+  "kernel_version": "2.6.20",
+  "product": "Drivers",
+  "component": "IEEE1394",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "wrong_behavior"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/ieee1394/nodemgr.c"
+    ],
+    "buggy_methods": [
+      "init_ieee1394_nodemgr",
+      "cleanup_ieee1394_nodemgr",
+      "nodemgr_dev_template_host"
+    ],
+    "num_methods": 3
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "system_call",
+      "pci_device_probe",
+      "device_attach",
+      "__pci_register_driver",
+      "bus_for_each_dev",
+      "really_probe",
+      "sys_init_module",
+      "device_bind_driver",
+      "klist_add_tail",
+      "__driver_attach",
+      "device_add",
+      "bus_add_driver",
+      "bus_attach_device"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "Module ohci1394 is in use"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 5648,
+    "description_word_count": 679
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 18,
+    "lines_removed": 8,
+    "patch_size": 26,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "init_ieee1394_nodemgr"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/ieee1394/nodemgr.c",
+    "filename": "nodemgr.c",
+    "directory": "drivers/ieee1394",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "ieee1394",
+    "driver_subsystem": "ieee1394/nodemgr.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_13_functions",
+      "component_known:IEEE1394"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "7942",
+      "version": "2.6.20",
+      "status": "found",
+      "path": "drivers/ieee1394/nodemgr.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "7942",
+    "version": "2.6.20",
+    "ground_truth_file": "drivers/ieee1394/nodemgr.c",
+    "trace_functions": [
+      "klist_add_tail",
+      "device_bind_driver",
+      "device_attach",
+      "bus_attach_device",
+      "device_add",
+      "hpsb_alloc_host",
+      "ohci1394_pci_probe",
+      "pci_device_probe",
+      "really_probe",
+      "__driver_attach",
+      "bus_for_each_dev",
+      "bus_add_driver",
+      "__pci_register_driver",
+      "sys_init_module",
+      "system_call"
+    ],
+    "total_trace_functions": 15,
+    "function_locations": {
+      "klist_add_tail": [
+        "lib/klist.c"
+      ],
+      "device_bind_driver": [
+        "drivers/base/dd.c"
+      ],
+      "device_attach": [
+        "drivers/pnp/driver.c",
+        "net/core/dev.c",
+        "drivers/base/dd.c"
+      ],
+      "bus_attach_device": [
+        "drivers/base/bus.c"
+      ],
+      "device_add": [
+        "drivers/pci/probe.c",
+        "drivers/base/platform.c",
+        "drivers/message/i2o/device.c",
+        "drivers/base/class.c",
+        "drivers/hwmon/f71805f.c",
+        "drivers/acpi/ibm_acpi.c",
+        "drivers/hwmon/vt1211.c",
+        "drivers/message/i2o/i2o_proc.c",
+        "drivers/acpi/container.c",
+        "drivers/acpi/processor_core.c"
+      ],
+      "hpsb_alloc_host": [
+        "drivers/ieee1394/hosts.c"
+      ],
+      "ohci1394_pci_probe": [
+        "drivers/ieee1394/ohci1394.c"
+      ],
+      "pci_device_probe": [
+        "drivers/pci/pci-driver.c"
+      ],
+      "really_probe": [
+        "drivers/base/dd.c"
+      ],
+      "__driver_attach": [
+        "drivers/base/dd.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "drivers/pci/probe.c",
+      "drivers/base/platform.c",
+      "drivers/base/bus.c",
+      "drivers/message/i2o/device.c",
+      "drivers/base/class.c",
+      "net/core/dev.c",
+      "drivers/hwmon/f71805f.c",
+      "drivers/pci/pci-driver.c",
+      "drivers/pnp/driver.c",
+      "drivers/acpi/ibm_acpi.c",
+      "drivers/hwmon/vt1211.c",
+      "drivers/message/i2o/i2o_proc.c",
+      "drivers/acpi/container.c",
+      "drivers/ieee1394/hosts.c",
+      "lib/klist.c",
+      "drivers/acpi/processor_core.c",
+      "drivers/ieee1394/ohci1394.c",
+      "drivers/base/dd.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

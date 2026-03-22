@@ -1,0 +1,34 @@
+{
+  "id": "1822",
+  "title": "usb-storage borks out with my camera",
+  "description": "I get this, while plugin my FinePix2400Zom camera to me USB port (it does work\nwith the 2.4 kernel series):\n\nInitializing USB Mass Storage driver...\nscsi0 : SCSI emulation for USB Mass Storage devices\n  Vendor: Fujifilm  Model: FinePix 1400Zoom  Rev: 1000\n  Type:   Direct-Access                      ANSI SCSI revision: 02\nsda : READ CAPACITY failed.\nsda : status=0, message=00, host=7, driver=00\nsda : sense not available.\nsda: assuming Write Enabled\nsda: assuming drive cache: write through\nsda : READ CAPACITY failed.\nsda : status=0, message=00, host=7, driver=00\nsda : sense not available.\nsda: assuming Write Enabled\nsda: assuming drive cache: write through\nsda : READ CAPACITY failed.\nsda : status=0, message=00, host=7, driver=00\nsda : sense not available.\nsda: assuming Write Enabled\nsda: assuming drive cache: write through\n /dev/scsi/host0/bus0/target0/lun0:<3>Buffer I/O error on device sda, logical\nblock 0\nBuffer I/O error on device sda, logical block 0\n unable to read partition table\n /dev/scsi/host0/bus0/target0/lun0:<3>Buffer I/O error on device sda, logical\nblock 0\n unable to read partition table\nAttached scsi removable disk sda at scsi0, channel 0, id 0, lun 0\nAttached scsi generic sg0 at scsi0, channel 0, id 0, lun 0,  type 0\nWARNING: USB Mass Storage data integrity not assured\nUSB Mass Storage device found at 3\ndrivers/usb/core/usb.c: registered new driver usb-storage\nUSB Mass Storage support registered.\nusbfs: USBDEVFS_CONTROL failed cmd usbmodules dev 3 rqt 128 rq 6 len 18 ret -110\n\n\n\n^^^^^^^^^ lots of those like this last line.",
+  "patch": [
+    "===== drivers/usb/storage/transport.c 1.123 vs edited =====\n--- 1.123/drivers/usb/storage/transport.c\tSun Feb 15 15:07:08 2004\n+++ edited/drivers/usb/storage/transport.c\tMon Feb 16 00:47:38 2004\n@@ -815,7 +815,10 @@\n \tif (us->iobuf[0]) {\n \t\tUS_DEBUGP(\"CBI IRQ data showed reserved bType %d\\n\",\n \t\t\t\tus->iobuf[0]);\n-\t\treturn USB_STOR_TRANSPORT_ERROR;\n+//\t\treturn USB_STOR_TRANSPORT_ERROR;\n+\t\t/* weirdo device -- fake goodness */\n+\t\treturn USB_STOR_TRANSPORT_GOOD;\n+\n \t}\n \n \tswitch (us->iobuf[1] & 0x0F) {\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "IO/Storage",
+  "Classification": "Unclassified",
+  "Component": "SCSI",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 high",
+  "Assignee": "Matthew Dharm",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2004-01-09 09:01 UTC by Andr",
+  "Modified": "2004-03-13 03:20 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.1",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/usb/storage/transport.c"
+  ],
+  "methods": [
+    "usb_stor_CBI_transport"
+  ]
+}

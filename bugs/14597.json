@@ -1,0 +1,35 @@
+{
+  "id": "14597",
+  "title": "thinkpad-acpi: driver fails to load on old BIOS for the A31, T23-T30, X30-X31",
+  "": "Show dependency tree",
+  "description": "The driver will fail to detect BIOSes that both lack the \"ThinkPad\" string in the DMI tables, and the EC version string, for ThinkPads that have the EC version string on the most up-to-date BIOSES.\n\nThis causes the driver to return -ENODEV, and the module will not load.\n\nThe problem can be worked around by giving the module the \"force_load=1\" parameter.\n\nProblem tracked down to the quirk tables used as a fallback for known-BIOS detection, they would not match if the EC version is flagged as \"unknown\".",
+  "patch": [
+    "commit bc6ddddc544c8c991158575446c5bfcc5ae4517e\nAuthor: Henrique de Moraes Holschuh <hmh@hmh.eng.br>\nDate:   Fri Nov 13 18:10:29 2009 -0200\n\n    thinkpad-acpi: fix detection of old ThinkPads\n    \n    There is a problem in the quirk tables used by tpacpi_is_fw_known()\n    and tpacpi_check_outdated_fw(), which causes outdated BIOSes that are\n    lacking the EC firmware ID DMI field to never match.\n    \n    This breaks module loading on, e.g. a T23 with outdated BIOS, and the\n    module will refuse to load unless the \"force_load=1\" parameter is\n    given.\n    \n    This is a serious regression, introduced by commit\n    e675abafcc0df38125e6e94a9ba91c92fe774f52,\n    \"thinkpad-acpi: be more strict when detecting a ThinkPad\".\n    \n    Fix the quirk tables so that they can also match the outdated BIOSes,\n    which in turn will both fix the module loading, and also warn the user\n    he is using outdated firmware and should upgrade.\n    \n    Reported-by: Paul Kimoto <kimoto@lightlink.com>\n    Signed-off-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>\n\ndiff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c\nindex d93108d..8973af1 100644\n--- a/drivers/platform/x86/thinkpad_acpi.c\n+++ b/drivers/platform/x86/thinkpad_acpi.c\n@@ -1680,36 +1680,48 @@ static void tpacpi_remove_driver_attributes(struct device_driver *drv)\n \t\t\t  | (__bv1) << 8 | (__bv2) }\n \n #define TPV_Q_X(__v, __bid1, __bid2, __bv1, __bv2,\t\\\n-\t\t__eid1, __eid2, __ev1, __ev2)\t\t\\\n+\t\t__eid, __ev1, __ev2)\t\t\t\\\n \t{ .vendor\t= (__v),\t\t\t\\\n \t  .bios\t\t= TPID(__bid1, __bid2),\t\t\\\n-\t  .ec\t\t= TPID(__eid1, __eid2),\t\t\\\n+\t  .ec\t\t= __eid,\t\t\t\\\n \t  .quirks\t= (__ev1) << 24 | (__ev2) << 16 \\\n \t\t\t  | (__bv1) << 8 | (__bv2) }\n \n #define TPV_QI0(__id1, __id2, __bv1, __bv2) \\\n \tTPV_Q(PCI_VENDOR_ID_IBM, __id1, __id2, __bv1, __bv2)\n \n+/* Outdated IBM BIOSes often lack the EC id string */\n #define TPV_QI1(__id1, __id2, __bv1, __bv2, __ev1, __ev2) \\\n \tTPV_Q_X(PCI_VENDOR_ID_IBM, __id1, __id2, \t\\\n-\t\t__bv1, __bv2, __id1, __id2, __ev1, __ev2)\n+\t\t__bv1, __bv2, TPID(__id1, __id2),\t\\\n+\t\t__ev1, __ev2),\t\t\t\t\\\n+\tTPV_Q_X(PCI_VENDOR_ID_IBM, __id1, __id2, \t\\\n+\t\t__bv1, __bv2, TPACPI_MATCH_UNKNOWN,\t\\\n+\t\t__ev1, __ev2)\n \n+/* Outdated IBM BIOSes often lack the EC id string */\n #define TPV_QI2(__bid1, __bid2, __bv1, __bv2,\t\t\\\n \t\t__eid1, __eid2, __ev1, __ev2) \t\t\\\n \tTPV_Q_X(PCI_VENDOR_ID_IBM, __bid1, __bid2, \t\\\n-\t\t__bv1, __bv2, __eid1, __eid2, __ev1, __ev2)\n+\t\t__bv1, __bv2, TPID(__eid1, __eid2),\t\\\n+\t\t__ev1, __ev2),\t\t\t\t\\\n+\tTPV_Q_X(PCI_VENDOR_ID_IBM, __bid1, __bid2, \t\\\n+\t\t__bv1, __bv2, TPACPI_MATCH_UNKNOWN,\t\\\n+\t\t__ev1, __ev2)\n \n #define TPV_QL0(__id1, __id2, __bv1, __bv2) \\\n \tTPV_Q(PCI_VENDOR_ID_LENOVO, __id1, __id2, __bv1, __bv2)\n \n #define TPV_QL1(__id1, __id2, __bv1, __bv2, __ev1, __ev2) \\\n \tTPV_Q_X(PCI_VENDOR_ID_LENOVO, __id1, __id2, \t\\\n-\t\t__bv1, __bv2, __id1, __id2, __ev1, __ev2)\n+\t\t__bv1, __bv2, TPID(__id1, __id2),\t\\\n+\t\t__ev1, __ev2)\n \n #define TPV_QL2(__bid1, __bid2, __bv1, __bv2,\t\t\\\n \t\t__eid1, __eid2, __ev1, __ev2) \t\t\\\n \tTPV_Q_X(PCI_VENDOR_ID_LENOVO, __bid1, __bid2, \t\\\n-\t\t__bv1, __bv2, __eid1, __eid2, __ev1, __ev2)\n+\t\t__bv1, __bv2, TPID(__eid1, __eid2),\t\\\n+\t\t__ev1, __ev2)\n \n static const struct tpacpi_quirk tpacpi_bios_version_qtable[] __initconst = {\n \t/*  Numeric models ------------------ */\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Platform",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "Henrique de Moraes Holschuh",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "14230",
+  "Reported": "2009-11-13 20:45 UTC by Henrique de Moraes Holschuh",
+  "Modified": "2010-10-08 18:22 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.32-rc1",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/platform/x86/thinkpad_acpi.c"
+  ],
+  "methods": [
+    "TPV_Q_X"
+  ]
+}

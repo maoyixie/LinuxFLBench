@@ -1,0 +1,34 @@
+{
+  "id": "2638",
+  "title": "kernel parameter acpi_os_name= does not work",
+  "description": "Distribution: Debian unstable \nHardware Environment: Centrino Notebook Bullman V5Cen (= Compal  \nCL50) \nProblem Description: \n \nI am using the command line parameter acpi_os_name=\"Microsoft \nWindows XP\" to prevent the EHCI device from being disabled. However, \nthis does not work anymore with kernel 2.6.5 onwards. \n \nWith kernel 2.6.4, dmesg also showed a line containing: \n \nACPI: Overriding _OS definition \n \nWith kernel 2.6.5 and 2.6.6-rc1, acpi_os_name=\"Microsoft Windows XP\" \ndoes not have the desired effect (not disabling the EHCI device), and the \nabove line is not shown in dmesg. \n \nThis happens with both the kernels supplied by the Debian project and \nkernels compiled by myself from the original source.",
+  "patch": [
+    "--- linux-2.6.6.orig/init/main.c\t2004-05-14 13:38:31.000000000 +0800\n+++ linux-2.6.6/init/main.c\t2004-05-14 15:16:55.888691104 +0800\n@@ -242,9 +242,17 @@ __setup(\"quiet\", quiet_kernel);\n    failed parameters */\n static int __init unknown_bootoption(char *param, char *val)\n {\n-\t/* Change NUL term back to \"=\", to make \"param\" the whole string. */\n-\tif (val)\n-\t\tval[-1] = '=';\n+\t/* Change NUL term back to \"=\" and restore quotes, to make \"param\"\n+\t   the whole string. */\n+\tif (val) {\n+\t\tif (val[-1] == '\"') {\n+\t\t\tval[-2] = '=';\n+\t\t\tval[strlen(val)] = '\"';\n+\t\t\tval[strlen(val) + 1] = '\\0';\n+\t\t}\n+\t\telse\n+\t\t\tval[-1] = '=';\n+\t}\n \n \t/* Handle obsolete-style parameters */\n \tif (obsolete_checksetup(param))\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Zhu Yi",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2004-05-04 13:25 UTC by Peter Teichmann",
+  "Modified": "2004-11-03 17:52 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.5",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "init/main.c"
+  ],
+  "methods": [
+    "unknown_bootoption"
+  ]
+}

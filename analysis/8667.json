@@ -1,0 +1,150 @@
+{
+  "id": "8667",
+  "title": "sky2 crash when return from resume to ram",
+  "kernel_version": "2.6.21",
+  "product": "Power Management",
+  "component": "Hibernation/Suspend",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "device_not_working",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/sky2.c"
+    ],
+    "buggy_methods": [
+      "sky2_up"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [
+      "lib/gconf/debian.defaults"
+    ],
+    "source_references": [
+      {
+        "file": "yamane",
+        "line": "5230"
+      },
+      {
+        "file": "yamane",
+        "line": "5230"
+      },
+      {
+        "file": "yamane",
+        "line": "5230"
+      },
+      {
+        "file": "yamane",
+        "line": "5230"
+      },
+      {
+        "file": "yamane",
+        "line": "5230"
+      },
+      {
+        "file": "yamane",
+        "line": "5230"
+      }
+    ],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 7830,
+    "description_word_count": 1111
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 16,
+    "lines_removed": 1,
+    "patch_size": 17,
+    "new_functions": [
+      "tx_init"
+    ],
+    "patch_types": [
+      "new_function",
+      "error_handling",
+      "init_fix",
+      "memory"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "sky2_up"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/sky2.c",
+    "filename": "sky2.c",
+    "directory": "drivers/net",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/sky2.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "file_paths_in_description",
+      "source_file_line_references",
+      "component_known:Hibernation/Suspend"
+    ],
+    "strategies": [
+      "direct_file_path_matching",
+      "use_source_references_to_locate_file",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "8667",
+      "version": "2.6.21",
+      "status": "found",
+      "path": "drivers/net/sky2.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "8667",
+    "title": "sky2 crash when return from resume to ram",
+    "ground_truth_file": "drivers/net/sky2.c",
+    "ground_truth_subsystem": "drivers/net",
+    "ground_truth_methods": [
+      "sky2_up"
+    ],
+    "product": "Power Management",
+    "component": "Hibernation/Suspend",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "hang/deadlock",
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named"
+    ],
+    "clue_details": {
+      "component": "Hibernation/Suspend",
+      "product": "Power Management",
+      "modules": [
+        "v3"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

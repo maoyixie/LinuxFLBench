@@ -1,0 +1,35 @@
+{
+  "id": "84561",
+  "title": "[ivb] Intel backlight does not adjust, but only turns on/off in kernel 3.16 on Samsung 880Z5E laptop",
+  "description": "Hi!\n\nAfter upgrading from kernel 3.14 to 3.16 on a Samsung 880Z5E laptop (with dual Intel HD 4000 and Radeon 8770M cards), the intermediate % of backlight don't work.\n\nI.e. /sys/class/backlight/intel_backlight is there with max_brightness=4882 and type=raw, but all brightness levels > 0 result in full brightness, and brightness level = 0 results in the screen turned off. The same is on the brightness adjustment UI: 0% is \"turned off\", everything greater than 0% is full brightness.\n\n(although when the screen is turned on after being turned off, the backlight turns on smoothly)\n\nacpi_backlight=vendor and video.use_native_backlight=1 also don't work.\n\nWhat other details do you need? acpidump, dmidecode?",
+  "patch": [
+    "From f39714124f8e57b7dd119407e3361bdf0c93596c Mon Sep 17 00:00:00 2001\nFrom: Aaron Lu <aaron.lu@intel.com>\nDate: Tue, 9 Dec 2014 13:04:36 +0800\nSubject: [PATCH] ACPI / video: Add some samsung models to\n disable_native_backlight list\n\nThe SAMSUNG 870Z5E/880Z5E/680Z5E and SAMSUNG\n370R4E/370R4V/370R5E/3570RE/370R5V do not have a working native\nbacklight control interface so restore their acpi_videoX interface.\n\nBuglink: https://bugzilla.kernel.org/show_bug.cgi?id=84221\nBuglink: https://bugzilla.kernel.org/show_bug.cgi?id=84651\nReported-and-tested-by: Brent Saner <brent.saner@gmail.com>\nReported-and-tested-by: Vitaliy Filippov <vitalif@yourcmc.ru>\nReported-and-tested-by: Laszlo KREKACS <laszlo.krekacs.list@gmail.com>\nReported-and-tested-by: Vladimir Perepechin <vovochka13@gmail.com>\nSigned-off-by: Aaron Lu <aaron.lu@intel.com>\n---\n drivers/acpi/video.c | 17 +++++++++++++++++\n 1 file changed, 17 insertions(+)\n\ndiff --git a/drivers/acpi/video.c b/drivers/acpi/video.c\nindex 185a57d13723..8b844931b936 100644\n--- a/drivers/acpi/video.c\n+++ b/drivers/acpi/video.c\n@@ -504,6 +504,23 @@ static struct dmi_system_id video_dmi_table[] __initdata = {\n \t\tDMI_MATCH(DMI_PRODUCT_NAME, \"HP ENVY 15 Notebook PC\"),\n \t\t},\n \t},\n+\n+\t{\n+\t .callback = video_disable_native_backlight,\n+\t .ident = \"SAMSUNG 870Z5E/880Z5E/680Z5E\",\n+\t .matches = {\n+\t\tDMI_MATCH(DMI_SYS_VENDOR, \"SAMSUNG ELECTRONICS CO., LTD.\"),\n+\t\tDMI_MATCH(DMI_PRODUCT_NAME, \"870Z5E/880Z5E/680Z5E\"),\n+\t\t},\n+\t},\n+\t{\n+\t .callback = video_disable_native_backlight,\n+\t .ident = \"SAMSUNG 370R4E/370R4V/370R5E/3570RE/370R5V\",\n+\t .matches = {\n+\t\tDMI_MATCH(DMI_SYS_VENDOR, \"SAMSUNG ELECTRONICS CO., LTD.\"),\n+\t\tDMI_MATCH(DMI_PRODUCT_NAME, \"370R4E/370R4V/370R5E/3570RE/370R5V\"),\n+\t\t},\n+\t},\n \t{}\n };\n \n-- \n1.9.3\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Video",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Aaron Lu",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (1)": "84221",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2014-09-14 10:39 UTC by Vitaliy Filippov",
+  "Modified": "2015-05-17 20:30 UTC",
+  "CC List": "8 users",
+  "See Also": "",
+  "Kernel Version": "3.16.2",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/video.c"
+  ],
+  "methods": [
+    "video_dmi_table"
+  ]
+}

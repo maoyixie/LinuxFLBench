@@ -1,0 +1,36 @@
+{
+  "id": "11735",
+  "title": "delkin_cb fails after resume",
+  "description": "Distribution:\ngentoo\nHardware Environment:\nx86 (Dell laptop, yenta cardbus), \"02:00.0 Mass storage controller [0180]: Workbit Corporation Device [1145:f021] (rev 01)\"\nProblem Description:\nThe delkin_cb driver works with ~3 mb/s performance, top shows the CPU in 98% wait state with heavy I/O. If you suspend to ram or disk, the system comes up but any further I/O to a CF card in the adapter will not complete, top shows ~100% wait state but commands to read from the card do not complete. pata_ninja32 not tested because it performs much worse than delkin_cb (~1 mb/s).\nSteps to reproduce: \n1. boot, mount a CF card through the adapter (or have root on the CF card, as I do)\n2. echo mem > /sys/power/state\n3. resume from sleep\n4. do I/O from the card, say \"ls /mnt/card\"\n5. <crickets chirp> ... top shows 100% wait state",
+  "patch": [
+    "From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>\nSubject: [PATCH] delkin_cb: add PM support\n\n* Factor out chipset initialization code from delkin_cb_probe()\n  to delkin_cb_init_chipset().\n\n* Assign ->init_chipset in struct delkin_cb_port_info.\n\n* Add delkin_cb_{suspend,resume}() (->suspend/->resume methods).\n\nCc: bumble.bee@xs4all.nl\nCc: Alan Cox <alan@lxorguk.ukuu.org.uk>\nSigned-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>\n---\n drivers/ide/pci/delkin_cb.c |   63 +++++++++++++++++++++++++++++++++++++++-----\n 1 file changed, 56 insertions(+), 7 deletions(-)\n\nIndex: b/drivers/ide/pci/delkin_cb.c\n===================================================================\n--- a/drivers/ide/pci/delkin_cb.c\n+++ b/drivers/ide/pci/delkin_cb.c\n@@ -46,10 +46,27 @@ static const struct ide_port_ops delkin_\n \t.quirkproc\t\t= ide_undecoded_slave,\n };\n \n+static unsigned int delkin_cb_init_chipset(struct pci_dev *dev)\n+{\n+\tunsigned long base = pci_resource_start(dev, 0);\n+\tint i;\n+\n+\toutb(0x02, base + 0x1e);\t/* set nIEN to block interrupts */\n+\tinb(base + 0x17);\t\t/* read status to clear interrupts */\n+\n+\tfor (i = 0; i < sizeof(setup); ++i) {\n+\t\tif (setup[i])\n+\t\t\toutb(setup[i], base + i);\n+\t}\n+\n+\treturn 0;\n+}\n+\n static const struct ide_port_info delkin_cb_port_info = {\n \t.port_ops\t\t= &delkin_cb_port_ops,\n \t.host_flags\t\t= IDE_HFLAG_IO_32BIT | IDE_HFLAG_UNMASK_IRQS |\n \t\t\t\t  IDE_HFLAG_NO_DMA,\n+\t.init_chipset\t\t= delkin_cb_init_chipset,\n };\n \n static int __devinit\n@@ -57,7 +74,7 @@ delkin_cb_probe (struct pci_dev *dev, co\n {\n \tstruct ide_host *host;\n \tunsigned long base;\n-\tint i, rc;\n+\tint rc;\n \thw_regs_t hw, *hws[] = { &hw, NULL, NULL, NULL };\n \n \trc = pci_enable_device(dev);\n@@ -72,12 +89,8 @@ delkin_cb_probe (struct pci_dev *dev, co\n \t\treturn rc;\n \t}\n \tbase = pci_resource_start(dev, 0);\n-\toutb(0x02, base + 0x1e);\t/* set nIEN to block interrupts */\n-\tinb(base + 0x17);\t\t/* read status to clear interrupts */\n-\tfor (i = 0; i < sizeof(setup); ++i) {\n-\t\tif (setup[i])\n-\t\t\toutb(setup[i], base + i);\n-\t}\n+\n+\tdelkin_cb_init_chipset(dev);\n \n \tmemset(&hw, 0, sizeof(hw));\n \tide_std_init_ports(&hw, base + 0x10, base + 0x1e);\n@@ -110,6 +123,40 @@ delkin_cb_remove (struct pci_dev *dev)\n \tpci_disable_device(dev);\n }\n \n+#ifdef CONFIG_PM\n+static int delkin_cb_suspend(struct pci_dev *dev, pm_message_t state)\n+{\n+\tpci_save_state(dev);\n+\tpci_disable_device(dev);\n+\tpci_set_power_state(dev, pci_choose_state(dev, state));\n+\n+\treturn 0;\n+}\n+\n+static int delkin_cb_resume(struct pci_dev *dev)\n+{\n+\tstruct ide_host *host = pci_get_drvdata(dev);\n+\tint rc;\n+\n+\tpci_set_power_state(dev, PCI_D0);\n+\n+\trc = pci_enable_device(dev);\n+\tif (rc)\n+\t\treturn rc;\n+\n+\tpci_restore_state(dev);\n+\tpci_set_master(dev);\n+\n+\tif (host->init_chipset)\n+\t\thost->init_chipset(dev);\n+\n+\treturn 0;\n+}\n+#else\n+#define delkin_cb_suspend NULL\n+#define delkin_cb_resume NULL\n+#endif\n+\n static struct pci_device_id delkin_cb_pci_tbl[] __devinitdata = {\n \t{ 0x1145, 0xf021, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},\n \t{ 0x1145, 0xf024, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},\n@@ -122,6 +169,8 @@ static struct pci_driver delkin_cb_pci_d\n \t.id_table\t= delkin_cb_pci_tbl,\n \t.probe\t\t= delkin_cb_probe,\n \t.remove\t\t= delkin_cb_remove,\n+\t.suspend\t= delkin_cb_suspend,\n+\t.resume\t\t= delkin_cb_resume,\n };\n \n static int __init delkin_cb_init(void)\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "IO/Storage",
+  "Classification": "Unclassified",
+  "Component": "IDE",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Bartlomiej Zolnierkiewicz",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-10-10 13:45 UTC by bumble.bee",
+  "Modified": "2008-10-29 11:19 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.27",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/ide/pci/delkin_cb.c"
+  ],
+  "methods": [
+    "delkin_cb_probe",
+    "delkin_cb_port_info",
+    "driver"
+  ]
+}

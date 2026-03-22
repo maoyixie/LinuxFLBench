@@ -1,0 +1,36 @@
+{
+  "id": "5553",
+  "title": "speedstep-smi fails to load if CONFIG_CPU_FREQ_DEBUG is not set",
+  "description": "Most recent kernel where this bug did not occur:\n 2.6.14\nDistribution:\n Debian GNU/Linux Etch\nHardware Environment:\n IBM ThinkPad T22, Pentium III (Coppermine), i440BX\nSoftware Environment:\nProblem Description:\n\ncpufreq used to work with 2.6.8 and 2.6.11 kernels, but doesn't work with 2.6.12\nand 2.6.14 for me. I've found that it actually works with 2.6.14 but only if\nkernel is compiled with CONFIG_CPU_FREQ_DEBUG option set.\n\nSteps to reproduce:\n\nCompile kernel with all allmodconfig and clear the CONFIG_CPU_FREQ_DEBUG.\n\nThen the following happens (otherwise it works):\n\n# modprobe speedstep-lib relaxed_check=1\n# modprobe speedstep-smi\nFATAL: Error inserting speedstep_smi\n(/lib/modules/2.6.14/kernel/arch/i386/kernel/cpu/cpufreq/speedstep-smi.ko): No\nsuch device",
+  "patch": [
+    "Index: sonnenschein/arch/i386/kernel/cpu/cpufreq/speedstep-smi.c\n===================================================================\n--- sonnenschein.orig/arch/i386/kernel/cpu/cpufreq/speedstep-smi.c\n+++ sonnenschein/arch/i386/kernel/cpu/cpufreq/speedstep-smi.c\n@@ -52,9 +52,9 @@ static struct cpufreq_frequency_table sp\n #define SET_SPEEDSTEP_STATE 2\n #define GET_SPEEDSTEP_FREQS 4\n \n-/* how often shall the SMI call be tried if it failed, e.g. because\n- * of DMA activity going on? */\n-#define SMI_TRIES 5\n+/* how often shall the SMI call be tried (it can easily fail, e.g. because\n+ * of DMA activity going on) */\n+#define SMI_TRIES 6\n \n #define dprintk(msg...) cpufreq_debug_printk(CPUFREQ_DEBUG_DRIVER, \"speedstep-smi\", msg)\n \n@@ -161,7 +161,7 @@ static void speedstep_set_state (unsigne\n \tunsigned int result = 0, command, new_state;\n \tunsigned long flags;\n \tunsigned int function=SET_SPEEDSTEP_STATE;\n-\tunsigned int retry = 0;\n+\tunsigned int try = 0;\n \n \tif (state > 0x1)\n \t\treturn;\n@@ -174,24 +174,22 @@ static void speedstep_set_state (unsigne\n \tdprintk(\"trying to set frequency to state %u with command %x at port %x\\n\", state, command, smi_port);\n \n \tdo {\n-\t\tif (retry) {\n-\t\t\tdprintk(\"retry %u, previous result %u, waiting...\\n\", retry, result);\n-\t\t\tmdelay(retry * 50);\n-\t\t}\n-\t\tretry++;\n+\t\tdprintk(\"try %u, previous result %u, waiting...\\n\", try, result);\n+\t\tmdelay(try * 50);\n+\t\ttry++;\n \t\t__asm__ __volatile__(\n \t\t\t\"movl $0, %%edi\\n\"\n \t\t\t\"out %%al, (%%dx)\\n\"\n \t\t\t: \"=b\" (new_state), \"=D\" (result)\n \t\t\t: \"a\" (command), \"b\" (function), \"c\" (state), \"d\" (smi_port), \"S\" (0)\n \t\t\t);\n-\t} while ((new_state != state) && (retry <= SMI_TRIES));\n+\t} while ((new_state != state) && (try <= SMI_TRIES));\n \n \t/* enable IRQs */\n \tlocal_irq_restore(flags);\n \n \tif (new_state == state) {\n-\t\tdprintk(\"change to %u MHz succeeded after %u tries with result %u\\n\", (speedstep_freqs[new_state].frequency / 1000), retry, result);\n+\t\tdprintk(\"change to %u MHz succeeded after %u tries with result %u\\n\", (speedstep_freqs[new_state].frequency / 1000), try, result);\n \t} else {\n \t\tprintk(KERN_ERR \"cpufreq: change failed with new_state %u and result %u\\n\", new_state, result);\n \t}\n",
+    "--- ../linux-source-2.6.15.orig/arch/i386/kernel/cpu/cpufreq/speedstep-smi.c\t2006-01-03 05:21:10.000000000 +0200\n+++ arch/i386/kernel/cpu/cpufreq/speedstep-smi.c\t2006-01-21 23:13:06.000000000 +0200\n@@ -70,7 +70,7 @@\n \tcommand = (smi_sig & 0xffffff00) | (smi_cmd & 0xff);\n \tmagic = virt_to_phys(magic_data);\n \n-\tdprintk(\"trying to obtain ownership with command %x at port %x\\n\", command, smi_port);\n+\tprintk(\"trying to obtain ownership with command %x at port %x\\n\", command, smi_port);\n \n \t__asm__ __volatile__(\n \t\t\"out %%al, (%%dx)\\n\"\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Power Management",
+  "Classification": "Unclassified",
+  "Component": "cpufreq",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "cpufreq",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2005-11-04 16:14 UTC by Theodor Milkov",
+  "Modified": "2011-07-30 05:19 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.14",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/i386/kernel/cpu/cpufreq/speedstep-smi.c"
+  ],
+  "methods": [
+    "void speedstep_set_state",
+    "SMI_TRIES"
+  ]
+}

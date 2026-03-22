@@ -1,0 +1,107 @@
+{
+  "id": "11104",
+  "title": "iwlwifi: printk flood in ad-hoc mode + WEP",
+  "kernel_version": "2.6.26",
+  "product": "Drivers",
+  "component": "network-wireless",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "net/mac80211/mlme.c"
+    ],
+    "buggy_methods": [
+      "ieee80211_rx_bss_info"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 547,
+    "description_word_count": 72
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "config/ifdef"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "ieee80211_rx_bss_info"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "net/mac80211/mlme.c",
+    "filename": "mlme.c",
+    "directory": "net/mac80211",
+    "depth": 3,
+    "top_level": "net",
+    "second_level": "mac80211",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:network-wireless",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "11104",
+      "version": "2.6.26",
+      "status": "found",
+      "path": "net/mac80211/mlme.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "11104",
+    "title": "iwlwifi: printk flood in ad-hoc mode + WEP",
+    "ground_truth_file": "net/mac80211/mlme.c",
+    "ground_truth_subsystem": "net/mac80211",
+    "ground_truth_methods": [
+      "ieee80211_rx_bss_info"
+    ],
+    "product": "Drivers",
+    "component": "network-wireless",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "network-wireless",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

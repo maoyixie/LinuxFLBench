@@ -1,0 +1,100 @@
+{
+  "id": "36082",
+  "title": "samsung-laptop: N150 DMI mismatch",
+  "kernel_version": "2.6.39",
+  "product": "Drivers",
+  "component": "Platform_x86",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "device_not_working"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/platform/x86/samsung-laptop.c"
+    ],
+    "buggy_methods": [
+      "dmi_system_id __initdata"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 235,
+    "description_word_count": 38
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 3,
+    "lines_removed": 3,
+    "patch_size": 6,
+    "patch_types": [
+      "quirk/device_table"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/platform/x86/samsung-laptop.c",
+    "filename": "samsung-laptop.c",
+    "directory": "drivers/platform/x86",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "platform",
+    "driver_subsystem": "platform/x86",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Platform_x86",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "36082",
+      "version": "2.6.39",
+      "status": "found",
+      "path": "drivers/platform/x86/samsung-laptop.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "36082",
+    "title": "samsung-laptop: N150 DMI mismatch",
+    "product": "Drivers",
+    "component": "Platform_x86",
+    "buggy_file": [
+      "drivers/platform/x86/samsung-laptop.c"
+    ],
+    "fix_type": "dmi_quirk_addition",
+    "table_entry_lines_added": 2,
+    "description_clues": [
+      "hardware_model_mentioned",
+      "dmi_info_in_description"
+    ],
+    "patch_size": 6,
+    "potential_strategies": [
+      "search_dmi_tables_in_drivers",
+      "search_for_model_specific_quirks",
+      "narrow_by_component:Platform_x86"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

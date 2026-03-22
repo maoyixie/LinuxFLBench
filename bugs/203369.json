@@ -1,0 +1,35 @@
+{
+  "id": "203369",
+  "title": "A4Tech mouse: horizontal scrolling is recognized as vertical since kernel 5.0",
+  "description": "I have an A4Tech WOP-49Z mouse, which has two wheels - one for vertical and one for horizontal scrolling. It has worked perfectly well with many Linux kernel versions since 2011. With the latest stable kernel version 5.0, however, the horizontal wheel acts as an inverted vertical wheel.\n\nxev reports both vertical and horizontal wheel scrolling as buttons 4/5 with kernel versions 5.0.5, 5.0.7. With kernel versions 4.19.32, 4.19.34 and 4.20.17, xev reports vertical wheel scrolling as buttons 4/5 and horizontal wheel scrolling as buttons 6/7.\n\nI'm testing different kernel versions in the same system with the same other package versions. I'm rebooting and switching between different installed kernel versions provided by Manjaro Linux distribution.\n\nCould this bug be caused by a mistake in the implementation of the new feature in kernel 5.0 - \"Logitech High Resolution Scrolling support\"?",
+  "patch": [
+    "diff --git a/drivers/hid/hid-a4tech.c b/drivers/hid/hid-a4tech.c\nindex 9428ea7cdf8a..fafb9fa558e7 100644\n--- a/drivers/hid/hid-a4tech.c\n+++ b/drivers/hid/hid-a4tech.c\n@@ -38,7 +38,7 @@ static int a4_input_mapped(struct hid_device *hdev, struct hid_input *hi,\n {\n \tstruct a4tech_sc *a4 = hid_get_drvdata(hdev);\n \n-\tif (usage->type == EV_REL && usage->code == REL_WHEEL)\n+\tif (usage->type == EV_REL && usage->code == REL_WHEEL_HI_RES)\n \t\tset_bit(REL_HWHEEL, *bit);\n \n \tif ((a4->quirks & A4_2WHEEL_MOUSE_HACK_7) && usage->hid == 0x00090007)\n@@ -60,7 +60,7 @@ static int a4_event(struct hid_device *hdev, struct hid_field *field,\n \tinput = field->hidinput->input;\n \n \tif (a4->quirks & A4_2WHEEL_MOUSE_HACK_B8) {\n-\t\tif (usage->type == EV_REL && usage->code == REL_WHEEL) {\n+\t\tif (usage->type == EV_REL && usage->code == REL_WHEEL_HI_RES) {\n \t\t\ta4->delayed_value = value;\n \t\t\treturn 1;\n \t\t}\n@@ -77,7 +77,7 @@ static int a4_event(struct hid_device *hdev, struct hid_field *field,\n \t\treturn 1;\n \t}\n \n-\tif (usage->code == REL_WHEEL && a4->hw_wheel) {\n+\tif (usage->code == REL_WHEEL_HI_RES && a4->hw_wheel) {\n \t\tinput_event(input, usage->type, REL_HWHEEL, value);\n \t\treturn 1;\n \t}\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Input Devices",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_input-devices",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2019-04-21 11:24 UTC by Igor Kushnir",
+  "Modified": "2019-10-15 10:16 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "5.0",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/hid/hid-a4tech.c"
+  ],
+  "methods": [
+    "a4_input_mapped",
+    "a4_event"
+  ]
+}

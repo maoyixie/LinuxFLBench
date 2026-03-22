@@ -1,0 +1,108 @@
+{
+  "id": "43088",
+  "title": "[965GM] hang at DPMS time",
+  "kernel_version": "3.2.14",
+  "product": "Drivers",
+  "component": "Video",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpu/drm/i915/intel_display.c"
+    ],
+    "buggy_methods": [
+      "intel_crtc_wait_for_pending_flips",
+      "intel_crtc_disable"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 771,
+    "description_word_count": 133
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 6,
+    "lines_removed": 23,
+    "patch_size": 29,
+    "patch_types": [
+      "synchronization"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "intel_crtc_disable",
+      "intel_clear_scanline_wait"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpu/drm/i915/intel_display.c",
+    "filename": "intel_display.c",
+    "directory": "drivers/gpu/drm/i915",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "gpu",
+    "driver_subsystem": "gpu/drm",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Video"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "43088",
+      "version": "3.2.14",
+      "status": "found",
+      "path": "drivers/gpu/drm/i915/intel_display.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "43088",
+    "title": "[965GM] hang at DPMS time",
+    "ground_truth_file": "drivers/gpu/drm/i915/intel_display.c",
+    "ground_truth_subsystem": "drivers/gpu",
+    "ground_truth_methods": [
+      "intel_crtc_wait_for_pending_flips",
+      "intel_crtc_disable"
+    ],
+    "product": "Drivers",
+    "component": "Video",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "locking_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "component": "Video",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

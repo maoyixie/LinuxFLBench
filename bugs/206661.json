@@ -1,0 +1,34 @@
+{
+  "id": "206661",
+  "title": "iwlwifi:9260: missing PCI subdevice entries for 0x2526 (0x04010, 0x4018 and 0x401C)",
+  "description": "Created attachment 287603 [details]\nBoot Log of Error\n\nI am using Kernel 5.6 RC2 and I am seeing issues where firmware is not being loaded for my Intel Corporation Wireless-AC 9260 card.  Attached is the boot logging.\n\nIf I can do anything to debug, let me know,",
+  "patch": [
+    "From f842f4ad6098dd99c22886554dc93947818d4d2a Mon Sep 17 00:00:00 2001\nFrom: Luca Coelho <luciano.coelho@intel.com>\nDate: Tue, 10 Mar 2020 14:25:21 +0200\nSubject: [PATCH] iwlwifi: pcie: add 0x2526/0x401* devices back to cfg\n detection\n\nThree devices, with PCI device ID 0x2526 and subdevice IDs 0x4010,\n0x4018 and 0x401C were removed accidentally.  Add them back.\n\nReported-by: Brett Hassal <brett.hassal@gmail.com>\nBugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=206661\nFixes: 0b295a1eb81f (\"iwlwifi: add device name to device_info\")\nSigned-off-by: Luca Coelho <luciano.coelho@intel.com>\n---\n drivers/net/wireless/intel/iwlwifi/pcie/drv.c | 3 +++\n 1 file changed, 3 insertions(+)\n\ndiff --git a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c\nindex 97f227f3cbc3..f441b20e1642 100644\n--- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c\n+++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c\n@@ -981,6 +981,9 @@ static const struct iwl_dev_info iwl_dev_info_table[] = {\n \tIWL_DEV_INFO(0x2526, 0x0014, iwl9260_2ac_160_cfg, iwl9260_160_name),\n \tIWL_DEV_INFO(0x2526, 0x0018, iwl9260_2ac_160_cfg, iwl9260_160_name),\n \tIWL_DEV_INFO(0x2526, 0x001C, iwl9260_2ac_160_cfg, iwl9260_160_name),\n+\tIWL_DEV_INFO(0x2526, 0x4010, iwl9260_2ac_160_cfg, iwl9260_160_name),\n+\tIWL_DEV_INFO(0x2526, 0x4018, iwl9260_2ac_160_cfg, iwl9260_160_name),\n+\tIWL_DEV_INFO(0x2526, 0x401C, iwl9260_2ac_160_cfg, iwl9260_160_name),\n \tIWL_DEV_INFO(0x2526, 0x6010, iwl9260_2ac_160_cfg, iwl9260_160_name),\n \tIWL_DEV_INFO(0x2526, 0x6014, iwl9260_2ac_160_cfg, iwl9260_160_name),\n \tIWL_DEV_INFO(0x2526, 0x8014, iwl9260_2ac_160_cfg, iwl9260_160_name),\n-- \n2.25.1\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "network-wireless",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "DO NOT USE - assign \"network-wireless-intel\" component instead",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2020-02-25 02:22 UTC by Mark Bidewell",
+  "Modified": "2020-03-26 05:25 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "5.6-rc2",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/intel/iwlwifi/pcie/drv.c"
+  ],
+  "methods": [
+    "iwl_dev_info_table"
+  ]
+}

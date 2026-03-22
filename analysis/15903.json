@@ -1,0 +1,114 @@
+{
+  "id": "15903",
+  "title": "PNP resource assignment fails",
+  "kernel_version": "2.6.34-rc6",
+  "product": "Drivers",
+  "component": "PNP",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/pnp/resource.c"
+    ],
+    "buggy_methods": [
+      "pnp_check_port",
+      "pnp_check_mem"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 427,
+    "description_word_count": 73
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 4,
+    "lines_removed": 0,
+    "patch_size": 4,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "pnp_check_port",
+      "pnp_check_mem"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/pnp/resource.c",
+    "filename": "resource.c",
+    "directory": "drivers/pnp",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "pnp",
+    "driver_subsystem": "pnp/resource.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:PNP",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "15903",
+      "version": "2.6.34-rc6",
+      "status": "found",
+      "path": "drivers/pnp/resource.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "15903",
+    "title": "PNP resource assignment fails",
+    "ground_truth_file": "drivers/pnp/resource.c",
+    "ground_truth_subsystem": "drivers/pnp",
+    "ground_truth_methods": [
+      "pnp_check_port",
+      "pnp_check_mem"
+    ],
+    "product": "Drivers",
+    "component": "PNP",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "PNP",
+      "product": "Drivers",
+      "modules": [
+        "is"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

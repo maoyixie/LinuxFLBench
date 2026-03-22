@@ -1,0 +1,34 @@
+{
+  "id": "7950",
+  "title": "Network traffic stops inexplicably when running at gigabit speed.",
+  "description": "Most recent kernel where this bug did *NOT* occur: 2.6.18.6\n\nDistribution: CentOS 4.4\n\nHardware Environment:\n\nASUS M2N-E (nForce 570 chipset)\nAMD64 X2 Dual Core 5200+\nBuilt in nic hooked up to a HP ProCurve 2428 gigabit switch.\n\nSoftware Environment:\nUsing a plain kernel without any distro patches.\nUsing forcedeth network driver.\nNo nVidia binary drivers what so ever.\nIP tables is turned off.\n\nProblem Description:\nAt random all network traffic just stops without apparent reason.\nRunning tcpdump shows outgoing packets but no incoming packets.\nIfconfig does not show any rx or tx errors.\nNo error messages show up in dmesg.\nTransfering data at high speed triggers the problem almost right away.\nWhen running an interactive session in ssh it tends to happen after 5-10 \nminutes.\nKernel 2.6.19.2 has the same problem as well.\n\nDoing a ifdown eth0 + ifup eth0 makes things work again for a while, but sooner \nor later it happens again.\nWhen hooking it up to a 100 megabit switch it works perfectly.\n\nI've tried messing around with all parameters you can set with ethtool but \nnothing helped.",
+  "patch": [
+    "--- orig/drivers/net/forcedeth.c\t2007-02-08 21:41:59.000000000 -0500\n+++ new/drivers/net/forcedeth.c\t2007-02-08 21:44:53.000000000 -0500\n@@ -3104,13 +3104,17 @@\n \tstruct fe_priv *np = netdev_priv(dev);\r\n \tu8 __iomem *base = get_hwbase(dev);\r\n \tunsigned long flags;\r\n+\tu32 retcode;\r\n \r\n-\tif (np->desc_ver == DESC_VER_1 || np->desc_ver == DESC_VER_2)\r\n+\tif (np->desc_ver == DESC_VER_1 || np->desc_ver == DESC_VER_2) {\r\n \t\tpkts = nv_rx_process(dev, limit);\r\n-\telse\r\n+\t\tretcode = nv_alloc_rx(dev);\r\n+\t} else {\r\n \t\tpkts = nv_rx_process_optimized(dev, limit);\r\n+\t\tretcode = nv_alloc_rx_optimized(dev);\r\n+\t}\r\n \r\n-\tif (nv_alloc_rx(dev)) {\r\n+\tif (retcode) {\r\n \t\tspin_lock_irqsave(&np->lock, flags);\r\n \t\tif (!np->in_shutdown)\r\n \t\t\tmod_timer(&np->oom_kick, jiffies + OOM_REFILL);\r\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Networking",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 blocking",
+  "Assignee": "Chuck Ebbert",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-02-06 08:57 UTC by Fredrik Ohrn",
+  "Modified": "2007-03-26 15:55 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.20",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/forcedeth.c"
+  ],
+  "methods": [
+    "phy_reset"
+  ]
+}

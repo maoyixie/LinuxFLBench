@@ -1,0 +1,106 @@
+{
+  "id": "84561",
+  "title": "[ivb] Intel backlight does not adjust, but only turns on/off in kernel 3.16 on Samsung 880Z5E laptop",
+  "kernel_version": "3.16.2",
+  "product": "ACPI",
+  "component": "Power-Video",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/video.c"
+    ],
+    "buggy_methods": [
+      "video_dmi_table"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/class/backlight/intel_backlight"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 709,
+    "description_word_count": 107
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 17,
+    "lines_removed": 0,
+    "patch_size": 17,
+    "patch_types": [
+      "quirk/device_table"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/video.c",
+    "filename": "video.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/video.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Power-Video",
+      "is_regression",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "84561",
+      "version": "3.16.2",
+      "status": "found",
+      "path": "drivers/acpi/video.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "84561",
+    "title": "[ivb] Intel backlight does not adjust, but only turns on/off in kernel 3.16 on Samsung 880Z5E laptop",
+    "product": "ACPI",
+    "component": "Power-Video",
+    "buggy_file": [
+      "drivers/acpi/video.c"
+    ],
+    "fix_type": "dmi_quirk_addition",
+    "table_entry_lines_added": 4,
+    "description_clues": [
+      "hardware_model_mentioned",
+      "dmi_info_in_description"
+    ],
+    "patch_size": 17,
+    "potential_strategies": [
+      "search_dmi_tables_in_drivers",
+      "search_for_model_specific_quirks",
+      "narrow_by_component:Power-Video"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

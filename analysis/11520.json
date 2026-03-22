@@ -1,0 +1,107 @@
+{
+  "id": "11520",
+  "title": "eeepc_laptop hwmon missing name",
+  "kernel_version": "2.6.26",
+  "product": "Drivers",
+  "component": "Hardware Monitoring",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/misc/eeepc-laptop.c"
+    ],
+    "buggy_methods": [
+      "eeepc_get_fan_pwm",
+      "*hwmon_attributes"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 183,
+    "description_word_count": 23
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 13,
+    "lines_removed": 3,
+    "patch_size": 16,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "eeepc_get_fan_pwm",
+      "show_sys_hwmon"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/misc/eeepc-laptop.c",
+    "filename": "eeepc-laptop.c",
+    "directory": "drivers/misc",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "misc",
+    "driver_subsystem": "misc/eeepc-laptop.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Hardware Monitoring"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "11520",
+      "version": "2.6.26",
+      "status": "found",
+      "path": "drivers/misc/eeepc-laptop.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "11520",
+    "title": "eeepc_laptop hwmon missing name",
+    "ground_truth_file": "drivers/misc/eeepc-laptop.c",
+    "ground_truth_subsystem": "drivers/misc",
+    "ground_truth_methods": [
+      "eeepc_get_fan_pwm",
+      "*hwmon_attributes"
+    ],
+    "product": "Drivers",
+    "component": "Hardware Monitoring",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "Hardware Monitoring",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

@@ -1,0 +1,96 @@
+{
+  "id": "8838",
+  "title": "Random data in files created on NFS (over OCFS2 over DRBD)",
+  "kernel_version": "2.6.22",
+  "product": "File System",
+  "component": "Other",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "fs/ocfs2/file.c"
+    ],
+    "buggy_methods": [
+      "*ocfs2_get_write_source"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 850,
+    "description_word_count": 140
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "fs/ocfs2/file.c",
+    "filename": "file.c",
+    "directory": "fs/ocfs2",
+    "depth": 3,
+    "top_level": "fs",
+    "second_level": "ocfs2",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [],
+    "strategies": []
+  },
+  "source_verification": [
+    {
+      "id": "8838",
+      "version": "2.6.22",
+      "status": "found",
+      "path": "fs/ocfs2/file.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "8838",
+    "title": "Random data in files created on NFS (over OCFS2 over DRBD)",
+    "ground_truth_file": "fs/ocfs2/file.c",
+    "ground_truth_subsystem": "fs/ocfs2",
+    "ground_truth_methods": [
+      "*ocfs2_get_write_source"
+    ],
+    "product": "File System",
+    "component": "Other",
+    "best_strategy": "semantic_understanding_only",
+    "symptom_categories": [
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "minimal_clues"
+    ],
+    "clue_details": {
+      "product": "File System"
+    }
+  },
+  "overall_category": "E_semantic_understanding_only"
+}

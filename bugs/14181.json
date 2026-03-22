@@ -1,0 +1,35 @@
+{
+  "id": "14181",
+  "title": "b43 causes panic at ifconfig down / shutdown",
+  "": "Show dependency tree",
+  "description": "This problem did not occur in 2.6.30 through 2.6.30.6\nThis problem does occur in 2.6.31-rc3 through 2.6.31\n\nWhen shutting down the system, a panic occurs.\n\nSystem: PowerMac G4\nDistribution: Ubuntu\nKernel is custom built / mainline.\n\nbacktrace is:\n\nssb_device_enable [ssb] (unreliable)\nb43_is_hw_radio_enabled [b43]\nb43_rfkill_poll [b43]\nieee80211_rfkill_poll [mac80211]\ncfg80211_rfkill_poll [cfg80211]\nrfkill_poll [rfkill]",
+  "patch": [
+    "Index: wireless-testing/drivers/net/wireless/b43/main.c\n===================================================================\n--- wireless-testing.orig/drivers/net/wireless/b43/main.c\n+++ wireless-testing/drivers/net/wireless/b43/main.c\n@@ -4500,6 +4500,7 @@ static void b43_op_stop(struct ieee80211\n \tcancel_work_sync(&(wl->beacon_update_trigger));\n \n \tmutex_lock(&wl->mutex);\n+\twiphy_rfkill_stop_polling(hw->wiphy);\n \tif (b43_status(dev) >= B43_STAT_STARTED) {\n \t\tdev = b43_wireless_core_stop(dev);\n \t\tif (!dev)\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "network-wireless",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "drivers_network-wireless@kernel-bugs.osdl.org",
+  "URL": "https://bugs.launchpad.net/bugs/430225",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "13615",
+  "Reported": "2009-09-15 18:34 UTC by Jeremy Huddleston",
+  "Modified": "2009-12-01 12:43 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.31",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/wireless/b43/main.c"
+  ],
+  "methods": [
+    "b43_op_stop"
+  ]
+}

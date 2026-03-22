@@ -1,0 +1,35 @@
+{
+  "id": "11742",
+  "title": "Device buffer on a DVD multi standard writer runs out burning a CD",
+  "description": "Latest working kernel version: 2.6.26\nEarliest failing kernel version:2.6.27\nDistribution: Debian Unstable\nHardware Environment: Laptop Acer 5920G with a Samsung CDDVDW TS-L632H connected through IDE \nSoftware Environment: KDE 3.5.9; k3b 1.0.5; Brasero\nProblem Description: I have compiled the 2.6.27 kernel using make oldconf, thus almost copying the passed 2.6.26.5 configuration. Since then, when I burn a CD the internal buffer in my DVD burner reaches 0% obliging k3b and brasero to slow down the writing speed. It happens even if I don't run any other application. I have noticed that the device buffer runs out even if the software buffer is full, like there was not a fast transfer from the software buffer to the device buffer. In the end, k3b reports a big amount of buffer under-runs (> 100).Everything works as expected with an older 2.6.26.5 kernel. What I need to do to help solving this bug? See you\n\nValerio\n\nSteps to reproduce: Using 2.6.27 kernel and k3b or brasero to burn a CD. It works in simulation mode too (so you don't waste too much CD's ;))",
+  "patch": [
+    "commit e5318b531b008c79d2a0c0df06a7b8628da38e2f\nAuthor: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>\nDate:   Wed Jul 16 20:33:35 2008 +0200\n\n    ide: use the dma safe check for REQ_TYPE_ATA_PC\n    \n    This uses the dma safe check for REQ_TYPE_ATA_PC. The dma safe check\n    is used for only sg requests but it should be used for other non fs\n    commands.\n    \n    This uses blk_queue_update_dma_pad to make the intention clear though\n    ide don't use the blk APIs so it doesn't change anything.\n    \n    Signed-off-by: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>\n    Acked-by: Borislav Petkov <petkovbb@gmail.com>\n    Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>\n    Cc: Tejun Heo <htejun@gmail.com>\n    Cc: Jens Axboe <jens.axboe@oracle.com>\n    Cc: James Bottomley <James.Bottomley@HansenPartnership.com>\n    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>\n    Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>\n\ndiff --git a/drivers/ide/ide-cd.c b/drivers/ide/ide-cd.c\nindex d6667c3..e12d602 100644\n--- a/drivers/ide/ide-cd.c\n+++ b/drivers/ide/ide-cd.c\n@@ -1191,12 +1191,17 @@ static ide_startstop_t cdrom_do_block_pc(ide_drive_t *drive, struct request *rq)\n \tinfo->dma = 0;\n \n \t/* sg request */\n-\tif (rq->bio) {\n-\t\tint mask = drive->queue->dma_alignment;\n-\t\tunsigned long addr =\n-\t\t\t(unsigned long)page_address(bio_page(rq->bio));\n+\tif (rq->bio || ((rq->cmd_type == REQ_TYPE_ATA_PC) && rq->data_len)) {\n+\t\tstruct request_queue *q = drive->queue;\n+\t\tunsigned int alignment;\n+\t\tunsigned long addr;\n \t\tunsigned long stack_mask = ~(THREAD_SIZE - 1);\n \n+\t\tif (rq->bio)\n+\t\t\taddr = (unsigned long)bio_data(rq->bio);\n+\t\telse\n+\t\t\taddr = (unsigned long)rq->data;\n+\n \t\tinfo->dma = drive->using_dma;\n \n \t\t/*\n@@ -1205,7 +1210,8 @@ static ide_startstop_t cdrom_do_block_pc(ide_drive_t *drive, struct request *rq)\n \t\t * NOTE! The \"len\" and \"addr\" checks should possibly have\n \t\t * separate masks.\n \t\t */\n-\t\tif ((rq->data_len & 15) || (addr & mask))\n+\t\talignment = queue_dma_alignment(q) | q->dma_pad_mask;\n+\t\tif (addr & alignment || rq->data_len & alignment)\n \t\t\tinfo->dma = 0;\n \n \t\tif (!((addr & stack_mask) ^\n@@ -1877,6 +1883,7 @@ static int ide_cdrom_setup(ide_drive_t *drive)\n \n \tblk_queue_prep_rq(drive->queue, ide_cdrom_prep_fn);\n \tblk_queue_dma_alignment(drive->queue, 31);\n+\tblk_queue_update_dma_pad(drive->queue, 15);\n \tdrive->queue->unplug_delay = (1 * HZ) / 1000;\n \tif (!drive->queue->unplug_delay)\n \t\tdrive->queue->unplug_delay = 1;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "IO/Storage",
+  "Classification": "Unclassified",
+  "Component": "IDE",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Borislav Petkov",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-10-11 15:54 UTC by Valerio Passini",
+  "Modified": "2008-11-03 09:56 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.27",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/ide/ide-cd.c"
+  ],
+  "methods": [
+    "cdrom_do_block_pc",
+    "ide_cdrom_setup"
+  ]
+}

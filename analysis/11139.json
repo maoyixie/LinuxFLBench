@@ -1,0 +1,137 @@
+{
+  "id": "11139",
+  "title": "warning in cpufreq.c on E450",
+  "kernel_version": "2.6.26",
+  "product": "Power Management",
+  "component": "cpufreq",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/sparc64/kernel/time.c"
+    ],
+    "buggy_methods": [
+      "time_init"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "start_kernel",
+      "auxio_probe",
+      "cpufreq_register_notifier"
+    ],
+    "mentioned_file_paths": [
+      "drivers/cpufreq/cpufreq.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1000,
+    "description_word_count": 70
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 8,
+    "lines_removed": 5,
+    "patch_size": 13,
+    "patch_types": [
+      "synchronization"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "time_init"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "arch/sparc64/kernel/time.c",
+    "filename": "time.c",
+    "directory": "arch/sparc64/kernel",
+    "depth": 4,
+    "top_level": "arch",
+    "second_level": "sparc64",
+    "arch": "sparc64",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_3_functions",
+      "component_known:cpufreq",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "11139",
+      "version": "2.6.26",
+      "status": "found",
+      "path": "arch/sparc64/kernel/time.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "11139",
+    "version": "2.6.26",
+    "ground_truth_file": "arch/sparc64/kernel/time.c",
+    "trace_functions": [
+      "cpufreq_register_notifier",
+      "start_kernel",
+      "auxio_probe"
+    ],
+    "total_trace_functions": 3,
+    "function_locations": {
+      "cpufreq_register_notifier": [
+        "drivers/cpufreq/cpufreq.c"
+      ],
+      "start_kernel": [
+        "init/main.c",
+        "arch/arm/kernel/smp.c",
+        "arch/um/kernel/skas/process.c",
+        "arch/x86/xen/enlighten.c",
+        "arch/x86/kernel/head32.c",
+        "arch/x86/kernel/head64.c",
+        "arch/alpha/boot/main.c"
+      ],
+      "auxio_probe": [
+        "arch/sparc64/kernel/auxio.c",
+        "arch/sparc/kernel/auxio.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "init/main.c",
+      "arch/alpha/boot/main.c",
+      "arch/sparc64/kernel/auxio.c",
+      "arch/arm/kernel/smp.c",
+      "arch/sparc/kernel/auxio.c",
+      "arch/um/kernel/skas/process.c",
+      "arch/x86/xen/enlighten.c",
+      "arch/x86/kernel/head32.c",
+      "arch/x86/kernel/head64.c",
+      "drivers/cpufreq/cpufreq.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

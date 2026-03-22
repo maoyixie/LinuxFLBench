@@ -1,0 +1,35 @@
+{
+  "id": "5366",
+  "title": "synchronize_tsc_bp can zero the TSC during a lost ticks measurement",
+  "description": "Most recent kernel where this bug did not occur: Unknown -- long ago, probably\nDistribution:\nHardware Environment: i386 and x86_64\nSoftware Environment:\nProblem Description:\n\nI verified this in 2.6.11 since it was handy on lxr.linux.no, but it\nprobably exists in most kernel versions.  Also, the bug appears to be\npresent in both the i386 and x86_64 arch even though it's in\narch-specific code.\n\nThe basic problem is that (in some system configurations) the timer\ninterrupt handler uses the TSC to determine whether some ticks have\nbeen lost, but the kernel synchronizes the TSCs by zeroing them all\n*after* timer interrupts have been started.  Thus at the next timer\ninterrupt, lost ticks are computed as a value from after the reset\n(near 0) minus a value from before the reset.  This overflows and\nproduces a garbage value that can be either positive or negative (the\ndetails of the arithmetic differ between x86_64 and i386, but the\nvalue is garbage on both).  If it's positive, it looks like a large\nnumber of ticks have been lost and they get spuriously added to the\njiffies counter.  This in turn can cause timeouts to go off before\nthey should.\n\nHere are some more details for x86_64.  i386 is generally similar.\n\narch/x86_64/kernel/smpboot.c:smp_boot_cpus()\n\n\tif (!skip_ioapic_setup && nr_ioapics)\n\t\tsetup_IO_APIC();      // calls check_timer() - hooks up PIT IRQ\n\telse\n\t\tnr_ioapics = 0;\n\n\tsetup_boot_APIC_clock();\n\n\t/*\n\t * Synchronize the TSC with the AP\n\t */\n\tif (cpu_has_tsc && cpucount)\n\t\tsynchronize_tsc_bp(); // Clear TSCs of all cpus\n\n\nsetup_IO_APIC() calls check_timer(). check_timer() goes through\nvarious schemes of hooking up the PIT IRQ. On success, it leaves it in\nthe unmasked state and from that point on we get timer interrupts.\n\nsynchronize_tsc_bp() is called after PIT timer interrupts are enabled. This\nfunction clears TSC on all cpus. By the time TSC is cleared, the BSP is\nguaranteed to have received at least 4 PIT interrupts (otherwise\ncheck_timer() would have declared it nonworking).\n\nThe timer interrupt code has some logic to compensate for lost interrupts.\nTSC of the last interrupt is saved in vxtime.last_tsc. However, when Linux\nclears TSC in synchronize_tsc_bp(), it does not clear any state in vxtime.\nAs a result, the next timer interrupt _after_ TSC is cleared can get\nconfused and think that lots of time was lost. Whether this happens or not\nis non-deterministic. \"offset\" variable that captures the time since the\nlast timer, is declared \"int\". It could end up positive or negative.\n\n\t\toffset = (((tsc - vxtime.last_tsc) *\n\t\t\t   vxtime.tsc_quot) >> 32) - (USEC_PER_SEC / HZ);\n\nThe number of lost ticks in \"lost\" is a function of offset which could be\nbogus. Here is all relevant code:\n\narch/x86)64/kernel/time.c:timer_interrupt(), VXTIME_TSC case:\n\tunsigned long tsc, lost = 0;\n\tint delay, offset = 0;\n\n\tif (vxtime.mode == VXTIME_HPET) {\n           ... // we do not go here\n\t} else {\n\t\toffset = (((tsc - vxtime.last_tsc) *\n\t\t\t   vxtime.tsc_quot) >> 32) - (USEC_PER_SEC / HZ);\n\n\t\tif (offset < 0)\n\t\t\toffset = 0;\n\n\t\tif (offset > (USEC_PER_SEC / HZ)) {\n\t\t\tlost = offset / (USEC_PER_SEC / HZ);\n\t\t\toffset %= (USEC_PER_SEC / HZ);\n\t\t}\n\n\t\tmonotonic_base += (tsc - vxtime.last_tsc)*1000000/cpu_khz ;\n\n\t\tvxtime.last_tsc = tsc - vxtime.quot * delay / vxtime.tsc_quot;\n\n\t\tif ((((tsc - vxtime.last_tsc) *\n\t\t      vxtime.tsc_quot) >> 32) < offset)\n\t\t\tvxtime.last_tsc = tsc -\n\t\t\t\t(((long) offset << 32) / vxtime.tsc_quot) - 1;\n\t}\n\n\tif (lost) {\n\t\tif (report_lost_ticks) {\n\t\t\tprintk(KERN_WARNING \"time.c: Lost %ld timer \"\n\t\t\t       \"tick(s)! \", lost);\n\t\t\tprint_symbol(\"rip %s)\\n\", regs->rip);\n\t\t}\n\t\tjiffies += lost;\n\t}",
+  "patch": [
+    "diff --git a/arch/i386/kernel/timers/timer_tsc.c b/arch/i386/kernel/timers/timer_tsc.c\n--- a/arch/i386/kernel/timers/timer_tsc.c\n+++ b/arch/i386/kernel/timers/timer_tsc.c\n@@ -45,6 +45,15 @@ static unsigned long last_tsc_high; /* m\n static unsigned long long monotonic_base;\n static seqlock_t monotonic_lock = SEQLOCK_UNLOCKED;\n \n+/* Avoid compensating for lost ticks before TSCs are synched */\n+static int detect_lost_ticks;\n+static int __init start_lost_tick_compensation(void)\n+{\n+\tdetect_lost_ticks = 1;\n+\treturn 0;\n+}\n+late_initcall(start_lost_tick_compensation);\n+\n /* convert from cycles(64bits) => nanoseconds (64bits)\n  *  basic equation:\n  *\t\tns = cycles / (freq / ns_per_sec)\n@@ -196,7 +205,8 @@ static void mark_offset_tsc_hpet(void)\n \n \t/* lost tick compensation */\n \toffset = hpet_readl(HPET_T0_CMP) - hpet_tick;\n-\tif (unlikely(((offset - hpet_last) > hpet_tick) && (hpet_last != 0))) {\n+\tif (unlikely(((offset - hpet_last) > hpet_tick) && (hpet_last != 0))\n+\t\t\t\t\t&& detect_lost_ticks) {\n \t\tint lost_ticks = (offset - hpet_last) / hpet_tick;\n \t\tjiffies_64 += lost_ticks;\n \t}\n@@ -419,7 +429,7 @@ static void mark_offset_tsc(void)\n \tdelta += delay_at_last_interrupt;\n \tlost = delta/(1000000/HZ);\n \tdelay = delta%(1000000/HZ);\n-\tif (lost >= 2) {\n+\tif (lost >= 2 && detect_lost_ticks) {\n \t\tjiffies_64 += lost-1;\n \n \t\t/* sanity check to ensure we're not always losing ticks */\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Timers",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 low",
+  "Assignee": "john stultz",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2005-10-04 18:16 UTC by Tim Mann",
+  "Modified": "2006-05-09 17:36 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.11",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/i386/kernel/timers/timer_tsc.c"
+  ],
+  "methods": [
+    "mark_offset_tsc_hpet",
+    "mark_offset_tsc"
+  ]
+}

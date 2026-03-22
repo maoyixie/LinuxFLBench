@@ -1,0 +1,114 @@
+{
+  "id": "4359",
+  "title": "With HT off in bios, /proc/cpuinfo shows2 processors, each with 2 siblings",
+  "kernel_version": "2.6.7",
+  "product": "ACPI",
+  "component": "BIOS",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/i386/kernel/smpboot.c"
+    ],
+    "buggy_methods": [
+      "smp_boot_cpus"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/cpuinfo"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 739,
+    "description_word_count": 123
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 5,
+    "lines_removed": 1,
+    "patch_size": 6,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "smp_boot_cpus"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "arch/i386/kernel/smpboot.c",
+    "filename": "smpboot.c",
+    "directory": "arch/i386/kernel",
+    "depth": 4,
+    "top_level": "arch",
+    "second_level": "i386",
+    "arch": "i386",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:BIOS"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "4359",
+      "version": "2.6.7",
+      "status": "found",
+      "path": "arch/i386/kernel/smpboot.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "4359",
+    "title": "With HT off in bios, /proc/cpuinfo shows2 processors, each with 2 siblings",
+    "ground_truth_file": "arch/i386/kernel/smpboot.c",
+    "ground_truth_subsystem": "arch/i386",
+    "ground_truth_methods": [
+      "smp_boot_cpus"
+    ],
+    "product": "ACPI",
+    "component": "BIOS",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/proc/cpuinfo"
+      ],
+      "component": "BIOS",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

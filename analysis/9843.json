@@ -1,0 +1,110 @@
+{
+  "id": "9843",
+  "title": "CIFS doesn't like the new fair group CPU scheduler",
+  "kernel_version": "2.6.24",
+  "product": "File System",
+  "component": "CIFS",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "kernel/sched_fair.c"
+    ],
+    "buggy_methods": [
+      "check_preempt_wakeup"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": true,
+    "description_length": 1711,
+    "description_word_count": 270
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 5,
+    "lines_removed": 1,
+    "patch_size": 6,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "check_preempt_wakeup"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "kernel/sched_fair.c",
+    "filename": "sched_fair.c",
+    "directory": "kernel",
+    "depth": 2,
+    "top_level": "kernel",
+    "second_level": "sched_fair.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:CIFS",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "9843",
+      "version": "2.6.24",
+      "status": "found",
+      "path": "kernel/sched_fair.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "9843",
+    "title": "CIFS doesn't like the new fair group CPU scheduler",
+    "ground_truth_file": "kernel/sched_fair.c",
+    "ground_truth_subsystem": "kernel/sched_fair.c",
+    "ground_truth_methods": [
+      "check_preempt_wakeup"
+    ],
+    "product": "File System",
+    "component": "CIFS",
+    "best_strategy": "search_config_related_code",
+    "symptom_categories": [
+      "performance"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "config_options",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "CIFS",
+      "product": "File System",
+      "configs": [
+        "CONFIG_FAIR_GROUP_SCHED"
+      ]
+    }
+  },
+  "overall_category": "E_search_config_related_code"
+}

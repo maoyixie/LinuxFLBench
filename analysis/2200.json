@@ -1,0 +1,116 @@
+{
+  "id": "2200",
+  "title": "uncorrectly enabling GPEs",
+  "kernel_version": "2.6.2",
+  "product": "ACPI",
+  "component": "ACPICA-Core",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/events/evgpeblk.c"
+    ],
+    "buggy_methods": [
+      "acpi_ev_save_method_info",
+      "acpi_ev_gpe_initialize"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 459,
+    "description_word_count": 78
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 85,
+    "lines_removed": 1,
+    "patch_size": 86,
+    "new_functions": [
+      "acpi_ev_is_wakeup_gpe"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "init_fix",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 3,
+    "hunk_functions": [
+      "acpi_ev_save_method_info",
+      "acpi_ev_gpe_initialize"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/events/evgpeblk.c",
+    "filename": "evgpeblk.c",
+    "directory": "drivers/acpi/events",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/events",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:ACPICA-Core"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "2200",
+      "version": "2.6.2",
+      "status": "found",
+      "path": "drivers/acpi/events/evgpeblk.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "2200",
+    "title": "uncorrectly enabling GPEs",
+    "ground_truth_file": "drivers/acpi/events/evgpeblk.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "acpi_ev_save_method_info",
+      "acpi_ev_gpe_initialize"
+    ],
+    "product": "ACPI",
+    "component": "ACPICA-Core",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "ACPICA-Core",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

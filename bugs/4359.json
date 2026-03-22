@@ -1,0 +1,34 @@
+{
+  "id": "4359",
+  "title": "With HT off in bios, /proc/cpuinfo shows2 processors, each with 2 siblings",
+  "description": "Distribution: RHEL4 AS, Fedora Core 2\nHardware Environment: Dual Xeon (HP DL-360 or Sun Fire V60x)\nSoftware Environment: kernel-smp\nProblem Description: inconsistent sibling count when ht is disabled\n\nSteps to reproduce:\n\nOn an HP DL-360 or Sun Fire V60x (dual xeon systems)\n  1. disable HT in the bios\n  2. boot any smp kernel after 2.6.5 (didn't try UP kernel)\n  3. /proc/cpuinfo shows 2 processors (phys ID 0 and 3) with 2 siblings\n\nExpected behavior:\n /proc/cpuinfo should show 2 processors with 1 sibling each.\n\nI don't see this behavior on any of my other dual xeon systems (HP x4000,\nxw8000, or xw8200).\nI don't see this behavior on ANY systems running kernel 2.6.5 or earlier.\nI've tried updating the firmware and that didn't help.",
+  "patch": [
+    "--- linux-2.6.6-1.435.2.3/arch/i386/kernel/smpboot.c.org\t2005-03-19 06:56:51.123416256 -0800\n+++ linux-2.6.6-1.435.2.3/arch/i386/kernel/smpboot.c\t2005-03-19 06:59:01.884537544 -0800\n@@ -1110,8 +1110,12 @@ static void __init smp_boot_cpus(unsigne\n \t\t\tcpu_set(cpu, cpu_sibling_map[cpu]);\n \t\t}\n \n-\t\tif (siblings != smp_num_siblings)\n+\t\tif (siblings != smp_num_siblings) {\n \t\t\tprintk(KERN_WARNING \"WARNING: %d siblings found for CPU%d, should be %d\\n\", siblings, cpu, smp_num_siblings);\n+\t\t\tprintk(KERN_WARNING \"WARNING: BIOS reporting wrong sibling count. Resetting it to %d\\n\", siblings);\n+\t\t\tsmp_num_siblings = siblings;\n+\t\t}\n+\n \t}\n \n \tif (nmi_watchdog == NMI_LOCAL_APIC)\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "BIOS",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Suresh B Siddha",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2005-03-17 12:25 UTC by Jay Hilliard",
+  "Modified": "2005-06-03 17:05 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.7",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/i386/kernel/smpboot.c"
+  ],
+  "methods": [
+    "smp_boot_cpus"
+  ]
+}

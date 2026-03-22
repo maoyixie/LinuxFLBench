@@ -1,0 +1,100 @@
+{
+  "id": "203475",
+  "title": "Samsung 860 EVO queued TRIM issues",
+  "kernel_version": "4.14.114",
+  "product": "IO/Storage",
+  "component": "Serial ATA",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/ata/libata-core.c"
+    ],
+    "buggy_methods": [
+      "ata_device_blacklist"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 4,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 709,
+    "description_word_count": 101
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 0,
+    "patch_size": 2,
+    "patch_types": [
+      "quirk/device_table"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/ata/libata-core.c",
+    "filename": "libata-core.c",
+    "directory": "drivers/ata",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "ata",
+    "driver_subsystem": "ata/libata-core.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "dmesg_logs_available",
+      "component_known:Serial ATA",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "203475",
+      "version": "4.14.114",
+      "status": "found",
+      "path": "drivers/ata/libata-core.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "203475",
+    "title": "Samsung 860 EVO queued TRIM issues",
+    "product": "IO/Storage",
+    "component": "Serial ATA",
+    "buggy_file": [
+      "drivers/ata/libata-core.c"
+    ],
+    "fix_type": "device_blacklist_addition",
+    "table_entry_lines_added": 2,
+    "description_clues": [
+      "device_ids_in_description"
+    ],
+    "patch_size": 2,
+    "potential_strategies": [
+      "grep_device_id_in_kernel_source",
+      "narrow_by_component:Serial ATA"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "12239",
+  "title": "Swap breaks after 2x hibernation failure due to lack of swap",
+  "": "Show dependency tree",
+  "description": "Distribution: Ubuntu 8.10\nHardware Environment: x86-64\nProblem Description:\n\nIf there is not enough swap to hibernate sucessfuly, and you try to hibernate twice in a row, the status of swap partitions is corrupted.\n\nSteps to reproduce:\n\n1) Conspire to ensure insufficient swap space for hibernation\n2) Attempt to hibernate, and fail\n3) Attempt to hibernate *again*, and fail\n4) try swapoff\n\nOutcome:\n\n# swapoff /dev/sda6\nswapoff: /dev/sda6: Invalid argument\n# cat /proc/swaps\nFilename                                Type            Size    Used   \nPriority\n/dev/sda6                               partition       1494004 1350564 -1\n\nMore details about the resulting behaviour:\n\nIncidentally \"swapoff -a\" fails silently, which I think is a bug in\nswapoff (i.e. it should report the error).\n\nI don't see any backtraces in dmesg; the only errors it shows is the\nfailure to hibernate\n\nIf I free up some memory and try to hibernate again, I get a different\nerror - \"Cannot find swap device, try swapon -a.\".  Now swapon -a\ndoesn't work, but if I target the specific device...\n\n# swapon /dev/sda6\n# cat /proc/swaps\nFilename                                Type            Size    Used   \nPriority\n/dev/sda6                               partition       1494004 331060  -1\n/dev/sda6                               partition       1494004 0       -2\n\nWheee!  Interestingly I can now hibernate and resume.  But it's not\nsafe; my desktop session dies horribly.\n\nThanks\nAlan\n\n[ 1541.499324] kdeinit[10614]: segfault at 0 ip 00007fbd8515139a sp\n00007fff8e04cf80 error 4 in libc-2.7.so[7fbd850dc000+158000]\n[ 1541.520988] kdeinit[7322]: segfault at 0 ip 00007fbd8515139a sp\n00007fff8e04cf50 error 4 in libc-2.7.so[7fbd850dc000+158000]\n[ 1541.545512] kio_file[7343]: segfault at ffffffff00000000 ip\nffffffff00000000 sp 00007fff8e04c8a8 error 14\n[ 1541.680883] Xorg[6928]: segfault at 692 ip 00007fb391c5bb92 sp\n00007fff99e6a6c0 error 4 in ld-2.7.so[7fb391c4e000+1d000]\n\n(ignore this bit, I think it happens every time X starts)\n[ 1541.686628] Xorg:6928 freeing invalid memtype d0020000-d002a000\n[ 1541.686748] Xorg:6928 freeing invalid memtype d002a000-d0032000\n[ 1541.686848] Xorg:6928 freeing invalid memtype d0032000-d0042000\n[ 1541.686948] Xorg:6928 freeing invalid memtype d0042000-d0043000\n[ 1541.687221] Xorg:6928 freeing invalid memtype d0100000-d0740000\n[ 1541.687421] Xorg:6928 freeing invalid memtype d077f000-d1a00000\n[ 1541.687549] Xorg:6928 freeing invalid memtype d1a00000-d2040000\n[ 1541.687649] Xorg:6928 freeing invalid memtype d2040000-d2680000\n[ 1541.687750] Xorg:6928 freeing invalid memtype d2680000-d4680000\n[ 1542.116794] Xorg:6928 freeing invalid memtype d0000000-d0020000\n\n[ 1542.343673] pidgin[7505] general protection ip:7fcfdab92c92\nsp:7fffe4e46ca0 error:0 in libX11.so.6.2.0[7fcfdab52000+ff000]\n[ 1542.366374] update-notifier[7372] general protection ip:7f543a2acb92\nsp:7fff424bc4a0 error:0 in ld-2.7.so[7f543a29f000+1d000]\n[ 1545.569879] skge eth2: disabling interface\n[ 1545.575729] skge eth2: enabling interface\n[ 1545.579087] ADDRCONF(NETDEV_UP): eth2: link is not ready\n[ 1546.966466] gedit[7423]: segfault at ffff88003740d448 ip\n00007fb76a5d9053 sp 00007fff7ecf11d0 error 5 in\nlibqt-mt.so.3.3.8[7fb76a1f8000+9df000]\n[ 1547.262323] skge eth2: Link is up at 100 Mbps, full duplex, flow\ncontrol both\n[ 1547.262656] ADDRCONF(NETDEV_CHANGE): eth2: link becomes ready\n[ 1547.831519] evince[7916] general protection ip:7f92c525b794\nsp:7fffcd46a680 error:0 in ld-2.7.so[7f92c524d000+1d000]\n[ 1547.964072] python[7526]: segfault at 200515 ip 00007f98515237e3 sp\n00007fff59737530 error 4 in ld-2.7.so[7f985151a000+1d000]\n[ 1549.013419] console-kit-dae[6506]: segfault at 28 ip 00007f310cf8b7c5\nsp 00007fff1519ef40 error 4 in ld-2.7.so[7f310cf82000+1d000]\n[ 1557.926527] eth2: no IPv6 routers present\n[ 1568.747175] dcopserver[7325]: segfault at 4617998 ip 00007fbd85111409\nsp 00007fff8e04c7e0 error 4 in libc-2.7.so[7fbd850dc000+158000]\n[ 1569.959891] eth2: no IPv6 routers present",
+  "patch": [
+    "diff --git a/mm/swapfile.c b/mm/swapfile.c\nindex f48b831..7740478 100644\n--- a/mm/swapfile.c\n+++ b/mm/swapfile.c\n@@ -635,7 +635,7 @@ int swap_type_of(dev_t device, sector_t offset, struct block_device **bdev_p)\n \n \t\tif (!bdev) {\n \t\t\tif (bdev_p)\n-\t\t\t\t*bdev_p = sis->bdev;\n+\t\t\t\t*bdev_p = bdget(sis->bdev->bd_dev);\n \n \t\t\tspin_unlock(&swap_lock);\n \t\t\treturn i;\n@@ -647,7 +647,7 @@ int swap_type_of(dev_t device, sector_t offset, struct block_device **bdev_p)\n \t\t\t\t\tstruct swap_extent, list);\n \t\t\tif (se->start_block == offset) {\n \t\t\t\tif (bdev_p)\n-\t\t\t\t\t*bdev_p = sis->bdev;\n+\t\t\t\t\t*bdev_p = bdget(sis->bdev->bd_dev);\n \n \t\t\t\tspin_unlock(&swap_lock);\n \t\t\t\tbdput(bdev);\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Power Management",
+  "Classification": "Unclassified",
+  "Component": "Hibernation/Suspend",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "power-management_other",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (1)": "12241",
+  "Depends on": "",
+  "Blocks": "7216",
+  "Reported": "2008-12-16 13:14 UTC by Alan Jenkins",
+  "Modified": "2009-03-19 04:05 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.27",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "mm/swapfile.c"
+  ],
+  "methods": [
+    "swap_type_of"
+  ]
+}

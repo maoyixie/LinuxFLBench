@@ -1,0 +1,116 @@
+{
+  "id": "11178",
+  "title": "Secondary hard drive fails during both hibernation and resume.",
+  "kernel_version": "2.6.27-rc1",
+  "product": "Drivers",
+  "component": "PCI",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/pci/msi.c"
+    ],
+    "buggy_methods": [
+      "__pci_restore_msi_state"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/power/state"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 716,
+    "description_word_count": 106
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 3,
+    "patch_size": 5,
+    "patch_types": [
+      "other"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "__pci_restore_msi_state"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/pci/msi.c",
+    "filename": "msi.c",
+    "directory": "drivers/pci",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "pci",
+    "driver_subsystem": "pci/msi.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:PCI",
+      "is_regression"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "11178",
+      "version": "2.6.27-rc1",
+      "status": "found",
+      "path": "drivers/pci/msi.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "11178",
+    "title": "Secondary hard drive fails during both hibernation and resume.",
+    "ground_truth_file": "drivers/pci/msi.c",
+    "ground_truth_subsystem": "drivers/pci",
+    "ground_truth_methods": [
+      "__pci_restore_msi_state"
+    ],
+    "product": "Drivers",
+    "component": "PCI",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "diagnostic_tool_output",
+      "is_regression"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/sys/power/state"
+      ],
+      "component": "PCI",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

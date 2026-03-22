@@ -1,0 +1,34 @@
+{
+  "id": "24562",
+  "title": "k8-powernow does not see all cores",
+  "description": "During boot, I get this summary on my AMD 890FX/SB850 chipset:\n\nSMP: Allowing 6 CPUs, 0 hotplug CPUs\nsetup_percpu: NR_CPUS:4096 nr_cpumask_bits:6 nr_cpu_ids:6 nr_node_ids:1\nPERCPU: Embedded 27 pages/cpu @ffff880006000000 s80704 r8192 d21696 u262144\npcpu-alloc: s80704 r8192 d21696 u262144 alloc=1*2097152\npcpu-alloc: [0] 0 1 2 3 4 5 - - \nSLUB: Genslabs=13, HWalign=64, Order=0-3, MinObjects=0, CPUs=6, Nodes=1\n        RCU-based detection of stalled CPUs is disabled.\n        Verbose stalled-CPUs detection is disabled.\nCPU: Physical Processor ID: 0\nCPU: Processor Core ID: 0\nmce: CPU supports 6 MCE banks\nCPU0: AMD Phenom(tm) II X6 1090T Processor stepping 00\nSwitch to broadcast mode on CPU1\nSwitch to broadcast mode on CPU2\nSwitch to broadcast mode on CPU3\nSwitch to broadcast mode on CPU4\nBrought up 6 CPUs\nSwitch to broadcast mode on CPU5\nSwitch to broadcast mode on CPU0\n\nAnd a bit further down cores 4 and 5 are not seen by \"powernow-k8\":\n\npowernow-k8: Found 1 AMD Phenom(tm) II X6 1090T Processor (6 cpu cores) (version 2.20.00)\npowernow-k8: Core Performance Boosting: on.\npowernow-k8:    0 : pstate 0 (3200 MHz)\npowernow-k8:    1 : pstate 1 (2400 MHz)\npowernow-k8:    2 : pstate 2 (1600 MHz)\npowernow-k8:    3 : pstate 3 (800 MHz)\n\nFrequency scaling does work on all 6 cores once the system is up and running.\n\n-----------------------------\n\nFinally, should this: \"AMD Opteron/Athlon64 PowerNow!\" under CPU Frequency scaling inside the kernel be called something else to accommodate the K10 (Phenom) line?",
+  "patch": [
+    "\nFix a poor KERN_INFO message in powernow-k8 driver.\nhttps://bugzilla.kernel.org/show_bug.cgi?id=24562#c6\n\nSigned-off-by: Zhang Rui <rui.zhang@intel.com>\n---\n arch/x86/kernel/cpu/cpufreq/powernow-k8.c |    5 ++---\n 1 file changed, 2 insertions(+), 3 deletions(-)\n\nIndex: linux-2.6/arch/x86/kernel/cpu/cpufreq/powernow-k8.c\n===================================================================\n--- linux-2.6.orig/arch/x86/kernel/cpu/cpufreq/powernow-k8.c\t2010-12-13 15:59:24.000000000 +0800\n+++ linux-2.6/arch/x86/kernel/cpu/cpufreq/powernow-k8.c\t2010-12-13 15:59:47.000000000 +0800\n@@ -625,13 +625,12 @@\n \t\t\t\tCPUFREQ_ENTRY_INVALID) {\n \t\t\tif (cpu_family == CPU_HW_PSTATE) {\n \t\t\t\tprintk(KERN_INFO PFX\n-\t\t\t\t\t\"   %d : pstate %d (%d MHz)\\n\", j,\n+\t\t\t\t\t\"   pstate %d (%d MHz)\\n\",\n \t\t\t\t\tdata->powernow_table[j].index,\n \t\t\t\t\tdata->powernow_table[j].frequency/1000);\n \t\t\t} else {\n \t\t\t\tprintk(KERN_INFO PFX\n-\t\t\t\t\t\"   %d : fid 0x%x (%d MHz), vid 0x%x\\n\",\n-\t\t\t\t\tj,\n+\t\t\t\t\t\"   fid 0x%x (%d MHz), vid 0x%x\\n\",\n \t\t\t\t\tdata->powernow_table[j].index & 0xff,\n \t\t\t\t\tdata->powernow_table[j].frequency/1000,\n \t\t\t\t\tdata->powernow_table[j].index >> 8);\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Power Management",
+  "Classification": "Unclassified",
+  "Component": "cpufreq",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Thomas Renninger",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2010-12-09 14:57 UTC by Thoralf Dassler",
+  "Modified": "2011-03-30 23:36 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.36",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/x86/kernel/cpu/cpufreq/powernow-k8.c"
+  ],
+  "methods": [
+    "print_basics"
+  ]
+}

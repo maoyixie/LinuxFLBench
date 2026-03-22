@@ -1,0 +1,110 @@
+{
+  "id": "177311",
+  "title": "crazy interrupt rate on i801_smbus",
+  "kernel_version": "4.8.1",
+  "product": "Drivers",
+  "component": "Hardware Monitoring",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/i2c/busses/i2c-i801.c"
+    ],
+    "buggy_methods": [
+      "i801_isr"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/proc/interrupts"
+    ],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 11,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": true,
+    "description_length": 1390,
+    "description_word_count": 192
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 11,
+    "lines_removed": 3,
+    "patch_size": 14,
+    "patch_types": [
+      "quirk/device_table",
+      "error_handling"
+    ],
+    "num_hunks": 5,
+    "hunk_functions": [
+      "i801_probe",
+      "i801_enable_host_notify",
+      "i801_isr"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/i2c/busses/i2c-i801.c",
+    "filename": "i2c-i801.c",
+    "directory": "drivers/i2c/busses",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "i2c",
+    "driver_subsystem": "i2c/busses",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "dmesg_logs_available",
+      "component_known:Hardware Monitoring",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "177311",
+      "version": "4.8.1",
+      "status": "found",
+      "path": "drivers/i2c/busses/i2c-i801.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "177311",
+    "title": "crazy interrupt rate on i801_smbus",
+    "product": "Drivers",
+    "component": "Hardware Monitoring",
+    "buggy_file": [
+      "drivers/i2c/busses/i2c-i801.c"
+    ],
+    "fix_type": "pci_usb_id_addition",
+    "table_entry_lines_added": 0,
+    "description_clues": [
+      "lspci_lsusb_output",
+      "driver_name_mentioned"
+    ],
+    "patch_size": 14,
+    "potential_strategies": [
+      "map_pci_usb_id_to_driver",
+      "narrow_by_component:Hardware Monitoring"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

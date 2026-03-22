@@ -1,0 +1,159 @@
+{
+  "id": "7487",
+  "title": "(net sundance) driver fails to recognize carrier status",
+  "kernel_version": "2.6.19",
+  "product": "Drivers",
+  "component": "Network",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/sundance.c"
+    ],
+    "buggy_methods": [
+      "netdev_error"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/class/net/eth0/features",
+      "/sys/class/net/eth0/mtu",
+      "/sys/class/net/eth0/carrier",
+      "/sys/class/net/eth0/type",
+      "/sys/class/net/eth0/addr_len",
+      "/sys/class/net/eth0/iflink",
+      "/sys/class/net/eth0/uevent",
+      "/sys/class/net/eth0/ifindex",
+      "/sys/class/net/eth0/dormant",
+      "/sys/class/net/eth0/link_mode",
+      "/sys/class/net/eth0/weight",
+      "/sys/class/net/eth0/",
+      "/sys/class/net/eth0/address",
+      "/sys/class/net/eth0/flags",
+      "/sys/class/net/eth0/tx_queue_len",
+      "/sys/class/net/eth0/broadcast",
+      "/sys/class/net/eth0/operstate"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3911,
+    "description_word_count": 424
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 61,
+    "lines_removed": 33,
+    "patch_size": 94,
+    "new_functions": [
+      "mdio_wait_link",
+      "mdio_wait_link",
+      "netdev_open"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 3,
+    "hunk_functions": [
+      "change_mtu",
+      "mdio_write",
+      "netdev_error"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/sundance.c",
+    "filename": "sundance.c",
+    "directory": "drivers/net",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/sundance.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Network"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "7487",
+      "version": "2.6.19",
+      "status": "found",
+      "path": "drivers/net/sundance.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "7487",
+    "title": "(net sundance) driver fails to recognize carrier status",
+    "ground_truth_file": "drivers/net/sundance.c",
+    "ground_truth_subsystem": "drivers/net",
+    "ground_truth_methods": [
+      "netdev_error"
+    ],
+    "product": "Drivers",
+    "component": "Network",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "driver_module_named",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/sys/class/net/eth0/iflink",
+        "/sys/class/net/eth0/broadcast",
+        "/sys/class/net/eth0/dormant",
+        "/sys/class/net/eth0/address",
+        "/sys/class/net/eth0/",
+        "/sys/class/net/eth0/flags",
+        "/sys/class/net/eth0/carrier",
+        "/sys/class/net/eth0/addr_len",
+        "/sys/class/net/eth0/mtu",
+        "/sys/class/net/eth0/link_mode",
+        "/sys/class/net/eth0/operstate",
+        "/sys/class/net/eth0/features",
+        "/sys/class/net/eth0/weight",
+        "/sys/class/net/eth0/ifindex",
+        "/sys/class/net/eth0/tx_queue_len",
+        "/sys/class/net/eth0/uevent",
+        "/sys/class/net/eth0/type"
+      ],
+      "component": "Network",
+      "product": "Drivers",
+      "modules": [
+        "fails"
+      ]
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

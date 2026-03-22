@@ -1,0 +1,117 @@
+{
+  "id": "12286",
+  "title": "[Patch] tc1100-wmi: sysfs entries always 0",
+  "kernel_version": "2.6.27",
+  "product": "Drivers",
+  "component": "Platform",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/misc/tc1100-wmi.c"
+    ],
+    "buggy_methods": [
+      "get_state"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/devices/platform/tc1100"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 760,
+    "description_word_count": 104
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 3,
+    "lines_removed": 4,
+    "patch_size": 7,
+    "patch_types": [
+      "logic_change",
+      "error_handling"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/misc/tc1100-wmi.c",
+    "filename": "tc1100-wmi.c",
+    "directory": "drivers/misc",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "misc",
+    "driver_subsystem": "misc/tc1100-wmi.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Platform"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "12286",
+      "version": "2.6.27",
+      "status": "found",
+      "path": "drivers/misc/tc1100-wmi.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "12286",
+    "title": "[Patch] tc1100-wmi: sysfs entries always 0",
+    "ground_truth_file": "drivers/misc/tc1100-wmi.c",
+    "ground_truth_subsystem": "drivers/misc",
+    "ground_truth_methods": [
+      "get_state"
+    ],
+    "product": "Drivers",
+    "component": "Platform",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "driver_module_named"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/sys/devices/platform/tc1100"
+      ],
+      "component": "Platform",
+      "product": "Drivers",
+      "modules": [
+        "intends",
+        "assumes",
+        "should"
+      ]
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

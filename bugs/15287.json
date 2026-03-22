@@ -1,0 +1,35 @@
+{
+  "id": "15287",
+  "title": "RadeonKMS segfaults kdm on mobility radeon x700 pcie",
+  "": "Show dependency tree",
+  "description": "Using the KMS option of the radeon-driver makes the kernel segfault and reboot when starting an kde session. This happens on daves radeon-testing tree using latest mesa-git and libdrm-git. Also happens on latest linus tree. The same combination works great when using the non-kms codepath.\n\nHardware is an mobility radeon x700 pcie.\n\nlspci -vn:\n02:00.0 0300: 1002:5653 (prog-if 00 [VGA controller])\n        Subsystem: 1734:1093\n        Flags: bus master, fast devsel, latency 0, IRQ 24\n        Memory at b0000000 (64-bit, prefetchable) [size=128M]\n        Memory at feaf0000 (64-bit, non-prefetchable) [size=64K]\n        I/O ports at b000 [size=256]\n        Expansion ROM at feac0000 [disabled] [size=128K]\n        Capabilities: [50] Power Management version 2\n        Capabilities: [58] Express Endpoint, MSI 00\n        Capabilities: [80] MSI: Enable- Count=1/1 Maskable- 64bit+\n        Capabilities: [100] Advanced Error Reporting",
+  "patch": [
+    "diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c\nindex 81d19d5..016ae1c 100644\n--- a/drivers/pci/quirks.c\n+++ b/drivers/pci/quirks.c\n@@ -2108,6 +2108,7 @@ static void __devinit quirk_disable_msi(struct pci_dev *dev)\n \t}\n }\n DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_8131_BRIDGE, quirk_disable_msi);\n+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_VIA, 0xa238, quirk_disable_msi);\n \n /* Go through the list of Hypertransport capabilities and\n  * return 1 if a HT MSI capability is found and enabled */\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "PCI",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "drivers_pci@kernel-bugs.osdl.org",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "14885",
+  "Reported": "2010-02-12 17:58 UTC by Jan Kreuzer",
+  "Modified": "2010-03-27 23:34 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "2.6.34-rc1",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/pci/quirks.c"
+  ],
+  "methods": [
+    "quirk_disable_msi"
+  ]
+}

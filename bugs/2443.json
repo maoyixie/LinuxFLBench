@@ -1,0 +1,34 @@
+{
+  "id": "2443",
+  "title": "Frequent short \"pauses\" corresponding to multiple battery events",
+  "description": "Distribution: Slackware-based, mostly self-built \nHardware Environment: IBM ThinkPad 240 - Celeron Mendocino 300, 192MB RAM \nSoftware Environment: \nProblem Description: System \"pauses\" for up to a second at a time, \napproximately every 10-15 seconds when ACPI is enabled. This corresponds to a \nblock of anything up to 10 \"battery BAT1 00000080 00000001\" events being \ngenerated. Running top shows \"events/0\" clocking up a chunk of CPU time \ncorresponding to the pause duration each time it occurs. \n \nUnder 2.4.25, the battery events always appear in twos. \n \nSteps to reproduce: Simply boot the system with an ACPI-enabled kernel :) I \ndon't know whether it is ThinkPad 240-specific or whether other systems are \nalso affected. The pauses are most noticeable when playing audio or video, but \naffect everything - when typing, characters will briefly stop being echoed \"in \nreal time\", then the system will \"catch up\" when the pause ends.",
+  "patch": [
+    "--- linux-2.6.6/drivers/acpi/events/evxfevnt.c\tMon May 10 03:32:26 2004\n+++ patched/drivers/acpi/events/evxfevnt.c\tThu May 20 11:15:16 2004\n@@ -247,6 +247,12 @@\n \t\tgoto unlock_and_exit;\n \t}\n \n+\t/* Be sure to clear status before enable it*/\n+\tstatus = acpi_hw_clear_gpe(gpe_event_info);\n+\tif (ACPI_FAILURE (status)) {\n+\t\tgoto unlock_and_exit;\n+\t}\n+\n \t/* Check for Wake vs Runtime GPE */\n \n \tif (flags & ACPI_EVENT_WAKE_ENABLE) {\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Battery",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Shaohua",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2004-04-05 09:48 UTC by Stephen Mollett",
+  "Modified": "2004-12-29 18:10 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.5",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/events/evxfevnt.c"
+  ],
+  "methods": [
+    "acpi_enable_gpe"
+  ]
+}

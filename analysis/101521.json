@@ -1,0 +1,181 @@
+{
+  "id": "101521",
+  "title": "iwlwifi: WARNING when setting Tx power with WEXT while in RFKILL - MWG100249491",
+  "kernel_version": "4.1.2",
+  "product": "Drivers",
+  "component": "network-wireless",
+  "hardware": "x86-64 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup",
+    "performance",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "net/mac80211/iface.c"
+    ],
+    "buggy_methods": [
+      "ieee80211_recalc_txpower"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "ioctl_standard_call",
+      "ieee80211_set_tx_power",
+      "warn_slowpath_fmt",
+      "warn_slowpath_common",
+      "wireless_process_ioctl",
+      "wext_handle_ioctl",
+      "sock_ioctl",
+      "do_vfs_ioctl",
+      "ieee80211_bss_info_change_notify",
+      "cfg80211_wext_siwtxpower",
+      "system_call_fastpath",
+      "ieee80211_recalc_txpower",
+      "dev_ioctl",
+      "dump_stack",
+      "SyS_ioctl"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 33,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 4344,
+    "description_word_count": 429
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 1,
+    "patch_size": 3,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "__ieee80211_recalc_txpower"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "net/mac80211/iface.c",
+    "filename": "iface.c",
+    "directory": "net/mac80211",
+    "depth": 3,
+    "top_level": "net",
+    "second_level": "mac80211",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_15_functions",
+      "dmesg_logs_available",
+      "component_known:network-wireless"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "101521",
+      "version": "4.1.2",
+      "status": "found",
+      "path": "net/mac80211/iface.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "101521",
+    "version": "4.1.2",
+    "ground_truth_file": "net/mac80211/iface.c",
+    "trace_functions": [
+      "ieee80211_bss_info_change_notify",
+      "dump_stack",
+      "console_unlock",
+      "warn_slowpath_common",
+      "warn_slowpath_fmt",
+      "ieee80211_recalc_txpower",
+      "ieee80211_set_tx_power",
+      "cfg80211_wext_siwtxpower",
+      "ioctl_standard_call",
+      "ioctl_standard_iw_point",
+      "9",
+      "wext_handle_ioctl",
+      "dev_ioctl",
+      "sock_ioctl",
+      "do_vfs_ioctl"
+    ],
+    "total_trace_functions": 19,
+    "function_locations": {
+      "ieee80211_bss_info_change_notify": [
+        "net/mac80211/main.c"
+      ],
+      "dump_stack": [
+        "lib/dump_stack.c",
+        "arch/tile/kernel/stack.c",
+        "kernel/trace/trace.c",
+        "tools/perf/util/util.c",
+        "arch/blackfin/kernel/dumpstack.c",
+        "arch/mips/kernel/process.c"
+      ],
+      "console_unlock": [
+        "kernel/printk/printk.c"
+      ],
+      "warn_slowpath_common": [
+        "kernel/panic.c"
+      ],
+      "warn_slowpath_fmt": [
+        "kernel/panic.c"
+      ],
+      "ieee80211_recalc_txpower": [
+        "net/mac80211/iface.c"
+      ],
+      "ieee80211_set_tx_power": [
+        "net/mac80211/cfg.c"
+      ],
+      "cfg80211_wext_siwtxpower": [
+        "net/wireless/wext-compat.c"
+      ],
+      "ioctl_standard_call": [
+        "net/wireless/wext-core.c"
+      ],
+      "ioctl_standard_iw_point": [
+        "net/wireless/wext-core.c"
+      ]
+    },
+    "gt_found_via_functions": [
+      "ieee80211_recalc_txpower"
+    ],
+    "other_candidate_files": [
+      "lib/dump_stack.c",
+      "arch/tile/kernel/stack.c",
+      "kernel/trace/trace.c",
+      "kernel/panic.c",
+      "net/wireless/wext-compat.c",
+      "net/mac80211/main.c",
+      "kernel/printk/printk.c",
+      "net/mac80211/cfg.c",
+      "tools/perf/util/util.c",
+      "arch/blackfin/kernel/dumpstack.c",
+      "net/wireless/wext-core.c",
+      "arch/mips/kernel/process.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

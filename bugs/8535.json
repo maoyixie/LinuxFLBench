@@ -1,0 +1,36 @@
+{
+  "id": "8535",
+  "title": "USB input death then system freeze",
+  "description": "Most recent kernel where this bug did *NOT* occur: pre 2.6.21 mm kernels, non-mm\n2.6.22-rc2\nDistribution: Fedora Devel\nHardware Environment: EHCI input on external powered hub with CK804 mainboard\nSoftware Environment: Nothing specific\nProblem Description:\n\nAfter a few hours of activity 2.6.22-rc1-mm1 and 2.6.22-rc2-mm1 will lose USB\nHID INPUT (keyboard or mice with no priority), then the system will freeze\n\nIf the mouse/tackball is lost first switching to the console and moving the ball\nwill output random text. Restarting gpm will rescue the mouse (but the system\nwill lock up soon after anyway)\n\nSame system with similar config works fine with mainline or older mm kernels\n\nLast trace capture in logs before lockup:\n\nKernel:\ndrivers/hid/usbhid/hid-core.c: input irq status -75 received\n\nXorg:\nProcXCloseDevice to close or not ?\nProcXCloseDevice to close or not ?\n(II) nek4k-enhanced-usb-0000:00:02.1-8.1/input1: Off\n(II) track-expl-usb-0000:00:02.1-8.3/input0: Off\n\n\nSteps to reproduce:\nJust run the system for some time",
+  "patch": [
+    "--- linux-2.6.22-rc1-mm1-orig/drivers/usb/host/ehci-sched.c\t2007-07-30 06:07:11.000000000 -0500\n+++ linux-2.6.22-rc1-mm1/drivers/usb/host/ehci-sched.c\t2007-07-30 08:39:54.000000000 -0500\n@@ -547,6 +547,19 @@ static void qh_inactivate_split_intr_qhs\n \twmb();\n }\n \n+static inline struct ehci_qtd *current_qtd (struct ehci_qh *qh)\n+{\n+\tstruct list_head\t*entry, *tmp;\n+\tstruct ehci_qtd\t\t*qtd;\n+\n+\tlist_for_each_safe (entry, tmp, &qh->qtd_list) {\n+\t\tqtd = list_entry (entry, struct ehci_qtd, qtd_list);\n+\t\tif (cpu_to_le32 (qtd->qtd_dma) == qh->hw_current)\n+\t\t\treturn qtd;\n+\t}\n+\treturn NULL;\n+}\n+\n static void qh_reactivate_split_intr_qhs (struct ehci_hcd *ehci)\n {\n \tstruct ehci_qh\t*qh;\n@@ -566,12 +579,21 @@ static void qh_reactivate_split_intr_qhs\n \t\t\tif (safe == 0) {\n \t\t\t\tnot_done = 1;\n \t\t\t} else if (safe > 0) {\n+\t\t\t\tstruct ehci_qtd *qtd;\n+\n \t\t\t\t/* See EHCI 1.0 section 4.15.2.4. */\n+\t\t\t\tqtd = current_qtd(qh);\t\n \t\t\t\ttoken = qh->hw_token;\n \t\t\t\tqh->hw_token = (token | HALT_BIT) & ~ACTIVE_BIT;\n \t\t\t\twmb();\n \t\t\t\tqh->hw_info1 &= ~INACTIVATE_BIT;\n \t\t\t\twmb();\n+\t\t\t\t/*\n+\t\t\t\t * nVidia controllers write overlay back to qtd\n+\t\t\t\t * when qh is inactivated, so reactivate it too.\n+\t\t\t\t */\n+\t\t\t\tif (qtd)\n+\t\t\t\t\tqtd->hw_token = token | qh->was_active;\n \t\t\t\tqh->hw_token = (token & ~HALT_BIT) | qh->was_active;\n \t\t\t}\n \t\t}\n",
+    "--- linux-2.6.22-rc1-mm1-orig/drivers/usb/host/ehci-sched.c\t2007-07-30 06:07:11.000000000 -0500\n+++ linux-2.6.22-rc1-mm1/drivers/usb/host/ehci-sched.c\t2007-07-30 08:39:54.000000000 -0500\n@@ -547,6 +547,19 @@ static void qh_inactivate_split_intr_qhs\n \twmb();\n }\n \n+static inline struct ehci_qtd *current_qtd (struct ehci_qh *qh)\n+{\n+\tstruct list_head\t*entry, *tmp;\n+\tstruct ehci_qtd\t\t*qtd;\n+\n+\tlist_for_each_safe (entry, tmp, &qh->qtd_list) {\n+\t\tqtd = list_entry (entry, struct ehci_qtd, qtd_list);\n+\t\tif (cpu_to_le32 (qtd->qtd_dma) == qh->hw_current)\n+\t\t\treturn qtd;\n+\t}\n+\treturn NULL;\n+}\n+\n static void qh_reactivate_split_intr_qhs (struct ehci_hcd *ehci)\n {\n \tstruct ehci_qh\t*qh;\n@@ -566,12 +582,21 @@ static void qh_reactivate_split_intr_qhs\n \t\t\tif (safe == 0) {\n \t\t\t\tnot_done = 1;\n \t\t\t} else if (safe > 0) {\n+\t\t\t\tstruct ehci_qtd *qtd;\n+\n \t\t\t\t/* See EHCI 1.0 section 4.15.2.4. */\n+\t\t\t\tqtd = current_qtd(qh);\t\n \t\t\t\ttoken = qh->hw_token;\n \t\t\t\tqh->hw_token = (token | halt) & ~active;\n \t\t\t\twmb();\n \t\t\t\tqh->hw_info1 &= ~inactivate;\n \t\t\t\twmb();\n+\t\t\t\t/*\n+\t\t\t\t * nVidia controllers write overlay back to qtd\n+\t\t\t\t * when qh is inactivated, so reactivate it too.\n+\t\t\t\t */\n+\t\t\t\tif (qtd)\n+\t\t\t\t\tqtd->hw_token = token | qh->was_active;\n \t\t\t\tqh->hw_token = (token & ~halt) | qh->was_active;\n \t\t\t}\n \t\t}\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Input Devices",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Andrew Morton",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (1)": "8534",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2007-05-24 11:02 UTC by Nicolas Mailhot",
+  "Modified": "2008-09-23 11:18 UTC",
+  "CC List": "9 users",
+  "See Also": "",
+  "Kernel Version": "2.6.23-rc1",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/usb/host/ehci-sched.c"
+  ],
+  "methods": [
+    "qh_reactivate_split_intr_qhs"
+  ]
+}

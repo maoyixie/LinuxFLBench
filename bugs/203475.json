@@ -1,0 +1,34 @@
+{
+  "id": "203475",
+  "title": "Samsung 860 EVO queued TRIM issues",
+  "description": "Created attachment 282579 [details]\ndmesg of the errors occuring\n\nI have a Samsung SSD 860 EVO mSATA 500GB SSD connected via an ASMedia ASM1062 Serial ATA Controller. It causes has 20-30 seconds lockups on fstrim (which runs during bootup on my system), with messages such as:\n\n[  332.792044] ata14.00: exception Emask 0x0 SAct 0x3fffe SErr 0x0 action 0x6 frozen\n[  332.798271] ata14.00: failed command: SEND FPDMA QUEUED\n[  332.804499] ata14.00: cmd 64/01:08:00:00:00/00:00:00:00:00/a0 tag 1 ncq dma 512 out\n                        res 40/00:00:00:00:00/00:00:00:00:00/00 Emask 0x4 (timeout)\n[  332.817145] ata14.00: status: { DRDY }\n\nAfter disabling queued TRIM via the included patch, the issue disappears.",
+  "patch": [
+    "$ diff -u a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c\n--- a/drivers/ata/libata-core.c\t2019-05-01 13:55:02.646011817 +0500\n+++ b/drivers/ata/libata-core.c\t2019-05-01 13:55:57.290012703 +0500\n@@ -4563,6 +4563,8 @@\n \t\t\t\t\t\tATA_HORKAGE_ZERO_AFTER_TRIM, },\n \t{ \"Samsung SSD 850*\",\t\tNULL,\tATA_HORKAGE_NO_NCQ_TRIM |\n \t\t\t\t\t\tATA_HORKAGE_ZERO_AFTER_TRIM, },\n+\t{ \"Samsung SSD 860*\",\t\tNULL,\tATA_HORKAGE_NO_NCQ_TRIM |\n+\t\t\t\t\t\tATA_HORKAGE_ZERO_AFTER_TRIM, },\n \t{ \"FCCT*M500*\",\t\t\tNULL,\tATA_HORKAGE_NO_NCQ_TRIM |\n \t\t\t\t\t\tATA_HORKAGE_ZERO_AFTER_TRIM, },\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "IO/Storage",
+  "Classification": "Unclassified",
+  "Component": "Serial ATA",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Tejun Heo",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2019-05-01 22:00 UTC by Roman Mamedov",
+  "Modified": "2023-10-06 12:46 UTC",
+  "CC List": "26 users",
+  "See Also": "",
+  "Kernel Version": "4.14.114",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/ata/libata-core.c"
+  ],
+  "methods": [
+    "ata_device_blacklist"
+  ]
+}

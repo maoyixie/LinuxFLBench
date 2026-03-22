@@ -1,0 +1,34 @@
+{
+  "id": "10590",
+  "title": "rndis_host fails to register HTC P3600 device",
+  "description": "Latest working kernel version: ???\nEarliest failing kernel version: ???, but fails with 2.6.24 too\nDistribution: Debian unstable\nHardware Environment: AMD64 Sempron on a VIA board, HTC P3600 \"phone\" with Samsung SC32442B processor\nSoftware Environment: SynCE 0.11 (host), Microsoft® Windows Mobile® 5.0 (phone)\n\nProblem Description: When I connect my hype phone thingy to my computer, the rdnis_host driver is loaded, but registration of the device fails, with the following logs:\n\n[17069.106611] usb 2-1: new full speed USB device using uhci_hcd and address 7\n[17069.228636] usb 2-1: configuration #1 chosen from 1 choice\n[17069.232878] usb 2-1: New USB device found, idVendor=0bb4, idProduct=0b05\n[17069.232884] usb 2-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3\n[17069.232887] usb 2-1: Product: Generic RNDIS\n[17069.232890] usb 2-1: Manufacturer: HTC\n[17069.232892] usb 2-1: SerialNumber: ********-****-****-****-************\n[17069.367902] usbcore: registered new interface driver cdc_ether\n[17069.446807] rndis_host 2-1:1.0: RNDIS_MSG_QUERY(0x00010202) failed, -110\n[17069.511717] rndis_host 2-1:1.0: RNDIS_MSG_QUERY(0x01010101) failed, -110\n[17069.511725] rndis_host 2-1:1.0: rndis get ethaddr, -110\n[17069.513247] rndis_host: probe of 2-1:1.0 failed with error -110\n[17069.513290] usbcore: registered new interface driver rndis_host\n[17069.613383] rndis_wlan 2-1:1.0: RNDIS_MSG_QUERY(0x00010202) failed, -47\n[17069.614388] usbcore: registered new interface driver rndis_wlan\n\nHowever, the SynCE project provides an alternative patched rndis_host driver, which does work. I narrowed down the diff to the relevant bits, and when patched with those bits, the mainline kernel driver works, with the following logs:\n\n[17039.548771] usb 2-1: new full speed USB device using uhci_hcd and address 6\n[17039.668976] usb 2-1: configuration #1 chosen from 1 choice\n[17039.672000] usb 2-1: New USB device found, idVendor=0bb4, idProduct=0b05\n[17039.672006] usb 2-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3\n[17039.672009] usb 2-1: Product: Generic RNDIS\n[17039.672012] usb 2-1: Manufacturer: HTC\n[17039.672014] usb 2-1: SerialNumber: ********-****-****-****-************\n[17039.808935] usbcore: registered new interface driver cdc_ether\n[17040.343229] rndis_host 2-1:1.0: RNDIS_MSG_QUERY(0x00010202) failed, -47\n[17040.915682] eth2: register 'rndis_host' at usb-0000:00:10.0-1, RNDIS device 80:00:60:0f:e8:00\n[17040.915721] usbcore: registered new interface driver rndis_host\n[17040.931986] usbcore: registered new interface driver rndis_wlan\n[17048.027188] eth2: no IPv6 routers present\n\nThe \"RNDIS_MSG_QUERY(0x00010202) failed, -47\" didn't show up with the 2.6.24 driver. (However, 2.6.24 had a packet reception problem, fixed by some other bits of the SynCE driver, but this doesn't appear on 2.6.25 anymore).\n\nSteps to reproduce: Just turn on the device and plug it into the USB port.\n\nAt least, the patch makes things work...",
+  "patch": [
+    "--- drivers/net/usb/rndis_host.c\t2008-04-17 04:49:44.000000000 +0200\n+++ drivers/net/usb/rndis_host.c\t2008-05-02 13:49:12.000000000 +0200\n@@ -51,6 +51,9 @@\n  * currently rare) \"Ethernet Emulation Model\" (EEM).\n  */\n \n+/* SC_* Samsung processors needs an extra timeout */\n+#define SC_SLEEP_TIMEOUT\t\t20\n+\n /*\n  * RNDIS notifications from device: command completion; \"reverse\"\n  * keepalives; etc\n@@ -116,6 +119,7 @@\n \trsp = buf->msg_type | RNDIS_MSG_COMPLETION;\n \tfor (count = 0; count < 10; count++) {\n \t\tmemset(buf, 0, CONTROL_BUFFER_SIZE);\n+\t\tmsleep(SC_SLEEP_TIMEOUT * 10);\n \t\tretval = usb_control_msg(dev->udev,\n \t\t\tusb_rcvctrlpipe(dev->udev, 0),\n \t\t\tUSB_CDC_GET_ENCAPSULATED_RESPONSE,\n@@ -123,6 +127,7 @@\n \t\t\t0, master_ifnum,\n \t\t\tbuf, CONTROL_BUFFER_SIZE,\n \t\t\tRNDIS_CONTROL_TIMEOUT_MS);\n+\t\tmsleep(SC_SLEEP_TIMEOUT * 10);\n \t\tif (likely(retval >= 8)) {\n \t\t\tmsg_len = le32_to_cpu(buf->msg_len);\n \t\t\trequest_id = (__force u32) buf->request_id;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Network",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Jeff Garzik",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-05-02 06:56 UTC by Pierre Ynard",
+  "Modified": "2008-08-12 01:15 UTC",
+  "CC List": "0 users",
+  "See Also": "",
+  "Kernel Version": "2.6.25",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/net/usb/rndis_host.c"
+  ],
+  "methods": [
+    "rndis_command"
+  ]
+}

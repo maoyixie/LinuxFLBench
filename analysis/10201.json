@@ -1,0 +1,120 @@
+{
+  "id": "10201",
+  "title": "Yum update of Kernel broke sis900 ethernet driver",
+  "kernel_version": "2.6.24",
+  "product": "Drivers",
+  "component": "Network",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "wrong_behavior",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/sis900.c"
+    ],
+    "buggy_methods": [
+      "sis900_probe"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 828,
+    "description_word_count": 120
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 22,
+    "lines_removed": 0,
+    "patch_size": 22,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "init_fix"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "sis900_probe"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/sis900.c",
+    "filename": "sis900.c",
+    "directory": "drivers/net",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/sis900.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Network",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "10201",
+      "version": "2.6.24",
+      "status": "found",
+      "path": "drivers/net/sis900.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "10201",
+    "title": "Yum update of Kernel broke sis900 ethernet driver",
+    "ground_truth_file": "drivers/net/sis900.c",
+    "ground_truth_subsystem": "drivers/net",
+    "ground_truth_methods": [
+      "sis900_probe"
+    ],
+    "product": "Drivers",
+    "component": "Network",
+    "best_strategy": "grep_error_strings",
+    "symptom_categories": [
+      "wrong_output"
+    ],
+    "fix_types": [
+      "null_check_added",
+      "init_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "greppable_error_strings",
+      "known_component",
+      "driver_module_named",
+      "is_regression"
+    ],
+    "clue_details": {
+      "error_strings": [
+        "SIOCSIFFLAGS: Invalid argument"
+      ],
+      "component": "Network",
+      "product": "Drivers",
+      "modules": [
+        "sis900"
+      ]
+    }
+  },
+  "overall_category": "E_grep_error_strings"
+}

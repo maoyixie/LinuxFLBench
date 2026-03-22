@@ -1,0 +1,161 @@
+{
+  "id": "25692",
+  "title": "Kernel oops (NULL pointer deref) during boot on stac92xx_unsol_event",
+  "kernel_version": "2.6.37-rc7",
+  "product": "Drivers",
+  "component": "Sound",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "device_not_working",
+    "performance"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "sound/pci/hda/patch_sigmatel.c"
+    ],
+    "buggy_methods": [
+      "stac_check_auto_mic"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "stac92xx_unsol_event"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/module/snd_hda_codec/initstate"
+    ],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 54,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": true,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 5115,
+    "description_word_count": 569
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 1,
+    "lines_removed": 1,
+    "patch_size": 2,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "stac_check_auto_mic"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "sound/pci/hda/patch_sigmatel.c",
+    "filename": "patch_sigmatel.c",
+    "directory": "sound/pci/hda",
+    "depth": 4,
+    "top_level": "sound",
+    "second_level": "pci",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_1_functions",
+      "proc_sys_paths_hint_subsystem",
+      "dmesg_logs_available",
+      "component_known:Sound",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "25692",
+      "version": "2.6.37-rc7",
+      "status": "found",
+      "path": "sound/pci/hda/patch_sigmatel.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "25692",
+    "version": "2.6.37-rc7",
+    "ground_truth_file": "sound/pci/hda/patch_sigmatel.c",
+    "trace_functions": [
+      "stac92xx_unsol_event",
+      "stac92xx_init",
+      "snd_hda_codec_build_controls",
+      "snd_hda_build_controls",
+      "azx_probe",
+      "__pm_runtime_set_status",
+      "local_pci_probe",
+      "pci_device_probe",
+      "driver_sysfs_add",
+      "driver_probe_device",
+      "__driver_attach",
+      "bus_for_each_dev",
+      "bus_add_driver",
+      "driver_register",
+      "__pci_register_driver"
+    ],
+    "total_trace_functions": 19,
+    "function_locations": {
+      "stac92xx_unsol_event": [
+        "sound/pci/hda/patch_sigmatel.c"
+      ],
+      "stac92xx_init": [
+        "sound/pci/hda/patch_sigmatel.c"
+      ],
+      "snd_hda_codec_build_controls": [
+        "sound/pci/hda/hda_codec.c"
+      ],
+      "snd_hda_build_controls": [
+        "sound/pci/hda/hda_codec.c"
+      ],
+      "azx_probe": [
+        "sound/pci/hda/hda_intel.c"
+      ],
+      "__pm_runtime_set_status": [
+        "drivers/base/power/runtime.c"
+      ],
+      "local_pci_probe": [
+        "drivers/pci/pci-driver.c"
+      ],
+      "pci_device_probe": [
+        "drivers/pci/pci-driver.c"
+      ],
+      "driver_sysfs_add": [
+        "drivers/base/dd.c"
+      ],
+      "driver_probe_device": [
+        "drivers/base/dd.c"
+      ]
+    },
+    "gt_found_via_functions": [
+      "stac92xx_unsol_event",
+      "stac92xx_init"
+    ],
+    "other_candidate_files": [
+      "sound/pci/hda/hda_codec.c",
+      "drivers/pci/pci-driver.c",
+      "sound/pci/hda/hda_intel.c",
+      "drivers/base/power/runtime.c",
+      "drivers/base/dd.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

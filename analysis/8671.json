@@ -1,0 +1,122 @@
+{
+  "id": "8671",
+  "title": "CPU frequency always on highest frequency after wakeup from suspend to disk",
+  "kernel_version": "2.6.22",
+  "product": "Power Management",
+  "component": "cpufreq",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/cpufreq/cpufreq.c"
+    ],
+    "buggy_methods": [
+      "cpufreq_add_dev",
+      "__cpufreq_remove_dev"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/power/state"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 461,
+    "description_word_count": 61
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 22,
+    "lines_removed": 1,
+    "patch_size": 23,
+    "patch_types": [
+      "logic_change",
+      "config/ifdef",
+      "synchronization"
+    ],
+    "num_hunks": 5,
+    "hunk_functions": [
+      "cpufreq_add_dev",
+      "__cpufreq_remove_dev"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/cpufreq/cpufreq.c",
+    "filename": "cpufreq.c",
+    "directory": "drivers/cpufreq",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "cpufreq",
+    "driver_subsystem": "cpufreq/cpufreq.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:cpufreq"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "8671",
+      "version": "2.6.22",
+      "status": "found",
+      "path": "drivers/cpufreq/cpufreq.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "8671",
+    "title": "CPU frequency always on highest frequency after wakeup from suspend to disk",
+    "ground_truth_file": "drivers/cpufreq/cpufreq.c",
+    "ground_truth_subsystem": "drivers/cpufreq",
+    "ground_truth_methods": [
+      "cpufreq_add_dev",
+      "__cpufreq_remove_dev"
+    ],
+    "product": "Power Management",
+    "component": "cpufreq",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "driver_module_named"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/sys/power/state"
+      ],
+      "component": "cpufreq",
+      "product": "Power Management",
+      "modules": [
+        "is",
+        "and"
+      ]
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

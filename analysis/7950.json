@@ -1,0 +1,102 @@
+{
+  "id": "7950",
+  "title": "Network traffic stops inexplicably when running at gigabit speed.",
+  "kernel_version": "2.6.20",
+  "product": "Networking",
+  "component": "Other",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "other"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/forcedeth.c"
+    ],
+    "buggy_methods": [
+      "phy_reset"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "messages show up in dmesg."
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1092,
+    "description_word_count": 181
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 7,
+    "lines_removed": 3,
+    "patch_size": 10,
+    "patch_types": [
+      "logic_change",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": []
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/forcedeth.c",
+    "filename": "forcedeth.c",
+    "directory": "drivers/net",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/forcedeth.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [],
+    "strategies": []
+  },
+  "source_verification": [
+    {
+      "id": "7950",
+      "version": "2.6.20",
+      "status": "found",
+      "path": "drivers/net/forcedeth.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "7950",
+    "title": "Network traffic stops inexplicably when running at gigabit speed.",
+    "ground_truth_file": "drivers/net/forcedeth.c",
+    "ground_truth_subsystem": "drivers/net",
+    "ground_truth_methods": [
+      "phy_reset"
+    ],
+    "product": "Networking",
+    "component": "Other",
+    "best_strategy": "parse_diagnostic_output",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "locking_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "product": "Networking"
+    }
+  },
+  "overall_category": "E_parse_diagnostic_output"
+}

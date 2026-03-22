@@ -1,0 +1,161 @@
+{
+  "id": "10836",
+  "title": "ELO serial touchscreen driver unload issue",
+  "kernel_version": "2.6.26",
+  "product": "Drivers",
+  "component": "Serial",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/input/serio/serio.c"
+    ],
+    "buggy_methods": [
+      "serio_remove_pending_events",
+      "serio_unregister_driver"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "driver_attach",
+      "EFLAGS"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 26,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 2568,
+    "description_word_count": 365
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 6,
+    "lines_removed": 3,
+    "patch_size": 9,
+    "new_functions": [
+      "serio_remove_pending_events"
+    ],
+    "patch_types": [
+      "new_function",
+      "logic_change",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 3,
+    "hunk_functions": [
+      "serio_handle_event",
+      "serio_unregister_driver",
+      "serio_remove_pending_events"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/input/serio/serio.c",
+    "filename": "serio.c",
+    "directory": "drivers/input/serio",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "input",
+    "driver_subsystem": "input/serio",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_2_functions",
+      "dmesg_logs_available",
+      "component_known:Serial"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "10836",
+      "version": "2.6.26",
+      "status": "found",
+      "path": "drivers/input/serio/serio.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "10836",
+    "version": "2.6.26",
+    "ground_truth_file": "drivers/input/serio/serio.c",
+    "trace_functions": [
+      "driver_attach",
+      "serio_thread",
+      "autoremove_wake_function",
+      "kthread",
+      "kernel_thread_helper",
+      "EFLAGS"
+    ],
+    "total_trace_functions": 6,
+    "function_locations": {
+      "driver_attach": [
+        "drivers/base/dd.c"
+      ],
+      "serio_thread": [
+        "drivers/input/serio/serio.c"
+      ],
+      "autoremove_wake_function": [
+        "kernel/wait.c"
+      ],
+      "kthread": [
+        "kernel/kthread.c",
+        "drivers/usb/atm/ueagle-atm.c",
+        "arch/s390/kernel/topology.c",
+        "drivers/misc/thinkpad_acpi.c"
+      ],
+      "kernel_thread_helper": [
+        "arch/x86/kernel/process_32.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "arch/sh/kernel/process_32.c",
+        "arch/sh/kernel/process_64.c",
+        "arch/blackfin/kernel/process.c",
+        "arch/m32r/kernel/process.c",
+        "arch/mips/kernel/process.c",
+        "arch/arm/kernel/process.c",
+        "arch/avr32/kernel/process.c"
+      ],
+      "EFLAGS": []
+    },
+    "gt_found_via_functions": [
+      "serio_thread"
+    ],
+    "other_candidate_files": [
+      "arch/x86/kernel/process_32.c",
+      "arch/cris/arch-v10/kernel/process.c",
+      "arch/sh/kernel/process_32.c",
+      "arch/sh/kernel/process_64.c",
+      "kernel/kthread.c",
+      "arch/arm/kernel/process.c",
+      "arch/blackfin/kernel/process.c",
+      "arch/avr32/kernel/process.c",
+      "kernel/wait.c",
+      "drivers/misc/thinkpad_acpi.c",
+      "arch/m32r/kernel/process.c",
+      "arch/mips/kernel/process.c",
+      "drivers/usb/atm/ueagle-atm.c",
+      "arch/s390/kernel/topology.c",
+      "drivers/base/dd.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

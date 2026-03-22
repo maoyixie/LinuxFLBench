@@ -1,0 +1,35 @@
+{
+  "id": "9374",
+  "title": "[ICH7 snd_hda_intel] Volume control broken",
+  "": "Show dependency tree",
+  "description": "Most recent kernel where this bug did not occur: 2.6.23\nDistribution: Debian\n\nHardware Environment:\nx86_64 Pentium D system; ICH7 chipset\n00:1b.0 Audio device [0403]: Intel Corporation 82801G (ICH7 Family) High Definition Audio Controller [8086:27d8] (rev 01)\n\nSoftware Environment: Debian Unstable, KDE Desktop\n\nProblem Description:\nIf I change the volume using the master control slider in KDE, the sound will first go down to a very low volume (almost muted with slider at 2/3 _up_) and then, in about 10 seconds, come slowly back up to its \"normal\" volume for the position of the slider. The volume does vary while I move the slider, but even at the very top it is very low at first.\nThis only happens with the master slider, the PCM and front sliders behave normally.\n\nThere were some changes from 2.6.23 to 2.6.24. During first boot of .24 I get:\nSetting up ALSA...warning: 'alsactl restore' failed with error message '\nalsactl: set_control:989: warning: name mismatch (Capture Volume/Input Source) for control #2\nalsactl: set_control:991: warning: index mismatch (0/1) for control #2\nalsactl: set_control:993: failed to obtain info for control #2 (Operation not permitted)'\n\nI also suddenly have a lot more controls (some probably bogus):\nOutput: master, PCM, front, surround, center, LFE, digital, mux, mux\nInput:  capture, capture, digital, mux, mux\n\nAlso, the rear output jack responds to the \"front\" output slider, as does the front output jack. Not sure if that is a regression or not; will check.\n\nCan provide any additional info needed.",
+  "patch": [
+    "[ALSA] hda-codec - Check PINCAP only for PIN widgets\n\nThe recent addition of checking PINCAP for EAPD seems to break some\nsystems due to unexpected response from the codec chip.  We shouldn't\nissue GET_PINCAP verb to non-PIN widgets.  Now checks the widget type\nbefore checking EAPD bit.\n\nSigned-off-by: Takashi Iwai <tiwai@suse.de>\n\n---\ncommit 62cb6114ba1e333615b32d124827844e82ff999a\ntree 0e01116568c051e0844b00177127ee12f24bcffb\nparent 73e4b31c14ec7feeecfa1acab1ff72f0bf1ac223\nauthor Takashi Iwai <tiwai@suse.de> Wed, 14 Nov 2007 16:13:33 +0100\ncommitter Takashi Iwai <tiwai@suse.de> Wed, 14 Nov 2007 16:13:33 +0100\n\n sound/pci/hda/hda_codec.c |   33 ++++++++++++++++++++-------------\n 1 files changed, 20 insertions(+), 13 deletions(-)\n\ndiff --git a/sound/pci/hda/hda_codec.c b/sound/pci/hda/hda_codec.c\nindex 8462235..39240e0 100644\n--- a/sound/pci/hda/hda_codec.c\n+++ b/sound/pci/hda/hda_codec.c\n@@ -1626,19 +1626,26 @@ static void hda_set_power_state(struct hda_codec *codec, hda_nid_t fg,\n \n \tnid = codec->start_nid;\n \tfor (i = 0; i < codec->num_nodes; i++, nid++) {\n-\t\tif (get_wcaps(codec, nid) & AC_WCAP_POWER) {\n-\t\t\tunsigned int pincap;\n-\t\t\t/*\n-\t\t\t * don't power down the widget if it controls eapd\n-\t\t\t * and EAPD_BTLENABLE is set.\n-\t\t\t */\n-\t\t\tpincap = snd_hda_param_read(codec, nid, AC_PAR_PIN_CAP);\n-\t\t\tif (pincap & AC_PINCAP_EAPD) {\n-\t\t\t\tint eapd = snd_hda_codec_read(codec, nid,\n-\t\t\t\t\t0, AC_VERB_GET_EAPD_BTLENABLE, 0);\n-\t\t\t\teapd &= 0x02;\n-\t\t\t\tif (power_state == AC_PWRST_D3 && eapd)\n-\t\t\t\t\tcontinue;\n+\t\tunsigned int wcaps = get_wcaps(codec, nid);\n+\t\tif (wcaps & AC_WCAP_POWER) {\n+\t\t\tunsigned int wid_type = (wcaps & AC_WCAP_TYPE) >>\n+\t\t\t\tAC_WCAP_TYPE_SHIFT;\n+\t\t\tif (wid_type == AC_WID_PIN) {\n+\t\t\t\tunsigned int pincap;\n+\t\t\t\t/*\n+\t\t\t\t * don't power down the widget if it controls\n+\t\t\t\t * eapd and EAPD_BTLENABLE is set.\n+\t\t\t\t */\n+\t\t\t\tpincap = snd_hda_param_read(codec, nid,\n+\t\t\t\t\t\t\t    AC_PAR_PIN_CAP);\n+\t\t\t\tif (pincap & AC_PINCAP_EAPD) {\n+\t\t\t\t\tint eapd = snd_hda_codec_read(codec,\n+\t\t\t\t\t\tnid, 0,\n+\t\t\t\t\t\tAC_VERB_GET_EAPD_BTLENABLE, 0);\n+\t\t\t\t\teapd &= 0x02;\n+\t\t\t\t\tif (power_state == AC_PWRST_D3 && eapd)\n+\t\t\t\t\t\tcontinue;\n+\t\t\t\t}\n \t\t\t}\n \t\t\tsnd_hda_codec_write(codec, nid, 0,\n \t\t\t\t\t    AC_VERB_SET_POWER_STATE,\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Sound",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Jaroslav Kysela",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "9243",
+  "Reported": "2007-11-13 16:56 UTC by Frans Pop",
+  "Modified": "2007-12-01 13:24 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.24-rc2",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "sound/pci/hda/hda_codec.c"
+  ],
+  "methods": [
+    "hda_set_power_state"
+  ]
+}

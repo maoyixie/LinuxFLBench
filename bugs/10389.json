@@ -1,0 +1,34 @@
+{
+  "id": "10389",
+  "title": "kernel 2.6.24-1 doesn't detect my laptop correctly",
+  "description": "Latest working kernel version: 2.6.22-3\nEarliest failing kernel version: 2.6.24-1\nDistribution: debian testing (lenny)\nHardware Environment: Toshiba Satellite L40-17R laptop\nSoftware Environment: gnome\nProblem Description:\nAfter upgading to kernel 2.6.24-1 I noticed, that my system started to dump the same lines to /var/log/acpid, slowing down overall performance. Here is beginning of log:\n\n[Thu Apr  3 19:36:36 2008] starting up\n[Thu Apr  3 19:36:36 2008] 75 rules loaded\n[Thu Apr  3 19:36:40 2008] client connected from 3185[107:110]\n[Thu Apr  3 19:36:40 2008] 1 client rule loaded\n[Thu Apr  3 19:36:43 2008] received event \"hotkey ATKD 0000005f 00000000\"\n[Thu Apr  3 19:36:43 2008] notifying client 3185[107:110]\n[Thu Apr  3 19:36:43 2008] executing action \"/etc/acpi/asus-wireless.sh on\"\n[Thu Apr  3 19:36:43 2008] BEGIN HANDLER MESSAGES\n[Thu Apr  3 19:36:43 2008] END HANDLER MESSAGES\n[Thu Apr  3 19:36:43 2008] action exited with status 0\n[Thu Apr  3 19:36:43 2008] completed event \"hotkey ATKD 0000005f 00000000\"\n[Thu Apr  3 19:36:43 2008] received event \"hotkey ATKD 0000005f 00000001\"\n[Thu Apr  3 19:36:43 2008] notifying client 3185[107:110]\n[Thu Apr  3 19:36:43 2008] executing action \"/etc/acpi/asus-wireless.sh on\"\n[Thu Apr  3 19:36:43 2008] BEGIN HANDLER MESSAGES\n\n... and so on.\n\ndmesg shows correct detection of Toshiba laptop:\n\nACPI: SSDT 3F7B8CC0, 04E6 (r1  PmRef    CpuPm     3000 INTL 20051117)\nACPI: DMI detected: Toshiba\nACPI: PM-Timer IO Port: 0x808\n\nBut later it fails to determine exact model and chooses Asus:\n\nAsus Laptop ACPI Extras version 0.30\n  unsupported model T20, trying default values\n  send /proc/acpi/dsdt to the developers\n\nSteps to reproduce: Just login.",
+  "patch": [
+    "From: Zhang Rui <rui.zhang@intel.com>\nSubject: don't load asus-acpi if model is not supported\n\nasus_hotk_get_info should return -ENODEV if the model is not supported.\nhttp://bugzilla.kernel.org/show_bug.cgi?id=10389\n\nSigned-off-by: Zhang Rui <rui.zhang@intel.com>\n---\n drivers/acpi/asus_acpi.c |    2 ++\n 1 file changed, 2 insertions(+)\n\nIndex: linux-2.6/drivers/acpi/asus_acpi.c\n===================================================================\n--- linux-2.6.orig/drivers/acpi/asus_acpi.c\n+++ linux-2.6/drivers/acpi/asus_acpi.c\n@@ -1244,6 +1244,8 @@ static int asus_hotk_get_info(void)\n \t\t\t       \"default values\\n\", string);\n \t\t\tprintk(KERN_NOTICE\n \t\t\t       \"  send /proc/acpi/dsdt to the developers\\n\");\n+\t\t\tkfree(model);\n+\t\t\treturn -ENODEV;\n \t\t}\n \t\thotk->methods = &model_conf[hotk->model];\n \t\treturn AE_OK;\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "ACPICA-Core",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Zhang Rui",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-04-03 10:28 UTC by Alexei Kouznetsov",
+  "Modified": "2008-10-24 23:05 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.24",
+  "Subsystem": "",
+  "Regression": "Yes",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/asus_acpi.c"
+  ],
+  "methods": [
+    "asus_hotk_get_info"
+  ]
+}

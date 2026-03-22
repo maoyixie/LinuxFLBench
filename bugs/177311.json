@@ -1,0 +1,37 @@
+{
+  "id": "177311",
+  "title": "crazy interrupt rate on i801_smbus",
+  "description": "I've noticed, when I do enable CONFIG_SENSORS_JC42 as a module or build into\nmy kernel, this causes a very high rate of interrupts on i801_smbus - about\n6000-8000 per second according to /proc/interrupts. After 20 minutes, there\nwere about 5 million interrupts generated on i801_smbus.\n \nWhen I do unload the module jc42, the interrupts do not stop, until I do a\ncomplete reboot.\n \nMainboard: Supermicro A1SRM-2758F\nKernel: Gentoo-Sources 4.8.1 (Happens also with Vanilla 4.8.1 and older kernel\nversions)\n \ndmesg:\n[    8.319900] i801_smbus 0000:00:1f.3: enabling device (0140 -> 0143)\n[    8.321864] i801_smbus 0000:00:1f.3: SMBus using PCI interrupt\n[    8.326098] ismt_smbus 0000:00:13.0: enabling device (0140 -> 0142)\n \nlspci:\n00:1f.3 SMBus: Intel Corporation Atom processor C2000 PCU SMBus (rev 02)\n\nWhen the module is loaded, I am also getting this errors:\n[   73.934901] ismt_smbus 0000:00:13.0: completion wait timed out\n[   74.974970] ismt_smbus 0000:00:13.0: completion wait timed out\n[   76.014949] ismt_smbus 0000:00:13.0: completion wait timed out\n[   77.054903] ismt_smbus 0000:00:13.0: completion wait timed out\n[   78.094961] ismt_smbus 0000:00:13.0: completion wait timed out\n[   79.134982] ismt_smbus 0000:00:13.0: completion wait timed out\n[   80.175116] ismt_smbus 0000:00:13.0: completion wait timed out\n[   81.215057] ismt_smbus 0000:00:13.0: completion wait timed out",
+  "patch": [
+    "diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c\nindex 89ae78ef1a1c..f6e124b8392e 100644\n--- a/drivers/i2c/busses/i2c-i801.c\n+++ b/drivers/i2c/busses/i2c-i801.c\n@@ -625,6 +625,8 @@ static irqreturn_t i801_isr(int irq, void *dev_id)\n \n \t/* Confirm this is our interrupt */\n \tpci_read_config_word(priv->pci_dev, PCI_STATUS, &pcists);\n+\tdev_dbg_ratelimited(&priv->pci_dev->dev, \"pcicst %#x, SMBHSTSTS %#x\\n\",\n+\t\t\t    pcists, inb_p(SMBHSTSTS(priv)));\n \tif (!(pcists & PCI_STATUS_INTERRUPT))\n \t\treturn IRQ_NONE;\n \n",
+    "diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c\nindex 89ae78ef1a1c..76d57fc4e7b8 100644\n--- a/drivers/i2c/busses/i2c-i801.c\n+++ b/drivers/i2c/busses/i2c-i801.c\n@@ -190,6 +190,7 @@\n #define SMBSLVSTS_HST_NTFY_STS\tBIT(0)\n \n /* Host Notify Command register bits */\n+#define SMBSLVCMD_SMBALERT_DISABLE\tBIT(2)\n #define SMBSLVCMD_HST_NTFY_INTREN\tBIT(0)\n \n #define STATUS_ERROR_FLAGS\t(SMBHSTSTS_FAILED | SMBHSTSTS_BUS_ERR | \\\n@@ -1820,6 +1821,10 @@ static int i801_probe(struct pci_dev *dev, const struct pci_device_id *id)\n \t\toutb_p(inb_p(SMBAUXCTL(priv)) &\n \t\t       ~(SMBAUXCTL_CRC | SMBAUXCTL_E32B), SMBAUXCTL(priv));\n \n+\t/* Disable SMB_ALERT signal */\n+\toutb_p(inb_p(SMBSLVCMD(priv)) | SMBSLVCMD_SMBALERT_DISABLE,\n+\t       SMBSLVCMD(priv));\n+\n \t/* Remember original Host Notify setting */\n \tif (priv->features & FEATURE_HOST_NOTIFY)\n \t\tpriv->original_slvcmd = inb_p(SMBSLVCMD(priv));\n",
+    "diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c\nindex 115660dce722..6ae0101b247a 100644\n--- a/drivers/i2c/busses/i2c-i801.c\n+++ b/drivers/i2c/busses/i2c-i801.c\n@@ -190,6 +190,7 @@\n #define SMBSLVSTS_HST_NTFY_STS\tBIT(0)\n \n /* Host Notify Command register bits */\n+#define SMBSLVCMD_SMBALERT_DISABLE\tBIT(2)\n #define SMBSLVCMD_HST_NTFY_INTREN\tBIT(0)\n \n #define STATUS_ERROR_FLAGS\t(SMBHSTSTS_FAILED | SMBHSTSTS_BUS_ERR | \\\n@@ -972,9 +973,9 @@ static void i801_enable_host_notify(struct i2c_adapter *adapter)\n \tif (!(priv->features & FEATURE_HOST_NOTIFY))\n \t\treturn;\n \n-\tif (!(SMBSLVCMD_HST_NTFY_INTREN & priv->original_slvcmd))\n-\t\toutb_p(SMBSLVCMD_HST_NTFY_INTREN | priv->original_slvcmd,\n-\t\t       SMBSLVCMD(priv));\n+\t/* Enable host notify interrupt and disable SMB_ALERT signal */\n+\toutb_p(SMBSLVCMD_HST_NTFY_INTREN | SMBSLVCMD_SMBALERT_DISABLE |\n+\t       priv->original_slvcmd, SMBSLVCMD(priv));\n \n \t/* clear Host Notify bit to allow a new notification */\n \toutb_p(SMBSLVSTS_HST_NTFY_STS, SMBSLVSTS(priv));\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Hardware Monitoring",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Jean Delvare",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (1)": "177291",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2016-10-12 20:59 UTC by Conrad Kostecki",
+  "Modified": "2022-01-14 17:30 UTC",
+  "CC List": "5 users",
+  "See Also": "",
+  "Kernel Version": "4.8.1",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/i2c/busses/i2c-i801.c"
+  ],
+  "methods": [
+    "i801_isr"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "id": "6455",
+  "title": "battery and AC status stops updating - HP Compaq nx6125",
+  "description": "Most recent kernel where this bug did not occur: not known\nDistribution: Gentoo Linux\nHardware Environment: HP Compaq nx6125 laptop with AMD Turion 64 CPU, BIOS F.0E\nSoftware Environment: KDE 3.5.2\nProblem Description:\nAt some point battery and AC status just stops updating. This happens when I\nunplug the AC cable and when I start my laptop withiut being connected to AC\npower. I think that it is more likely to happen when I do something that uses a\nlot of CPU or Graphics power.\n\nSteps to reproduce:\nI can't tell you the exact steps as I didn't figure out what causes it to stop\nupdating. Most of the time it stops working when I power on my laptop while\ntravelling by train to the work and then at some point it justs stops updating.\nIt also happens at one point when if keep plugginh and unplugging the laptop\nfrom AC power. High CPU usage at that time may help in causing this bug.",
+  "patch": [
+    "diff -ru linux-2.6.17-rc6-mm2.a/drivers/acpi/ec.c linux-2.6.17-rc6-mm2.b/drivers/acpi/ec.c\n--- linux-2.6.17-rc6-mm2.a/drivers/acpi/ec.c\t2006-06-21 03:02:26.000000000 +0400\n+++ linux-2.6.17-rc6-mm2.b/drivers/acpi/ec.c\t2006-06-21 02:58:05.000000000 +0400\n@@ -212,7 +212,7 @@\n \n \tswitch (event) {\n \tcase ACPI_EC_EVENT_IBE:\n-\t\tif (~acpi_ec_read_status(ec) & event) {\n+\t\tif (~acpi_ec_read_status(ec) & ACPI_EC_FLAG_IBF) {\n \t\t\tec->intr.expect_event = 0;\n \t\t\treturn 0;\n \t\t}\n@@ -771,12 +771,15 @@\n \tcase ACPI_EC_EVENT_OBF:\n \t\tif (!(value & ACPI_EC_FLAG_OBF))\n \t\t\tbreak;\n+\t\tec->intr.expect_event = 0;\n+\t\twake_up(&ec->intr.wait);\n+\t\tbreak;\n \tcase ACPI_EC_EVENT_IBE:\n \t\tif ((value & ACPI_EC_FLAG_IBF))\n \t\t\tbreak;\n \t\tec->intr.expect_event = 0;\n \t\twake_up(&ec->intr.wait);\n-\t\treturn ACPI_INTERRUPT_HANDLED;\n+\t\tbreak;\n \tdefault:\n \t\tbreak;\n \t}\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Battery",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Vladimir Lebedev",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-04-28 14:23 UTC by Jure Repinc",
+  "Modified": "2006-06-30 17:01 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.6.17",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/ec.c"
+  ],
+  "methods": [
+    "acpi_ec_intr_wait",
+    "acpi_ec_gpe_intr_handler"
+  ]
+}

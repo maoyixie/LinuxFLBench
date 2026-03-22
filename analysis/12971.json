@@ -1,0 +1,233 @@
+{
+  "id": "12971",
+  "title": "\"tg3 transmit timed out\" when transmitting at high bitrate",
+  "kernel_version": "2.6.29",
+  "product": "Drivers",
+  "component": "Network",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "performance",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/tg3.c"
+    ],
+    "buggy_methods": [
+      "tg3_start_xmit_dma_bug"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "irq_exit",
+      "smp_apic_timer_interrupt",
+      "c1e_idle",
+      "rest_init",
+      "dev_watchdog",
+      "__do_softirq",
+      "do_softirq",
+      "apic_timer_interrupt",
+      "run_timer_softirq",
+      "warn_slowpath",
+      "cpu_idle"
+    ],
+    "mentioned_file_paths": [
+      "net/sched/sch_generic.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 3061,
+    "description_word_count": 379
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 7,
+    "lines_removed": 2,
+    "patch_size": 9,
+    "patch_types": [
+      "logic_change",
+      "synchronization"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "tg3_start_xmit_dma_bug"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/tg3.c",
+    "filename": "tg3.c",
+    "directory": "drivers/net",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/tg3.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_11_functions",
+      "component_known:Network"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "12971",
+      "version": "2.6.29",
+      "status": "found",
+      "path": "drivers/net/tg3.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "12971",
+    "version": "2.6.29",
+    "ground_truth_file": "drivers/net/tg3.c",
+    "trace_functions": [
+      "dev_watchdog",
+      "warn_slowpath",
+      "sd_init_MC",
+      "__enqueue_entity",
+      "cpumask_next_and",
+      "find_busiest_group",
+      "enqueue_task",
+      "strlcpy",
+      "getnstimeofday",
+      "run_timer_softirq",
+      "__do_softirq",
+      "update_process_times",
+      "do_softirq",
+      "irq_exit",
+      "smp_apic_timer_interrupt"
+    ],
+    "total_trace_functions": 20,
+    "function_locations": {
+      "dev_watchdog": [
+        "net/sched/sch_generic.c"
+      ],
+      "warn_slowpath": [
+        "kernel/panic.c"
+      ],
+      "sd_init_MC": [],
+      "__enqueue_entity": [
+        "kernel/sched_fair.c"
+      ],
+      "cpumask_next_and": [
+        "lib/cpumask.c"
+      ],
+      "find_busiest_group": [],
+      "enqueue_task": [
+        "kernel/sched.c"
+      ],
+      "strlcpy": [
+        "lib/parser.c",
+        "net/netlink/attr.c",
+        "scripts/unifdef.c",
+        "lib/string.c",
+        "arch/s390/lib/string.c"
+      ],
+      "getnstimeofday": [
+        "kernel/time.c",
+        "kernel/time/timekeeping.c"
+      ],
+      "run_timer_softirq": [
+        "kernel/timer.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "kernel/sched_fair.c",
+      "kernel/sched.c",
+      "kernel/time/timekeeping.c",
+      "kernel/panic.c",
+      "lib/parser.c",
+      "net/netlink/attr.c",
+      "scripts/unifdef.c",
+      "lib/string.c",
+      "kernel/timer.c",
+      "lib/cpumask.c",
+      "net/sched/sch_generic.c",
+      "arch/s390/lib/string.c",
+      "kernel/time.c"
+    ],
+    "status": "miss"
+  },
+  "trace_miss_analysis": {
+    "id": "12971",
+    "title": "\"tg3 transmit timed out\" when transmitting at high bitrate",
+    "ground_truth_file": "drivers/net/tg3.c",
+    "ground_truth_methods": [
+      "tg3_start_xmit_dma_bug"
+    ],
+    "ground_truth_subsystem": "drivers/net",
+    "trace_functions_top8": [
+      "dev_watchdog",
+      "warn_slowpath",
+      "sd_init_MC",
+      "__enqueue_entity",
+      "cpumask_next_and",
+      "find_busiest_group",
+      "enqueue_task",
+      "strlcpy"
+    ],
+    "trace_function_locations": {
+      "dev_watchdog": [
+        "net/sched/sch_generic.c"
+      ],
+      "warn_slowpath": [
+        "kernel/panic.c"
+      ],
+      "sd_init_MC": [],
+      "__enqueue_entity": [
+        "kernel/sched_fair.c"
+      ],
+      "cpumask_next_and": [
+        "lib/cpumask.c"
+      ],
+      "find_busiest_group": [],
+      "enqueue_task": [
+        "kernel/sched.c"
+      ],
+      "strlcpy": [
+        "arch/s390/lib/string.c",
+        "scripts/unifdef.c",
+        "lib/string.c"
+      ]
+    },
+    "trace_subsystems": [
+      "kernel/panic.c",
+      "kernel/sched_fair.c",
+      "arch/s390",
+      "net/sched",
+      "lib/string.c",
+      "kernel/sched.c",
+      "scripts/unifdef.c",
+      "lib/cpumask.c"
+    ],
+    "mismatch_type": "trace_in_infrastructure",
+    "gt_calls_trace_func": false,
+    "gt_method_in_trace": false,
+    "product": "Drivers",
+    "component": "Network"
+  },
+  "overall_category": "C_trace_misleads"
+}

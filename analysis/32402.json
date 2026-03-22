@@ -1,0 +1,115 @@
+{
+  "id": "32402",
+  "title": "Oops associated with radeon_unpin_work_func",
+  "kernel_version": "2.6.39",
+  "product": "Drivers",
+  "component": "Video",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpu/drm/radeon/radeon_display.c"
+    ],
+    "buggy_methods": [
+      "radeon_unpin_work_func",
+      "radeon_crtc_page_flip"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1719,
+    "description_word_count": 220
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 8,
+    "lines_removed": 5,
+    "patch_size": 13,
+    "patch_types": [
+      "error_handling",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 4,
+    "hunk_functions": [
+      "radeon_crtc_page_flip",
+      "radeon_unpin_work_func"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpu/drm/radeon/radeon_display.c",
+    "filename": "radeon_display.c",
+    "directory": "drivers/gpu/drm/radeon",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "gpu",
+    "driver_subsystem": "gpu/drm",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Video"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "32402",
+      "version": "2.6.39",
+      "status": "found",
+      "path": "drivers/gpu/drm/radeon/radeon_display.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "32402",
+    "title": "Oops associated with radeon_unpin_work_func",
+    "ground_truth_file": "drivers/gpu/drm/radeon/radeon_display.c",
+    "ground_truth_subsystem": "drivers/gpu",
+    "ground_truth_methods": [
+      "radeon_unpin_work_func",
+      "radeon_crtc_page_flip"
+    ],
+    "product": "Drivers",
+    "component": "Video",
+    "best_strategy": "search_named_driver",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "locking_fix",
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "driver_module_named"
+    ],
+    "clue_details": {
+      "component": "Video",
+      "product": "Drivers",
+      "modules": [
+        "6"
+      ]
+    }
+  },
+  "overall_category": "E_search_named_driver"
+}

@@ -1,0 +1,201 @@
+{
+  "id": "12216",
+  "title": "Error when drm is loaded",
+  "kernel_version": "2.6.28-rc8",
+  "product": "Drivers",
+  "component": "Video",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpu/drm/radeon/radeon_irq.c"
+    ],
+    "buggy_methods": [
+      "radeon_irq_set_state",
+      "r500_vbl_irq_set_state"
+    ],
+    "num_methods": 2
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "irq_exit",
+      "drm_ioctl",
+      "handle_level_irq",
+      "io_schedule",
+      "do_IRQ",
+      "do_page_fault",
+      "filemap_fault",
+      "sys_ioctl",
+      "reiserfs_file_write",
+      "vfs_ioctl",
+      "sysenter_do_call",
+      "radeon_cp_dispatch_vertex",
+      "note_interrupt",
+      "common_interrupt",
+      "drm_vblank_get",
+      "do_vfs_ioctl",
+      "__do_softirq",
+      "vfs_write",
+      "__report_bad_irq",
+      "handle_IRQ_event",
+      "unix_bind",
+      "drm_modeset_ctl",
+      "__do_fault"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "[   55.642188] [drm] Initialized drm 1.1.0 20060810"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 49,
+    "has_workaround": true,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 3131,
+    "description_word_count": 326
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 2,
+    "patch_size": 4,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "r500_vbl_irq_set_state",
+      "radeon_irq_set_state"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpu/drm/radeon/radeon_irq.c",
+    "filename": "radeon_irq.c",
+    "directory": "drivers/gpu/drm/radeon",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "gpu",
+    "driver_subsystem": "gpu/drm",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_23_functions",
+      "dmesg_logs_available",
+      "component_known:Video",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "12216",
+      "version": "2.6.28-rc8",
+      "status": "found",
+      "path": "drivers/gpu/drm/radeon/radeon_irq.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "12216",
+    "version": "2.6.28-rc8",
+    "ground_truth_file": "drivers/gpu/drm/radeon/radeon_irq.c",
+    "trace_functions": [
+      "__report_bad_irq",
+      "note_interrupt",
+      "handle_IRQ_event",
+      "handle_level_irq",
+      "__do_softirq",
+      "common_interrupt",
+      "irq_exit",
+      "do_IRQ",
+      "io_schedule",
+      "radeon_cp_dispatch_vertex",
+      "drm_vblank_get",
+      "filemap_fault",
+      "drm_modeset_ctl",
+      "drm_ioctl",
+      "__do_fault"
+    ],
+    "total_trace_functions": 25,
+    "function_locations": {
+      "__report_bad_irq": [],
+      "note_interrupt": [
+        "kernel/irq/spurious.c"
+      ],
+      "handle_IRQ_event": [
+        "kernel/irq/handle.c"
+      ],
+      "handle_level_irq": [],
+      "__do_softirq": [
+        "kernel/softirq.c"
+      ],
+      "common_interrupt": [
+        "arch/x86/mach-voyager/voyager_cat.c"
+      ],
+      "irq_exit": [
+        "kernel/rcupreempt.c",
+        "kernel/softirq.c",
+        "drivers/uio/uio_pdrv_genirq.c"
+      ],
+      "do_IRQ": [
+        "arch/cris/kernel/irq.c",
+        "arch/xtensa/kernel/irq.c",
+        "arch/x86/kernel/irq_32.c",
+        "arch/powerpc/kernel/irq.c",
+        "arch/h8300/kernel/irq.c",
+        "arch/cris/arch-v10/kernel/irq.c",
+        "arch/avr32/mach-at32ap/intc.c",
+        "arch/m68knommu/kernel/irq.c",
+        "arch/sh/kernel/irq.c",
+        "arch/xtensa/kernel/traps.c"
+      ],
+      "io_schedule": [
+        "kernel/sched.c",
+        "block/bsg.c"
+      ],
+      "radeon_cp_dispatch_vertex": [
+        "drivers/gpu/drm/radeon/radeon_state.c"
+      ]
+    },
+    "gt_found_via_functions": [],
+    "other_candidate_files": [
+      "drivers/gpu/drm/radeon/radeon_state.c",
+      "arch/cris/kernel/irq.c",
+      "block/bsg.c",
+      "arch/xtensa/kernel/irq.c",
+      "arch/x86/kernel/irq_32.c",
+      "kernel/softirq.c",
+      "drivers/uio/uio_pdrv_genirq.c",
+      "arch/powerpc/kernel/irq.c",
+      "arch/h8300/kernel/irq.c",
+      "arch/cris/arch-v10/kernel/irq.c",
+      "kernel/irq/spurious.c",
+      "arch/avr32/mach-at32ap/intc.c",
+      "arch/m68knommu/kernel/irq.c",
+      "arch/sh/kernel/irq.c",
+      "arch/xtensa/kernel/traps.c",
+      "arch/x86/mach-voyager/voyager_cat.c",
+      "kernel/sched.c",
+      "kernel/irq/handle.c",
+      "kernel/rcupreempt.c"
+    ],
+    "status": "correct_directory_hit"
+  },
+  "overall_category": "B_trace_hits_gt_directory"
+}

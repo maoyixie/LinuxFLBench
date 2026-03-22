@@ -1,0 +1,34 @@
+{
+  "id": "9761",
+  "title": "unsupported ACPI video device - Samsung R70",
+  "description": "Latest working kernel version: unknown\nEarliest failing kernel version:unknown\nDistribution: Mandriva 2008.1 Alpha 2\nHardware Environment: Samsung R70 (BIOS UE6)\nSoftware Environment: 64Bit\nProblem Description:\nWhen booting up my system, I can see this error in my dmesg.\nAs requested on the linux-acpi mailing list, I'm opening that bug.\n\nHere come the dmesg :\n\nACPI Error (utglobal-0126): Unknown exception code: 0xFFFFFFFE [20070126]\nPid: 1952, comm: modprobe Not tainted 2.6.24-laptop-0.rc7.2mdv #1\n\nCall Trace:\n [<ffffffff8038bd2e>] acpi_ut_update_ref_count+0x50/0x9d\n [<ffffffff8038c1d9>] acpi_format_exception+0x2c/0x35\n [<ffffffff8038af73>] acpi_ut_exception+0x25/0x8c\n [<ffffffff803765cc>] acpi_evaluate_integer+0xb6/0xc7\n [<ffffffff881dcd0a>] :video:acpi_video_bus_add+0xcc9/0xce2\n [<ffffffff802c46a8>] ifind+0x58/0xd0\n [<ffffffff8038f2e8>] acpi_device_probe+0x43/0x91\n [<ffffffff803c321c>] driver_probe_device+0x9c/0x1b0\n [<ffffffff803c34e9>] __driver_attach+0xc9/0xd0\n [<ffffffff803c3420>] __driver_attach+0x0/0xd0\n [<ffffffff803c23fd>] bus_for_each_dev+0x4d/0x80\n [<ffffffff803c286c>] bus_add_driver+0xac/0x220\n [<ffffffff8814603c>] :video:acpi_video_init+0x3c/0x5e\n [<ffffffff8026236e>] sys_init_module+0x18e/0x19a0\n [<ffffffff802522f0>] autoremove_wake_function+0x0/0x30\n [<ffffffff8020c34e>] system_call+0x7e/0x83\n\nACPI Exception (video-1721): UNKNOWN_STATUS_CODE, Cant attach device [20070126]\n\nSteps to reproduce:\nJust bootup on that system.",
+  "patch": [
+    "From: Zhang Rui <rui.zhang@intel.com>\n\nThe child of a video bus device is not alway a video device.\nIt should be a warn message rather than an exception here.\nhttp://bugzilla.kernel.org/show_bug.cgi?id=9761\n\nSigned-off-by: Zhang Rui <rui.zhang@intel.com>\n---\n drivers/acpi/video.c |    3 ++-\n 1 file changed, 2 insertions(+), 1 deletion(-)\n\nIndex: linux-2.6/drivers/acpi/video.c\n===================================================================\n--- linux-2.6.orig/drivers/acpi/video.c\n+++ linux-2.6/drivers/acpi/video.c\n@@ -1705,7 +1705,8 @@ acpi_video_bus_get_devices(struct acpi_v\n \n \t\tstatus = acpi_video_bus_get_one_device(dev, video);\n \t\tif (ACPI_FAILURE(status)) {\n-\t\t\tACPI_EXCEPTION((AE_INFO, status, \"Cant attach device\"));\n+\t\t\tACPI_DEBUG_PRINT((ACPI_DB_WARN,\n+\t\t\t\t\t\"Cant attach device\"));\n \t\t\tcontinue;\n \t\t}\n \t}\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Zhang Rui",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-01-16 00:08 UTC by Erwan Velu",
+  "Modified": "2008-06-23 13:45 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "2.6.24",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/video.c"
+  ],
+  "methods": [
+    "acpi_video_bus_get_devices"
+  ]
+}

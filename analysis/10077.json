@@ -1,0 +1,259 @@
+{
+  "id": "10077",
+  "title": "nozomi (driver for Qualcomm 3G PCMCIA adapter) crashes",
+  "kernel_version": "2.6.25",
+  "product": "Drivers",
+  "component": "PCMCIA",
+  "hardware": "All Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "performance",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/char/nozomi.c"
+    ],
+    "buggy_methods": [
+      "read_mem32",
+      "write_mem32",
+      "nozomi_read_config_table",
+      "enable_transmit_ul",
+      "disable_transmit_ul",
+      "enable_transmit_dl",
+      "disable_transmit_dl",
+      "receive_flow_control",
+      "handle_data_dl",
+      "handle_data_ul",
+      "interrupt_handler",
+      "nozomi_card_init",
+      "nozomi_card_exit",
+      "ntty_open",
+      "ntty_close",
+      "ntty_tiocmset",
+      "ntty_ioctl_tiocgicount",
+      "nozomi",
+      "nozomi_pci_tbl"
+    ],
+    "num_methods": 19
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "driver_register",
+      "pci_device_probe",
+      "__pci_register_driver",
+      "__ioremap",
+      "driver_attach",
+      "nozomi_init",
+      "EFLAGS",
+      "ioremap_nocache",
+      "bus_for_each_dev",
+      "sysenter_past_esp",
+      "sys_init_module",
+      "warn_on_slowpath",
+      "__driver_attach",
+      "ntty_write_room",
+      "driver_probe_device",
+      "bus_add_driver",
+      "nozomi_card_init"
+    ],
+    "mentioned_file_paths": [
+      "arch/x86/mm/ioremap.c"
+    ],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 5202,
+    "description_word_count": 597
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 101,
+    "lines_removed": 81,
+    "patch_size": 182,
+    "patch_types": [
+      "quirk/device_table",
+      "logic_change",
+      "error_handling",
+      "synchronization",
+      "memory"
+    ],
+    "num_hunks": 35,
+    "hunk_functions": [
+      "nozomi_read_config_table",
+      "interrupt_handler",
+      "write_mem32",
+      "disable_transmit_dl",
+      "disable_transmit_ul",
+      "enable_transmit_dl",
+      "receive_flow_control",
+      "handle_data_ul",
+      "ntty_ioctl_tiocgicount",
+      "ntty_tiocmset",
+      "nozomi_card_exit",
+      "ntty_tiocmget",
+      "ntty_open",
+      "ntty_close",
+      "handle_data_dl",
+      "read_mem32",
+      "enable_transmit_ul",
+      "nozomi_card_init"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/char/nozomi.c",
+    "filename": "nozomi.c",
+    "directory": "drivers/char",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "char",
+    "driver_subsystem": "char/nozomi.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_17_functions",
+      "component_known:PCMCIA",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "10077",
+      "version": "2.6.25",
+      "status": "found",
+      "path": "drivers/char/nozomi.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "10077",
+    "version": "2.6.25",
+    "ground_truth_file": "drivers/char/nozomi.c",
+    "trace_functions": [
+      "__ioremap",
+      "warn_on_slowpath",
+      "acpi_pci_allocate_irq",
+      "__request_region",
+      "pci_request_region",
+      "pci_request_selected_regions",
+      "ioremap_nocache",
+      "nozomi_card_init",
+      "find_inode",
+      "sysfs_ilookup_test",
+      "ifind",
+      "sysfs_addrm_finish",
+      "sysfs_add_one",
+      "sysfs_addrm_start",
+      "pci_match_device"
+    ],
+    "total_trace_functions": 41,
+    "function_locations": {
+      "__ioremap": [
+        "arch/powerpc/mm/pgtable_64.c",
+        "arch/m68knommu/mm/kmap.c",
+        "arch/x86/mm/ioremap.c",
+        "arch/mips/mm/ioremap.c",
+        "arch/m68k/mm/kmap.c",
+        "arch/frv/mm/kmap.c",
+        "arch/m68k/mm/sun3kmap.c",
+        "arch/avr32/mm/ioremap.c",
+        "arch/cris/mm/ioremap.c",
+        "arch/sh/mm/ioremap_32.c"
+      ],
+      "warn_on_slowpath": [
+        "kernel/panic.c"
+      ],
+      "acpi_pci_allocate_irq": [],
+      "__request_region": [
+        "kernel/resource.c"
+      ],
+      "pci_request_region": [
+        "drivers/pci/pci.c"
+      ],
+      "pci_request_selected_regions": [
+        "drivers/pci/pci.c"
+      ],
+      "ioremap_nocache": [
+        "lib/devres.c",
+        "arch/x86/mm/ioremap.c",
+        "arch/cris/mm/ioremap.c"
+      ],
+      "nozomi_card_init": [
+        "drivers/char/nozomi.c"
+      ],
+      "find_inode": [
+        "fs/inotify_user.c",
+        "fs/nfs/delegation.c",
+        "fs/inode.c"
+      ],
+      "sysfs_ilookup_test": [
+        "fs/sysfs/dir.c"
+      ]
+    },
+    "gt_found_via_functions": [
+      "nozomi_card_init"
+    ],
+    "other_candidate_files": [
+      "kernel/resource.c",
+      "arch/powerpc/mm/pgtable_64.c",
+      "arch/x86/mm/ioremap.c",
+      "arch/m68k/mm/kmap.c",
+      "arch/mips/mm/ioremap.c",
+      "arch/frv/mm/kmap.c",
+      "arch/m68k/mm/sun3kmap.c",
+      "kernel/panic.c",
+      "fs/inode.c",
+      "fs/inotify_user.c",
+      "fs/nfs/delegation.c",
+      "arch/avr32/mm/ioremap.c",
+      "arch/cris/mm/ioremap.c",
+      "arch/sh/mm/ioremap_32.c",
+      "lib/devres.c",
+      "arch/m68knommu/mm/kmap.c",
+      "drivers/pci/pci.c",
+      "fs/sysfs/dir.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "quirk_analysis": {
+    "id": "10077",
+    "title": "nozomi (driver for Qualcomm 3G PCMCIA adapter) crashes",
+    "product": "Drivers",
+    "component": "PCMCIA",
+    "buggy_file": [
+      "drivers/char/nozomi.c"
+    ],
+    "fix_type": "pci_usb_id_addition",
+    "table_entry_lines_added": 0,
+    "description_clues": [
+      "device_ids_in_description",
+      "dmi_info_in_description"
+    ],
+    "patch_size": 182,
+    "potential_strategies": [
+      "grep_device_id_in_kernel_source",
+      "search_dmi_tables_in_drivers",
+      "narrow_by_component:PCMCIA"
+    ]
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

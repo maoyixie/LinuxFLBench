@@ -1,0 +1,36 @@
+{
+  "id": "1696",
+  "title": "Centrino's Speedstep is not detected correctly",
+  "description": "I used to use /proc/acpi/processor/.../performance to set Centrino's 5 \nperformance states via userspace daemon. \n \nNow in linux 2.6.0, I configured the kernel ACPI to include \"processor\" and I \nconfigured SpeedStep to support the \"deprecated\" acpi performance interface as \nwell as anything else I think I have to turn on for cpufreq. \nBut after booting 2.6, I have /proc/acpi/processor/.../ but without \n\"performance\" in it. \"info\" says  \n+----- \n| processor id:            0 \n| acpi id:                 0 \n| bus mastering control:   yes \n| power management:        yes \n| throttling control:      no \n| performance management:  no \n| limit interface:         yes \n+----- \n \nSo it seems like \"performance\" is not supported even if I select it in kernel \nconfig. \n \nAdditionally, I do not find anything cpufreq-related in /sys/.  \n \ndmesg|grep \"cpufreq\" says: \n+----- \n| cpufreq: No CPUs supporting ACPI performance management found. \n+----- \n \nIn 2.4, everything is fine...",
+  "patch": [
+    "One big limitation of the ACPI specification is that it's impossible to\ndetect the current P-State by reading from ACPI-defined registers. And the\nCPU isn't always at P0 when the system boots. So, try to \"guess\" the current\nP-State by analyzing cpu_khz.\n\n arch/i386/kernel/cpu/cpufreq/acpi.c |   35 ++++++++++++++++++++++++++++++-----\n 1 files changed, 30 insertions(+), 5 deletions(-)\n\ndiff -ruN linux-original/arch/i386/kernel/cpu/cpufreq/acpi.c linux/arch/i386/kernel/cpu/cpufreq/acpi.c\n--- linux-original/arch/i386/kernel/cpu/cpufreq/acpi.c\t2004-03-15 09:20:50.000000000 +0100\n+++ linux/arch/i386/kernel/cpu/cpufreq/acpi.c\t2004-03-15 13:50:36.152118840 +0100\n@@ -238,6 +238,34 @@\n }\n \n \n+static unsigned long\n+acpi_cpufreq_guess_freq (\n+\tstruct cpufreq_acpi_io\t*data,\n+\tunsigned int\t\tcpu)\n+{\n+\tif (cpu_khz) {\n+\t\t/* search the closest match to cpu_khz */\n+\t\tunsigned int i;\n+\t\tunsigned long freq;\n+\t\tunsigned long freqn = data->acpi_data.states[0].core_frequency * 1000;\n+\n+\t\tfor (i=0; i < (data->acpi_data.state_count - 1); i++) {\n+\t\t\tfreq = freqn;\n+\t\t\tfreqn = data->acpi_data.states[i+1].core_frequency * 1000;\n+\t\t\tif ((2 * cpu_khz) > (freqn + freq)) {\n+\t\t\t\tdata->acpi_data.state = i;\n+\t\t\t\treturn (freq);\n+\t\t\t}\n+\t\t}\n+\t\tdata->acpi_data.state = data->acpi_data.state_count - 1;\n+\t\treturn (freqn);\n+\t} else\n+\t\t/* assume CPU is at P0... */\n+\t\tdata->acpi_data.state = 0;\n+\t\treturn data->acpi_data.states[0].core_frequency * 1000;\n+\t\n+}\n+\n static int\n acpi_cpufreq_cpu_init (\n \tstruct cpufreq_policy   *policy)\n@@ -290,11 +318,8 @@\n \t}\n \tpolicy->governor = CPUFREQ_DEFAULT_GOVERNOR;\n \n-\t/* \n-\t * The current speed is unknown and not detectable by ACPI... argh! Assume \n-\t * it's P0, it will be set to this value later during initialization.\n-\t */\n-\tpolicy->cur = data->acpi_data.states[0].core_frequency * 1000;\n+\t/* The current speed is unknown and not detectable by ACPI...  */\n+\tpolicy->cur = acpi_cpufreq_guess_freq(data, policy->cpu);\n \n \t/* table init */\n \tfor (i=0; i<=data->acpi_data.state_count; i++)\n",
+    "Export an array of supported frequencies in sysfs [scaling_available_frequencies]\n\n arch/i386/kernel/cpu/cpufreq/acpi.c |   10 +++++++++-\n 1 files changed, 9 insertions(+), 1 deletion(-)\n\ndiff -ruN linux-original/arch/i386/kernel/cpu/cpufreq/acpi.c linux/arch/i386/kernel/cpu/cpufreq/acpi.c\n--- linux-original/arch/i386/kernel/cpu/cpufreq/acpi.c\t2004-03-15 13:52:08.060146696 +0100\n+++ linux/arch/i386/kernel/cpu/cpufreq/acpi.c\t2004-03-15 13:52:32.376450056 +0100\n@@ -331,7 +331,7 @@\n \t\t\tdata->freq_table[i].frequency = CPUFREQ_TABLE_END;\n \t}\n \n-\tresult = cpufreq_frequency_table_cpuinfo(policy, &data->freq_table[0]);\n+\tresult = cpufreq_frequency_table_cpuinfo(policy, data->freq_table);\n \tif (result) {\n \t\tgoto err_freqfree;\n \t}\n@@ -346,6 +346,7 @@\n \t\t\t(u32) data->acpi_data.states[i].power,\n \t\t\t(u32) data->acpi_data.states[i].transition_latency);\n \n+\tcpufreq_frequency_table_get_attr(data->freq_table, policy->cpu);\n \treturn_VALUE(result);\n \n  err_freqfree:\n@@ -370,6 +371,7 @@\n \tACPI_FUNCTION_TRACE(\"acpi_cpufreq_cpu_exit\");\n \n \tif (data) {\n+\t\tcpufreq_frequency_table_put_attr(policy->cpu);\n \t\tacpi_io_data[policy->cpu] = NULL;\n \t\tacpi_processor_unregister_performance(&data->acpi_data, policy->cpu);\n \t\tkfree(data);\n@@ -379,6 +381,11 @@\n }\n \n \n+static struct freq_attr* acpi_cpufreq_attr[] = {\n+\t&cpufreq_freq_attr_scaling_available_freqs,\n+\tNULL,\n+};\n+\n static struct cpufreq_driver acpi_cpufreq_driver = {\n \t.verify \t= acpi_cpufreq_verify,\n \t.target \t= acpi_cpufreq_target,\n@@ -386,6 +393,7 @@\n \t.exit\t\t= acpi_cpufreq_cpu_exit,\n \t.name\t\t= \"acpi-cpufreq\",\n \t.owner\t\t= THIS_MODULE,\n+\t.attr           = acpi_cpufreq_attr,\n };\n \n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Processor",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Len Brown",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (1)": "1697",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2003-12-18 02:16 UTC by Bernd Wurst",
+  "Modified": "2004-06-02 09:42 UTC",
+  "CC List": "4 users",
+  "See Also": "",
+  "Kernel Version": "2.6.0",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "arch/i386/kernel/cpu/cpufreq/acpi.c"
+  ],
+  "methods": [
+    "acpi_cpufreq_cpu_init"
+  ]
+}

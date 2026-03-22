@@ -1,0 +1,35 @@
+{
+  "id": "75581",
+  "title": "Faill of battery detection on Lenovo Z480 with probability 5-10%",
+  "description": "Created attachment 135211 [details]\noutput of dmesg (last line after rmmod battery&&modprobe battery)\n\nSometimes battery detection in module battery fails, reloading of module solves problem. I see this bug from Linux-3.7.4 until Linux-3.14.2.",
+  "patch": [
+    "diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c\nindex 9a2c63b..82086ca 100644\n--- a/drivers/acpi/battery.c\n+++ b/drivers/acpi/battery.c\n@@ -34,6 +34,7 @@\n #include <linux/dmi.h>\n #include <linux/slab.h>\n #include <linux/suspend.h>\n+#include <linux/delay.h>\n #include <asm/unaligned.h>\n \n #include <linux/acpi.h>\n@@ -672,6 +673,8 @@ static void acpi_battery_quirks(struct acpi_battery *battery)\n static int acpi_battery_update(struct acpi_battery *battery)\n {\n \tint result, old_present = acpi_battery_present(battery);\n+\tint retry = 5;\n+\n \tresult = acpi_battery_get_status(battery);\n \tif (result)\n \t\treturn result;\n@@ -682,7 +685,16 @@ static int acpi_battery_update(struct acpi_battery *battery)\n \t}\n \tif (!battery->update_time ||\n \t    old_present != acpi_battery_present(battery)) {\n+\n+retry:\n \t\tresult = acpi_battery_get_info(battery);\n+\n+\t\tif (result && retry) {\n+\t\t\tretry--;\n+\t\t\tmdelay(500);\n+\t\t\tgoto retry;\n+\t\t}\t\t\n+\n \t\tif (result)\n \t\t\treturn result;\n \t\tacpi_battery_init_alarm(battery);\n",
+    "diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c\nindex 9a2c63b..e8a68f1 100644\n--- a/drivers/acpi/battery.c\n+++ b/drivers/acpi/battery.c\n@@ -34,6 +34,7 @@\n #include <linux/dmi.h>\n #include <linux/slab.h>\n #include <linux/suspend.h>\n+#include <linux/delay.h>\n #include <asm/unaligned.h>\n \n #include <linux/acpi.h>\n@@ -771,7 +772,7 @@ static struct dmi_system_id bat_dmi_table[] = {\n \n static int acpi_battery_add(struct acpi_device *device)\n {\n-\tint result = 0;\n+\tint result = 0, retry = 5;\n \tstruct acpi_battery *battery = NULL;\n \n \tif (!device)\n@@ -787,7 +788,16 @@ static int acpi_battery_add(struct acpi_device *device)\n \tmutex_init(&battery->sysfs_lock);\n \tif (acpi_has_method(battery->device->handle, \"_BIX\"))\n \t\tset_bit(ACPI_BATTERY_XINFO_PRESENT, &battery->flags);\n+\n+retry_get_info:\n \tresult = acpi_battery_update(battery);\n+\n+\tif (result && retry) {\n+\t\tmsleep(10);\n+\t\tretry--;\n+\t\tgoto retry_get_info;\n+\t}\n+\n \tif (result)\n \t\tgoto fail;\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "ACPI",
+  "Classification": "Unclassified",
+  "Component": "Power-Battery",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Lan Tianyu",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2014-05-06 10:03 UTC by naszar",
+  "Modified": "2014-07-08 07:21 UTC",
+  "CC List": "3 users",
+  "See Also": "",
+  "Kernel Version": "3.14.2",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/acpi/battery.c"
+  ],
+  "methods": [
+    "acpi_battery_update"
+  ]
+}

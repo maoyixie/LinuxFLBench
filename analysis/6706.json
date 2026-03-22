@@ -1,0 +1,112 @@
+{
+  "id": "6706",
+  "title": "modprobe -r ohci1394 hangs or panics",
+  "kernel_version": "2.6.15",
+  "product": "Drivers",
+  "component": "IEEE1394",
+  "hardware": "i386 Linux",
+  "is_regression": "---",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/ieee1394/nodemgr.c"
+    ],
+    "buggy_methods": [
+      "nodemgr_bus_match",
+      "init_ieee1394_nodemgr",
+      "nodemgr_dev_template_host"
+    ],
+    "num_methods": 3
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1124,
+    "description_word_count": 169
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 18,
+    "lines_removed": 3,
+    "patch_size": 21,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "synchronization"
+    ],
+    "num_hunks": 4,
+    "hunk_functions": [
+      "init_ieee1394_nodemgr",
+      "nodemgr_bus_match"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/ieee1394/nodemgr.c",
+    "filename": "nodemgr.c",
+    "directory": "drivers/ieee1394",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "ieee1394",
+    "driver_subsystem": "ieee1394/nodemgr.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:IEEE1394"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "6706",
+      "version": "2.6.15",
+      "status": "found",
+      "path": "drivers/ieee1394/nodemgr.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "6706",
+    "title": "modprobe -r ohci1394 hangs or panics",
+    "ground_truth_file": "drivers/ieee1394/nodemgr.c",
+    "ground_truth_subsystem": "drivers/ieee1394",
+    "ground_truth_methods": [
+      "nodemgr_bus_match",
+      "init_ieee1394_nodemgr",
+      "nodemgr_dev_template_host"
+    ],
+    "product": "Drivers",
+    "component": "IEEE1394",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "IEEE1394",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

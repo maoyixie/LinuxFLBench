@@ -1,0 +1,36 @@
+{
+  "id": "32402",
+  "title": "Oops associated with radeon_unpin_work_func",
+  "description": "If this system (LFS build) is left idle for several hours with xscreensaver running(don't currently know which screen saver app. I am assuming one of the Mesa 3D ones) the system will oops. The system is locked solid and there is no trace in messages.old on reboot. The attached jpg is a photo of the screen at system failure. I first noticed the problem in 2.6.38-rc8 but have waited until now to report the problem in the hope of obtaining a more repeatable scenario.\n\nVersion info:\n\nXorg server 1.10.0\nXorg ati driver 6.14.1\nlibdrm-2.4.24\nMesa-7.10.1\n\nProcessor  AMD Phenom(tm) II X4 940 Processor\n\nLinux Andromeda 2.6.38.2 #1 SMP Mon Mar 28 22:17:13 BST 2011 i686 athlon-4 i386 GNU/Linux\n \nGnu C                  4.6.0\nGnu make               3.81\nbinutils               2.21\nutil-linux             2.14.1\nmount                  support\nmodule-init-tools      3.5\ne2fsprogs              1.41.4\nLinux C Library        2.13\nDynamic linker (ldd)   2.13\nLinux C++ Library      6.0.15\nProcps                 3.2.7\nNet-tools              1.60\nKbd                    1.15\nSh-utils               7.4\nModules Loaded         md4 md5 hmac cryptomgr aead nls_cp437 cifs crypto_hash crypto_algapi microcode nfs fscache nfsd lockd sunrpc exportfs fuse usbhid firewire_ohci sr_mod sg firewire_core cdrom psmouse i2c_piix4 crc_itu_t button vboxnetflt fifo splitter ohci_hcd ehci_hcd usbcore nls_base vboxnetadp snd_hda_codec_hdmi snd_hda_codec_analog snd_hda_intel snd_hda_codec snd_seq_dummy snd_seq_oss snd_seq_midi_event snd_seq snd_seq_device snd_pcm_oss snd_mixer_oss snd_hwdep snd_pcm snd_page_alloc snd_timer snd soundcore brd loop asus_atk0110 powernow_k8 processor thermal_sys mperf pata_atiixp vboxdrv sky2 rtc eeprom unix",
+  "patch": [
+    "From ee11d4db3389aab9df38edb3eed4d5822320d5f1 Mon Sep 17 00:00:00 2001\nFrom: Dave Airlie <airlied@redhat.com>\nDate: Sun, 29 May 2011 17:48:32 +1000\nSubject: [PATCH] drm/radeon: fix oops in ttm reserve when pageflipping (v2)\n\nWe need to take a reference to this object, pinning doesn't take a reference\nso if userspace deletes the object it can disappear even if pinned.\n\nv2: fix error paths to unreference properly also.\n\nshould fix:\nhttps://bugzilla.kernel.org/show_bug.cgi?id=32402\nand\nhttps://bugzilla.redhat.com/show_bug.cgi?id=680651\n\nSigned-off-by: Dave Airlie <airlied@redhat.com>\n---\n drivers/gpu/drm/radeon/radeon_display.c |   13 ++++++++-----\n 1 files changed, 8 insertions(+), 5 deletions(-)\n\ndiff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c\nindex ae247ee..292f73f 100644\n--- a/drivers/gpu/drm/radeon/radeon_display.c\n+++ b/drivers/gpu/drm/radeon/radeon_display.c\n@@ -264,6 +264,8 @@ static void radeon_unpin_work_func(struct work_struct *__work)\n \t\tradeon_bo_unreserve(work->old_rbo);\n \t} else\n \t\tDRM_ERROR(\"failed to reserve buffer after flip\\n\");\n+\n+\tdrm_gem_object_unreference_unlocked(&work->old_rbo->gem_base);\n \tkfree(work);\n }\n \n@@ -371,6 +373,8 @@ static int radeon_crtc_page_flip(struct drm_crtc *crtc,\n \tnew_radeon_fb = to_radeon_framebuffer(fb);\n \t/* schedule unpin of the old buffer */\n \tobj = old_radeon_fb->obj;\n+\t/* take a reference to the old object */\n+\tdrm_gem_object_reference(obj);\n \trbo = gem_to_radeon_bo(obj);\n \twork->old_rbo = rbo;\n \tINIT_WORK(&work->work, radeon_unpin_work_func);\n@@ -378,12 +382,9 @@ static int radeon_crtc_page_flip(struct drm_crtc *crtc,\n \t/* We borrow the event spin lock for protecting unpin_work */\n \tspin_lock_irqsave(&dev->event_lock, flags);\n \tif (radeon_crtc->unpin_work) {\n-\t\tspin_unlock_irqrestore(&dev->event_lock, flags);\n-\t\tkfree(work);\n-\t\tradeon_fence_unref(&fence);\n-\n \t\tDRM_DEBUG_DRIVER(\"flip queue: crtc already busy\\n\");\n-\t\treturn -EBUSY;\n+\t\tr = -EBUSY;\n+\t\tgoto unlock_free;\n \t}\n \tradeon_crtc->unpin_work = work;\n \tradeon_crtc->deferred_flip_completion = 0;\n@@ -497,6 +498,8 @@ pflip_cleanup1:\n pflip_cleanup:\n \tspin_lock_irqsave(&dev->event_lock, flags);\n \tradeon_crtc->unpin_work = NULL;\n+unlock_free:\n+\tdrm_gem_object_unreference_unlocked(old_radeon_fb->obj);\n \tspin_unlock_irqrestore(&dev->event_lock, flags);\n \tradeon_fence_unref(&fence);\n \tkfree(work);\n-- \n1.7.4.4\n\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Drivers",
+  "Classification": "Unclassified",
+  "Component": "Video",
+  "Hardware": "All Linux",
+  "Importance": "P1 high",
+  "Assignee": "drivers_video-dri",
+  "URL": "",
+  "Keywords": "",
+  "Duplicates (3)": "29942 33222 38232",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2011-03-31 23:13 UTC by Stuart Foster",
+  "Modified": "2011-07-10 23:13 UTC",
+  "CC List": "11 users",
+  "See Also": "",
+  "Kernel Version": "2.6.39",
+  "Subsystem": "",
+  "Regression": "No",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/gpu/drm/radeon/radeon_display.c"
+  ],
+  "methods": [
+    "radeon_unpin_work_func",
+    "radeon_crtc_page_flip"
+  ]
+}

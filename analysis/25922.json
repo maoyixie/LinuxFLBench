@@ -1,0 +1,116 @@
+{
+  "id": "25922",
+  "title": "IdeaPad Y530 brightness keys not functioning",
+  "kernel_version": "2.6.37-rc8",
+  "product": "Drivers",
+  "component": "Platform_x86",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/platform/x86/ideapad-laptop.c"
+    ],
+    "buggy_methods": [
+      "ideapad_acpi_notify"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [
+      "/sys/class/backlight/acpi_video0/brightness"
+    ],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 308,
+    "description_word_count": 43
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 0,
+    "patch_size": 2,
+    "patch_types": [
+      "logic_change",
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "ideapad_acpi_notify"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/platform/x86/ideapad-laptop.c",
+    "filename": "ideapad-laptop.c",
+    "directory": "drivers/platform/x86",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "platform",
+    "driver_subsystem": "platform/x86",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "proc_sys_paths_hint_subsystem",
+      "component_known:Platform_x86",
+      "is_regression"
+    ],
+    "strategies": [
+      "map_proc_sys_path_to_driver_or_subsystem",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "25922",
+      "version": "2.6.37-rc8",
+      "status": "found",
+      "path": "drivers/platform/x86/ideapad-laptop.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "25922",
+    "title": "IdeaPad Y530 brightness keys not functioning",
+    "ground_truth_file": "drivers/platform/x86/ideapad-laptop.c",
+    "ground_truth_subsystem": "drivers/platform",
+    "ground_truth_methods": [
+      "ideapad_acpi_notify"
+    ],
+    "product": "Drivers",
+    "component": "Platform_x86",
+    "best_strategy": "map_proc_sys_to_subsystem",
+    "symptom_categories": [
+      "hang/deadlock"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "proc_sys_paths",
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "proc_sys_paths": [
+        "/sys/class/backlight/acpi_video0/brightness"
+      ],
+      "component": "Platform_x86",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_map_proc_sys_to_subsystem"
+}

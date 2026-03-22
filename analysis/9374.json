@@ -1,0 +1,111 @@
+{
+  "id": "9374",
+  "title": "[ICH7 snd_hda_intel] Volume control broken",
+  "kernel_version": "2.6.24-rc2",
+  "product": "Drivers",
+  "component": "Sound",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "hang/lockup",
+    "performance",
+    "wrong_behavior",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "sound/pci/hda/hda_codec.c"
+    ],
+    "buggy_methods": [
+      "hda_set_power_state"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": true,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 1550,
+    "description_word_count": 247
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 20,
+    "lines_removed": 13,
+    "patch_size": 33,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "hda_set_power_state"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "sound/pci/hda/hda_codec.c",
+    "filename": "hda_codec.c",
+    "directory": "sound/pci/hda",
+    "depth": 4,
+    "top_level": "sound",
+    "second_level": "pci",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Sound",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "9374",
+      "version": "2.6.24-rc2",
+      "status": "found",
+      "path": "sound/pci/hda/hda_codec.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "9374",
+    "title": "[ICH7 snd_hda_intel] Volume control broken",
+    "ground_truth_file": "sound/pci/hda/hda_codec.c",
+    "ground_truth_subsystem": "sound/pci",
+    "ground_truth_methods": [
+      "hda_set_power_state"
+    ],
+    "product": "Drivers",
+    "component": "Sound",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "hang/deadlock",
+      "wrong_output",
+      "performance"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "Sound",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

@@ -1,0 +1,155 @@
+{
+  "id": "196743",
+  "title": "iwlwifi: adding too many link-layer multicast addresses produces a warning - WIFILNX-1329",
+  "kernel_version": "4.12.8",
+  "product": "Drivers",
+  "component": "network-wireless",
+  "hardware": "x86-64 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops",
+    "compile_error"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c"
+    ],
+    "buggy_methods": [
+      "iwl_mvm_mc_iface_iterator"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "iwl_pcie_enqueue_hcmd"
+    ],
+    "mentioned_file_paths": [
+      "drivers/net/wireless/intel/iwlwifi/pcie/tx.c"
+    ],
+    "source_references": [],
+    "error_messages": [
+      "sending MCAST_FILTER_CMD: enqueue_hcmd failed: -22"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": true,
+    "description_length": 3906,
+    "description_word_count": 416
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 9,
+    "lines_removed": 1,
+    "patch_size": 10,
+    "patch_types": [
+      "error_handling",
+      "memory"
+    ],
+    "num_hunks": 2,
+    "hunk_functions": [
+      "iwl_mvm_mc_iface_iterator"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c",
+    "filename": "mac80211.c",
+    "directory": "drivers/net/wireless/intel/iwlwifi/mvm",
+    "depth": 7,
+    "top_level": "drivers",
+    "second_level": "net",
+    "driver_subsystem": "net/wireless",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy",
+    "signals": [
+      "call_trace_available",
+      "file_paths_in_description",
+      "trace_has_1_functions",
+      "component_known:network-wireless"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "direct_file_path_matching",
+      "match_trace_functions_to_source_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "196743",
+      "version": "4.12.8",
+      "status": "found",
+      "path": "drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "196743",
+    "version": "4.12.8",
+    "ground_truth_file": "drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c",
+    "trace_functions": [
+      "iwl_pcie_enqueue_hcmd",
+      "enqueue_task_fair",
+      "iwl_trans_pcie_send_hcmd",
+      "try_to_wake_up",
+      "iwl_trans_send_cmd",
+      "default_wake_function",
+      "iwl_mvm_send_cmd",
+      "iwl_mvm_update_mu_groups",
+      "iwl_mvm_send_cmd_pdu",
+      "iwl_mvm_mc_iface_iterator",
+      "__iterate_interfaces",
+      "ieee80211_iterate_active_interfaces_atomic",
+      "iwl_mvm_recalc_multicast",
+      "iwl_mvm_configure_filter",
+      "ieee80211_configure_filter"
+    ],
+    "total_trace_functions": 21,
+    "function_locations": {
+      "iwl_pcie_enqueue_hcmd": [
+        "drivers/net/wireless/intel/iwlwifi/pcie/tx.c"
+      ],
+      "enqueue_task_fair": [],
+      "iwl_trans_pcie_send_hcmd": [
+        "drivers/net/wireless/intel/iwlwifi/pcie/tx.c"
+      ],
+      "try_to_wake_up": [],
+      "iwl_trans_send_cmd": [
+        "drivers/net/wireless/intel/iwlwifi/iwl-trans.c"
+      ],
+      "default_wake_function": [
+        "kernel/sched/core.c"
+      ],
+      "iwl_mvm_send_cmd": [
+        "drivers/net/wireless/intel/iwlwifi/mvm/utils.c"
+      ],
+      "iwl_mvm_update_mu_groups": [
+        "drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c"
+      ],
+      "iwl_mvm_send_cmd_pdu": [
+        "drivers/net/wireless/intel/iwlwifi/mvm/utils.c"
+      ],
+      "iwl_mvm_mc_iface_iterator": [
+        "drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c"
+      ]
+    },
+    "gt_found_via_functions": [
+      "iwl_mvm_update_mu_groups",
+      "iwl_mvm_mc_iface_iterator"
+    ],
+    "other_candidate_files": [
+      "kernel/sched/core.c",
+      "drivers/net/wireless/intel/iwlwifi/pcie/tx.c",
+      "drivers/net/wireless/intel/iwlwifi/mvm/utils.c",
+      "drivers/net/wireless/intel/iwlwifi/iwl-trans.c"
+    ],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

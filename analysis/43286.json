@@ -1,0 +1,105 @@
+{
+  "id": "43286",
+  "title": "NFS4ERR_SHARE_DENIED errors are translated to EIO",
+  "kernel_version": "3.0",
+  "product": "File System",
+  "component": "NFS",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "fs/nfs/nfs4proc.c"
+    ],
+    "buggy_methods": [
+      "nfs4_map_errors"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 1184,
+    "description_word_count": 151
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 0,
+    "patch_size": 2,
+    "patch_types": [
+      "logic_change",
+      "error_handling",
+      "synchronization"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "nfs4_map_errors"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "fs/nfs/nfs4proc.c",
+    "filename": "nfs4proc.c",
+    "directory": "fs/nfs",
+    "depth": 3,
+    "top_level": "fs",
+    "second_level": "nfs",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:NFS"
+    ],
+    "strategies": [
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "43286",
+      "version": "3.0",
+      "status": "found",
+      "path": "fs/nfs/nfs4proc.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "43286",
+    "title": "NFS4ERR_SHARE_DENIED errors are translated to EIO",
+    "ground_truth_file": "fs/nfs/nfs4proc.c",
+    "ground_truth_subsystem": "fs/nfs",
+    "ground_truth_methods": [
+      "nfs4_map_errors"
+    ],
+    "product": "File System",
+    "component": "NFS",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "suspend/resume"
+    ],
+    "fix_types": [
+      "error_return_fix"
+    ],
+    "localization_clues": [
+      "known_component"
+    ],
+    "clue_details": {
+      "component": "NFS",
+      "product": "File System"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

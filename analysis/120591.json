@@ -1,0 +1,107 @@
+{
+  "id": "120591",
+  "title": "BUG() in dmesg after loading nouveau module",
+  "kernel_version": "4.7-rc3",
+  "product": "Drivers",
+  "component": "Video",
+  "hardware": "x86-64 Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/gpu/drm/nouveau/nouveau_fbcon.c"
+    ],
+    "buggy_methods": [
+      "nouveau_fbcon_init"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 421,
+    "description_word_count": 60
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 1,
+    "patch_size": 3,
+    "patch_types": [
+      "logic_change"
+    ],
+    "num_hunks": 1,
+    "hunk_functions": [
+      "nouveau_fbcon_init"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/gpu/drm/nouveau/nouveau_fbcon.c",
+    "filename": "nouveau_fbcon.c",
+    "directory": "drivers/gpu/drm/nouveau",
+    "depth": 5,
+    "top_level": "drivers",
+    "second_level": "gpu",
+    "driver_subsystem": "gpu/drm",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "medium",
+    "signals": [
+      "call_trace_available",
+      "component_known:Video"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "narrow_search_by_component"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "120591",
+      "version": "4.7-rc3",
+      "status": "found",
+      "path": "drivers/gpu/drm/nouveau/nouveau_fbcon.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "120591",
+    "title": "BUG() in dmesg after loading nouveau module",
+    "ground_truth_file": "drivers/gpu/drm/nouveau/nouveau_fbcon.c",
+    "ground_truth_subsystem": "drivers/gpu",
+    "ground_truth_methods": [
+      "nouveau_fbcon_init"
+    ],
+    "product": "Drivers",
+    "component": "Video",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "new_function_calls"
+    ],
+    "localization_clues": [
+      "known_component",
+      "diagnostic_tool_output"
+    ],
+    "clue_details": {
+      "component": "Video",
+      "product": "Drivers"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}

@@ -1,0 +1,3881 @@
+{
+  "total_trace_bugs": 53,
+  "ground_truth_hit": 21,
+  "correct_directory_hit": 15,
+  "miss": 17,
+  "details": [
+    {
+      "id": "196743",
+      "version": "4.12.8",
+      "ground_truth_file": "drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c",
+      "trace_functions": [
+        "iwl_pcie_enqueue_hcmd",
+        "enqueue_task_fair",
+        "iwl_trans_pcie_send_hcmd",
+        "try_to_wake_up",
+        "iwl_trans_send_cmd",
+        "default_wake_function",
+        "iwl_mvm_send_cmd",
+        "iwl_mvm_update_mu_groups",
+        "iwl_mvm_send_cmd_pdu",
+        "iwl_mvm_mc_iface_iterator",
+        "__iterate_interfaces",
+        "ieee80211_iterate_active_interfaces_atomic",
+        "iwl_mvm_recalc_multicast",
+        "iwl_mvm_configure_filter",
+        "ieee80211_configure_filter"
+      ],
+      "total_trace_functions": 21,
+      "function_locations": {
+        "iwl_pcie_enqueue_hcmd": [
+          "drivers/net/wireless/intel/iwlwifi/pcie/tx.c"
+        ],
+        "enqueue_task_fair": [],
+        "iwl_trans_pcie_send_hcmd": [
+          "drivers/net/wireless/intel/iwlwifi/pcie/tx.c"
+        ],
+        "try_to_wake_up": [],
+        "iwl_trans_send_cmd": [
+          "drivers/net/wireless/intel/iwlwifi/iwl-trans.c"
+        ],
+        "default_wake_function": [
+          "kernel/sched/core.c"
+        ],
+        "iwl_mvm_send_cmd": [
+          "drivers/net/wireless/intel/iwlwifi/mvm/utils.c"
+        ],
+        "iwl_mvm_update_mu_groups": [
+          "drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c"
+        ],
+        "iwl_mvm_send_cmd_pdu": [
+          "drivers/net/wireless/intel/iwlwifi/mvm/utils.c"
+        ],
+        "iwl_mvm_mc_iface_iterator": [
+          "drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "iwl_mvm_update_mu_groups",
+        "iwl_mvm_mc_iface_iterator"
+      ],
+      "other_candidate_files": [
+        "kernel/sched/core.c",
+        "drivers/net/wireless/intel/iwlwifi/pcie/tx.c",
+        "drivers/net/wireless/intel/iwlwifi/mvm/utils.c",
+        "drivers/net/wireless/intel/iwlwifi/iwl-trans.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "101521",
+      "version": "4.1.2",
+      "ground_truth_file": "net/mac80211/iface.c",
+      "trace_functions": [
+        "ieee80211_bss_info_change_notify",
+        "dump_stack",
+        "console_unlock",
+        "warn_slowpath_common",
+        "warn_slowpath_fmt",
+        "ieee80211_recalc_txpower",
+        "ieee80211_set_tx_power",
+        "cfg80211_wext_siwtxpower",
+        "ioctl_standard_call",
+        "ioctl_standard_iw_point",
+        "9",
+        "wext_handle_ioctl",
+        "dev_ioctl",
+        "sock_ioctl",
+        "do_vfs_ioctl"
+      ],
+      "total_trace_functions": 19,
+      "function_locations": {
+        "ieee80211_bss_info_change_notify": [
+          "net/mac80211/main.c"
+        ],
+        "dump_stack": [
+          "lib/dump_stack.c",
+          "arch/tile/kernel/stack.c",
+          "kernel/trace/trace.c",
+          "tools/perf/util/util.c",
+          "arch/blackfin/kernel/dumpstack.c",
+          "arch/mips/kernel/process.c"
+        ],
+        "console_unlock": [
+          "kernel/printk/printk.c"
+        ],
+        "warn_slowpath_common": [
+          "kernel/panic.c"
+        ],
+        "warn_slowpath_fmt": [
+          "kernel/panic.c"
+        ],
+        "ieee80211_recalc_txpower": [
+          "net/mac80211/iface.c"
+        ],
+        "ieee80211_set_tx_power": [
+          "net/mac80211/cfg.c"
+        ],
+        "cfg80211_wext_siwtxpower": [
+          "net/wireless/wext-compat.c"
+        ],
+        "ioctl_standard_call": [
+          "net/wireless/wext-core.c"
+        ],
+        "ioctl_standard_iw_point": [
+          "net/wireless/wext-core.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "ieee80211_recalc_txpower"
+      ],
+      "other_candidate_files": [
+        "lib/dump_stack.c",
+        "arch/tile/kernel/stack.c",
+        "kernel/trace/trace.c",
+        "kernel/panic.c",
+        "net/wireless/wext-compat.c",
+        "net/mac80211/main.c",
+        "kernel/printk/printk.c",
+        "net/mac80211/cfg.c",
+        "tools/perf/util/util.c",
+        "arch/blackfin/kernel/dumpstack.c",
+        "net/wireless/wext-core.c",
+        "arch/mips/kernel/process.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "90521",
+      "version": "3.19-rc2",
+      "ground_truth_file": "drivers/gpio/gpio-crystalcove.c",
+      "trace_functions": [
+        "irq_nested_primary_handler",
+        "dump_stack",
+        "warn_slowpath_common",
+        "warn_slowpath_fmt",
+        "handle_irq_event_percpu",
+        "regmap_format_10_14_write",
+        "_regmap_bus_raw_write",
+        "handle_irq_event",
+        "handle_simple_irq",
+        "generic_handle_irq",
+        "crystalcove_gpio_irq_handler",
+        "handle_nested_irq",
+        "regmap_irq_thread",
+        "irq_thread_fn",
+        "irq_thread"
+      ],
+      "total_trace_functions": 22,
+      "function_locations": {
+        "irq_nested_primary_handler": [
+          "kernel/irq/manage.c"
+        ],
+        "dump_stack": [
+          "lib/dump_stack.c",
+          "arch/tile/kernel/stack.c",
+          "kernel/trace/trace.c",
+          "tools/perf/util/util.c",
+          "arch/blackfin/kernel/dumpstack.c",
+          "arch/mips/kernel/process.c"
+        ],
+        "warn_slowpath_common": [
+          "kernel/panic.c"
+        ],
+        "warn_slowpath_fmt": [
+          "kernel/panic.c"
+        ],
+        "handle_irq_event_percpu": [],
+        "regmap_format_10_14_write": [
+          "drivers/base/regmap/regmap.c"
+        ],
+        "_regmap_bus_raw_write": [
+          "drivers/base/regmap/regmap.c"
+        ],
+        "handle_irq_event": [
+          "drivers/misc/lkdtm.c",
+          "kernel/irq/handle.c"
+        ],
+        "handle_simple_irq": [],
+        "generic_handle_irq": [
+          "kernel/irq/irqdesc.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "drivers/misc/lkdtm.c",
+        "lib/dump_stack.c",
+        "arch/tile/kernel/stack.c",
+        "kernel/trace/trace.c",
+        "kernel/panic.c",
+        "drivers/base/regmap/regmap.c",
+        "tools/perf/util/util.c",
+        "arch/blackfin/kernel/dumpstack.c",
+        "kernel/irq/handle.c",
+        "arch/mips/kernel/process.c",
+        "kernel/irq/manage.c",
+        "kernel/irq/irqdesc.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "60583",
+      "version": "3.5.4",
+      "ground_truth_file": "drivers/acpi/acpica/evxface.c",
+      "trace_functions": [
+        "acpi_ev_notify_dispatch",
+        "acpi_os_execute_deferred",
+        "process_one_work",
+        "acpi_os_wait_events_complete",
+        "worker_thread",
+        "manage_workers",
+        "kthread",
+        "kthread_freezable_should_stop",
+        "kernel_thread_helper",
+        "kthread_data",
+        "wq_worker_sleeping",
+        "__schedule",
+        "d_hash_and_lookup",
+        "proc_flush_task",
+        "call_rcu_sched"
+      ],
+      "total_trace_functions": 32,
+      "function_locations": {
+        "acpi_ev_notify_dispatch": [
+          "drivers/acpi/acpica/evmisc.c"
+        ],
+        "acpi_os_execute_deferred": [
+          "drivers/acpi/osl.c"
+        ],
+        "process_one_work": [
+          "kernel/workqueue.c"
+        ],
+        "acpi_os_wait_events_complete": [
+          "drivers/acpi/osl.c"
+        ],
+        "worker_thread": [
+          "kernel/workqueue.c",
+          "drivers/scsi/ipr.c"
+        ],
+        "manage_workers": [
+          "kernel/workqueue.c"
+        ],
+        "kthread": [
+          "fs/ecryptfs/kthread.c",
+          "fs/btrfs/inode-map.c",
+          "fs/btrfs/volumes.c",
+          "kernel/kthread.c",
+          "fs/btrfs/disk-io.c",
+          "drivers/net/xen-netback/netback.c",
+          "drivers/staging/media/lirc/lirc_zilog.c",
+          "drivers/usb/atm/ueagle-atm.c",
+          "kernel/time/clocksource.c",
+          "drivers/block/nvme.c"
+        ],
+        "kthread_freezable_should_stop": [
+          "kernel/kthread.c"
+        ],
+        "kernel_thread_helper": [
+          "arch/hexagon/kernel/process.c",
+          "arch/sh/kernel/process_32.c",
+          "arch/cris/arch-v10/kernel/process.c",
+          "arch/sh/kernel/process_64.c",
+          "arch/blackfin/kernel/process.c",
+          "arch/openrisc/kernel/process.c",
+          "arch/m32r/kernel/process.c",
+          "arch/c6x/kernel/process.c",
+          "arch/x86/kernel/process.c",
+          "arch/mips/kernel/process.c"
+        ],
+        "kthread_data": [
+          "kernel/kthread.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "fs/btrfs/volumes.c",
+        "arch/sh/kernel/process_64.c",
+        "kernel/kthread.c",
+        "arch/blackfin/kernel/process.c",
+        "drivers/acpi/osl.c",
+        "arch/mips/kernel/process.c",
+        "arch/hexagon/kernel/process.c",
+        "fs/btrfs/inode-map.c",
+        "arch/sh/kernel/process_32.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "fs/btrfs/disk-io.c",
+        "arch/openrisc/kernel/process.c",
+        "kernel/workqueue.c",
+        "arch/c6x/kernel/process.c",
+        "drivers/usb/atm/ueagle-atm.c",
+        "kernel/time/clocksource.c",
+        "drivers/block/nvme.c",
+        "fs/ecryptfs/kthread.c",
+        "drivers/acpi/acpica/evmisc.c",
+        "drivers/net/xen-netback/netback.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "50491",
+      "version": "3.0.39",
+      "ground_truth_file": "drivers/edac/i7core_edac.c",
+      "trace_functions": [
+        "klist_next",
+        "warn_slowpath_common",
+        "warn_slowpath_null",
+        "pci_do_find_bus",
+        "next_device",
+        "bus_find_device",
+        "pci_get_dev_by_id",
+        "pci_get_subsys",
+        "pci_get_device",
+        "i7core_get_onedevice",
+        "i7core_probe",
+        "local_pci_probe",
+        "__pci_device_probe",
+        "pci_device_probe",
+        "really_probe"
+      ],
+      "total_trace_functions": 28,
+      "function_locations": {
+        "klist_next": [
+          "lib/klist.c"
+        ],
+        "warn_slowpath_common": [
+          "kernel/panic.c"
+        ],
+        "warn_slowpath_null": [
+          "kernel/panic.c"
+        ],
+        "pci_do_find_bus": [
+          "drivers/pci/search.c"
+        ],
+        "next_device": [
+          "drivers/base/bus.c",
+          "drivers/base/driver.c",
+          "drivers/video/omap2/dss/display.c",
+          "sound/core/timer.c",
+          "drivers/mtd/mtdcore.c",
+          "drivers/base/core.c"
+        ],
+        "bus_find_device": [
+          "drivers/base/bus.c",
+          "drivers/nubus/nubus.c"
+        ],
+        "pci_get_dev_by_id": [
+          "drivers/pci/search.c"
+        ],
+        "pci_get_subsys": [
+          "drivers/pci/search.c"
+        ],
+        "pci_get_device": [],
+        "i7core_get_onedevice": [
+          "drivers/edac/i7core_edac.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "i7core_get_onedevice"
+      ],
+      "other_candidate_files": [
+        "drivers/pci/search.c",
+        "drivers/base/bus.c",
+        "drivers/base/driver.c",
+        "kernel/panic.c",
+        "lib/klist.c",
+        "drivers/nubus/nubus.c",
+        "drivers/video/omap2/dss/display.c",
+        "sound/core/timer.c",
+        "drivers/mtd/mtdcore.c",
+        "drivers/base/core.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "35472",
+      "version": "2.6.38",
+      "ground_truth_file": "drivers/gpu/drm/radeon/rv770.c",
+      "trace_functions": [
+        "radeon_fence_wait",
+        "drm_ioctl"
+      ],
+      "total_trace_functions": 2,
+      "function_locations": {
+        "radeon_fence_wait": [
+          "drivers/gpu/drm/radeon/radeon_fence.c"
+        ],
+        "drm_ioctl": [
+          "drivers/gpu/drm/drm_drv.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "drivers/gpu/drm/drm_drv.c",
+        "drivers/gpu/drm/radeon/radeon_fence.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "33232",
+      "version": "2.6.38",
+      "ground_truth_file": "drivers/net/wireless/zd1211rw/zd_mac.c",
+      "trace_functions": [
+        "cfg80211_inform_bss_frame",
+        "warn_slowpath_common",
+        "warn_slowpath_null",
+        "58",
+        "usb_hcd_link_urb_to_ep",
+        "ieee80211_bss_info_update",
+        "ieee80211_scan_rx",
+        "ieee80211_prepare_and_rx_handle",
+        "__ieee80211_rx_handle_packet",
+        "ieee80211_rx",
+        "ehci_irq",
+        "ieee80211_tasklet_handler",
+        "tasklet_action",
+        "__do_softirq",
+        "ack_apic_level"
+      ],
+      "total_trace_functions": 25,
+      "function_locations": {
+        "cfg80211_inform_bss_frame": [],
+        "warn_slowpath_common": [
+          "kernel/panic.c"
+        ],
+        "warn_slowpath_null": [
+          "kernel/panic.c"
+        ],
+        "58": [
+          "drivers/ssb/pci.c",
+          "sound/pci/ac97/ac97_patch.c",
+          "sound/isa/cmi8330.c",
+          "sound/pci/oxygen/oxygen_mixer.c",
+          "sound/pci/fm801.c",
+          "sound/i2c/cs8427.c",
+          "sound/pci/cs46xx/cs46xx_lib.c",
+          "sound/i2c/other/ak4114.c",
+          "sound/pci/ca0106/ca0106_proc.c",
+          "sound/i2c/other/ak4117.c"
+        ],
+        "usb_hcd_link_urb_to_ep": [
+          "drivers/usb/core/hcd.c"
+        ],
+        "ieee80211_bss_info_update": [],
+        "ieee80211_scan_rx": [],
+        "ieee80211_prepare_and_rx_handle": [
+          "net/mac80211/rx.c"
+        ],
+        "__ieee80211_rx_handle_packet": [
+          "net/mac80211/rx.c"
+        ],
+        "ieee80211_rx": [
+          "net/mac80211/rx.c",
+          "drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "drivers/ssb/pci.c",
+        "kernel/panic.c",
+        "sound/isa/cmi8330.c",
+        "sound/pci/ac97/ac97_patch.c",
+        "sound/pci/oxygen/oxygen_mixer.c",
+        "sound/pci/fm801.c",
+        "sound/i2c/cs8427.c",
+        "drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c",
+        "sound/pci/cs46xx/cs46xx_lib.c",
+        "sound/i2c/other/ak4114.c",
+        "net/mac80211/rx.c",
+        "sound/pci/ca0106/ca0106_proc.c",
+        "sound/i2c/other/ak4117.c",
+        "drivers/usb/core/hcd.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "32032",
+      "version": "2.6.38",
+      "ground_truth_file": "drivers/staging/brcm80211/sys/wlc_ampdu.c",
+      "trace_functions": [
+        "minstrel_ht_tx_status",
+        "ieee80211_tx_status",
+        "ieee80211_tasklet_handler",
+        "__do_softirq",
+        "tasklet_action",
+        "irq_exit",
+        "do_IRQ",
+        "common_interrupt",
+        "acpi_idle_enter_bm",
+        "cpuidle_idle_call",
+        "cpu_idle",
+        "start_secondary",
+        "EFLAGS"
+      ],
+      "total_trace_functions": 13,
+      "function_locations": {
+        "minstrel_ht_tx_status": [],
+        "ieee80211_tx_status": [
+          "net/mac80211/status.c"
+        ],
+        "ieee80211_tasklet_handler": [
+          "net/mac80211/main.c"
+        ],
+        "__do_softirq": [
+          "kernel/softirq.c"
+        ],
+        "tasklet_action": [
+          "drivers/tty/serial/serial_core.c",
+          "drivers/misc/lkdtm.c",
+          "kernel/softirq.c"
+        ],
+        "irq_exit": [
+          "drivers/staging/vme/bridges/vme_ca91cx42.c",
+          "kernel/softirq.c",
+          "drivers/uio/uio_pdrv_genirq.c",
+          "drivers/mfd/wm831x-irq.c",
+          "drivers/mfd/max8998-irq.c",
+          "kernel/rcutree.c",
+          "drivers/mfd/wm8350-irq.c",
+          "drivers/staging/vme/bridges/vme_tsi148.c",
+          "drivers/mfd/wm8994-irq.c",
+          "drivers/mfd/88pm860x-core.c"
+        ],
+        "do_IRQ": [
+          "arch/cris/kernel/irq.c",
+          "arch/microblaze/kernel/irq.c",
+          "arch/xtensa/kernel/irq.c",
+          "arch/powerpc/kernel/irq.c",
+          "arch/h8300/kernel/irq.c",
+          "arch/cris/arch-v10/kernel/irq.c",
+          "arch/score/kernel/irq.c",
+          "arch/avr32/mach-at32ap/intc.c",
+          "arch/m68knommu/kernel/irq.c",
+          "arch/sh/kernel/irq.c"
+        ],
+        "common_interrupt": [],
+        "acpi_idle_enter_bm": [
+          "drivers/acpi/processor_idle.c"
+        ],
+        "cpuidle_idle_call": [
+          "drivers/cpuidle/cpuidle.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "drivers/tty/serial/serial_core.c",
+        "arch/cris/kernel/irq.c",
+        "arch/microblaze/kernel/irq.c",
+        "drivers/mfd/wm8350-irq.c",
+        "arch/xtensa/kernel/irq.c",
+        "drivers/staging/vme/bridges/vme_tsi148.c",
+        "kernel/rcutree.c",
+        "drivers/staging/vme/bridges/vme_ca91cx42.c",
+        "kernel/softirq.c",
+        "drivers/uio/uio_pdrv_genirq.c",
+        "arch/powerpc/kernel/irq.c",
+        "arch/h8300/kernel/irq.c",
+        "net/mac80211/main.c",
+        "arch/cris/arch-v10/kernel/irq.c",
+        "arch/score/kernel/irq.c",
+        "arch/avr32/mach-at32ap/intc.c",
+        "arch/m68knommu/kernel/irq.c",
+        "drivers/cpuidle/cpuidle.c",
+        "arch/sh/kernel/irq.c",
+        "drivers/mfd/wm8994-irq.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "25692",
+      "version": "2.6.37-rc7",
+      "ground_truth_file": "sound/pci/hda/patch_sigmatel.c",
+      "trace_functions": [
+        "stac92xx_unsol_event",
+        "stac92xx_init",
+        "snd_hda_codec_build_controls",
+        "snd_hda_build_controls",
+        "azx_probe",
+        "__pm_runtime_set_status",
+        "local_pci_probe",
+        "pci_device_probe",
+        "driver_sysfs_add",
+        "driver_probe_device",
+        "__driver_attach",
+        "bus_for_each_dev",
+        "bus_add_driver",
+        "driver_register",
+        "__pci_register_driver"
+      ],
+      "total_trace_functions": 19,
+      "function_locations": {
+        "stac92xx_unsol_event": [
+          "sound/pci/hda/patch_sigmatel.c"
+        ],
+        "stac92xx_init": [
+          "sound/pci/hda/patch_sigmatel.c"
+        ],
+        "snd_hda_codec_build_controls": [
+          "sound/pci/hda/hda_codec.c"
+        ],
+        "snd_hda_build_controls": [
+          "sound/pci/hda/hda_codec.c"
+        ],
+        "azx_probe": [
+          "sound/pci/hda/hda_intel.c"
+        ],
+        "__pm_runtime_set_status": [
+          "drivers/base/power/runtime.c"
+        ],
+        "local_pci_probe": [
+          "drivers/pci/pci-driver.c"
+        ],
+        "pci_device_probe": [
+          "drivers/pci/pci-driver.c"
+        ],
+        "driver_sysfs_add": [
+          "drivers/base/dd.c"
+        ],
+        "driver_probe_device": [
+          "drivers/base/dd.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "stac92xx_unsol_event",
+        "stac92xx_init"
+      ],
+      "other_candidate_files": [
+        "sound/pci/hda/hda_codec.c",
+        "drivers/pci/pci-driver.c",
+        "sound/pci/hda/hda_intel.c",
+        "drivers/base/power/runtime.c",
+        "drivers/base/dd.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "24312",
+      "version": "2.6.37-rc3",
+      "ground_truth_file": "drivers/gpu/drm/i915/intel_sdvo.c",
+      "trace_functions": [
+        "i2c_transfer",
+        "8",
+        "intel_dp_set_m_n",
+        "intel_sdvo_init",
+        "intel_crt_init",
+        "intel_setup_outputs",
+        "intel_modeset_init",
+        "i915_load_modeset_init",
+        "i915_vga_set_decode",
+        "intel_detect_pch",
+        "i915_driver_load",
+        "drm_get_pci_dev",
+        "_raw_spin_lock_irqsave",
+        "i915_pci_probe",
+        "local_pci_probe"
+      ],
+      "total_trace_functions": 34,
+      "function_locations": {
+        "i2c_transfer": [
+          "drivers/media/radio/saa7706h.c",
+          "drivers/i2c/i2c-core.c",
+          "drivers/media/common/saa7146_i2c.c",
+          "drivers/media/dvb/dvb-usb/dw2102.c"
+        ],
+        "8": [
+          "drivers/char/serial167.c",
+          "arch/powerpc/lib/sstep.c",
+          "arch/sparc/kernel/btext.c",
+          "drivers/hwmon/vt1211.c",
+          "drivers/media/video/cx88/cx88-dvb.c",
+          "drivers/pci/setup-irq.c",
+          "drivers/scsi/sun_esp.c",
+          "arch/ia64/sn/pci/tioca_provider.c",
+          "drivers/message/fusion/mptbase.c",
+          "arch/x86/kvm/x86.c"
+        ],
+        "intel_dp_set_m_n": [],
+        "intel_sdvo_init": [
+          "drivers/gpu/drm/i915/intel_sdvo.c"
+        ],
+        "intel_crt_init": [
+          "drivers/gpu/drm/i915/intel_crt.c"
+        ],
+        "intel_setup_outputs": [
+          "drivers/gpu/drm/i915/intel_display.c"
+        ],
+        "intel_modeset_init": [
+          "drivers/gpu/drm/i915/intel_display.c"
+        ],
+        "i915_load_modeset_init": [
+          "drivers/gpu/drm/i915/i915_dma.c"
+        ],
+        "i915_vga_set_decode": [
+          "drivers/gpu/drm/i915/i915_dma.c"
+        ],
+        "intel_detect_pch": [
+          "drivers/gpu/drm/i915/i915_drv.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "intel_sdvo_init"
+      ],
+      "other_candidate_files": [
+        "drivers/char/serial167.c",
+        "arch/powerpc/lib/sstep.c",
+        "arch/sparc/kernel/btext.c",
+        "drivers/media/radio/saa7706h.c",
+        "drivers/media/common/saa7146_i2c.c",
+        "drivers/gpu/drm/i915/i915_dma.c",
+        "drivers/gpu/drm/i915/intel_display.c",
+        "drivers/i2c/i2c-core.c",
+        "drivers/hwmon/vt1211.c",
+        "drivers/media/video/cx88/cx88-dvb.c",
+        "drivers/pci/setup-irq.c",
+        "drivers/scsi/sun_esp.c",
+        "arch/ia64/sn/pci/tioca_provider.c",
+        "drivers/message/fusion/mptbase.c",
+        "drivers/gpu/drm/i915/i915_drv.c",
+        "drivers/media/dvb/dvb-usb/dw2102.c",
+        "arch/x86/kvm/x86.c",
+        "drivers/gpu/drm/i915/intel_crt.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "21092",
+      "version": "2.6.36",
+      "ground_truth_file": "fs/reiserfs/super.c",
+      "trace_functions": [
+        "reiserfs_write_unlock",
+        "reiserfs_unpack",
+        "path_put",
+        "reiserfs_quota_on",
+        "do_path_lookup",
+        "strncpy_from_user",
+        "do_quotactl",
+        "down_read",
+        "sys_quotactl",
+        "system_call_fastpath"
+      ],
+      "total_trace_functions": 10,
+      "function_locations": {
+        "reiserfs_write_unlock": [
+          "fs/reiserfs/lock.c"
+        ],
+        "reiserfs_unpack": [
+          "fs/reiserfs/ioctl.c"
+        ],
+        "path_put": [
+          "fs/namei.c"
+        ],
+        "reiserfs_quota_on": [
+          "fs/reiserfs/super.c"
+        ],
+        "do_path_lookup": [
+          "fs/namei.c"
+        ],
+        "strncpy_from_user": [
+          "arch/m68k/lib/uaccess.c",
+          "arch/mn10300/lib/usercopy.c",
+          "arch/m32r/lib/usercopy.c",
+          "arch/frv/kernel/uaccess.c",
+          "arch/um/kernel/skas/uaccess.c",
+          "arch/x86/lib/usercopy_64.c",
+          "arch/x86/lib/usercopy_32.c"
+        ],
+        "do_quotactl": [
+          "fs/quota/quota.c"
+        ],
+        "down_read": [
+          "lib/rwsem-spinlock.c",
+          "kernel/rwsem.c"
+        ],
+        "sys_quotactl": [],
+        "system_call_fastpath": []
+      },
+      "gt_found_via_functions": [
+        "reiserfs_quota_on"
+      ],
+      "other_candidate_files": [
+        "fs/reiserfs/ioctl.c",
+        "fs/namei.c",
+        "arch/m68k/lib/uaccess.c",
+        "arch/mn10300/lib/usercopy.c",
+        "arch/m32r/lib/usercopy.c",
+        "arch/frv/kernel/uaccess.c",
+        "arch/x86/lib/usercopy_32.c",
+        "fs/quota/quota.c",
+        "arch/um/kernel/skas/uaccess.c",
+        "kernel/rwsem.c",
+        "lib/rwsem-spinlock.c",
+        "arch/x86/lib/usercopy_64.c",
+        "fs/reiserfs/lock.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "19462",
+      "version": "2.6.32",
+      "ground_truth_file": "drivers/acpi/acpica/dswexec.c",
+      "trace_functions": [
+        "acpi_ut_update_object_reference",
+        "acpi_ds_build_internal_object"
+      ],
+      "total_trace_functions": 2,
+      "function_locations": {
+        "acpi_ut_update_object_reference": [],
+        "acpi_ds_build_internal_object": []
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [],
+      "status": "miss"
+    },
+    {
+      "id": "15908",
+      "version": "2.6.34-rc6",
+      "ground_truth_file": "drivers/char/nozomi.c",
+      "trace_functions": [
+        "mutex_lock",
+        "ntty_write_room",
+        "ntty_write",
+        "tty_write_room",
+        "n_tty_poll",
+        "tty_poll",
+        "do_select",
+        "__pollwait",
+        "elv_rb_add",
+        "cfq_insert_request",
+        "vsnprintf",
+        "raw_pci_write",
+        "up",
+        "release_console_sem",
+        "__mem_cgroup_try_charge"
+      ],
+      "total_trace_functions": 35,
+      "function_locations": {
+        "mutex_lock": [
+          "fs/lockd/host.c",
+          "kernel/mutex.c",
+          "kernel/rtmutex.c",
+          "kernel/rtmutex-debug.c"
+        ],
+        "ntty_write_room": [
+          "drivers/char/nozomi.c"
+        ],
+        "ntty_write": [
+          "drivers/char/nozomi.c"
+        ],
+        "tty_write_room": [
+          "drivers/isdn/i4l/isdn_tty.c",
+          "net/bluetooth/rfcomm/tty.c",
+          "drivers/usb/class/cdc-acm.c",
+          "drivers/char/tty_ioctl.c",
+          "drivers/isdn/capi/capi.c",
+          "drivers/net/wan/pc300_tty.c",
+          "drivers/char/nozomi.c",
+          "drivers/s390/char/sclp_tty.c",
+          "drivers/staging/dream/smd/smd_tty.c",
+          "net/irda/ircomm/ircomm_tty.c"
+        ],
+        "n_tty_poll": [
+          "drivers/char/n_tty.c"
+        ],
+        "tty_poll": [
+          "drivers/char/n_tty.c",
+          "drivers/bluetooth/hci_ldisc.c",
+          "drivers/char/tty_io.c",
+          "drivers/char/n_hdlc.c",
+          "drivers/net/ppp_async.c"
+        ],
+        "do_select": [
+          "fs/select.c"
+        ],
+        "__pollwait": [
+          "fs/select.c"
+        ],
+        "elv_rb_add": [
+          "block/elevator.c"
+        ],
+        "cfq_insert_request": [
+          "block/cfq-iosched.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "ntty_write_room",
+        "ntty_write",
+        "tty_write_room"
+      ],
+      "other_candidate_files": [
+        "drivers/char/n_tty.c",
+        "kernel/rtmutex-debug.c",
+        "drivers/usb/class/cdc-acm.c",
+        "drivers/char/tty_ioctl.c",
+        "net/bluetooth/rfcomm/tty.c",
+        "fs/select.c",
+        "block/elevator.c",
+        "drivers/isdn/i4l/isdn_tty.c",
+        "kernel/rtmutex.c",
+        "drivers/isdn/capi/capi.c",
+        "fs/lockd/host.c",
+        "drivers/s390/char/sclp_tty.c",
+        "drivers/staging/dream/smd/smd_tty.c",
+        "drivers/net/ppp_async.c",
+        "drivers/bluetooth/hci_ldisc.c",
+        "drivers/net/wan/pc300_tty.c",
+        "block/cfq-iosched.c",
+        "drivers/char/tty_io.c",
+        "kernel/mutex.c",
+        "drivers/char/n_hdlc.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "15407",
+      "version": "2.6.32",
+      "ground_truth_file": "drivers/acpi/sleep.c",
+      "trace_functions": [
+        "__report_bad_irq",
+        "note_interrupt",
+        "read_tsc",
+        "handle_fasteoi_irq",
+        "handle_irq",
+        "do_IRQ",
+        "ret_from_intr",
+        "acpi_idle_enter_bm",
+        "cpuidle_idle_call",
+        "cpu_idle",
+        "start_secondary",
+        "acpi_irq"
+      ],
+      "total_trace_functions": 12,
+      "function_locations": {
+        "__report_bad_irq": [],
+        "note_interrupt": [
+          "kernel/irq/spurious.c"
+        ],
+        "read_tsc": [
+          "arch/x86/kvm/vmx.c",
+          "arch/x86/kernel/tsc.c",
+          "arch/x86/kernel/rtc.c"
+        ],
+        "handle_fasteoi_irq": [],
+        "handle_irq": [
+          "drivers/hwmon/ams/ams-core.c",
+          "arch/arm/mach-pxa/am200epd.c",
+          "drivers/video/au1200fb.c",
+          "arch/ia64/kernel/irq_ia64.c",
+          "arch/x86/kernel/irq_32.c",
+          "arch/blackfin/mach-common/ints-priority.c",
+          "drivers/platform/x86/sony-laptop.c",
+          "drivers/video/sa1100fb.c",
+          "arch/x86/kernel/cpu/perf_event.c",
+          "drivers/video/pxa168fb.c"
+        ],
+        "do_IRQ": [
+          "arch/cris/kernel/irq.c",
+          "arch/microblaze/kernel/irq.c",
+          "arch/xtensa/kernel/irq.c",
+          "arch/powerpc/kernel/irq.c",
+          "arch/h8300/kernel/irq.c",
+          "arch/cris/arch-v10/kernel/irq.c",
+          "arch/score/kernel/irq.c",
+          "arch/avr32/mach-at32ap/intc.c",
+          "arch/m68knommu/kernel/irq.c",
+          "arch/sh/kernel/irq.c"
+        ],
+        "ret_from_intr": [],
+        "acpi_idle_enter_bm": [
+          "drivers/acpi/processor_idle.c"
+        ],
+        "cpuidle_idle_call": [
+          "drivers/cpuidle/cpuidle.c"
+        ],
+        "cpu_idle": [
+          "arch/h8300/kernel/process.c",
+          "arch/blackfin/kernel/process.c",
+          "arch/xtensa/kernel/process.c",
+          "arch/mips/kernel/process.c",
+          "arch/mn10300/kernel/process.c",
+          "arch/avr32/kernel/process.c",
+          "arch/x86/kernel/process_32.c",
+          "arch/parisc/kernel/process.c",
+          "arch/m68knommu/kernel/process.c",
+          "arch/um/kernel/process.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "drivers/hwmon/ams/ams-core.c",
+        "arch/h8300/kernel/process.c",
+        "arch/cris/kernel/irq.c",
+        "arch/arm/mach-pxa/am200epd.c",
+        "arch/microblaze/kernel/irq.c",
+        "drivers/video/au1200fb.c",
+        "arch/blackfin/kernel/process.c",
+        "arch/ia64/kernel/irq_ia64.c",
+        "arch/xtensa/kernel/irq.c",
+        "arch/x86/kernel/irq_32.c",
+        "arch/xtensa/kernel/process.c",
+        "arch/mips/kernel/process.c",
+        "arch/blackfin/mach-common/ints-priority.c",
+        "arch/mn10300/kernel/process.c",
+        "arch/avr32/kernel/process.c",
+        "arch/x86/kernel/process_32.c",
+        "arch/powerpc/kernel/irq.c",
+        "arch/h8300/kernel/irq.c",
+        "arch/cris/arch-v10/kernel/irq.c",
+        "kernel/irq/spurious.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "15366",
+      "version": "2.6.32",
+      "ground_truth_file": "kernel/time/clocksource.c",
+      "trace_functions": [
+        "sysfs_show_current_clocksources",
+        "sysdev_show",
+        "sysfs_read_file",
+        "vfs_read",
+        "sys_read",
+        "ret_fast_syscall",
+        "lr",
+        "psr"
+      ],
+      "total_trace_functions": 8,
+      "function_locations": {
+        "sysfs_show_current_clocksources": [],
+        "sysdev_show": [],
+        "sysfs_read_file": [],
+        "vfs_read": [
+          "fs/nfsd/vfs.c",
+          "fs/read_write.c"
+        ],
+        "sys_read": [
+          "fs/proc/proc_sysctl.c",
+          "drivers/video/fb_sys_fops.c"
+        ],
+        "ret_fast_syscall": [],
+        "lr": [
+          "drivers/video/geode/suspend_gx.c",
+          "drivers/net/fs_enet/mii-bitbang.c",
+          "arch/x86/mm/pageattr.c",
+          "drivers/net/bnx2x_main.c",
+          "drivers/net/igb/igb_main.c",
+          "drivers/block/cpqarray.c",
+          "drivers/scsi/u14-34f.c",
+          "drivers/scsi/bfa/bfa_fcport.c",
+          "arch/arm/mach-davinci/dma.c",
+          "arch/sparc/kernel/sbus.c"
+        ],
+        "psr": [
+          "arch/ia64/kernel/perfmon.c",
+          "arch/sparc/kernel/traps_64.c",
+          "arch/ia64/kvm/vcpu.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "fs/nfsd/vfs.c",
+        "arch/arm/mach-davinci/dma.c",
+        "fs/proc/proc_sysctl.c",
+        "arch/ia64/kvm/vcpu.c",
+        "drivers/video/geode/suspend_gx.c",
+        "drivers/net/fs_enet/mii-bitbang.c",
+        "arch/sparc/kernel/sbus.c",
+        "arch/ia64/kernel/perfmon.c",
+        "arch/x86/mm/pageattr.c",
+        "drivers/block/cpqarray.c",
+        "arch/sparc/kernel/traps_64.c",
+        "drivers/net/bnx2x_main.c",
+        "drivers/video/fb_sys_fops.c",
+        "drivers/net/igb/igb_main.c",
+        "fs/read_write.c",
+        "drivers/scsi/u14-34f.c",
+        "drivers/scsi/bfa/bfa_fcport.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "14957",
+      "version": "2.6.33-rc2",
+      "ground_truth_file": "drivers/gpu/drm/i915/intel_lvds.c",
+      "trace_functions": [
+        "drm_helper_initial_config",
+        "warn_slowpath_common",
+        "warn_slowpath_fmt",
+        "i915_driver_load",
+        "drm_get_dev",
+        "i915_pci_probe",
+        "local_pci_probe",
+        "pci_device_probe",
+        "driver_probe_device",
+        "__driver_attach",
+        "bus_for_each_dev",
+        "driver_attach",
+        "bus_add_driver",
+        "kset_find_obj",
+        "driver_register"
+      ],
+      "total_trace_functions": 21,
+      "function_locations": {
+        "drm_helper_initial_config": [
+          "drivers/gpu/drm/drm_crtc_helper.c"
+        ],
+        "warn_slowpath_common": [
+          "kernel/panic.c"
+        ],
+        "warn_slowpath_fmt": [
+          "kernel/panic.c"
+        ],
+        "i915_driver_load": [
+          "drivers/gpu/drm/i915/i915_dma.c"
+        ],
+        "drm_get_dev": [
+          "drivers/gpu/drm/drm_stub.c"
+        ],
+        "i915_pci_probe": [],
+        "local_pci_probe": [
+          "drivers/pci/pci-driver.c"
+        ],
+        "pci_device_probe": [
+          "drivers/pci/pci-driver.c"
+        ],
+        "driver_probe_device": [
+          "drivers/base/dd.c"
+        ],
+        "__driver_attach": [
+          "drivers/base/dd.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "drivers/pci/pci-driver.c",
+        "drivers/gpu/drm/i915/i915_dma.c",
+        "kernel/panic.c",
+        "drivers/gpu/drm/drm_stub.c",
+        "drivers/gpu/drm/drm_crtc_helper.c",
+        "drivers/base/dd.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "14686",
+      "version": "2.6.32",
+      "ground_truth_file": "drivers/net/wireless/ath/ath5k/eeprom.c",
+      "trace_functions": [
+        "ath5k_tasklet_rx",
+        "warn_slowpath_common",
+        "warn_slowpath_fmt",
+        "ieee80211_wake_queues",
+        "tasklet_action",
+        "__do_softirq",
+        "ack_apic_level",
+        "handle_IRQ_event",
+        "do_softirq",
+        "irq_exit",
+        "do_IRQ",
+        "common_interrupt",
+        "push_rt_task",
+        "read_hpet",
+        "getnstimeofday"
+      ],
+      "total_trace_functions": 18,
+      "function_locations": {
+        "ath5k_tasklet_rx": [
+          "drivers/net/wireless/ath/ath5k/base.c"
+        ],
+        "warn_slowpath_common": [
+          "kernel/panic.c"
+        ],
+        "warn_slowpath_fmt": [
+          "kernel/panic.c"
+        ],
+        "ieee80211_wake_queues": [
+          "net/mac80211/util.c"
+        ],
+        "tasklet_action": [
+          "drivers/misc/lkdtm.c",
+          "kernel/softirq.c",
+          "drivers/serial/serial_core.c"
+        ],
+        "__do_softirq": [
+          "kernel/softirq.c"
+        ],
+        "ack_apic_level": [
+          "arch/x86/kernel/apic/io_apic.c"
+        ],
+        "handle_IRQ_event": [
+          "kernel/irq/handle.c"
+        ],
+        "do_softirq": [
+          "kernel/softirq.c",
+          "arch/powerpc/kernel/irq.c",
+          "arch/x86/kernel/irq_32.c",
+          "arch/sh/kernel/irq.c",
+          "arch/x86/kernel/irq_64.c",
+          "arch/sparc/kernel/irq_64.c",
+          "arch/s390/kernel/irq.c"
+        ],
+        "irq_exit": [
+          "drivers/staging/vme/bridges/vme_ca91cx42.c",
+          "kernel/softirq.c",
+          "drivers/uio/uio_pdrv_genirq.c",
+          "drivers/mfd/wm831x-irq.c",
+          "drivers/staging/vme/bridges/vme_tsi148.c",
+          "kernel/rcutree.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "arch/x86/kernel/apic/io_apic.c",
+        "arch/x86/kernel/irq_32.c",
+        "drivers/staging/vme/bridges/vme_tsi148.c",
+        "kernel/rcutree.c",
+        "drivers/staging/vme/bridges/vme_ca91cx42.c",
+        "kernel/softirq.c",
+        "drivers/uio/uio_pdrv_genirq.c",
+        "arch/powerpc/kernel/irq.c",
+        "kernel/panic.c",
+        "drivers/net/wireless/ath/ath5k/base.c",
+        "arch/sh/kernel/irq.c",
+        "kernel/irq/handle.c",
+        "arch/s390/kernel/irq.c",
+        "drivers/misc/lkdtm.c",
+        "drivers/mfd/wm831x-irq.c",
+        "net/mac80211/util.c",
+        "drivers/serial/serial_core.c",
+        "arch/sparc/kernel/irq_64.c",
+        "arch/x86/kernel/irq_64.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "14143",
+      "version": "2.6.31",
+      "ground_truth_file": "block/blk-sysfs.c",
+      "trace_functions": [
+        "__wake_up_common",
+        "__wake_up",
+        "queue_requests_store",
+        "queue_attr_store",
+        "sysfs_write_file",
+        "vfs_write",
+        "sys_write",
+        "system_call_fastpath"
+      ],
+      "total_trace_functions": 8,
+      "function_locations": {
+        "__wake_up_common": [
+          "kernel/sched.c"
+        ],
+        "__wake_up": [
+          "kernel/sched.c"
+        ],
+        "queue_requests_store": [],
+        "queue_attr_store": [],
+        "sysfs_write_file": [],
+        "vfs_write": [
+          "fs/nfsd/vfs.c",
+          "fs/read_write.c"
+        ],
+        "sys_write": [
+          "fs/proc/proc_sysctl.c",
+          "drivers/video/fb_sys_fops.c"
+        ],
+        "system_call_fastpath": []
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "fs/nfsd/vfs.c",
+        "kernel/sched.c",
+        "fs/proc/proc_sysctl.c",
+        "drivers/video/fb_sys_fops.c",
+        "fs/read_write.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "13823",
+      "version": "2.6.29",
+      "ground_truth_file": "drivers/scsi/qla2xxx/qla_gs.c",
+      "trace_functions": [
+        "qla2x00_prep_ms_fdmi_iocb",
+        "qla2x00_fdmi_rhba",
+        "qla2x00_get_port_name",
+        "qla2x00_fdmi_register",
+        "qla2x00_configure_loop",
+        "qla2x00_mailbox_command",
+        "qla2x00_get_retry_cnt",
+        "qla2x00_loop_resync",
+        "qla2x00_do_dpc",
+        "kthread",
+        "child_rip"
+      ],
+      "total_trace_functions": 11,
+      "function_locations": {
+        "qla2x00_prep_ms_fdmi_iocb": [],
+        "qla2x00_fdmi_rhba": [],
+        "qla2x00_get_port_name": [],
+        "qla2x00_fdmi_register": [],
+        "qla2x00_configure_loop": [
+          "drivers/scsi/qla2xxx/qla_init.c"
+        ],
+        "qla2x00_mailbox_command": [],
+        "qla2x00_get_retry_cnt": [],
+        "qla2x00_loop_resync": [],
+        "qla2x00_do_dpc": [
+          "drivers/scsi/qla2xxx/qla_os.c"
+        ],
+        "kthread": [
+          "fs/ecryptfs/kthread.c",
+          "kernel/kthread.c",
+          "fs/btrfs/disk-io.c",
+          "drivers/hwmon/lis3lv02d.c",
+          "drivers/usb/atm/ueagle-atm.c",
+          "drivers/platform/x86/thinkpad_acpi.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "fs/ecryptfs/kthread.c",
+        "kernel/kthread.c",
+        "fs/btrfs/disk-io.c",
+        "drivers/scsi/qla2xxx/qla_init.c",
+        "drivers/hwmon/lis3lv02d.c",
+        "drivers/scsi/qla2xxx/qla_os.c",
+        "drivers/usb/atm/ueagle-atm.c",
+        "drivers/platform/x86/thinkpad_acpi.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "13793",
+      "version": "2.6.31-rc3",
+      "ground_truth_file": "fs/jfs/acl.c",
+      "trace_functions": [
+        "rcu_do_batch",
+        "__rcu_process_callbacks",
+        "tick_handle_oneshot_broadcast",
+        "rcu_process_callbacks",
+        "timer_interrupt",
+        "handle_IRQ_event",
+        "do_softirq",
+        "irq_exit",
+        "do_IRQ",
+        "common_interrupt",
+        "sys_getresuid",
+        "acpi_idle_enter_bm",
+        "cpuidle_idle_call",
+        "cpu_idle"
+      ],
+      "total_trace_functions": 14,
+      "function_locations": {
+        "rcu_do_batch": [
+          "kernel/rcuclassic.c",
+          "kernel/rcutree.c"
+        ],
+        "__rcu_process_callbacks": [
+          "kernel/rcuclassic.c"
+        ],
+        "tick_handle_oneshot_broadcast": [
+          "kernel/time/tick-broadcast.c"
+        ],
+        "rcu_process_callbacks": [
+          "kernel/rcuclassic.c",
+          "kernel/rcupreempt.c",
+          "kernel/rcutree.c"
+        ],
+        "timer_interrupt": [
+          "arch/arm/mach-ixp23xx/core.c",
+          "arch/x86/kernel/time_64.c",
+          "arch/sparc/kernel/sun4d_smp.c",
+          "sound/oss/sound_timer.c",
+          "arch/avr32/kernel/time.c",
+          "arch/arm/mach-ixp4xx/common.c",
+          "arch/m32r/kernel/traps.c",
+          "arch/arm/common/time-acorn.c",
+          "drivers/staging/comedi/drivers/das16.c",
+          "arch/arm/mach-footbridge/isa-timer.c"
+        ],
+        "handle_IRQ_event": [
+          "kernel/irq/handle.c"
+        ],
+        "do_softirq": [
+          "kernel/softirq.c",
+          "arch/powerpc/kernel/irq.c",
+          "arch/x86/kernel/irq_32.c",
+          "arch/sh/kernel/irq.c",
+          "arch/x86/kernel/irq_64.c",
+          "arch/sparc/kernel/irq_64.c",
+          "arch/s390/kernel/irq.c"
+        ],
+        "irq_exit": [
+          "kernel/rcupreempt.c",
+          "kernel/softirq.c",
+          "drivers/uio/uio_pdrv_genirq.c",
+          "kernel/rcutree.c"
+        ],
+        "do_IRQ": [
+          "arch/cris/kernel/irq.c",
+          "arch/microblaze/kernel/irq.c",
+          "arch/xtensa/kernel/irq.c",
+          "arch/powerpc/kernel/irq.c",
+          "arch/h8300/kernel/irq.c",
+          "arch/cris/arch-v10/kernel/irq.c",
+          "arch/avr32/mach-at32ap/intc.c",
+          "arch/m68knommu/kernel/irq.c",
+          "arch/sh/kernel/irq.c",
+          "arch/x86/kernel/irq.c"
+        ],
+        "common_interrupt": []
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "arch/cris/kernel/irq.c",
+        "arch/microblaze/kernel/irq.c",
+        "kernel/time/tick-broadcast.c",
+        "arch/arm/mach-ixp23xx/core.c",
+        "arch/x86/kernel/time_64.c",
+        "arch/sparc/kernel/sun4d_smp.c",
+        "sound/oss/sound_timer.c",
+        "arch/xtensa/kernel/irq.c",
+        "kernel/rcuclassic.c",
+        "arch/x86/kernel/irq_32.c",
+        "arch/avr32/kernel/time.c",
+        "arch/arm/mach-ixp4xx/common.c",
+        "kernel/rcutree.c",
+        "arch/m32r/kernel/traps.c",
+        "kernel/softirq.c",
+        "drivers/uio/uio_pdrv_genirq.c",
+        "arch/powerpc/kernel/irq.c",
+        "arch/h8300/kernel/irq.c",
+        "arch/cris/arch-v10/kernel/irq.c",
+        "arch/arm/common/time-acorn.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "13780",
+      "version": "2.6.29",
+      "ground_truth_file": "arch/x86/kernel/cpu/cpufreq/powernow-k8.c",
+      "trace_functions": [
+        "powernowk8_cpu_init"
+      ],
+      "total_trace_functions": 1,
+      "function_locations": {
+        "powernowk8_cpu_init": [
+          "arch/x86/kernel/cpu/cpufreq/powernow-k8.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "powernowk8_cpu_init"
+      ],
+      "other_candidate_files": [],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "13776",
+      "version": "2.6.31-rc3",
+      "ground_truth_file": "drivers/gpu/drm/drm_gem.c",
+      "trace_functions": [
+        "read_cache_page_async",
+        "read_cache_page",
+        "i915_gem_object_get_pages",
+        "i915_gem_object_bind_to_gtt",
+        "i915_gem_object_pin",
+        "drm_gem_object_alloc",
+        "i915_gem_init_ringbuffer",
+        "i915_driver_load",
+        "drm_get_dev",
+        "i915_pci_probe",
+        "local_pci_probe",
+        "pci_device_probe",
+        "driver_probe_device",
+        "__driver_attach",
+        "bus_for_each_dev"
+      ],
+      "total_trace_functions": 29,
+      "function_locations": {
+        "read_cache_page_async": [
+          "mm/filemap.c"
+        ],
+        "read_cache_page": [
+          "mm/filemap.c"
+        ],
+        "i915_gem_object_get_pages": [],
+        "i915_gem_object_bind_to_gtt": [
+          "drivers/gpu/drm/i915/i915_gem.c"
+        ],
+        "i915_gem_object_pin": [],
+        "drm_gem_object_alloc": [],
+        "i915_gem_init_ringbuffer": [],
+        "i915_driver_load": [
+          "drivers/gpu/drm/i915/i915_dma.c"
+        ],
+        "drm_get_dev": [
+          "drivers/gpu/drm/drm_stub.c"
+        ],
+        "i915_pci_probe": []
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "drivers/gpu/drm/i915/i915_dma.c",
+        "drivers/gpu/drm/drm_stub.c",
+        "drivers/gpu/drm/i915/i915_gem.c",
+        "mm/filemap.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "13761",
+      "version": "2.6.31-rc2",
+      "ground_truth_file": "mm/kmemleak.c",
+      "trace_functions": [
+        "kmemleak_seq_next",
+        "seq_read",
+        "vfs_read",
+        "sys_read",
+        "sysenter_do_call",
+        "free_object_rcu",
+        "kmemleak_alloc",
+        "EFLAGS"
+      ],
+      "total_trace_functions": 8,
+      "function_locations": {
+        "kmemleak_seq_next": [
+          "mm/kmemleak.c"
+        ],
+        "seq_read": [
+          "kernel/sched.c",
+          "security/device_cgroup.c",
+          "net/core/skbuff.c",
+          "sound/core/seq/seq_clientmgr.c",
+          "fs/seq_file.c"
+        ],
+        "vfs_read": [
+          "fs/nfsd/vfs.c",
+          "fs/read_write.c"
+        ],
+        "sys_read": [
+          "fs/proc/proc_sysctl.c",
+          "drivers/video/fb_sys_fops.c"
+        ],
+        "sysenter_do_call": [],
+        "free_object_rcu": [
+          "mm/kmemleak.c"
+        ],
+        "kmemleak_alloc": [
+          "mm/kmemleak.c"
+        ],
+        "EFLAGS": []
+      },
+      "gt_found_via_functions": [
+        "kmemleak_seq_next",
+        "free_object_rcu",
+        "kmemleak_alloc"
+      ],
+      "other_candidate_files": [
+        "fs/nfsd/vfs.c",
+        "kernel/sched.c",
+        "fs/proc/proc_sysctl.c",
+        "security/device_cgroup.c",
+        "net/core/skbuff.c",
+        "sound/core/seq/seq_clientmgr.c",
+        "drivers/video/fb_sys_fops.c",
+        "fs/seq_file.c",
+        "fs/read_write.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "13710",
+      "version": "2.6.31-rc1",
+      "ground_truth_file": "arch/x86/kernel/setup.c",
+      "trace_functions": [
+        "check_for_bios_corruption",
+        "warn_slowpath_common",
+        "warn_slowpath_fmt",
+        "check_corruption",
+        "worker_thread",
+        "autoremove_wake_function",
+        "kthread",
+        "child_rip",
+        "suspend_test_finish",
+        "suspend_devices_and_enter",
+        "enter_state",
+        "rtc_time_to_tm",
+        "pm_suspend",
+        "test_suspend",
+        "do_one_initcall"
+      ],
+      "total_trace_functions": 18,
+      "function_locations": {
+        "check_for_bios_corruption": [
+          "arch/x86/kernel/check.c"
+        ],
+        "warn_slowpath_common": [
+          "kernel/panic.c"
+        ],
+        "warn_slowpath_fmt": [
+          "kernel/panic.c"
+        ],
+        "check_corruption": [
+          "arch/x86/kernel/check.c"
+        ],
+        "worker_thread": [
+          "kernel/workqueue.c",
+          "drivers/scsi/ipr.c"
+        ],
+        "autoremove_wake_function": [
+          "kernel/wait.c"
+        ],
+        "kthread": [
+          "fs/ecryptfs/kthread.c",
+          "kernel/kthread.c",
+          "fs/btrfs/disk-io.c",
+          "drivers/usb/atm/ueagle-atm.c",
+          "drivers/platform/x86/thinkpad_acpi.c"
+        ],
+        "child_rip": [],
+        "suspend_test_finish": [
+          "kernel/power/suspend_test.c"
+        ],
+        "suspend_devices_and_enter": [
+          "kernel/power/suspend.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "fs/ecryptfs/kthread.c",
+        "kernel/kthread.c",
+        "kernel/panic.c",
+        "fs/btrfs/disk-io.c",
+        "kernel/power/suspend.c",
+        "kernel/workqueue.c",
+        "kernel/wait.c",
+        "arch/x86/kernel/check.c",
+        "kernel/power/suspend_test.c",
+        "drivers/usb/atm/ueagle-atm.c",
+        "drivers/scsi/ipr.c",
+        "drivers/platform/x86/thinkpad_acpi.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "13498",
+      "version": "2.6.27",
+      "ground_truth_file": "drivers/pci/pcie/aspm.c",
+      "trace_functions": [
+        "driver_register",
+        "acpi_pci_root_init",
+        "early_idt_handler",
+        "acpi_bus_register_driver",
+        "do_one_initcall",
+        "task_statm",
+        "kernel_init",
+        "trace_hardirqs_on_thunk",
+        "child_rip",
+        "restore_args",
+        "pcie_aspm_init_link_state"
+      ],
+      "total_trace_functions": 11,
+      "function_locations": {
+        "driver_register": [
+          "drivers/base/driver.c",
+          "drivers/usb/host/ohci-ps3.c",
+          "drivers/ssb/main.c",
+          "arch/arm/mach-integrator/lm.c",
+          "drivers/message/fusion/mptbase.c",
+          "drivers/s390/crypto/ap_bus.c",
+          "drivers/s390/cio/ccwgroup.c",
+          "drivers/ps3/ps3-vuart.c",
+          "arch/ia64/sn/kernel/tiocx.c",
+          "drivers/message/i2o/driver.c"
+        ],
+        "acpi_pci_root_init": [
+          "drivers/acpi/pci_root.c"
+        ],
+        "early_idt_handler": [],
+        "acpi_bus_register_driver": [
+          "drivers/acpi/scan.c"
+        ],
+        "do_one_initcall": [
+          "init/main.c"
+        ],
+        "task_statm": [
+          "fs/proc/task_nommu.c",
+          "fs/proc/task_mmu.c"
+        ],
+        "kernel_init": [
+          "init/main.c"
+        ],
+        "trace_hardirqs_on_thunk": [],
+        "child_rip": [],
+        "restore_args": []
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "init/main.c",
+        "drivers/s390/crypto/ap_bus.c",
+        "drivers/s390/cio/ccwgroup.c",
+        "drivers/base/driver.c",
+        "drivers/ps3/ps3-vuart.c",
+        "drivers/usb/host/ohci-ps3.c",
+        "drivers/ssb/main.c",
+        "fs/proc/task_nommu.c",
+        "fs/proc/task_mmu.c",
+        "arch/arm/mach-integrator/lm.c",
+        "arch/ia64/sn/kernel/tiocx.c",
+        "drivers/message/fusion/mptbase.c",
+        "drivers/acpi/pci_root.c",
+        "drivers/message/i2o/driver.c",
+        "drivers/acpi/scan.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "13394",
+      "version": "2.6.30",
+      "ground_truth_file": "drivers/acpi/processor_core.c",
+      "trace_functions": [
+        "check_early_ioremap_leak",
+        "warn_slowpath_common",
+        "warn_slowpath_fmt",
+        "do_one_initcall",
+        "register_irq_proc",
+        "init_irq_proc",
+        "kernel_init",
+        "kernel_thread_helper"
+      ],
+      "total_trace_functions": 8,
+      "function_locations": {
+        "check_early_ioremap_leak": [
+          "arch/x86/mm/ioremap.c"
+        ],
+        "warn_slowpath_common": [
+          "kernel/panic.c"
+        ],
+        "warn_slowpath_fmt": [
+          "kernel/panic.c"
+        ],
+        "do_one_initcall": [
+          "init/main.c"
+        ],
+        "register_irq_proc": [
+          "kernel/irq/proc.c"
+        ],
+        "init_irq_proc": [
+          "kernel/irq/proc.c",
+          "arch/s390/kernel/irq.c",
+          "arch/sparc/kernel/irq_32.c",
+          "arch/m68k/kernel/ints.c"
+        ],
+        "kernel_init": [
+          "init/main.c"
+        ],
+        "kernel_thread_helper": [
+          "arch/x86/kernel/process_32.c",
+          "arch/cris/arch-v10/kernel/process.c",
+          "arch/sh/kernel/process_32.c",
+          "arch/sh/kernel/process_64.c",
+          "arch/blackfin/kernel/process.c",
+          "arch/m32r/kernel/process.c",
+          "arch/mips/kernel/process.c",
+          "arch/arm/kernel/process.c",
+          "arch/microblaze/kernel/process.c",
+          "arch/avr32/kernel/process.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "init/main.c",
+        "arch/x86/mm/ioremap.c",
+        "arch/x86/kernel/process_32.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "arch/sh/kernel/process_32.c",
+        "arch/m68k/kernel/ints.c",
+        "kernel/panic.c",
+        "arch/sh/kernel/process_64.c",
+        "arch/blackfin/kernel/process.c",
+        "arch/sparc/kernel/irq_32.c",
+        "arch/m32r/kernel/process.c",
+        "arch/microblaze/kernel/process.c",
+        "kernel/irq/proc.c",
+        "arch/mips/kernel/process.c",
+        "arch/arm/kernel/process.c",
+        "arch/s390/kernel/irq.c",
+        "arch/avr32/kernel/process.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "13348",
+      "version": "2.6.29",
+      "ground_truth_file": "drivers/net/macvlan.c",
+      "trace_functions": [
+        "vlan_dev_hard_header",
+        "warn_slowpath",
+        "macvlan_hard_header",
+        "arp_create",
+        "arp_send",
+        "arp_solicit",
+        "neigh_timer_handler",
+        "run_timer_softirq",
+        "__do_softirq",
+        "handle_level_irq",
+        "irq_exit",
+        "do_IRQ",
+        "common_interrupt",
+        "default_idle",
+        "cpu_idle"
+      ],
+      "total_trace_functions": 15,
+      "function_locations": {
+        "vlan_dev_hard_header": [
+          "net/8021q/vlan_dev.c"
+        ],
+        "warn_slowpath": [
+          "kernel/panic.c"
+        ],
+        "macvlan_hard_header": [
+          "drivers/net/macvlan.c"
+        ],
+        "arp_create": [
+          "net/ipv4/arp.c"
+        ],
+        "arp_send": [
+          "net/ipv4/arp.c",
+          "drivers/net/bonding/bond_main.c",
+          "drivers/infiniband/ulp/ipoib/ipoib_main.c"
+        ],
+        "arp_solicit": [
+          "net/ipv4/arp.c"
+        ],
+        "neigh_timer_handler": [
+          "net/core/neighbour.c"
+        ],
+        "run_timer_softirq": [
+          "kernel/timer.c"
+        ],
+        "__do_softirq": [
+          "kernel/softirq.c"
+        ],
+        "handle_level_irq": []
+      },
+      "gt_found_via_functions": [
+        "macvlan_hard_header"
+      ],
+      "other_candidate_files": [
+        "net/8021q/vlan_dev.c",
+        "kernel/softirq.c",
+        "drivers/infiniband/ulp/ipoib/ipoib_main.c",
+        "kernel/panic.c",
+        "net/core/neighbour.c",
+        "drivers/net/bonding/bond_main.c",
+        "kernel/timer.c",
+        "net/ipv4/arp.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "13313",
+      "version": "2.6.30",
+      "ground_truth_file": "arch/x86/kernel/vm86_32.c",
+      "trace_functions": [
+        "lockdep_sys_exit",
+        "copy_vm86_regs_from_user",
+        "resume_userspace",
+        "syscall_call",
+        "EFLAGS"
+      ],
+      "total_trace_functions": 5,
+      "function_locations": {
+        "lockdep_sys_exit": [
+          "kernel/lockdep.c"
+        ],
+        "copy_vm86_regs_from_user": [
+          "arch/x86/kernel/vm86_32.c"
+        ],
+        "resume_userspace": [],
+        "syscall_call": [],
+        "EFLAGS": []
+      },
+      "gt_found_via_functions": [
+        "copy_vm86_regs_from_user"
+      ],
+      "other_candidate_files": [
+        "kernel/lockdep.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "13232",
+      "version": "2.6.29",
+      "ground_truth_file": "fs/inode.c",
+      "trace_functions": [
+        "trace_hardirqs_on",
+        "journal_commit_transaction",
+        "_spin_unlock_irqrestore",
+        "trace_hardirqs_on_caller",
+        "autoremove_wake_function",
+        "del_timer",
+        "kjournald",
+        "kthread",
+        "kernel_thread_helper",
+        "prepare_to_wait",
+        "log_wait_commit",
+        "journal_stop",
+        "__ext3_journal_stop",
+        "ext3_delete_inode",
+        "generic_delete_inode"
+      ],
+      "total_trace_functions": 50,
+      "function_locations": {
+        "trace_hardirqs_on": [
+          "kernel/lockdep.c",
+          "kernel/trace/trace_irqsoff.c"
+        ],
+        "journal_commit_transaction": [
+          "fs/jbd2/commit.c",
+          "fs/jbd/commit.c"
+        ],
+        "_spin_unlock_irqrestore": [
+          "kernel/spinlock.c"
+        ],
+        "trace_hardirqs_on_caller": [
+          "kernel/lockdep.c",
+          "kernel/trace/trace_irqsoff.c"
+        ],
+        "autoremove_wake_function": [
+          "kernel/wait.c"
+        ],
+        "del_timer": [
+          "net/ax25/ax25_ds_timer.c",
+          "drivers/isdn/mISDN/timerdev.c",
+          "net/bluetooth/hidp/core.c",
+          "net/core/neighbour.c",
+          "sound/drivers/serial-u16550.c",
+          "kernel/timer.c",
+          "drivers/net/atl1e/atl1e_main.c",
+          "net/ipv6/addrconf.c",
+          "drivers/net/atl1c/atl1c_main.c"
+        ],
+        "kjournald": [
+          "fs/jbd/journal.c"
+        ],
+        "kthread": [
+          "fs/ecryptfs/kthread.c",
+          "kernel/kthread.c",
+          "fs/btrfs/disk-io.c",
+          "drivers/hwmon/lis3lv02d.c",
+          "drivers/usb/atm/ueagle-atm.c",
+          "drivers/platform/x86/thinkpad_acpi.c"
+        ],
+        "kernel_thread_helper": [
+          "arch/x86/kernel/process_32.c",
+          "arch/cris/arch-v10/kernel/process.c",
+          "arch/sh/kernel/process_32.c",
+          "arch/sh/kernel/process_64.c",
+          "arch/blackfin/kernel/process.c",
+          "arch/m32r/kernel/process.c",
+          "arch/mips/kernel/process.c",
+          "arch/arm/kernel/process.c",
+          "arch/avr32/kernel/process.c"
+        ],
+        "prepare_to_wait": []
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "arch/sh/kernel/process_64.c",
+        "kernel/kthread.c",
+        "net/bluetooth/hidp/core.c",
+        "arch/blackfin/kernel/process.c",
+        "kernel/lockdep.c",
+        "kernel/timer.c",
+        "arch/mips/kernel/process.c",
+        "fs/jbd2/commit.c",
+        "arch/avr32/kernel/process.c",
+        "fs/jbd/commit.c",
+        "kernel/spinlock.c",
+        "arch/x86/kernel/process_32.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "arch/sh/kernel/process_32.c",
+        "fs/btrfs/disk-io.c",
+        "sound/drivers/serial-u16550.c",
+        "arch/arm/kernel/process.c",
+        "drivers/net/atl1c/atl1c_main.c",
+        "drivers/platform/x86/thinkpad_acpi.c",
+        "drivers/isdn/mISDN/timerdev.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "12971",
+      "version": "2.6.29",
+      "ground_truth_file": "drivers/net/tg3.c",
+      "trace_functions": [
+        "dev_watchdog",
+        "warn_slowpath",
+        "sd_init_MC",
+        "__enqueue_entity",
+        "cpumask_next_and",
+        "find_busiest_group",
+        "enqueue_task",
+        "strlcpy",
+        "getnstimeofday",
+        "run_timer_softirq",
+        "__do_softirq",
+        "update_process_times",
+        "do_softirq",
+        "irq_exit",
+        "smp_apic_timer_interrupt"
+      ],
+      "total_trace_functions": 20,
+      "function_locations": {
+        "dev_watchdog": [
+          "net/sched/sch_generic.c"
+        ],
+        "warn_slowpath": [
+          "kernel/panic.c"
+        ],
+        "sd_init_MC": [],
+        "__enqueue_entity": [
+          "kernel/sched_fair.c"
+        ],
+        "cpumask_next_and": [
+          "lib/cpumask.c"
+        ],
+        "find_busiest_group": [],
+        "enqueue_task": [
+          "kernel/sched.c"
+        ],
+        "strlcpy": [
+          "lib/parser.c",
+          "net/netlink/attr.c",
+          "scripts/unifdef.c",
+          "lib/string.c",
+          "arch/s390/lib/string.c"
+        ],
+        "getnstimeofday": [
+          "kernel/time.c",
+          "kernel/time/timekeeping.c"
+        ],
+        "run_timer_softirq": [
+          "kernel/timer.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "kernel/sched_fair.c",
+        "kernel/sched.c",
+        "kernel/time/timekeeping.c",
+        "kernel/panic.c",
+        "lib/parser.c",
+        "net/netlink/attr.c",
+        "scripts/unifdef.c",
+        "lib/string.c",
+        "kernel/timer.c",
+        "lib/cpumask.c",
+        "net/sched/sch_generic.c",
+        "arch/s390/lib/string.c",
+        "kernel/time.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "12969",
+      "version": "2.6.29",
+      "ground_truth_file": "drivers/net/b44.c",
+      "trace_functions": [
+        "check_sync",
+        "warn_slowpath",
+        "register_lock_class",
+        "mark_lock",
+        "_raw_spin_unlock",
+        "_spin_unlock_irqrestore",
+        "trace_hardirqs_on",
+        "debug_dma_sync_single_for_device",
+        "dma_sync_single_for_device",
+        "ssb_dma_sync_single_for_device",
+        "b44_recycle_rx",
+        "b44_poll",
+        "net_rx_action",
+        "__do_softirq",
+        "do_softirq"
+      ],
+      "total_trace_functions": 18,
+      "function_locations": {
+        "check_sync": [],
+        "warn_slowpath": [
+          "kernel/panic.c"
+        ],
+        "register_lock_class": [],
+        "mark_lock": [
+          "kernel/lockdep.c"
+        ],
+        "_raw_spin_unlock": [
+          "lib/spinlock_debug.c"
+        ],
+        "_spin_unlock_irqrestore": [
+          "kernel/spinlock.c"
+        ],
+        "trace_hardirqs_on": [
+          "kernel/lockdep.c",
+          "kernel/trace/trace_irqsoff.c"
+        ],
+        "debug_dma_sync_single_for_device": [],
+        "dma_sync_single_for_device": [
+          "arch/m68k/kernel/dma.c",
+          "arch/parisc/kernel/pci-dma.c",
+          "arch/sparc/kernel/dma.c",
+          "arch/sparc/kernel/ioport.c",
+          "arch/ia64/sn/pci/pci_dma.c",
+          "arch/mips/mm/dma-default.c"
+        ],
+        "ssb_dma_sync_single_for_device": []
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "kernel/spinlock.c",
+        "arch/m68k/kernel/dma.c",
+        "kernel/trace/trace_irqsoff.c",
+        "arch/parisc/kernel/pci-dma.c",
+        "kernel/panic.c",
+        "arch/sparc/kernel/dma.c",
+        "kernel/lockdep.c",
+        "arch/sparc/kernel/ioport.c",
+        "arch/ia64/sn/pci/pci_dma.c",
+        "lib/spinlock_debug.c",
+        "arch/mips/mm/dma-default.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "12216",
+      "version": "2.6.28-rc8",
+      "ground_truth_file": "drivers/gpu/drm/radeon/radeon_irq.c",
+      "trace_functions": [
+        "__report_bad_irq",
+        "note_interrupt",
+        "handle_IRQ_event",
+        "handle_level_irq",
+        "__do_softirq",
+        "common_interrupt",
+        "irq_exit",
+        "do_IRQ",
+        "io_schedule",
+        "radeon_cp_dispatch_vertex",
+        "drm_vblank_get",
+        "filemap_fault",
+        "drm_modeset_ctl",
+        "drm_ioctl",
+        "__do_fault"
+      ],
+      "total_trace_functions": 25,
+      "function_locations": {
+        "__report_bad_irq": [],
+        "note_interrupt": [
+          "kernel/irq/spurious.c"
+        ],
+        "handle_IRQ_event": [
+          "kernel/irq/handle.c"
+        ],
+        "handle_level_irq": [],
+        "__do_softirq": [
+          "kernel/softirq.c"
+        ],
+        "common_interrupt": [
+          "arch/x86/mach-voyager/voyager_cat.c"
+        ],
+        "irq_exit": [
+          "kernel/rcupreempt.c",
+          "kernel/softirq.c",
+          "drivers/uio/uio_pdrv_genirq.c"
+        ],
+        "do_IRQ": [
+          "arch/cris/kernel/irq.c",
+          "arch/xtensa/kernel/irq.c",
+          "arch/x86/kernel/irq_32.c",
+          "arch/powerpc/kernel/irq.c",
+          "arch/h8300/kernel/irq.c",
+          "arch/cris/arch-v10/kernel/irq.c",
+          "arch/avr32/mach-at32ap/intc.c",
+          "arch/m68knommu/kernel/irq.c",
+          "arch/sh/kernel/irq.c",
+          "arch/xtensa/kernel/traps.c"
+        ],
+        "io_schedule": [
+          "kernel/sched.c",
+          "block/bsg.c"
+        ],
+        "radeon_cp_dispatch_vertex": [
+          "drivers/gpu/drm/radeon/radeon_state.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "drivers/gpu/drm/radeon/radeon_state.c",
+        "arch/cris/kernel/irq.c",
+        "block/bsg.c",
+        "arch/xtensa/kernel/irq.c",
+        "arch/x86/kernel/irq_32.c",
+        "kernel/softirq.c",
+        "drivers/uio/uio_pdrv_genirq.c",
+        "arch/powerpc/kernel/irq.c",
+        "arch/h8300/kernel/irq.c",
+        "arch/cris/arch-v10/kernel/irq.c",
+        "kernel/irq/spurious.c",
+        "arch/avr32/mach-at32ap/intc.c",
+        "arch/m68knommu/kernel/irq.c",
+        "arch/sh/kernel/irq.c",
+        "arch/xtensa/kernel/traps.c",
+        "arch/x86/mach-voyager/voyager_cat.c",
+        "kernel/sched.c",
+        "kernel/irq/handle.c",
+        "kernel/rcupreempt.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "11391",
+      "version": "2.6.26",
+      "ground_truth_file": "kernel/nsproxy.c",
+      "trace_functions": [
+        "do_notify_parent",
+        "dput",
+        "mntput_no_expire",
+        "filp_close",
+        "reparent_thread",
+        "do_exit",
+        "do_group_exit",
+        "get_signal_to_deliver",
+        "do_notify_resume",
+        "autoremove_wake_function",
+        "current_fd_time",
+        "tty_ldisc_deref",
+        "autit_syscall_exit",
+        "int_signal"
+      ],
+      "total_trace_functions": 14,
+      "function_locations": {
+        "do_notify_parent": [
+          "kernel/signal.c"
+        ],
+        "dput": [
+          "fs/block_dev.c",
+          "fs/dcache.c"
+        ],
+        "mntput_no_expire": [
+          "fs/namespace.c"
+        ],
+        "filp_close": [
+          "fs/open.c"
+        ],
+        "reparent_thread": [],
+        "do_exit": [
+          "drivers/misc/sgi-xp/xpc_main.c",
+          "kernel/exit.c"
+        ],
+        "do_group_exit": [],
+        "get_signal_to_deliver": [
+          "kernel/signal.c"
+        ],
+        "do_notify_resume": [
+          "arch/mn10300/kernel/signal.c",
+          "arch/h8300/kernel/signal.c",
+          "arch/m32r/kernel/signal.c",
+          "arch/avr32/kernel/signal.c",
+          "arch/parisc/kernel/signal.c",
+          "arch/mips/kernel/signal.c",
+          "arch/sh/kernel/signal_32.c",
+          "arch/x86/kernel/signal_64.c",
+          "arch/frv/kernel/signal.c",
+          "arch/sparc64/kernel/signal.c"
+        ],
+        "autoremove_wake_function": [
+          "kernel/wait.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "arch/mn10300/kernel/signal.c",
+        "arch/h8300/kernel/signal.c",
+        "arch/m32r/kernel/signal.c",
+        "kernel/exit.c",
+        "drivers/misc/sgi-xp/xpc_main.c",
+        "fs/namespace.c",
+        "kernel/signal.c",
+        "fs/block_dev.c",
+        "arch/avr32/kernel/signal.c",
+        "fs/dcache.c",
+        "arch/parisc/kernel/signal.c",
+        "arch/mips/kernel/signal.c",
+        "arch/sh/kernel/signal_32.c",
+        "kernel/wait.c",
+        "arch/x86/kernel/signal_64.c",
+        "arch/frv/kernel/signal.c",
+        "fs/open.c",
+        "arch/sparc64/kernel/signal.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "11139",
+      "version": "2.6.26",
+      "ground_truth_file": "arch/sparc64/kernel/time.c",
+      "trace_functions": [
+        "cpufreq_register_notifier",
+        "start_kernel",
+        "auxio_probe"
+      ],
+      "total_trace_functions": 3,
+      "function_locations": {
+        "cpufreq_register_notifier": [
+          "drivers/cpufreq/cpufreq.c"
+        ],
+        "start_kernel": [
+          "init/main.c",
+          "arch/arm/kernel/smp.c",
+          "arch/um/kernel/skas/process.c",
+          "arch/x86/xen/enlighten.c",
+          "arch/x86/kernel/head32.c",
+          "arch/x86/kernel/head64.c",
+          "arch/alpha/boot/main.c"
+        ],
+        "auxio_probe": [
+          "arch/sparc64/kernel/auxio.c",
+          "arch/sparc/kernel/auxio.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "init/main.c",
+        "arch/alpha/boot/main.c",
+        "arch/sparc64/kernel/auxio.c",
+        "arch/arm/kernel/smp.c",
+        "arch/sparc/kernel/auxio.c",
+        "arch/um/kernel/skas/process.c",
+        "arch/x86/xen/enlighten.c",
+        "arch/x86/kernel/head32.c",
+        "arch/x86/kernel/head64.c",
+        "drivers/cpufreq/cpufreq.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "10836",
+      "version": "2.6.26",
+      "ground_truth_file": "drivers/input/serio/serio.c",
+      "trace_functions": [
+        "driver_attach",
+        "serio_thread",
+        "autoremove_wake_function",
+        "kthread",
+        "kernel_thread_helper",
+        "EFLAGS"
+      ],
+      "total_trace_functions": 6,
+      "function_locations": {
+        "driver_attach": [
+          "drivers/base/dd.c"
+        ],
+        "serio_thread": [
+          "drivers/input/serio/serio.c"
+        ],
+        "autoremove_wake_function": [
+          "kernel/wait.c"
+        ],
+        "kthread": [
+          "kernel/kthread.c",
+          "drivers/usb/atm/ueagle-atm.c",
+          "arch/s390/kernel/topology.c",
+          "drivers/misc/thinkpad_acpi.c"
+        ],
+        "kernel_thread_helper": [
+          "arch/x86/kernel/process_32.c",
+          "arch/cris/arch-v10/kernel/process.c",
+          "arch/sh/kernel/process_32.c",
+          "arch/sh/kernel/process_64.c",
+          "arch/blackfin/kernel/process.c",
+          "arch/m32r/kernel/process.c",
+          "arch/mips/kernel/process.c",
+          "arch/arm/kernel/process.c",
+          "arch/avr32/kernel/process.c"
+        ],
+        "EFLAGS": []
+      },
+      "gt_found_via_functions": [
+        "serio_thread"
+      ],
+      "other_candidate_files": [
+        "arch/x86/kernel/process_32.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "arch/sh/kernel/process_32.c",
+        "arch/sh/kernel/process_64.c",
+        "kernel/kthread.c",
+        "arch/arm/kernel/process.c",
+        "arch/blackfin/kernel/process.c",
+        "arch/avr32/kernel/process.c",
+        "kernel/wait.c",
+        "drivers/misc/thinkpad_acpi.c",
+        "arch/m32r/kernel/process.c",
+        "arch/mips/kernel/process.c",
+        "drivers/usb/atm/ueagle-atm.c",
+        "arch/s390/kernel/topology.c",
+        "drivers/base/dd.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "10077",
+      "version": "2.6.25",
+      "ground_truth_file": "drivers/char/nozomi.c",
+      "trace_functions": [
+        "__ioremap",
+        "warn_on_slowpath",
+        "acpi_pci_allocate_irq",
+        "__request_region",
+        "pci_request_region",
+        "pci_request_selected_regions",
+        "ioremap_nocache",
+        "nozomi_card_init",
+        "find_inode",
+        "sysfs_ilookup_test",
+        "ifind",
+        "sysfs_addrm_finish",
+        "sysfs_add_one",
+        "sysfs_addrm_start",
+        "pci_match_device"
+      ],
+      "total_trace_functions": 41,
+      "function_locations": {
+        "__ioremap": [
+          "arch/powerpc/mm/pgtable_64.c",
+          "arch/m68knommu/mm/kmap.c",
+          "arch/x86/mm/ioremap.c",
+          "arch/mips/mm/ioremap.c",
+          "arch/m68k/mm/kmap.c",
+          "arch/frv/mm/kmap.c",
+          "arch/m68k/mm/sun3kmap.c",
+          "arch/avr32/mm/ioremap.c",
+          "arch/cris/mm/ioremap.c",
+          "arch/sh/mm/ioremap_32.c"
+        ],
+        "warn_on_slowpath": [
+          "kernel/panic.c"
+        ],
+        "acpi_pci_allocate_irq": [],
+        "__request_region": [
+          "kernel/resource.c"
+        ],
+        "pci_request_region": [
+          "drivers/pci/pci.c"
+        ],
+        "pci_request_selected_regions": [
+          "drivers/pci/pci.c"
+        ],
+        "ioremap_nocache": [
+          "lib/devres.c",
+          "arch/x86/mm/ioremap.c",
+          "arch/cris/mm/ioremap.c"
+        ],
+        "nozomi_card_init": [
+          "drivers/char/nozomi.c"
+        ],
+        "find_inode": [
+          "fs/inotify_user.c",
+          "fs/nfs/delegation.c",
+          "fs/inode.c"
+        ],
+        "sysfs_ilookup_test": [
+          "fs/sysfs/dir.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "nozomi_card_init"
+      ],
+      "other_candidate_files": [
+        "kernel/resource.c",
+        "arch/powerpc/mm/pgtable_64.c",
+        "arch/x86/mm/ioremap.c",
+        "arch/m68k/mm/kmap.c",
+        "arch/mips/mm/ioremap.c",
+        "arch/frv/mm/kmap.c",
+        "arch/m68k/mm/sun3kmap.c",
+        "kernel/panic.c",
+        "fs/inode.c",
+        "fs/inotify_user.c",
+        "fs/nfs/delegation.c",
+        "arch/avr32/mm/ioremap.c",
+        "arch/cris/mm/ioremap.c",
+        "arch/sh/mm/ioremap_32.c",
+        "lib/devres.c",
+        "arch/m68knommu/mm/kmap.c",
+        "drivers/pci/pci.c",
+        "fs/sysfs/dir.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "9761",
+      "version": "2.6.24",
+      "ground_truth_file": "drivers/acpi/video.c",
+      "trace_functions": [
+        "acpi_ut_update_ref_count",
+        "acpi_format_exception",
+        "acpi_ut_exception",
+        "acpi_evaluate_integer",
+        "acpi_video_bus_add",
+        "ifind",
+        "acpi_device_probe",
+        "driver_probe_device",
+        "__driver_attach",
+        "bus_for_each_dev",
+        "bus_add_driver",
+        "acpi_video_init",
+        "sys_init_module",
+        "autoremove_wake_function",
+        "system_call"
+      ],
+      "total_trace_functions": 15,
+      "function_locations": {
+        "acpi_ut_update_ref_count": [],
+        "acpi_format_exception": [
+          "drivers/acpi/utilities/utglobal.c"
+        ],
+        "acpi_ut_exception": [],
+        "acpi_evaluate_integer": [],
+        "acpi_video_bus_add": [
+          "drivers/acpi/video.c"
+        ],
+        "ifind": [
+          "fs/inode.c"
+        ],
+        "acpi_device_probe": [
+          "drivers/acpi/scan.c"
+        ],
+        "driver_probe_device": [
+          "drivers/base/dd.c"
+        ],
+        "__driver_attach": [
+          "drivers/base/dd.c"
+        ],
+        "bus_for_each_dev": [
+          "drivers/base/bus.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "acpi_video_bus_add"
+      ],
+      "other_candidate_files": [
+        "drivers/base/bus.c",
+        "fs/inode.c",
+        "drivers/acpi/utilities/utglobal.c",
+        "drivers/base/dd.c",
+        "drivers/acpi/scan.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "9747",
+      "version": "2.6.24-rc7",
+      "ground_truth_file": "drivers/acpi/processor_throttling.c",
+      "trace_functions": [
+        "_stext",
+        "acpi_processor_set_throttling",
+        "acpi_processor_write_throttling",
+        "proc_reg_write",
+        "vfs_write",
+        "sys_write",
+        "system_call"
+      ],
+      "total_trace_functions": 7,
+      "function_locations": {
+        "_stext": [],
+        "acpi_processor_set_throttling": [
+          "drivers/acpi/processor_throttling.c"
+        ],
+        "acpi_processor_write_throttling": [
+          "drivers/acpi/processor_throttling.c"
+        ],
+        "proc_reg_write": [
+          "sound/pci/ca0106/ca0106_proc.c",
+          "fs/proc/inode.c",
+          "sound/pci/emu10k1/emu10k1x.c"
+        ],
+        "vfs_write": [
+          "fs/nfsd/vfs.c",
+          "fs/read_write.c"
+        ],
+        "sys_write": [
+          "fs/read_write.c",
+          "fs/proc/proc_sysctl.c",
+          "drivers/video/fb_sys_fops.c"
+        ],
+        "system_call": [
+          "arch/m68knommu/platform/5307/vectors.c",
+          "arch/x86/kernel/traps_32.c",
+          "arch/cris/arch-v10/kernel/irq.c",
+          "arch/m68knommu/platform/68328/ints.c",
+          "arch/m68knommu/platform/68360/ints.c",
+          "arch/xtensa/kernel/traps.c",
+          "arch/m68k/kernel/traps.c",
+          "arch/cris/arch-v32/kernel/irq.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "acpi_processor_set_throttling",
+        "acpi_processor_write_throttling"
+      ],
+      "other_candidate_files": [
+        "fs/nfsd/vfs.c",
+        "fs/proc/proc_sysctl.c",
+        "fs/proc/inode.c",
+        "sound/pci/emu10k1/emu10k1x.c",
+        "arch/m68knommu/platform/5307/vectors.c",
+        "arch/x86/kernel/traps_32.c",
+        "arch/cris/arch-v10/kernel/irq.c",
+        "arch/m68knommu/platform/68328/ints.c",
+        "drivers/video/fb_sys_fops.c",
+        "arch/m68knommu/platform/68360/ints.c",
+        "arch/xtensa/kernel/traps.c",
+        "fs/read_write.c",
+        "sound/pci/ca0106/ca0106_proc.c",
+        "arch/m68k/kernel/traps.c",
+        "arch/cris/arch-v32/kernel/irq.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "9699",
+      "version": "2.6.24",
+      "ground_truth_file": "drivers/media/radio/radio-sf16fmr2.c",
+      "trace_functions": [
+        "strnlen",
+        "vsnprintf",
+        "seq_printf",
+        "r_show",
+        "seq_read",
+        "proc_reg_read",
+        "vfs_read",
+        "sys_read",
+        "sysenter_past_esp",
+        "EFLAGS"
+      ],
+      "total_trace_functions": 10,
+      "function_locations": {
+        "strnlen": [
+          "arch/x86/boot/string.c",
+          "fs/romfs/inode.c",
+          "lib/string.c",
+          "arch/powerpc/boot/stdio.c",
+          "arch/s390/lib/string.c",
+          "arch/x86/lib/string_32.c"
+        ],
+        "vsnprintf": [
+          "lib/vsprintf.c"
+        ],
+        "seq_printf": [
+          "net/core/sock.c",
+          "fs/seq_file.c",
+          "arch/sparc/kernel/sun4d_irq.c"
+        ],
+        "r_show": [
+          "fs/partitions/check.c",
+          "drivers/s390/block/dasd_devmap.c",
+          "block/deadline-iosched.c",
+          "drivers/leds/led-triggers.c",
+          "drivers/net/netconsole.c",
+          "drivers/parisc/pdc_stable.c",
+          "block/as-iosched.c",
+          "drivers/s390/char/tape_core.c",
+          "mm/slub.c",
+          "fs/reiserfs/procfs.c"
+        ],
+        "seq_read": [
+          "sound/core/seq/seq_clientmgr.c",
+          "fs/seq_file.c",
+          "net/core/skbuff.c"
+        ],
+        "proc_reg_read": [
+          "fs/proc/inode.c",
+          "sound/pci/emu10k1/emu10k1x.c"
+        ],
+        "vfs_read": [
+          "fs/nfsd/vfs.c",
+          "fs/read_write.c"
+        ],
+        "sys_read": [
+          "fs/read_write.c",
+          "fs/proc/proc_sysctl.c",
+          "drivers/video/fb_sys_fops.c"
+        ],
+        "sysenter_past_esp": [],
+        "EFLAGS": []
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "fs/nfsd/vfs.c",
+        "fs/romfs/inode.c",
+        "fs/partitions/check.c",
+        "fs/proc/inode.c",
+        "drivers/s390/block/dasd_devmap.c",
+        "net/core/skbuff.c",
+        "drivers/leds/led-triggers.c",
+        "drivers/net/netconsole.c",
+        "drivers/parisc/pdc_stable.c",
+        "block/as-iosched.c",
+        "drivers/s390/char/tape_core.c",
+        "sound/core/seq/seq_clientmgr.c",
+        "fs/seq_file.c",
+        "mm/slub.c",
+        "fs/reiserfs/procfs.c",
+        "fs/proc/proc_sysctl.c",
+        "sound/pci/emu10k1/emu10k1x.c",
+        "lib/string.c",
+        "arch/powerpc/boot/stdio.c",
+        "arch/x86/lib/string_32.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "9272",
+      "version": "2.6.24-rc1",
+      "ground_truth_file": "drivers/md/raid5.c",
+      "trace_functions": [
+        "__release_stripe",
+        "release_stripe",
+        "raid5d",
+        "schedule_timeout",
+        "md_thread",
+        "autoremove_wake_function",
+        "kthread",
+        "kernel_thread_helper",
+        "EFLAGS"
+      ],
+      "total_trace_functions": 9,
+      "function_locations": {
+        "__release_stripe": [
+          "drivers/md/raid5.c"
+        ],
+        "release_stripe": [
+          "drivers/md/raid5.c"
+        ],
+        "raid5d": [
+          "drivers/md/raid5.c"
+        ],
+        "schedule_timeout": [
+          "kernel/sched.c",
+          "drivers/block/floppy.c",
+          "kernel/timer.c"
+        ],
+        "md_thread": [
+          "drivers/md/md.c"
+        ],
+        "autoremove_wake_function": [
+          "kernel/wait.c"
+        ],
+        "kthread": [
+          "drivers/usb/atm/ueagle-atm.c",
+          "arch/ia64/sn/kernel/xpc_main.c",
+          "kernel/kthread.c"
+        ],
+        "kernel_thread_helper": [
+          "arch/x86/kernel/process_32.c",
+          "arch/cris/arch-v10/kernel/process.c",
+          "arch/sh/kernel/process.c",
+          "arch/blackfin/kernel/process.c",
+          "arch/m32r/kernel/process.c",
+          "arch/sh64/kernel/process.c",
+          "arch/mips/kernel/process.c",
+          "arch/arm/kernel/process.c",
+          "arch/avr32/kernel/process.c"
+        ],
+        "EFLAGS": []
+      },
+      "gt_found_via_functions": [
+        "__release_stripe",
+        "release_stripe",
+        "raid5d"
+      ],
+      "other_candidate_files": [
+        "kernel/sched.c",
+        "arch/x86/kernel/process_32.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "arch/sh/kernel/process.c",
+        "kernel/kthread.c",
+        "arch/arm/kernel/process.c",
+        "arch/blackfin/kernel/process.c",
+        "arch/ia64/sn/kernel/xpc_main.c",
+        "kernel/timer.c",
+        "kernel/wait.c",
+        "arch/m32r/kernel/process.c",
+        "arch/sh64/kernel/process.c",
+        "drivers/md/md.c",
+        "arch/mips/kernel/process.c",
+        "drivers/usb/atm/ueagle-atm.c",
+        "drivers/block/floppy.c",
+        "arch/avr32/kernel/process.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "8721",
+      "version": "2.6.21",
+      "ground_truth_file": "sound/sound_core.c",
+      "trace_functions": [
+        "kobject_shadow_add",
+        "device_add",
+        "device_create",
+        "sound_insert_unit",
+        "register_sound_special_device",
+        "snd_register_oss_device",
+        "register_oss_dsp",
+        "idr_get_new_above_int",
+        "idr_get_new",
+        "get_inode_number",
+        "create_proc_entry",
+        "snd_info_register",
+        "snd_pcm_oss_proc_init",
+        "snd_pcm_oss_register_minor",
+        "load_module"
+      ],
+      "total_trace_functions": 20,
+      "function_locations": {
+        "kobject_shadow_add": [
+          "lib/kobject.c"
+        ],
+        "device_add": [
+          "drivers/pci/probe.c",
+          "drivers/base/platform.c",
+          "drivers/message/i2o/device.c",
+          "drivers/base/class.c",
+          "drivers/hwmon/f71805f.c",
+          "drivers/acpi/ibm_acpi.c",
+          "drivers/hwmon/vt1211.c",
+          "drivers/message/i2o/i2o_proc.c",
+          "drivers/acpi/container.c",
+          "drivers/acpi/processor_core.c"
+        ],
+        "device_create": [
+          "arch/sparc64/kernel/of_device.c",
+          "arch/powerpc/kernel/of_platform.c",
+          "sound/i2c/i2c.c",
+          "drivers/base/class.c",
+          "drivers/net/phy/phy_device.c",
+          "arch/sparc/kernel/of_device.c",
+          "arch/i386/kernel/msr.c",
+          "arch/i386/kernel/cpuid.c",
+          "drivers/base/core.c"
+        ],
+        "sound_insert_unit": [
+          "sound/sound_core.c"
+        ],
+        "register_sound_special_device": [
+          "sound/sound_core.c"
+        ],
+        "snd_register_oss_device": [
+          "sound/core/sound_oss.c"
+        ],
+        "register_oss_dsp": [
+          "sound/core/oss/pcm_oss.c"
+        ],
+        "idr_get_new_above_int": [
+          "lib/idr.c"
+        ],
+        "idr_get_new": [
+          "lib/idr.c"
+        ],
+        "get_inode_number": [
+          "fs/proc/generic.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "sound_insert_unit",
+        "register_sound_special_device"
+      ],
+      "other_candidate_files": [
+        "drivers/pci/probe.c",
+        "arch/sparc64/kernel/of_device.c",
+        "sound/core/oss/pcm_oss.c",
+        "drivers/hwmon/vt1211.c",
+        "drivers/acpi/container.c",
+        "sound/core/sound_oss.c",
+        "drivers/message/i2o/device.c",
+        "arch/powerpc/kernel/of_platform.c",
+        "lib/kobject.c",
+        "drivers/hwmon/f71805f.c",
+        "arch/i386/kernel/cpuid.c",
+        "drivers/base/platform.c",
+        "sound/i2c/i2c.c",
+        "lib/idr.c",
+        "drivers/acpi/ibm_acpi.c",
+        "drivers/message/i2o/i2o_proc.c",
+        "drivers/net/phy/phy_device.c",
+        "drivers/base/class.c",
+        "arch/sparc/kernel/of_device.c",
+        "drivers/acpi/processor_core.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "8450",
+      "version": "2.6.21",
+      "ground_truth_file": "include/net/ip6_fib.h",
+      "trace_functions": [
+        "ipv6_hop_jumbo",
+        "show_trace_log_lvl",
+        "show_stack_log_lvl",
+        "show_registers",
+        "die",
+        "do_page_fault",
+        "error_code",
+        "ip6_parse_tlv",
+        "ipv6_parse_hopopts",
+        "ipv6_rcv",
+        "netif_receive_skb",
+        "process_backlog",
+        "net_rx_action",
+        "__do_softirq",
+        "do_softirq"
+      ],
+      "total_trace_functions": 23,
+      "function_locations": {
+        "ipv6_hop_jumbo": [
+          "net/ipv6/exthdrs.c"
+        ],
+        "show_trace_log_lvl": [],
+        "show_stack_log_lvl": [
+          "arch/i386/kernel/traps.c"
+        ],
+        "show_registers": [
+          "arch/m32r/kernel/traps.c",
+          "arch/s390/kernel/traps.c",
+          "arch/cris/arch-v32/kernel/arbiter.c",
+          "arch/i386/kernel/nmi.c",
+          "drivers/net/wireless/ipw2100.c",
+          "arch/x86_64/kernel/traps.c",
+          "arch/cris/arch-v32/kernel/time.c",
+          "drivers/net/ni5010.c",
+          "arch/mips/kernel/traps.c",
+          "arch/m68k/kernel/traps.c"
+        ],
+        "die": [
+          "arch/arm/mach-realview/hotplug.c",
+          "arch/ppc/kernel/traps.c",
+          "arch/s390/kernel/traps.c",
+          "arch/ia64/kernel/smp.c",
+          "arch/powerpc/platforms/powermac/smp.c",
+          "arch/sh/mm/fault.c",
+          "arch/x86_64/kernel/traps.c",
+          "arch/m32r/mm/fault.c",
+          "arch/x86_64/kernel/smpboot.c",
+          "arch/x86_64/boot/tools/build.c"
+        ],
+        "do_page_fault": [
+          "arch/avr32/mm/fault.c",
+          "arch/m68knommu/mm/fault.c",
+          "arch/sh/mm/fault.c",
+          "arch/m32r/mm/fault.c",
+          "arch/sh64/mm/fault.c",
+          "arch/xtensa/mm/fault.c",
+          "arch/x86_64/mm/fault.c",
+          "arch/ppc/mm/fault.c",
+          "arch/m68k/mm/fault.c",
+          "arch/i386/mm/fault.c"
+        ],
+        "error_code": [],
+        "ip6_parse_tlv": [
+          "net/ipv6/exthdrs.c"
+        ],
+        "ipv6_parse_hopopts": [
+          "net/ipv6/exthdrs.c"
+        ],
+        "ipv6_rcv": [
+          "net/ipv6/ip6_input.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "arch/arm/mach-realview/hotplug.c",
+        "arch/ppc/kernel/traps.c",
+        "arch/s390/kernel/traps.c",
+        "arch/avr32/mm/fault.c",
+        "arch/cris/arch-v32/kernel/arbiter.c",
+        "arch/ia64/kernel/smp.c",
+        "arch/powerpc/platforms/powermac/smp.c",
+        "arch/sh/mm/fault.c",
+        "arch/m68knommu/mm/fault.c",
+        "arch/x86_64/kernel/traps.c",
+        "arch/cris/arch-v32/kernel/time.c",
+        "arch/m32r/mm/fault.c",
+        "arch/x86_64/kernel/smpboot.c",
+        "arch/x86_64/boot/tools/build.c",
+        "arch/sh64/mm/fault.c",
+        "arch/xtensa/mm/fault.c",
+        "arch/x86_64/mm/fault.c",
+        "arch/ppc/mm/fault.c",
+        "arch/m68k/mm/fault.c",
+        "arch/m32r/kernel/traps.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "7942",
+      "version": "2.6.20",
+      "ground_truth_file": "drivers/ieee1394/nodemgr.c",
+      "trace_functions": [
+        "klist_add_tail",
+        "device_bind_driver",
+        "device_attach",
+        "bus_attach_device",
+        "device_add",
+        "hpsb_alloc_host",
+        "ohci1394_pci_probe",
+        "pci_device_probe",
+        "really_probe",
+        "__driver_attach",
+        "bus_for_each_dev",
+        "bus_add_driver",
+        "__pci_register_driver",
+        "sys_init_module",
+        "system_call"
+      ],
+      "total_trace_functions": 15,
+      "function_locations": {
+        "klist_add_tail": [
+          "lib/klist.c"
+        ],
+        "device_bind_driver": [
+          "drivers/base/dd.c"
+        ],
+        "device_attach": [
+          "drivers/pnp/driver.c",
+          "net/core/dev.c",
+          "drivers/base/dd.c"
+        ],
+        "bus_attach_device": [
+          "drivers/base/bus.c"
+        ],
+        "device_add": [
+          "drivers/pci/probe.c",
+          "drivers/base/platform.c",
+          "drivers/message/i2o/device.c",
+          "drivers/base/class.c",
+          "drivers/hwmon/f71805f.c",
+          "drivers/acpi/ibm_acpi.c",
+          "drivers/hwmon/vt1211.c",
+          "drivers/message/i2o/i2o_proc.c",
+          "drivers/acpi/container.c",
+          "drivers/acpi/processor_core.c"
+        ],
+        "hpsb_alloc_host": [
+          "drivers/ieee1394/hosts.c"
+        ],
+        "ohci1394_pci_probe": [
+          "drivers/ieee1394/ohci1394.c"
+        ],
+        "pci_device_probe": [
+          "drivers/pci/pci-driver.c"
+        ],
+        "really_probe": [
+          "drivers/base/dd.c"
+        ],
+        "__driver_attach": [
+          "drivers/base/dd.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "drivers/pci/probe.c",
+        "drivers/base/platform.c",
+        "drivers/base/bus.c",
+        "drivers/message/i2o/device.c",
+        "drivers/base/class.c",
+        "net/core/dev.c",
+        "drivers/hwmon/f71805f.c",
+        "drivers/pci/pci-driver.c",
+        "drivers/pnp/driver.c",
+        "drivers/acpi/ibm_acpi.c",
+        "drivers/hwmon/vt1211.c",
+        "drivers/message/i2o/i2o_proc.c",
+        "drivers/acpi/container.c",
+        "drivers/ieee1394/hosts.c",
+        "lib/klist.c",
+        "drivers/acpi/processor_core.c",
+        "drivers/ieee1394/ohci1394.c",
+        "drivers/base/dd.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "7657",
+      "version": "2.6.19",
+      "ground_truth_file": "net/ieee80211/softmac/ieee80211softmac_assoc.c",
+      "trace_functions": [
+        "ieee80211softmac_get_network_by_bssid_locked",
+        "ieee80211softmac_get_network_by_bssid",
+        "ieee80211softmac_send_disassoc_req",
+        "ieee80211softmac_assoc_work",
+        "ieee80211softmac_assoc_notify_scan",
+        "ieee80211softmac_notify_callback",
+        "run_workqueue",
+        "worker_thread",
+        "default_wake_function",
+        "kthread",
+        "kernel_thread_helper"
+      ],
+      "total_trace_functions": 11,
+      "function_locations": {
+        "ieee80211softmac_get_network_by_bssid_locked": [],
+        "ieee80211softmac_get_network_by_bssid": [],
+        "ieee80211softmac_send_disassoc_req": [],
+        "ieee80211softmac_assoc_work": [],
+        "ieee80211softmac_assoc_notify_scan": [],
+        "ieee80211softmac_notify_callback": [],
+        "run_workqueue": [
+          "kernel/workqueue.c"
+        ],
+        "worker_thread": [
+          "kernel/workqueue.c",
+          "drivers/scsi/ipr.c"
+        ],
+        "default_wake_function": [
+          "kernel/sched.c"
+        ],
+        "kthread": [
+          "drivers/usb/atm/ueagle-atm.c",
+          "arch/ia64/sn/kernel/xpc_main.c",
+          "kernel/kthread.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "kernel/sched.c",
+        "kernel/kthread.c",
+        "arch/ia64/sn/kernel/xpc_main.c",
+        "kernel/workqueue.c",
+        "drivers/usb/atm/ueagle-atm.c",
+        "drivers/scsi/ipr.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "7527",
+      "version": "2.6.18",
+      "ground_truth_file": "drivers/char/isicom.c",
+      "trace_functions": [
+        "isicom_close",
+        "release_dev",
+        "__wake_up",
+        "tty_ldisc_enable",
+        "init_dev",
+        "tty_open",
+        "chrdev_open",
+        "__dentry_open",
+        "nameidata_to_filp",
+        "do_filp_open",
+        "strncpy_from_user",
+        "do_sys_open",
+        "sys_open",
+        "sysenter_past_esp",
+        "Not"
+      ],
+      "total_trace_functions": 15,
+      "function_locations": {
+        "isicom_close": [
+          "drivers/char/isicom.c"
+        ],
+        "release_dev": [
+          "drivers/pci/probe.c",
+          "drivers/pcmcia/ds.c",
+          "drivers/rapidio/rio-scan.c",
+          "arch/sparc64/kernel/of_device.c",
+          "sound/aoa/soundbus/i2sbus/i2sbus-core.c",
+          "drivers/block/pktcdvd.c",
+          "drivers/infiniband/core/uverbs_main.c",
+          "drivers/macintosh/macio_asic.c",
+          "drivers/ide/ide-probe.c",
+          "drivers/char/tty_io.c"
+        ],
+        "__wake_up": [
+          "kernel/sched.c"
+        ],
+        "tty_ldisc_enable": [
+          "drivers/char/tty_io.c"
+        ],
+        "init_dev": [
+          "drivers/ieee1394/eth1394.c",
+          "net/ipv4/igmp.c",
+          "fs/reiserfs/journal.c",
+          "drivers/isdn/pcbit/drv.c",
+          "drivers/isdn/pcbit/module.c",
+          "drivers/char/tty_io.c",
+          "drivers/media/video/em28xx/em28xx-video.c",
+          "drivers/net/ne-h8300.c",
+          "fs/jbd/journal.c",
+          "net/ipv6/mcast.c"
+        ],
+        "tty_open": [
+          "arch/um/drivers/tty.c",
+          "drivers/isdn/i4l/isdn_tty.c",
+          "drivers/char/n_tty.c",
+          "drivers/bluetooth/hci_ldisc.c",
+          "drivers/char/viocons.c",
+          "arch/v850/kernel/memcons.c",
+          "net/bluetooth/rfcomm/tty.c",
+          "drivers/usb/class/cdc-acm.c",
+          "drivers/isdn/capi/capi.c",
+          "drivers/net/wan/pc300_tty.c"
+        ],
+        "chrdev_open": [
+          "drivers/ide/ide-tape.c",
+          "fs/char_dev.c",
+          "drivers/scsi/3w-9xxx.c",
+          "drivers/scsi/3w-xxxx.c"
+        ],
+        "__dentry_open": [
+          "fs/open.c"
+        ],
+        "nameidata_to_filp": [
+          "fs/open.c"
+        ],
+        "do_filp_open": [
+          "fs/open.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "isicom_close"
+      ],
+      "other_candidate_files": [
+        "drivers/pci/probe.c",
+        "arch/sparc64/kernel/of_device.c",
+        "drivers/char/n_tty.c",
+        "fs/reiserfs/journal.c",
+        "arch/v850/kernel/memcons.c",
+        "drivers/usb/class/cdc-acm.c",
+        "drivers/block/pktcdvd.c",
+        "drivers/infiniband/core/uverbs_main.c",
+        "drivers/scsi/3w-xxxx.c",
+        "drivers/ide/ide-tape.c",
+        "drivers/media/video/em28xx/em28xx-video.c",
+        "drivers/scsi/3w-9xxx.c",
+        "net/ipv6/mcast.c",
+        "net/bluetooth/rfcomm/tty.c",
+        "drivers/ieee1394/eth1394.c",
+        "sound/aoa/soundbus/i2sbus/i2sbus-core.c",
+        "arch/um/drivers/tty.c",
+        "drivers/isdn/pcbit/drv.c",
+        "drivers/isdn/pcbit/module.c",
+        "fs/char_dev.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "7303",
+      "version": "2.6.18",
+      "ground_truth_file": "drivers/acpi/dock.c",
+      "trace_functions": [
+        "my"
+      ],
+      "total_trace_functions": 1,
+      "function_locations": {
+        "my": [
+          "drivers/usb/gadget/dummy_hcd.c",
+          "drivers/video/mbx/mbxdebugfs.c",
+          "arch/x86_64/kernel/traps.c",
+          "drivers/char/ftape/zftape/zftape-ctl.c",
+          "drivers/isdn/hisax/l3ni1.c",
+          "drivers/net/tlan.c",
+          "drivers/video/console/dummycon.c",
+          "drivers/video/aty/mach64_ct.c",
+          "fs/xfs/xfs_fsops.c",
+          "drivers/usb/misc/sisusbvga/sisusb_con.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "drivers/usb/gadget/dummy_hcd.c",
+        "drivers/video/console/dummycon.c",
+        "drivers/video/aty/mach64_ct.c",
+        "drivers/video/mbx/mbxdebugfs.c",
+        "arch/x86_64/kernel/traps.c",
+        "drivers/char/ftape/zftape/zftape-ctl.c",
+        "fs/xfs/xfs_fsops.c",
+        "drivers/usb/misc/sisusbvga/sisusb_con.c",
+        "drivers/isdn/hisax/l3ni1.c",
+        "drivers/net/tlan.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "7234",
+      "version": "2.6.18",
+      "ground_truth_file": "drivers/i2c/i2c-core.c",
+      "trace_functions": [
+        "worker_thread",
+        "default_wake_function",
+        "kthread",
+        "kernel_thread_helper",
+        "schedule_timeout",
+        "mutex_lock",
+        "inotify_poll",
+        "do_select",
+        "__pollwait",
+        "do_page_fault",
+        "error_code",
+        "__pagevec_free",
+        "release_pages",
+        "skb_copy_datagram_iovec",
+        "proc_alloc_inode"
+      ],
+      "total_trace_functions": 69,
+      "function_locations": {
+        "worker_thread": [
+          "kernel/workqueue.c",
+          "drivers/scsi/ipr.c"
+        ],
+        "default_wake_function": [
+          "kernel/sched.c"
+        ],
+        "kthread": [
+          "drivers/usb/atm/ueagle-atm.c",
+          "arch/ia64/sn/kernel/xpc_main.c",
+          "kernel/kthread.c"
+        ],
+        "kernel_thread_helper": [
+          "arch/sh/kernel/process.c",
+          "arch/cris/arch-v10/kernel/process.c",
+          "arch/m32r/kernel/process.c",
+          "arch/arm26/kernel/process.c",
+          "arch/i386/kernel/process.c",
+          "arch/mips/kernel/process.c",
+          "arch/arm/kernel/process.c"
+        ],
+        "schedule_timeout": [
+          "kernel/sched.c",
+          "drivers/block/floppy.c",
+          "kernel/timer.c"
+        ],
+        "mutex_lock": [
+          "kernel/mutex.c",
+          "kernel/rtmutex.c",
+          "kernel/rtmutex-debug.c"
+        ],
+        "inotify_poll": [
+          "fs/inotify_user.c"
+        ],
+        "do_select": [
+          "fs/select.c"
+        ],
+        "__pollwait": [
+          "fs/select.c"
+        ],
+        "do_page_fault": [
+          "arch/m68knommu/mm/fault.c",
+          "arch/sh/mm/fault.c",
+          "arch/m32r/mm/fault.c",
+          "arch/sh64/mm/fault.c",
+          "arch/xtensa/mm/fault.c",
+          "arch/m68k/mm/fault.c",
+          "arch/x86_64/mm/fault.c",
+          "arch/ppc/mm/fault.c",
+          "arch/i386/mm/fault.c",
+          "arch/parisc/mm/fault.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "kernel/rtmutex-debug.c",
+        "kernel/kthread.c",
+        "arch/m68knommu/mm/fault.c",
+        "arch/sh/mm/fault.c",
+        "kernel/timer.c",
+        "arch/m32r/mm/fault.c",
+        "arch/i386/kernel/process.c",
+        "arch/mips/kernel/process.c",
+        "arch/sh64/mm/fault.c",
+        "arch/xtensa/mm/fault.c",
+        "arch/m68k/mm/fault.c",
+        "arch/x86_64/mm/fault.c",
+        "arch/ppc/mm/fault.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "arch/i386/mm/fault.c",
+        "arch/parisc/mm/fault.c",
+        "arch/ia64/sn/kernel/xpc_main.c",
+        "fs/select.c",
+        "arch/arm/kernel/process.c",
+        "kernel/sched.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "7201",
+      "version": "2.6.18",
+      "ground_truth_file": "drivers/usb/net/rndis_host.c",
+      "trace_functions": [
+        "usbnet_probe",
+        "__driver_attach",
+        "usb_probe_interface",
+        "driver_probe_device",
+        "bus_for_each_dev",
+        "driver_attach",
+        "bus_add_driver",
+        "usb_register_driver",
+        "sys_init_module",
+        "syscall_call",
+        "Not"
+      ],
+      "total_trace_functions": 11,
+      "function_locations": {
+        "usbnet_probe": [],
+        "__driver_attach": [
+          "drivers/base/dd.c"
+        ],
+        "usb_probe_interface": [
+          "drivers/usb/core/driver.c"
+        ],
+        "driver_probe_device": [
+          "drivers/base/dd.c"
+        ],
+        "bus_for_each_dev": [
+          "drivers/base/bus.c"
+        ],
+        "driver_attach": [
+          "drivers/base/dd.c",
+          "drivers/acpi/scan.c"
+        ],
+        "bus_add_driver": [
+          "drivers/base/bus.c"
+        ],
+        "usb_register_driver": [
+          "drivers/usb/core/driver.c"
+        ],
+        "sys_init_module": [],
+        "syscall_call": []
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "drivers/usb/core/driver.c",
+        "drivers/base/bus.c",
+        "drivers/base/dd.c",
+        "drivers/acpi/scan.c"
+      ],
+      "status": "miss"
+    },
+    {
+      "id": "5105",
+      "version": "2.6.12",
+      "ground_truth_file": "arch/x86_64/kernel/time.c",
+      "trace_functions": [
+        "default_idle"
+      ],
+      "total_trace_functions": 1,
+      "function_locations": {
+        "default_idle": [
+          "arch/h8300/kernel/process.c",
+          "arch/sh64/kernel/process.c",
+          "arch/sparc64/kernel/process.c",
+          "arch/mips/kernel/process.c",
+          "arch/i386/kernel/process.c",
+          "arch/ppc64/kernel/idle.c",
+          "arch/x86_64/kernel/process.c",
+          "arch/cris/arch-v10/kernel/process.c",
+          "arch/parisc/kernel/process.c",
+          "arch/sparc/kernel/process.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "arch/h8300/kernel/process.c",
+        "arch/ppc64/kernel/idle.c",
+        "arch/x86_64/kernel/process.c",
+        "arch/cris/arch-v10/kernel/process.c",
+        "arch/i386/kernel/process.c",
+        "arch/parisc/kernel/process.c",
+        "arch/sparc/kernel/process.c",
+        "arch/sh64/kernel/process.c",
+        "arch/sparc64/kernel/process.c",
+        "arch/mips/kernel/process.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "4364",
+      "version": "2.6.16",
+      "ground_truth_file": "drivers/acpi/thermal.c",
+      "trace_functions": [
+        "check_timer_failed",
+        "del_timer",
+        "uhci_stop",
+        "usb_hcd_pci_remove",
+        "usb_hcd_pci_probe",
+        "pci_device_probe_static",
+        "__pci_device_probe",
+        "pci_device_probe",
+        "driver_probe_device",
+        "driver_attach",
+        "bus_add_driver",
+        "driver_register",
+        "pci_register_driver",
+        "uhci_hcd_init",
+        "sys_init_module"
+      ],
+      "total_trace_functions": 16,
+      "function_locations": {
+        "check_timer_failed": [],
+        "del_timer": [
+          "net/ax25/ax25_ds_timer.c",
+          "net/bluetooth/hidp/core.c",
+          "net/rxrpc/krxtimod.c",
+          "net/core/neighbour.c",
+          "sound/drivers/serial-u16550.c",
+          "kernel/timer.c",
+          "fs/afs/kafstimod.c",
+          "net/ipv6/addrconf.c"
+        ],
+        "uhci_stop": [
+          "drivers/usb/host/uhci-hcd.c"
+        ],
+        "usb_hcd_pci_remove": [
+          "drivers/usb/core/hcd-pci.c"
+        ],
+        "usb_hcd_pci_probe": [
+          "drivers/usb/core/hcd-pci.c"
+        ],
+        "pci_device_probe_static": [],
+        "__pci_device_probe": [],
+        "pci_device_probe": [
+          "drivers/pci/pci-driver.c"
+        ],
+        "driver_probe_device": [
+          "drivers/base/dd.c"
+        ],
+        "driver_attach": [
+          "drivers/base/dd.c",
+          "drivers/acpi/scan.c"
+        ]
+      },
+      "gt_found_via_functions": [],
+      "other_candidate_files": [
+        "net/ax25/ax25_ds_timer.c",
+        "drivers/pci/pci-driver.c",
+        "net/bluetooth/hidp/core.c",
+        "net/rxrpc/krxtimod.c",
+        "net/core/neighbour.c",
+        "sound/drivers/serial-u16550.c",
+        "kernel/timer.c",
+        "fs/afs/kafstimod.c",
+        "net/ipv6/addrconf.c",
+        "drivers/usb/host/uhci-hcd.c",
+        "drivers/usb/core/hcd-pci.c",
+        "drivers/base/dd.c",
+        "drivers/acpi/scan.c"
+      ],
+      "status": "correct_directory_hit"
+    },
+    {
+      "id": "4351",
+      "version": "2.6.9",
+      "ground_truth_file": "drivers/char/ipmi/ipmi_si_intf.c",
+      "trace_functions": [
+        "init_one_smi",
+        "show_stack",
+        "show_regs",
+        "die",
+        "ia64_do_page_fault",
+        "ia64_leave_kernel",
+        "init_ipmi_si",
+        "sys_init_module",
+        "ia64_ret_from_syscall",
+        "Not"
+      ],
+      "total_trace_functions": 10,
+      "function_locations": {
+        "init_one_smi": [
+          "drivers/char/ipmi/ipmi_si_intf.c"
+        ],
+        "show_stack": [
+          "arch/m68knommu/kernel/traps.c",
+          "arch/s390/kernel/traps.c",
+          "arch/x86_64/kernel/traps.c",
+          "arch/alpha/kernel/traps.c",
+          "arch/m32r/kernel/traps.c",
+          "arch/um/kernel/sysrq.c",
+          "arch/h8300/kernel/traps.c",
+          "arch/sparc/kernel/process.c",
+          "arch/arm26/kernel/traps.c",
+          "arch/parisc/kernel/traps.c"
+        ],
+        "show_regs": [
+          "arch/h8300/kernel/process.c",
+          "arch/s390/kernel/traps.c",
+          "arch/um/sys-i386/sysrq.c",
+          "arch/um/sys-ppc/sysrq.c",
+          "arch/alpha/kernel/traps.c",
+          "arch/sh64/kernel/process.c",
+          "arch/sparc64/kernel/process.c",
+          "arch/i386/kernel/process.c",
+          "arch/x86_64/kernel/process.c",
+          "arch/cris/arch-v10/kernel/process.c"
+        ],
+        "die": [
+          "arch/ppc/kernel/traps.c",
+          "arch/s390/kernel/traps.c",
+          "arch/ia64/kernel/smp.c",
+          "arch/sh/mm/fault.c",
+          "arch/x86_64/kernel/traps.c",
+          "arch/m32r/mm/fault.c",
+          "arch/x86_64/boot/tools/build.c",
+          "arch/sh64/mm/fault.c",
+          "drivers/isdn/hisax/isdnl3.c",
+          "arch/m32r/kernel/traps.c"
+        ],
+        "ia64_do_page_fault": [],
+        "ia64_leave_kernel": [],
+        "init_ipmi_si": [
+          "drivers/char/ipmi/ipmi_si_intf.c"
+        ],
+        "sys_init_module": [],
+        "ia64_ret_from_syscall": [],
+        "Not": []
+      },
+      "gt_found_via_functions": [
+        "init_one_smi",
+        "init_ipmi_si"
+      ],
+      "other_candidate_files": [
+        "arch/h8300/kernel/process.c",
+        "arch/ppc/kernel/traps.c",
+        "arch/s390/kernel/traps.c",
+        "arch/m68knommu/kernel/traps.c",
+        "arch/ia64/kernel/smp.c",
+        "arch/um/sys-i386/sysrq.c",
+        "arch/sh/mm/fault.c",
+        "arch/x86_64/kernel/traps.c",
+        "arch/um/sys-ppc/sysrq.c",
+        "arch/alpha/kernel/traps.c",
+        "arch/m32r/mm/fault.c",
+        "arch/sh64/kernel/process.c",
+        "arch/x86_64/boot/tools/build.c",
+        "arch/sparc64/kernel/process.c",
+        "arch/i386/kernel/process.c",
+        "arch/sh64/mm/fault.c",
+        "drivers/isdn/hisax/isdnl3.c",
+        "arch/m32r/kernel/traps.c",
+        "arch/x86_64/kernel/process.c",
+        "arch/cris/arch-v10/kernel/process.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "2423",
+      "version": "2.6.5",
+      "ground_truth_file": "drivers/usb/core/message.c",
+      "trace_functions": [
+        "usb_disable_interface",
+        "usb_set_interface",
+        "hci_usb_probe",
+        "alloc_inode",
+        "sysfs_new_inode",
+        "usb_probe_interface",
+        "bus_match",
+        "device_attach",
+        "bus_add_device",
+        "device_add",
+        "usb_set_configuration",
+        "usb_new_device",
+        "hub_port_connect_change",
+        "hub_events",
+        "hub_thread"
+      ],
+      "total_trace_functions": 18,
+      "function_locations": {
+        "usb_disable_interface": [
+          "drivers/usb/core/message.c"
+        ],
+        "usb_set_interface": [
+          "drivers/usb/core/message.c"
+        ],
+        "hci_usb_probe": [
+          "drivers/bluetooth/hci_usb.c"
+        ],
+        "alloc_inode": [
+          "fs/romfs/inode.c",
+          "fs/proc/inode.c",
+          "fs/ext3/super.c",
+          "mm/shmem.c",
+          "fs/hfsplus/super.c",
+          "fs/nfs/inode.c",
+          "fs/smbfs/inode.c",
+          "fs/dquot.c",
+          "fs/ufs/super.c",
+          "fs/reiserfs/super.c"
+        ],
+        "sysfs_new_inode": [
+          "fs/sysfs/inode.c"
+        ],
+        "usb_probe_interface": [
+          "drivers/usb/core/usb.c"
+        ],
+        "bus_match": [
+          "drivers/zorro/zorro-driver.c",
+          "drivers/s390/net/iucv.c",
+          "drivers/scsi/scsi_sysfs.c",
+          "drivers/acpi/scan.c",
+          "drivers/pci/pci-driver.c",
+          "drivers/base/bus.c",
+          "drivers/s390/cio/ccwgroup.c",
+          "drivers/ieee1394/nodemgr.c",
+          "drivers/eisa/eisa-bus.c",
+          "drivers/mca/mca-bus.c"
+        ],
+        "device_attach": [
+          "drivers/base/bus.c",
+          "arch/ia64/sn/io/sn2/pcibr/pcibr_slot.c",
+          "drivers/pnp/driver.c",
+          "arch/ia64/sn/io/sn2/pic.c",
+          "arch/ia64/sn/io/sn2/pciio.c"
+        ],
+        "bus_add_device": [
+          "drivers/base/bus.c"
+        ],
+        "device_add": [
+          "drivers/base/class_simple.c",
+          "drivers/base/class.c",
+          "drivers/scsi/libata-core.c",
+          "drivers/base/core.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "usb_disable_interface",
+        "usb_set_interface"
+      ],
+      "other_candidate_files": [
+        "fs/romfs/inode.c",
+        "fs/proc/inode.c",
+        "fs/ext3/super.c",
+        "drivers/zorro/zorro-driver.c",
+        "fs/sysfs/inode.c",
+        "mm/shmem.c",
+        "fs/hfsplus/super.c",
+        "fs/nfs/inode.c",
+        "drivers/s390/net/iucv.c",
+        "fs/smbfs/inode.c",
+        "fs/dquot.c",
+        "drivers/scsi/scsi_sysfs.c",
+        "drivers/acpi/scan.c",
+        "fs/ufs/super.c",
+        "arch/ia64/sn/io/sn2/pciio.c",
+        "drivers/pci/pci-driver.c",
+        "drivers/base/bus.c",
+        "drivers/s390/cio/ccwgroup.c",
+        "drivers/scsi/libata-core.c",
+        "fs/reiserfs/super.c"
+      ],
+      "status": "ground_truth_hit"
+    },
+    {
+      "id": "583",
+      "version": "2.5.67",
+      "ground_truth_file": "fs/coda/psdev.c",
+      "trace_functions": [
+        "vsnprintf",
+        "devfs_mk_dir",
+        "kmalloc",
+        "register_chrdev_region",
+        "register_chrdev",
+        "init_coda_psdev",
+        "init_once",
+        "init",
+        "kernel_thread_helper"
+      ],
+      "total_trace_functions": 9,
+      "function_locations": {
+        "vsnprintf": [
+          "lib/vsprintf.c"
+        ],
+        "devfs_mk_dir": [
+          "fs/devfs/base.c"
+        ],
+        "kmalloc": [
+          "drivers/atm/firestream.c",
+          "fs/reiserfs/fix_node.c",
+          "sound/core/wrappers.c",
+          "drivers/pnp/pnpbios/core.c",
+          "net/wanrouter/af_wanpipe.c",
+          "drivers/char/ftape/zftape/zftape-buffers.c",
+          "drivers/net/wan/sdlamain.c",
+          "arch/ppc/kernel/irq.c",
+          "drivers/char/sx.c",
+          "drivers/net/wan/sdla_x25.c"
+        ],
+        "register_chrdev_region": [
+          "fs/char_dev.c"
+        ],
+        "register_chrdev": [
+          "fs/char_dev.c",
+          "drivers/isdn/hardware/eicon/divasmain.c",
+          "drivers/isdn/hardware/eicon/divamnt.c",
+          "drivers/isdn/hardware/eicon/divasi.c"
+        ],
+        "init_coda_psdev": [
+          "fs/coda/psdev.c"
+        ],
+        "init_once": [
+          "fs/romfs/inode.c",
+          "fs/proc/inode.c",
+          "fs/ext3/super.c",
+          "mm/shmem.c",
+          "fs/nfs/inode.c",
+          "fs/jfs/jfs_metapage.c",
+          "fs/smbfs/inode.c",
+          "fs/ufs/super.c",
+          "fs/ntfs/super.c",
+          "fs/reiserfs/super.c"
+        ],
+        "init": [
+          "drivers/hotplug/cpci_hotplug_core.c",
+          "arch/arm/mach-pxa/lubbock.c",
+          "arch/m68k/mac/macints.c",
+          "drivers/net/e100/e100_main.c",
+          "drivers/s390/char/tape_block.c",
+          "drivers/input/mouse/amimouse.c",
+          "fs/nls/nls_cp860.c",
+          "drivers/net/pcmcia/axnet_cs.c",
+          "drivers/net/stnic.c",
+          "drivers/oprofile/oprof.c"
+        ],
+        "kernel_thread_helper": [
+          "arch/i386/kernel/process.c"
+        ]
+      },
+      "gt_found_via_functions": [
+        "init_coda_psdev"
+      ],
+      "other_candidate_files": [
+        "drivers/hotplug/cpci_hotplug_core.c",
+        "arch/arm/mach-pxa/lubbock.c",
+        "fs/romfs/inode.c",
+        "fs/proc/inode.c",
+        "drivers/atm/firestream.c",
+        "arch/m68k/mac/macints.c",
+        "fs/reiserfs/fix_node.c",
+        "sound/core/wrappers.c",
+        "drivers/net/e100/e100_main.c",
+        "fs/ext3/super.c",
+        "drivers/pnp/pnpbios/core.c",
+        "drivers/s390/char/tape_block.c",
+        "drivers/isdn/hardware/eicon/divasmain.c",
+        "mm/shmem.c",
+        "fs/nfs/inode.c",
+        "arch/i386/kernel/process.c",
+        "fs/jfs/jfs_metapage.c",
+        "net/wanrouter/af_wanpipe.c",
+        "fs/smbfs/inode.c",
+        "drivers/input/mouse/amimouse.c"
+      ],
+      "status": "ground_truth_hit"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "id": "933",
+  "title": "FTP NAT doesn't work in 2.6.0-test1",
+  "description": "Distribution: Red Hat 9\nHardware Environment: \nSoftware Environment: gcc-3.3\nProblem Description:\n\nBoth IP masquerading and SNAT do not work with FTP. When I issue dir command,\nftp connection gets stuck. In ethernet sniffer I see a lot of TCP ack packets\ngoing in both directions. Both FTP client and server are Win2k boxes. \n\nSteps to reproduce:\n\nSetup a NAT box\nmodprobe ip_nat_ftp\nmodprobe ip_conntrack_ftp\niptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE (assuming eth0 is an\nexternal interface)\n\nTry ftp connection.\n\nThis setup works fine with RedHat kernel 2.4.20-18.9.",
+  "patch": [
+    "--- linux-2.5.75/net/ipv4/netfilter/ip_nat_helper.c.orig\t2003-07-17 19:27:53.000000000 +0200\n+++ linux-2.5.75/net/ipv4/netfilter/ip_nat_helper.c\t2003-07-17 19:30:29.000000000 +0200\n@@ -191,7 +191,7 @@\n \t\t\t\t   csum_partial((char *)tcph, tcph->doff*4,\n \t\t\t\t\t\t(*pskb)->csum));\n \tadjust_tcp_sequence(ntohl(tcph->seq),\n-\t\t\t    (int)match_len - (int)rep_len,\n+\t\t\t    (int)rep_len - (int)match_len,\n \t\t\t    ct, ctinfo);\n \treturn 1;\n }\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Networking",
+  "Classification": "Unclassified",
+  "Component": "Netfilter/Iptables",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 normal",
+  "Assignee": "Martin Josefsson",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2003-07-15 10:44 UTC by Pavel R",
+  "Modified": "2003-07-20 23:39 UTC",
+  "CC List": "0 users",
+  "See Also": "",
+  "Kernel Version": "2.5.75",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "net/ipv4/netfilter/ip_nat_helper.c"
+  ],
+  "methods": [
+    "ip_nat_mangle_tcp_packet"
+  ]
+}

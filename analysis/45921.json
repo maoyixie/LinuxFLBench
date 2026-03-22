@@ -1,0 +1,108 @@
+{
+  "id": "45921",
+  "title": "resume from hibernate fails when \"Suspend to RAM and standby\" is disabled",
+  "kernel_version": "3.5",
+  "product": "Power Management",
+  "component": "Hibernation/Suspend",
+  "hardware": "All Linux",
+  "is_regression": "No",
+  "symptom_classification": [
+    "hang/lockup",
+    "wrong_behavior",
+    "power/sleep"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/sleep.c"
+    ],
+    "buggy_methods": [
+      "init_old_suspend_ordering",
+      "init_nvs_nosave",
+      "acpi_sleep_init",
+      "acpisleep_dmi_table"
+    ],
+    "num_methods": 4
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": true,
+    "description_length": 716,
+    "description_word_count": 119
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 166,
+    "lines_removed": 163,
+    "patch_size": 329,
+    "patch_types": [
+      "quirk/device_table",
+      "memory"
+    ],
+    "num_hunks": 4,
+    "hunk_functions": [
+      "acpi_pm_end",
+      "acpi_old_suspend_ordering",
+      "acpi_sleep_init"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/sleep.c",
+    "filename": "sleep.c",
+    "directory": "drivers/acpi",
+    "depth": 3,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/sleep.c",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:Hibernation/Suspend",
+      "fix_is_quirk_table_entry"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "search_for_quirk_tables_in_related_drivers"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "45921",
+      "version": "3.5",
+      "status": "found",
+      "path": "drivers/acpi/sleep.c"
+    }
+  ],
+  "quirk_analysis": {
+    "id": "45921",
+    "title": "resume from hibernate fails when \"Suspend to RAM and standby\" is disabled",
+    "product": "Power Management",
+    "component": "Hibernation/Suspend",
+    "buggy_file": [
+      "drivers/acpi/sleep.c"
+    ],
+    "fix_type": "dmi_quirk_addition",
+    "table_entry_lines_added": 40,
+    "description_clues": [
+      "dmi_info_in_description"
+    ],
+    "patch_size": 329,
+    "potential_strategies": [
+      "search_dmi_tables_in_drivers",
+      "narrow_by_component:Hibernation/Suspend"
+    ]
+  },
+  "overall_category": "D_quirk_device_table"
+}

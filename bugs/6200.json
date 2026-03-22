@@ -1,0 +1,34 @@
+{
+  "id": "6200",
+  "title": "Linux 2.4.32 keeps hanging",
+  "description": "We are running Linux Kernel 2.4.32 and have been experiencing hangs every 1-4\ndays.  Sometimes, we can get multiple hangs in a single day.  We cannot\ndetermine the precise steps to reproduce the hang, but we have replaced the\nserver three times, and each time the problem continues to reoccur.  The\nfirst server had Intel server board SE7501WV2A.  The second system was a Dell\nPrecision WorkStation 450 (Intel 7505 chipset).  The last system was a Dell\nPowerEdge 1750 box (Intel ServerWorks GC LE chipset). All systems have Dual\nXeon, 4 gb memory.  The first two systems were using on-board Intel e1000, which\nI was suspicious was the cause of the problem, but the last system was running\ndual Broadcom gigabit and using the tg3 driver, so this was not an issue.  The\nusers logging into the server are accessing their home directories from our NFS\nserver.\n\nWhen the server hangs, the monitor on the console screen goes black, yet the\nmachine remains pingable.  An nmap on the machine reveals the ports that it\nprovides services on.  The machine will answer on those ports, but the\nservices are not available.  We also have the contents of a \"ps\" that\nis going to a file once every minute, in order to try to help us solve\nthis problem, and that activity stops.  Activity prior to the crash is\ngenerally minimal.  A serial console displays nothing until the machine\nis rebooted. \n\nWe recently installed the sgi kdb patch in the hopes that we might be able to\nprovide more details in order to solve this problem.  Yesterday, the system\ncrashed again.  We were able to get into kdb and record the following information:\n\n1) a ps listing of all running processes\n2) sysrq memory data\n2) a backtrace on each running process\n3) a single step trace on each of the processors\n\nI have included this data in the attached file.\n\nWe are extremely anxious to solve this problem.  If anyone has any idea, please\nlet us know.",
+  "patch": [
+    "\nHere is a patch that stops inodes from being removed\nfrom the inode hash list when an ESTALE error is\nreturned from a getattr request. This unhashing would\ncause the sync() to loop indefinitely in certain cases.\n\nThe dump shows that the inode is indeed on the locked list, but\nnot locked.  It's also clear why, and it has nothing to do with i_count:\nrather, the problem is that the inode is unhashed.  (\"Ahhhh!\")\n\n__sync_one does:\n\n\tinode->i_state |= I_LOCK;\n\t/* Do stuff */\n\tinode->i_state &= ~I_LOCK;\n\tif (!(inode->i_state & I_FREEING))\n\t\t__refile_inode(inode);\n\nand __refile_inode() itself does:\n\n\tif (inode->i_state & I_FREEING)\n\t\treturn;\n\tif (list_empty(&inode->i_hash))\n\t\treturn;\n\t\t\nAnd indeed, the inode here is unhashed, so __refile_inode is doing\nnothing.  *That* is the source of the problem!\n\nSo why is this happening?\n\nBecause NFS calls remove_inode_hash exactly once.  In\n__nfs_revalidate_inode().  If the inode is stale:\n\n\t\tif (status == -ESTALE) {\n\t\t\tNFS_FLAGS(inode) |= NFS_INO_STALE;\n\t\t\tif (inode != inode->i_sb->s_root->d_inode)\n\t\t\t\tremove_inode_hash(inode);\n\t\t}\n\nAny time this path triggers during a sync(), when the inode is locked,\nyou'll get the bug.  The \"acregmin=1,acregmax=1\" options exacerbate the\nproblem simply by calling __nfs_revalidate_inode so much.\n\n\n--- linux-2.4.21/fs/nfs/inode.c.orig\n+++ linux-2.4.21/fs/nfs/inode.c\n@@ -1167,11 +1167,8 @@ __nfs_revalidate_inode(struct nfs_server\n \tif (status) {\n \t\tdfprintk(PAGECACHE, \"nfs_revalidate_inode: (%x/%Ld) getattr failed, error=%d\\n\",\n \t\t\t inode->i_dev, (long long)NFS_FILEID(inode), status);\n-\t\tif (status == -ESTALE) {\n+\t\tif (status == -ESTALE)\n \t\t\tNFS_FLAGS(inode) |= NFS_INO_STALE;\n-\t\t\tif (inode != inode->i_sb->s_root->d_inode)\n-\t\t\t\tremove_inode_hash(inode);\n-\t\t}\n \t\tgoto out;\n \t}\n \n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "IO/Storage",
+  "Classification": "Unclassified",
+  "Component": "Other",
+  "Hardware": "i386 Linux",
+  "Importance": "P2 high",
+  "Assignee": "fs_other",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2006-03-09 08:08 UTC by jas",
+  "Modified": "2008-03-19 01:45 UTC",
+  "CC List": "1 user",
+  "See Also": "",
+  "Kernel Version": "2.4.32",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "fs/nfs/inode.c"
+  ],
+  "methods": [
+    "__nfs_revalidate_inode"
+  ]
+}

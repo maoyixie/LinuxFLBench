@@ -1,0 +1,37 @@
+{
+  "id": "12310",
+  "title": "NOHZ appears to cause ondemand to effectively ignore 'ignore_nice_load'",
+  "description": "Latest working kernel version: Don't think it ever worked well with NOHZ, but got worse after 2.6.26\nEarliest failing kernel version:\nDistribution:\nHardware Environment: Everex notebook, AMD 64 dual-core\nSoftware Environment: \nProblem Description:\n\n  [this bug is a tickless+ondemand interaction: the problem may be in the cpufreq_ondemand code]\n\n  I'm running boinc, which will cheerfully keep both cores loaded with niced processes if I let it. In the past, meaning for the last six months or more, I managed to stop the niced processes from upping the frequency by setting up_threshhold to 50 or more and letting boinc use only 80% CPU, but with 2.6.28 nothing I did mattered.\n\n I got to looking around the ondemand code and noticed that it would try to call\nget_cpu_idle_time_us() and then calculate idle time differently if that failed, which would happen if NOHZ is turned off. I rebooted with 'nohz=off' and the ondemand code behaves completely to spec according to how I set ignore_nice_load and up_threshhold.\n\nSteps to reproduce:  Build tickless kernel, run boinc (or maybe a niced while-true loop?).",
+  "patch": [
+    "\nMake ignore_nice_load setting of ondemand work as expected.\nondemand micro-accounting of idle time changes broke ignore_nice_load\nsysfs setting due to a thinko in the code.\n\nThe bug entry:\nhttp://bugzilla.kernel.org/show_bug.cgi?id=12310\n\nReported-by: Jim Bray <jimsantelmo@gmail.com>\n\nSigned-off-by: Venkatesh Pallipadi <venkatesh.pallipadi@intel.com>\n\n---\n drivers/cpufreq/cpufreq_ondemand.c |   47 +++++++++++++++++++------------------\n 1 file changed, 25 insertions(+), 22 deletions(-)\n\nIndex: linux-2.6/drivers/cpufreq/cpufreq_ondemand.c\n===================================================================\n--- linux-2.6.orig/drivers/cpufreq/cpufreq_ondemand.c\t2008-12-31 14:10:15.000000000 -0800\n+++ linux-2.6/drivers/cpufreq/cpufreq_ondemand.c\t2008-12-31 14:28:52.000000000 -0800\n@@ -117,11 +117,7 @@ static inline cputime64_t get_cpu_idle_t\n \tbusy_time = cputime64_add(busy_time, kstat_cpu(cpu).cpustat.irq);\n \tbusy_time = cputime64_add(busy_time, kstat_cpu(cpu).cpustat.softirq);\n \tbusy_time = cputime64_add(busy_time, kstat_cpu(cpu).cpustat.steal);\n-\n-\tif (!dbs_tuners_ins.ignore_nice) {\n-\t\tbusy_time = cputime64_add(busy_time,\n-\t\t\t\tkstat_cpu(cpu).cpustat.nice);\n-\t}\n+\tbusy_time = cputime64_add(busy_time, kstat_cpu(cpu).cpustat.nice);\n \n \tidle_time = cputime64_sub(cur_wall_time, busy_time);\n \tif (wall)\n@@ -137,23 +133,6 @@ static inline cputime64_t get_cpu_idle_t\n \tif (idle_time == -1ULL)\n \t\treturn get_cpu_idle_time_jiffy(cpu, wall);\n \n-\tif (dbs_tuners_ins.ignore_nice) {\n-\t\tcputime64_t cur_nice;\n-\t\tunsigned long cur_nice_jiffies;\n-\t\tstruct cpu_dbs_info_s *dbs_info;\n-\n-\t\tdbs_info = &per_cpu(cpu_dbs_info, cpu);\n-\t\tcur_nice = cputime64_sub(kstat_cpu(cpu).cpustat.nice,\n-\t\t\t\t\t dbs_info->prev_cpu_nice);\n-\t\t/*\n-\t\t * Assumption: nice time between sampling periods will be\n-\t\t * less than 2^32 jiffies for 32 bit sys\n-\t\t */\n-\t\tcur_nice_jiffies = (unsigned long)\n-\t\t\t\t\tcputime64_to_jiffies64(cur_nice);\n-\t\tdbs_info->prev_cpu_nice = kstat_cpu(cpu).cpustat.nice;\n-\t\treturn idle_time + jiffies_to_usecs(cur_nice_jiffies);\n-\t}\n \treturn idle_time;\n }\n \n@@ -319,6 +298,9 @@ static ssize_t store_ignore_nice_load(st\n \t\tdbs_info = &per_cpu(cpu_dbs_info, j);\n \t\tdbs_info->prev_cpu_idle = get_cpu_idle_time(j,\n \t\t\t\t\t\t&dbs_info->prev_cpu_wall);\n+\t\tif (dbs_tuners_ins.ignore_nice)\n+\t\t\tdbs_info->prev_cpu_nice = kstat_cpu(j).cpustat.nice;\n+\n \t}\n \tmutex_unlock(&dbs_mutex);\n \n@@ -419,6 +401,23 @@ static void dbs_check_cpu(struct cpu_dbs\n \t\t\t\tj_dbs_info->prev_cpu_idle);\n \t\tj_dbs_info->prev_cpu_idle = cur_idle_time;\n \n+\t\tif (dbs_tuners_ins.ignore_nice) {\n+\t\t\tcputime64_t cur_nice;\n+\t\t\tunsigned long cur_nice_jiffies;\n+\n+\t\t\tcur_nice = cputime64_sub(kstat_cpu(j).cpustat.nice,\n+\t\t\t\t\t j_dbs_info->prev_cpu_nice);\n+\t\t\t/*\n+\t\t\t * Assumption: nice time between sampling periods will\n+\t\t\t * be less than 2^32 jiffies for 32 bit sys\n+\t\t\t */\n+\t\t\tcur_nice_jiffies = (unsigned long)\n+\t\t\t\t\tcputime64_to_jiffies64(cur_nice);\n+\n+\t\t\tj_dbs_info->prev_cpu_nice = kstat_cpu(j).cpustat.nice;\n+\t\t\tidle_time += jiffies_to_usecs(cur_nice_jiffies);\n+\t\t}\n+\n \t\tif (unlikely(!wall_time || wall_time < idle_time))\n \t\t\tcontinue;\n \n@@ -575,6 +574,10 @@ static int cpufreq_governor_dbs(struct c\n \n \t\t\tj_dbs_info->prev_cpu_idle = get_cpu_idle_time(j,\n \t\t\t\t\t\t&j_dbs_info->prev_cpu_wall);\n+\t\t\tif (dbs_tuners_ins.ignore_nice) {\n+\t\t\t\tj_dbs_info->prev_cpu_nice =\n+\t\t\t\t\t\tkstat_cpu(j).cpustat.nice;\n+\t\t\t}\n \t\t}\n \t\tthis_dbs_info->cpu = cpu;\n \t\t/*\n"
+  ],
+  "Status": "CLOSED CODE_FIX",
+  "Alias": "None",
+  "Product": "Power Management",
+  "Classification": "Unclassified",
+  "Component": "cpufreq",
+  "Hardware": "All Linux",
+  "Importance": "P1 normal",
+  "Assignee": "Venkatesh Pallipadi",
+  "URL": "",
+  "Keywords": "",
+  "Depends on": "",
+  "Blocks": "",
+  "Reported": "2008-12-27 19:38 UTC by Jim Bray",
+  "Modified": "2009-02-13 15:15 UTC",
+  "CC List": "2 users",
+  "See Also": "",
+  "Kernel Version": "2.6.28",
+  "Subsystem": "",
+  "Regression": "---",
+  "Bisected commit-id": "",
+  "paths": [
+    "drivers/cpufreq/cpufreq_ondemand.c"
+  ],
+  "methods": [
+    "get_cpu_idle_time_jiffy",
+    "store_ignore_nice_load",
+    "dbs_check_cpu",
+    "cpufreq_governor_dbs"
+  ]
+}

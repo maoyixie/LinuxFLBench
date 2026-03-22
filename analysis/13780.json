@@ -1,0 +1,117 @@
+{
+  "id": "13780",
+  "title": "NULL pointer dereference loading powernowk8",
+  "kernel_version": "2.6.29",
+  "product": "Power Management",
+  "component": "cpufreq",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "crash/panic/oops"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "arch/x86/kernel/cpu/cpufreq/powernow-k8.c"
+    ],
+    "buggy_methods": [
+      "check_pst_table",
+      "fill_powernow_table_pstate",
+      "fill_powernow_table_fidvid"
+    ],
+    "num_methods": 3
+  },
+  "description_clues": {
+    "has_call_trace": true,
+    "trace_functions": [
+      "powernowk8_cpu_init"
+    ],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [
+      "kernel: [   39.822807] BUG: unable to handle kernel NULL pointer dereference at"
+    ],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": true,
+    "dmesg_line_count": 2,
+    "has_workaround": true,
+    "has_repro_steps": false,
+    "mentions_regression": false,
+    "mentions_hardware_model": true,
+    "mentions_kernel_config": false,
+    "description_length": 462,
+    "description_word_count": 60
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 9,
+    "lines_removed": 8,
+    "patch_size": 17,
+    "new_functions": [
+      "invalidate_entry"
+    ],
+    "patch_types": [
+      "new_function"
+    ],
+    "num_hunks": 6,
+    "hunk_functions": [
+      "fill_powernow_table_fidvid",
+      "fill_powernow_table_pstate",
+      "check_pst_table"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "arch/x86/kernel/cpu/cpufreq/powernow-k8.c",
+    "filename": "powernow-k8.c",
+    "directory": "arch/x86/kernel/cpu/cpufreq",
+    "depth": 6,
+    "top_level": "arch",
+    "second_level": "x86",
+    "arch": "x86",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "easy-medium",
+    "signals": [
+      "call_trace_available",
+      "trace_has_1_functions",
+      "dmesg_logs_available",
+      "component_known:cpufreq",
+      "is_regression"
+    ],
+    "strategies": [
+      "parse_call_trace_to_identify_functions_and_files",
+      "match_trace_functions_to_source_files",
+      "grep_error_messages_in_kernel_source",
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "13780",
+      "version": "2.6.29",
+      "status": "found",
+      "path": "arch/x86/kernel/cpu/cpufreq/powernow-k8.c"
+    }
+  ],
+  "call_trace_analysis": {
+    "id": "13780",
+    "version": "2.6.29",
+    "ground_truth_file": "arch/x86/kernel/cpu/cpufreq/powernow-k8.c",
+    "trace_functions": [
+      "powernowk8_cpu_init"
+    ],
+    "total_trace_functions": 1,
+    "function_locations": {
+      "powernowk8_cpu_init": [
+        "arch/x86/kernel/cpu/cpufreq/powernow-k8.c"
+      ]
+    },
+    "gt_found_via_functions": [
+      "powernowk8_cpu_init"
+    ],
+    "other_candidate_files": [],
+    "status": "ground_truth_hit"
+  },
+  "overall_category": "A_trace_hits_gt_file"
+}

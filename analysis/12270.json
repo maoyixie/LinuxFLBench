@@ -1,0 +1,107 @@
+{
+  "id": "12270",
+  "title": "Almost all my devices are not recongnized by  kernel-2.6.27, 2.6-28",
+  "kernel_version": "2.6.27",
+  "product": "ACPI",
+  "component": "ACPICA-Core",
+  "hardware": "All Linux",
+  "is_regression": "Yes",
+  "symptom_classification": [
+    "device_not_working"
+  ],
+  "ground_truth": {
+    "buggy_file": [
+      "drivers/acpi/resources/rscreate.c"
+    ],
+    "buggy_methods": [
+      "acpi_rs_create_pci_routing_table"
+    ],
+    "num_methods": 1
+  },
+  "description_clues": {
+    "has_call_trace": false,
+    "trace_functions": [],
+    "mentioned_file_paths": [],
+    "source_references": [],
+    "error_messages": [],
+    "proc_sys_paths": [],
+    "has_dmesg_logs": false,
+    "dmesg_line_count": 0,
+    "has_workaround": false,
+    "has_repro_steps": true,
+    "mentions_regression": false,
+    "mentions_hardware_model": false,
+    "mentions_kernel_config": false,
+    "description_length": 581,
+    "description_word_count": 87
+  },
+  "patch_analysis": {
+    "has_patch": true,
+    "lines_added": 2,
+    "lines_removed": 25,
+    "patch_size": 27,
+    "patch_types": [
+      "error_handling"
+    ],
+    "num_hunks": 4,
+    "hunk_functions": [
+      "acpi_rs_create_pci_routing_table"
+    ]
+  },
+  "location_analysis": {
+    "full_path": "drivers/acpi/resources/rscreate.c",
+    "filename": "rscreate.c",
+    "directory": "drivers/acpi/resources",
+    "depth": 4,
+    "top_level": "drivers",
+    "second_level": "acpi",
+    "driver_subsystem": "acpi/resources",
+    "extension": "c"
+  },
+  "localizability": {
+    "difficulty": "hard",
+    "signals": [
+      "component_known:ACPICA-Core",
+      "is_regression"
+    ],
+    "strategies": [
+      "narrow_search_by_component",
+      "bisect_or_check_recent_commits"
+    ]
+  },
+  "source_verification": [
+    {
+      "id": "12270",
+      "version": "2.6.27",
+      "status": "found",
+      "path": "drivers/acpi/resources/rscreate.c"
+    }
+  ],
+  "remaining_analysis": {
+    "id": "12270",
+    "title": "Almost all my devices are not recongnized by  kernel-2.6.27, 2.6-28",
+    "ground_truth_file": "drivers/acpi/resources/rscreate.c",
+    "ground_truth_subsystem": "drivers/acpi",
+    "ground_truth_methods": [
+      "acpi_rs_create_pci_routing_table"
+    ],
+    "product": "ACPI",
+    "component": "ACPICA-Core",
+    "best_strategy": "narrow_by_component_metadata",
+    "symptom_categories": [
+      "other_functional"
+    ],
+    "fix_types": [
+      "other_fix"
+    ],
+    "localization_clues": [
+      "known_component",
+      "is_regression"
+    ],
+    "clue_details": {
+      "component": "ACPICA-Core",
+      "product": "ACPI"
+    }
+  },
+  "overall_category": "E_narrow_by_component_metadata"
+}
